@@ -1,0 +1,8 @@
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD.
+    define(['easejs', 'jquery', 'MathUuid'],factory);
+  } else {
+    	root.contactJS = factory(root.easejs, root.$, root.MathUuid);
+  }
+}(this, function(easejs, $, MathUuid) {

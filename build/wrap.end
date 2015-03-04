@@ -1,0 +1,12 @@
+ 	define('easejs', function() {
+    return easejs;
+  });
+  define('jquery', function() {
+    return $;
+  });
+  define('MathUuid', function() {
+    return MathUuid;
+  });
+ 
+  return require('contactJS');
+}));
