@@ -141,7 +141,6 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @param {String} _name Name of the database.
 		 */
 		'private initStorage' : function(_name){
-			var self = this;
 			if(!window.openDatabase) {
 		        console.log('Databases are not supported in this browser.');
 			}else{
@@ -201,7 +200,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, this.successCB);
 				}
 				console.log('insertIntoTable: ' + tableName);
-			};
+			}
 		},
 		
 		/**
@@ -275,7 +274,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @param {@this} self
 		 */	
 		'private queryTableSuccess' : function(_tx, results, self, _function){
-			self.attributeNames = new Array();
+			self.attributeNames = [];
 			var len = results.rows.length;
 			for(var i=0; i<len; i++){
 				var table = results.rows.item(i).name;
@@ -361,12 +360,12 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @param {*} _tx
 		 * @param {*} results
 		 * @param {String} _tableName Name of the searched attribute.
-		 * @param {@this} self
-		 * @param {?function} _function For additional actions, if an asynchronous function is used.
+		 * @param self
+         * @param {?function} _function For additional actions, if an asynchronous function is used.
 		 */	
 		'private queryValuesSuccess' : function(_tx, results,_tableName, self, _function){
 			var len = results.rows.length;
-			var attributeList = new Array();
+			var attributeList = [];
 			var attributeName = this.resolveAttributeName(_tableName);
 			var parameterList = this.resolveParameters(_tableName);
 			for(var i=0; i<len; i++){
@@ -376,7 +375,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 								withTimestamp(results.rows.item(i).created_).
 								withParameters(parameterList);
 				attributeList.push(attribute);
-			};
+			}
 			self.attributes = new RetrievalResult().withName(_tableName)
 													.withTimestamp(new Date())
 													.withValues(attributeList);
@@ -465,7 +464,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 			var self = this;
 			if(self.data.size() == 0){
 				return;
-			};
+			}
 			var keys = self.data.getKeys();
 			for(var i in keys){
 				var key = keys[i];
@@ -545,8 +544,8 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 				var keys = parameterList.getKeys();
 				for(var i in keys){
 					tableName = tableName + '__' +keys[i] + '_'+parameterList.getItem(keys[i]);
-				};
-			};
+				}
+			}
 			return tableName;
 		},
 		
@@ -561,9 +560,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 */
 		'private resolveAttributeName' : function(_tableName){
 			var resolvedTableName = _tableName.split('__');
-
-			var attributeName = resolvedTableName[0];
-			return attributeName;
+            return resolvedTableName[0];
 		},
 		
 		/** Extracts the parameters form the table name.
@@ -584,9 +581,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 				parameterList.put(parameter);
 			}
 			return parameterList;
-		},
-	
-	
+		}
 		
 	});
 

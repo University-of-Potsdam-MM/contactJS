@@ -41,7 +41,7 @@ define(['easejs',
 		'public queryReferencedWidget' :function(_widgetHandle, _function){
 			var widget = this.discoverer.getWidget(_widgetHandle.getId());
 			widget.updateWidgetInformation(_function);			
-		},
+		}
 		
 	});
 

@@ -155,7 +155,7 @@ define([ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
 			 */
 			'private onError' : function(error) {
 				alert('code: ' + error.code + '\n' + 'message: '+ error.message + '\n');
-			},
+			}
 		});
 		return GeoLocationWidget;
 	});

@@ -802,7 +802,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 				if (this.discoverer) {
 					this.discoverer.registerNewComponent(this);
 				}
-			},
+			}
 			
 //			/**
 //			 * Unregisters the component to the associated discoverer

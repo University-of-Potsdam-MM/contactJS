@@ -36,7 +36,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 
 				/**
 				 * Builder for value.
-				 * 
+				 *
 				 * @public
 				 * @alias withValue
 				 * @memberof AttributeValue#
@@ -51,7 +51,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 
 				/**
 				 * Builder for timestamp.
-				 * 
+				 *
 				 * @public
 				 * @alias withTimestamp
 				 * @memberof AttributeValue#
@@ -65,7 +65,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 
 				/**
 				 * Sets the value.
-				 * 
+				 *
 				 * @public
 				 * @alias setValue
 				 * @memberof AttributeValue#
@@ -77,7 +77,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 
 				/**
 				 * Returns the value.
-				 * 
+				 *
 				 * @public
 				 * @alias getValue
 				 * @memberof AttributeValue#
@@ -89,7 +89,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 
 				/**
 				 * Sets the timestamp.
-				 * 
+				 *
 				 * @public
 				 * @alias setTimestamp
 				 * @memberof AttributeValue#
@@ -101,7 +101,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 
 				/**
 				 * Returns the timestamp.
-				 * 
+				 *
 				 * @public
 				 * @alias getTimestamp
 				 * @memberof AttributeValue#
@@ -113,7 +113,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 
 				/**
 				 * Compares this instance with the given one.
-				 * 
+				 *
 				 * @public
 				 * @alias equals
 				 * @memberof AttributeValue#
@@ -126,44 +126,41 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 								&& _attributeValue.getValue() == this
 										.getValue()) {
 							return true;
-						};
-					};
+						}
+					}
 					return false;
 				},
 
 				/**
 				 * Returns the AttributeType of an AttributeValue.
-				 * 
+				 *
 				 * @public
 				 * @alias getAttributeType
 				 * @memberof AttributeValue#
 				 * @returns {AttributeType}
 				 */
 				'public getAttributeType' : function() {
-					var type = new AttributeType().withName(this.name)
-							.withType(this.type).withParameters(
-									this.parameterList);
-					return type;
+                    return new AttributeType().withName(this.name)
+                        .withType(this.type).withParameters(
+                        this.parameterList);
 				},
-				
+
 				/**
 				 * Builds a new AttributeValue from the given type.
-				 * 
+				 *
 				 * @public
 				 * @alias buildFromAttributeType
 				 * @memberof AttributeValue#
 				 * @param {AttributeType} _attributeType AttributeType for build process.
-				 * @returns {AttributeValue}			 
+				 * @returns {AttributeValue}
 				 */
 				'public buildFromAttributeType' : function(_attributeType) {
 					if (Class.isA(AttributeType, _attributeType)) {
-						var attValue = new AttributeValue().withName(_attributeType.getName())
-									.withType(_attributeType.getType()).withParameter(_attributeType.getParameters()).withValue('undefined');
-					
-						return attValue;
-					};
+                        return new AttributeValue().withName(_attributeType.getName())
+                            .withType(_attributeType.getType()).withParameter(_attributeType.getParameters()).withValue('undefined');
+					}
 					return null;
-				},
+				}
 
 			});
 

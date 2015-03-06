@@ -35,7 +35,7 @@ define(['easejs',
 			 * @memberof AttributeType#
 			 * @desc Name of the Attribute
 			 */
-			'protected parameterList' : [], 
+			'protected parameterList' : [],
 
 			/**
 			 * Constructor: Initializes the ParameterList.
@@ -153,8 +153,8 @@ define(['easejs',
 			'public setName' : function(_name){
 				if(typeof _name === 'string'){
 					this.name = _name;
-				};
-			},
+                }
+            },
 
 			/**
 			 * Sets the type.
@@ -167,8 +167,8 @@ define(['easejs',
 			'public setType' : function(_type){
 				if(typeof _type === 'string'){
 					this.type = _type;
-				};
-			},
+                }
+            },
 			
 			/**
 			 * Adds a parameter.
@@ -210,13 +210,13 @@ define(['easejs',
 								&& _attributeType.getType() == this.getType()
 								&& _attributeType.getParameters().equals(this.parameterList)){
 						return true;
-					};
-				};
-				return false;
+                    }
+                }
+                return false;
 
-			},
+			}
 
-			});
+        });
 
 		return AttributeType;
 	

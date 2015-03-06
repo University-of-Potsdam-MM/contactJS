@@ -111,8 +111,8 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 				this.attributeTypes.put(_attributeType);
 				var attVal = new AttributeValue().buildFromAttributeType(_attributeType);
 				this.attributes.put(attVal);
-			};
-		},
+            }
+        },
 		
 		/**
 		 * Sets WidgetHandles.
@@ -182,9 +182,9 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 					} else {
 						this.removeWidget(widgetHandle.getName());
 					}
-				};
-			};
-		},
+                }
+            }
+        },
 		
 		/**
 		 * Retrieves all ConstantAttributes of the specified widgets.
@@ -205,11 +205,10 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 						this.setConstantAttributes(widgetInstance.queryConstantAttributes());
 					} else {
 						this.removeWidget(widgetHandle.getName());
-					};
-				};
-			};
-
-		},
+                    }
+                }
+            }
+        },
 		
 		/**
 		 * Retrieves all actual Callbacks of the specified Widgets.
@@ -224,9 +223,9 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 				for(var i in widgetList){
 					var widgetHandle = widgetList[i];
 					this.initWidgetSubscription(widgetHandle);
-				};
-			};
-		},
+                }
+            }
+        },
 		
 		/**
 		 * InitMethod for Aggregators. Called by constructor.
@@ -321,8 +320,8 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 									withConditions(_conditions);	
 				console.log(this.name + ' subscribeTo: ' + _widget.getName());
 				_widget.addSubscriber(subscriber);
-			};
-		},
+            }
+        },
 		
 		/**
 		 * Subscribes to the widgets that are defined in the WidgetHandleList
@@ -347,9 +346,9 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 					this.subscribeTo(widget, calls);
 				} else {
 					this.removeWidget(_widgetHandle.getName());
-				};			
-			};			
-			return calls;
+                }
+            }
+            return calls;
 		},
 		
 		/**
@@ -374,12 +373,12 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 						for(var y in typeList){
 							var singleType = typeList[y];
 							this.addAttributeType(singleType);
-						};				
-					};
-					this.addWidget(_widgetHandle);
-				};
-			};		
-		},
+                        }
+                    }
+                    this.addWidget(_widgetHandle);
+                }
+            }
+        },
 		
 		/**
 		 * Removes subscribed Widgets and deletes the entry 
@@ -397,9 +396,9 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 					console.log('aggregator unsubscribeFrom: ' + widget.getName());
 					widget.removeSubscriber(this.id);
 					this.widgets.removeItem(_widgetHandle.getName());
-				};				
-			};	
-		},
+                }
+            }
+        },
 		
 		/**
 		 * Puts context data to Widget and expects an array.
@@ -411,7 +410,7 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 		 * @param {(AttributeValueList|Array)}  _data data that shall be input
 	     */
 		'override public putData' : function(_data){
-			var list = new Array();
+			var list = [];
 			if(_data instanceof Array){
 				list = _data;
 			} else if (Class.isA( AttributeValueList, _data)) {
@@ -424,10 +423,9 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 					if(this.db){
 						this.store(x);
 					}
-				};
-			};
-			
-		},
+                }
+            }
+        },
 		
 		/**
 		 * Calls the given Interpreter for interpretation the data.
@@ -468,9 +466,9 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 						if(this.db){
 							this.store(x);
 						}
-					};
-				};
-			}
+                    }
+                }
+            }
 			return response;
 		},
 		
@@ -567,9 +565,9 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 		 */
 		'virtual public getAggregatorDescription' : function(){
 			return this.getWidgetDescription();
-		},
-		
-	});
+		}
+
+    });
 
 	return Aggregator;
 });

@@ -129,7 +129,7 @@ define(['easejs'],
 			'public setName' : function(_name){
 				if(typeof _name === 'string'){
 					this.name = _name;
-				};
+				}
 			},
 
 			/**
@@ -143,7 +143,7 @@ define(['easejs'],
 			'public setTimestamp' : function(_timesstamp){
 				if(_timesstamp instanceof Date){
 					this.type = _timesstamp;
-				};
+				}
 			},
 			
 			/**
@@ -157,8 +157,8 @@ define(['easejs'],
 			'public setValues' : function(_values){
 				if(_values instanceof Array){
 					this.values = _values;
-				};
-			},
+				}
+			}
 
 			});
 
