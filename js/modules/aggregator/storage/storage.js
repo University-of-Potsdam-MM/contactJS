@@ -345,7 +345,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 					function(_tx,results){self.queryValuesSuccess(_tx,results,_tableName, self, _function);}, 
 					function(error){self.errorCB(error);});			
 			} else {
-				console.log('Table unavailable');
+				console.log('Table "'+_tableName+'" unavailable');
 			}
 		},
 		

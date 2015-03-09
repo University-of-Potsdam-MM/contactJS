@@ -1,18 +1,18 @@
 require(['configTest'], function() {
-	require(['easejs', 'attributeType','attributeValue', 'parameter'],function(easejs, AttributeType, AttributeValue, Parameter){
+	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "AttributeValue", function( assert ) {
 				
 
-				var attributeValue = new AttributeValue();
+				var attributeValue = new contactJS.AttributeValue();
 				
-				var parameter = new Parameter().withKey('testKey').withValue('testValue');			
+				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
 				var date = new Date();
-				var attributeValue2 = new AttributeValue().withName('testName').
+				var attributeValue2 = new contactJS.AttributeValue().withName('testName').
 										withType('integer').withParameter(parameter).
 										withValue('testValue').withTimestamp(date);
 				
-				var attributeValue3 = new AttributeValue().withName('testName').withType('integer')
+				var attributeValue3 = new contactJS.AttributeValue().withName('testName').withType('integer')
 										.withParameter(parameter).withValue('testValue')
 										.withTimestamp(date);
 
@@ -22,14 +22,14 @@ require(['configTest'], function() {
 				assert.ok( attributeValue2.equals(attributeValue3),"Passed!: equals -> true" );
 				assert.ok( !attributeValue2.equals(attributeValue),"Passed!: equals -> false" );
 				
-				var attributeValue3 = new AttributeValue().withName('testName').
+				var attributeValue3 = new contactJS.AttributeValue().withName('testName').
 						withType('integer').withParameter(parameter).
 						withValue('testValue').withTimestamp(new Date());
 				assert.ok( attributeValue2.equals(attributeValue3),"Passed!: equals -> date is not verified" );
 				/*
 				 * getAttributeType
 				 */
-				var attributeType = new AttributeType().withName('testName').
+				var attributeType = new contactJS.AttributeType().withName('testName').
 				withType('integer').withParameter(parameter);
 				
 				assert.ok( attributeValue2.getAttributeType().equals(attributeType),"Passed!: getAttributeType()" );

@@ -11,7 +11,6 @@ define(['easejs',
     		ParameterList){
     	var Class = easejs.Class;
 		var AttributeType = Class('AttributeType',{
-			
 			/**
 			 * @alias name
 			 * @protected

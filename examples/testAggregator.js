@@ -1,10 +1,9 @@
-define(['easejs',
-        'aggregator', 'attributeValue'],
- 	function( easejs, Aggregator, AttributeValue){
+define(['easejs', 'contactJS'],
+ 	function( easejs, contactJS){
 
  	var Class = easejs.Class;
 	var TestAggregator =  Class('TestAggregator').
-				extend(Aggregator, 
+				extend(contactJS.Aggregator,
 			
 	{
 		'public name' : 'TestAggregator', 
@@ -22,15 +21,15 @@ define(['easejs',
 		'protected initWidgetHandles' : function(){},
 		
 		'protected setAggregatorAttributeValues' : function(){
-			var latitude = new AttributeValue().withName('latitude')
+			var latitude = new contactJS.AttributeValue().withName('latitude')
 						.withType('double')
 						.withValue('undefined');
 			this.addAttribute(latitude);
-			var longitude = new AttributeValue().withName('longitude')
+			var longitude = new contactJS.AttributeValue().withName('longitude')
 						.withType('double')
 						.withValue('undefined');
 			this.addAttribute(longitude);
-			var address = new AttributeValue().withName('formattedAddress')
+			var address = new contactJS.AttributeValue().withName('formattedAddress')
 						.withType('string')
 						.withValue('undefined');
 			this.addAttribute(address);

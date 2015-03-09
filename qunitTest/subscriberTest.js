@@ -1,35 +1,35 @@
 require(['configTest'], function() {
-	require(['subscriber', 'attributeTypeList', 'attributeType', 'callback', 'callbackList', 'parameter'],function(Subscriber, AttributeTypeList, AttributeType, Callback, CallbackList, Parameter){
+	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "Subscriber", function( assert ) {
 				
-				var parameter = new Parameter().withKey('testKey').withValue('testValue');
+				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
 				
-				var attributeType = new AttributeType();
-				var attributeType2 = new AttributeType().withName('testName').
+				var attributeType = new contactJS.AttributeType();
+				var attributeType2 = new contactJS.AttributeType().withName('testName').
 										withType('integer').withParameter(parameter);
 				var attArray = new Array();
 				attArray.push(attributeType);
-				var attList = new AttributeTypeList().withItems(attArray);
+				var attList = new contactJS.AttributeTypeList().withItems(attArray);
 				
 				attArray.push(attributeType2);
-				var attList2 = new AttributeTypeList().withItems(attArray);
-				var call = new Callback().withName('test').withAttributeTypes(attList2);
+				var attList2 = new contactJS.AttributeTypeList().withItems(attArray);
+				var call = new contactJS.Callback().withName('test').withAttributeTypes(attList2);
 				
 				var callArray = new Array();
 				callArray.push(call);
-				var callList = new CallbackList().withItems(callArray);
+				var callList = new contactJS.CallbackList().withItems(callArray);
 				
-				var subscriber = new Subscriber().withSubscriberName('test')
+				var subscriber = new contactJS.Subscriber().withSubscriberName('test')
 										.withSubscriberId('test2')
 										.withSubscriptionCallbacks(callList)
 										.withAttributesSubset(attList);
 				
-				var subscriber2 = new Subscriber().withSubscriberName('test')
+				var subscriber2 = new contactJS.Subscriber().withSubscriberName('test')
 										.withSubscriberId('test2')
 										.withSubscriptionCallbacks(callList)
 										.withAttributesSubset(attList);
-				var subscriber3 = new Subscriber().withSubscriberName('test')
+				var subscriber3 = new contactJS.Subscriber().withSubscriberName('test')
 										.withSubscriberId('test3')
 										.withSubscriptionCallbacks(callList);
 				var test = subscriber.getAttributesSubset();

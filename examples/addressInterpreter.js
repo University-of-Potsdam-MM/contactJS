@@ -4,8 +4,8 @@
  * @module AddressInterpreter
  * @fileOverview
  */
-define(['easejs', 'jquery', 'interpreter', 'attributeType', 'attributeValue'],
-	function(easejs, $, Interpreter, AttributeType, AttributeValue) {
+define(['easejs', 'jquery', 'contactJS'],
+	function(easejs, $, contactJS) {
 		var Class = easejs.Class;
 		/**
 		 * @class AddressInterpreter
@@ -18,7 +18,7 @@ define(['easejs', 'jquery', 'interpreter', 'attributeType', 'attributeValue'],
 		 * @requires AttributeValue
 		 * @requires Parameter
 		 */
-		var AddressInterpreter = Class('AddressInterpreter').extend(Interpreter,{
+		var AddressInterpreter = Class('AddressInterpreter').extend(contactJS.Interpreter,{
 			/**
 			 * @alias name
 			 * @public
@@ -44,10 +44,10 @@ define(['easejs', 'jquery', 'interpreter', 'attributeType', 'attributeValue'],
 			 * @memberof AddressInterpreter#
 			 */
 			'protected initInAttributes' : function() {
-				var latitude = new AttributeType()
+				var latitude = new contactJS.AttributeType()
 						.withName('latitude').withType('double');
 				this.inAttributeTypes.put(latitude);
-				var longitude = new AttributeType()
+				var longitude = new contactJS.AttributeType()
 						.withName('longitude').withType('double');
 				this.inAttributeTypes.put(longitude);
 			},
@@ -60,7 +60,7 @@ define(['easejs', 'jquery', 'interpreter', 'attributeType', 'attributeValue'],
 			 * @memberof AddressInterpreter#
 			 */
 			'protected initOutAttributes' : function() {
-				var formattedAddress = new AttributeType()
+				var formattedAddress = new contactJS.AttributeType()
 						.withName('formattedAddress')
 						.withType('string');
 				this.outAttributeTypes.put(formattedAddress);
@@ -87,7 +87,7 @@ define(['easejs', 'jquery', 'interpreter', 'attributeType', 'attributeValue'],
 					}
 				} else {
 					alert("Keine Internetverbindung verfuegbar");
-				};
+				}
 			},
 
 			/**
@@ -139,9 +139,8 @@ define(['easejs', 'jquery', 'interpreter', 'attributeType', 'attributeValue'],
 			 * @param {Array} json
 			 */
 			'private checkStatus' : function(json) {
-				if (json["status"] == "OK")
-					return true;
-				return false;
+				return json["status"] == "OK";
+
 			},
 
 			/**
@@ -156,9 +155,8 @@ define(['easejs', 'jquery', 'interpreter', 'attributeType', 'attributeValue'],
 			'private googleGetAddress' : function(json,
 					self) {
 				return json["results"][0]["formatted_address"];
-			},
+			}
+        });
 
-							});
-
-			return AddressInterpreter;
-		});
+		return AddressInterpreter;
+    });

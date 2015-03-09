@@ -1,28 +1,28 @@
 require(['configTest'], function() {
-	require(['condition', 'equals', 'unequals', 'conditionList', 'attributeType'],function(Condition, Equals, UnEquals, ConditionList, AttributeType){
+	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "ConditionList", function( assert ) {
 				
-				var type = new AttributeType().withName('test').withType('string');
-		    	var type2 = new AttributeType().withName('test').withType('string');
+				var type = new contactJS.AttributeType().withName('test').withType('string');
+		    	var type2 = new contactJS.AttributeType().withName('test').withType('string');
 		    	
-				var method = new Equals();
-		    	var method2 = new UnEquals();
+				var method = new contactJS.Equals();
+		    	var method2 = new contactJS.UnEquals();
 
-		    	var condition = new Condition().withName('condition').withAttributeType(type)
+		    	var condition = new contactJS.Condition().withName('condition').withAttributeType(type)
 		    									.withComparisonMethod(method);
-		    	var condition2 = new Condition().withName('condition2').withAttributeType(type2)
+		    	var condition2 = new contactJS.Condition().withName('condition2').withAttributeType(type2)
 												.withComparisonMethod(method);	
-		    	var condition3 = new Condition().withName('condition3').withAttributeType(type)
+		    	var condition3 = new contactJS.Condition().withName('condition3').withAttributeType(type)
 												.withComparisonMethod(method2);	
 				
 				var array = new Array();
 				array.push(condition2);
 				array.push(condition3);
-				var list = new ConditionList().withItems(array);
+				var list = new contactJS.ConditionList().withItems(array);
 				assert.equal( list.size(), 2, "Passed!: Builder (withItems)" );
 				
-				var list2 = new ConditionList();
+				var list2 = new contactJS.ConditionList();
 				list2.put(condition);
 				
 				assert.equal( list2.size(), 1, "Passed!: Put type to list (put)" );

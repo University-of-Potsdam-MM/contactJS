@@ -164,9 +164,9 @@ define(['easejs', 'attributeTypeList'],
 			 * @params {String} _id Id of the described widget
 			 */
 			'public setId' : function(_id){
-				if(typeof _id === 'string'){
+				if(typeof _id === 'string') {
 					this.id = _id;
-				};
+				}
 			},
 			
 			/**
@@ -191,7 +191,7 @@ define(['easejs', 'attributeTypeList'],
 			 */
 			'public setOutAttributeTypes' : function(_outAttributeTypes){
 				this.outAttributeTypes.putAll(_outAttributeTypes);
-			},
+			}
 			
 			});
 

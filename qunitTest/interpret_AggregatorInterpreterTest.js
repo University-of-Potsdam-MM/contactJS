@@ -1,30 +1,30 @@
 require(['configTest'], function() {
-	require(['addressInterpreter', 'testAggregator', 'discoverer', 'attributeValue', 'attributeValueList', 'attributeTypeList'],
-	         	function(AddressInterpreter, TestAggregator, Discoverer, AttributeValue, AttributeValueList, AttributeTypeList){
+	require(['../examples/AddressInterpreter', '../examples/TestAggregator', 'contactJS'],
+	         	function(AddressInterpreter, TestAggregator, contactJS){
 		
 			QUnit.asyncTest( "interpret", function( assert ) {
 				
 				//initializes the test environment
 				var testInterpreter =new AddressInterpreter();
 				var testAggregator = new TestAggregator();
-				var discoverer = new Discoverer();
+				var discoverer = new contactJS.Discoverer();
 				testAggregator.setDiscoverer(discoverer);			        
 				testInterpreter.setDiscoverer(discoverer);
 				
 				var interpreter = discoverer.getInterpreterDescriptions();
 				
 				//put data into aggregator
-				var latitudeValue = new AttributeValue().withName('latitude')
+				var latitudeValue = new contactJS.AttributeValue().withName('latitude')
 								.withType('double').withValue(52.3992404);
-				var longitudeValue = new AttributeValue().withName('longitude')
+				var longitudeValue = new contactJS.AttributeValue().withName('longitude')
 								.withType('double').withValue(13.066132);				
-				var list = new AttributeValueList();
+				var list = new contactJS.AttributeValueList();
 				list.put(latitudeValue);
 				list.put(longitudeValue);
 				testAggregator.putData(list);	
 				
 				//if aggregator provides more attributes
-				var typeList = new AttributeTypeList();
+				var typeList = new contactJS.AttributeTypeList();
 				typeList.put(latitudeValue.getAttributeType());
 				typeList.put(longitudeValue.getAttributeType());
 				
@@ -41,7 +41,7 @@ require(['configTest'], function() {
 					assert.equal( data2.size(), 3,"Passed!: three available attributes" );
 					var item = data2.getItem('formattedAddress');
 					assert.ok(item,"Callback passed!: interpreted data exists" );
-	    			var add = "Charlottenstraﬂe 70, 14467 Potsdam, Germany";
+	    			var add = "Charlottenstraﬂe 70, 14467 Potsdam, Deutschland";
 	    			assert.equal(item.getValue(), add ,"Passed!: interpreted data equals expected value" );
 	    		
 				};

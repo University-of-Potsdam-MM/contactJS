@@ -1,20 +1,20 @@
 require(['configTest'], function() {
-	require(['addressInterpreter', 'attributeValue', 'attributeValueList', 'attributeType', 'attributeTypeList'],
-	         	function(AddressInterpreter, AttributeValue, AttributeValueList, AttributeType, AttributeTypeList){
+	require(['../examples/AddressInterpreter', 'contactJS'],
+	         	function(AddressInterpreter, contactJS){
 		
 			QUnit.asyncTest( "AddressInterpreter", function( assert ) {
 				
 				
-				var testInterpreter =new AddressInterpreter();
+				var testInterpreter = new AddressInterpreter();
 		    				        
 		        var id = testInterpreter.getId();
 				assert.ok( id && id !== "null" && id !== "undefined","Passed!: id is not null" );
 				assert.equal( testInterpreter.getType(), 'Interpreter',"Passed!: type -> Interpreter" );
 				
 				//getInAttributeTypes
-				var latitudeType = new AttributeType().withName('latitude')
+				var latitudeType = new contactJS.AttributeType().withName('latitude')
 									.withType('double');			
-				var longitudeType = new AttributeType().withName('longitude')
+				var longitudeType = new contactJS.AttributeType().withName('longitude')
 									.withType('double');
 				var inTypes = testInterpreter.getInAttributeTypes();
 				assert.ok( inTypes.size() == 2,"Passed!: 2 defined type in addressInterpreter" );
@@ -24,7 +24,7 @@ require(['configTest'], function() {
 				assert.ok( inTypes.getItem('longitude').equals(longitudeType),"Passed!: longitude equals expected type" );
 			
 				//getOutAttributeTypes
-				var formattedAddress = new AttributeType().withName('formattedAddress').withType('string');
+				var formattedAddress = new contactJS.AttributeType().withName('formattedAddress').withType('string');
 				var outTypes = testInterpreter.getOutAttributeTypes();
 				assert.ok( outTypes.size() == 1,"Passed!: 1 defined outType in addressInterpreter" );
 				assert.ok( outTypes.getItem('formattedAddress'),"Passed!: formattedAddress exists" );
@@ -41,15 +41,15 @@ require(['configTest'], function() {
 				
 				
 				//callInterpreter && getInterpretedData with callback
-				var latitudeValue = new AttributeValue().withName('latitude')
+				var latitudeValue = new contactJS.AttributeValue().withName('latitude')
 								.withType('double').withValue(52.3992404);
-				var longitudeValue = new AttributeValue().withName('longitude')
+				var longitudeValue = new contactJS.AttributeValue().withName('longitude')
 								.withType('double').withValue(13.066132);
 						
 				var array = new Array();
 				array.push(latitudeValue);
 				array.push(longitudeValue);
-				var attributeList = new AttributeValueList().withItems(array);
+				var attributeList = new contactJS.AttributeValueList().withItems(array);
 					    		    		
 		    	var assertData2 = function(){
 		    		var result = testInterpreter.getInterpretedData();
@@ -63,7 +63,7 @@ require(['configTest'], function() {
 		    			var att = list[i];
 		    			assert.ok(att,"Callback passed!: interpreted data exists" );
 		    			assert.ok(att.getAttributeType().equals(formattedAddress),"Callback passed!: interpreted data equals expected type" );
-		    			var add = "Charlottenstraﬂe 70, 14467 Potsdam, Germany";
+		    			var add = "Charlottenstraﬂe 70, 14467 Potsdam, Deutschland";
 		    			assert.equal(att.getValue(), add ,"Passed!: interpreted data equals expected value" );
 		    		};
 	    		};	  

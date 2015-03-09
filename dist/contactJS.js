@@ -469,7 +469,7 @@ define('retrievalResult',['easejs'],
 			'public setName' : function(_name){
 				if(typeof _name === 'string'){
 					this.name = _name;
-				};
+				}
 			},
 
 			/**
@@ -483,7 +483,7 @@ define('retrievalResult',['easejs'],
 			'public setTimestamp' : function(_timesstamp){
 				if(_timesstamp instanceof Date){
 					this.type = _timesstamp;
-				};
+				}
 			},
 			
 			/**
@@ -497,8 +497,8 @@ define('retrievalResult',['easejs'],
 			'public setValues' : function(_values){
 				if(_values instanceof Array){
 					this.values = _values;
-				};
-			},
+				}
+			}
 
 			});
 
@@ -1033,7 +1033,6 @@ define('attributeType',['easejs',
     		ParameterList){
     	var Class = easejs.Class;
 		var AttributeType = Class('AttributeType',{
-			
 			/**
 			 * @alias name
 			 * @protected
@@ -1057,7 +1056,7 @@ define('attributeType',['easejs',
 			 * @memberof AttributeType#
 			 * @desc Name of the Attribute
 			 */
-			'protected parameterList' : [], 
+			'protected parameterList' : [],
 
 			/**
 			 * Constructor: Initializes the ParameterList.
@@ -1175,8 +1174,8 @@ define('attributeType',['easejs',
 			'public setName' : function(_name){
 				if(typeof _name === 'string'){
 					this.name = _name;
-				};
-			},
+                }
+            },
 
 			/**
 			 * Sets the type.
@@ -1189,8 +1188,8 @@ define('attributeType',['easejs',
 			'public setType' : function(_type){
 				if(typeof _type === 'string'){
 					this.type = _type;
-				};
-			},
+                }
+            },
 			
 			/**
 			 * Adds a parameter.
@@ -1232,13 +1231,13 @@ define('attributeType',['easejs',
 								&& _attributeType.getType() == this.getType()
 								&& _attributeType.getParameters().equals(this.parameterList)){
 						return true;
-					};
-				};
-				return false;
+                    }
+                }
+                return false;
 
-			},
+			}
 
-			});
+        });
 
 		return AttributeType;
 	
@@ -1281,7 +1280,7 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 
 				/**
 				 * Builder for value.
-				 * 
+				 *
 				 * @public
 				 * @alias withValue
 				 * @memberof AttributeValue#
@@ -1296,7 +1295,7 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 
 				/**
 				 * Builder for timestamp.
-				 * 
+				 *
 				 * @public
 				 * @alias withTimestamp
 				 * @memberof AttributeValue#
@@ -1310,7 +1309,7 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 
 				/**
 				 * Sets the value.
-				 * 
+				 *
 				 * @public
 				 * @alias setValue
 				 * @memberof AttributeValue#
@@ -1322,7 +1321,7 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 
 				/**
 				 * Returns the value.
-				 * 
+				 *
 				 * @public
 				 * @alias getValue
 				 * @memberof AttributeValue#
@@ -1334,7 +1333,7 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 
 				/**
 				 * Sets the timestamp.
-				 * 
+				 *
 				 * @public
 				 * @alias setTimestamp
 				 * @memberof AttributeValue#
@@ -1346,7 +1345,7 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 
 				/**
 				 * Returns the timestamp.
-				 * 
+				 *
 				 * @public
 				 * @alias getTimestamp
 				 * @memberof AttributeValue#
@@ -1358,7 +1357,7 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 
 				/**
 				 * Compares this instance with the given one.
-				 * 
+				 *
 				 * @public
 				 * @alias equals
 				 * @memberof AttributeValue#
@@ -1371,44 +1370,41 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 								&& _attributeValue.getValue() == this
 										.getValue()) {
 							return true;
-						};
-					};
+						}
+					}
 					return false;
 				},
 
 				/**
 				 * Returns the AttributeType of an AttributeValue.
-				 * 
+				 *
 				 * @public
 				 * @alias getAttributeType
 				 * @memberof AttributeValue#
 				 * @returns {AttributeType}
 				 */
 				'public getAttributeType' : function() {
-					var type = new AttributeType().withName(this.name)
-							.withType(this.type).withParameters(
-									this.parameterList);
-					return type;
+                    return new AttributeType().withName(this.name)
+                        .withType(this.type).withParameters(
+                        this.parameterList);
 				},
-				
+
 				/**
 				 * Builds a new AttributeValue from the given type.
-				 * 
+				 *
 				 * @public
 				 * @alias buildFromAttributeType
 				 * @memberof AttributeValue#
 				 * @param {AttributeType} _attributeType AttributeType for build process.
-				 * @returns {AttributeValue}			 
+				 * @returns {AttributeValue}
 				 */
 				'public buildFromAttributeType' : function(_attributeType) {
 					if (Class.isA(AttributeType, _attributeType)) {
-						var attValue = new AttributeValue().withName(_attributeType.getName())
-									.withType(_attributeType.getType()).withParameter(_attributeType.getParameters()).withValue('undefined');
-					
-						return attValue;
-					};
+                        return new AttributeValue().withName(_attributeType.getName())
+                            .withType(_attributeType.getType()).withParameter(_attributeType.getParameters()).withValue('undefined');
+					}
 					return null;
-				},
+				}
 
 			});
 
@@ -1423,7 +1419,6 @@ define('attributeValue',[ 'easejs', 'attributeType' ], function(easejs, Attribut
 define('attributeTypeList',[ 'easejs', 'abstractList', 'attributeType' ],
 	function(easejs, AbstractList, AttributeType) {
 		var Class = easejs.Class;
-			
 		/**
 		 * @class AttributeTypeList
 		 * @classdesc This class represents a list for AttributeType.
@@ -1539,6 +1534,7 @@ define('attributeTypeList',[ 'easejs', 'abstractList', 'attributeType' ],
 			'public contains' : function(_item) {
 				if (Class.isA(AttributeType, _item)) {
 					var tmp = this.getItem(_item.getName());
+                    console.log(tmp);
 					if (!(typeof tmp === 'undefined')
 							&& tmp.equals(_item)) {
 						return true;
@@ -1568,12 +1564,11 @@ define('attributeTypeList',[ 'easejs', 'abstractList', 'attributeType' ],
 					return true;
 				}
 				return false;
-			},
+			}
+        });
 
-							});
-
-			return AttributeTypeList;
-		});
+		return AttributeTypeList;
+	});
 /**
  * This module represents a AttributeValueList. It is a subclass of
  * AbstractList.
@@ -1932,7 +1927,6 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @param {String} _name Name of the database.
 		 */
 		'private initStorage' : function(_name){
-			var self = this;
 			if(!window.openDatabase) {
 		        console.log('Databases are not supported in this browser.');
 			}else{
@@ -1992,7 +1986,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, this.successCB);
 				}
 				console.log('insertIntoTable: ' + tableName);
-			};
+			}
 		},
 		
 		/**
@@ -2066,7 +2060,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @param {@this} self
 		 */	
 		'private queryTableSuccess' : function(_tx, results, self, _function){
-			self.attributeNames = new Array();
+			self.attributeNames = [];
 			var len = results.rows.length;
 			for(var i=0; i<len; i++){
 				var table = results.rows.item(i).name;
@@ -2137,7 +2131,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 					function(_tx,results){self.queryValuesSuccess(_tx,results,_tableName, self, _function);}, 
 					function(error){self.errorCB(error);});			
 			} else {
-				console.log('Table unavailable');
+				console.log('Table "'+_tableName+'" unavailable');
 			}
 		},
 		
@@ -2152,12 +2146,12 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 * @param {*} _tx
 		 * @param {*} results
 		 * @param {String} _tableName Name of the searched attribute.
-		 * @param {@this} self
-		 * @param {?function} _function For additional actions, if an asynchronous function is used.
+		 * @param self
+         * @param {?function} _function For additional actions, if an asynchronous function is used.
 		 */	
 		'private queryValuesSuccess' : function(_tx, results,_tableName, self, _function){
 			var len = results.rows.length;
-			var attributeList = new Array();
+			var attributeList = [];
 			var attributeName = this.resolveAttributeName(_tableName);
 			var parameterList = this.resolveParameters(_tableName);
 			for(var i=0; i<len; i++){
@@ -2167,7 +2161,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 								withTimestamp(results.rows.item(i).created_).
 								withParameters(parameterList);
 				attributeList.push(attribute);
-			};
+			}
 			self.attributes = new RetrievalResult().withName(_tableName)
 													.withTimestamp(new Date())
 													.withValues(attributeList);
@@ -2256,7 +2250,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 			var self = this;
 			if(self.data.size() == 0){
 				return;
-			};
+			}
 			var keys = self.data.getKeys();
 			for(var i in keys){
 				var key = keys[i];
@@ -2336,8 +2330,8 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 				var keys = parameterList.getKeys();
 				for(var i in keys){
 					tableName = tableName + '__' +keys[i] + '_'+parameterList.getItem(keys[i]);
-				};
-			};
+				}
+			}
 			return tableName;
 		},
 		
@@ -2352,9 +2346,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 		 */
 		'private resolveAttributeName' : function(_tableName){
 			var resolvedTableName = _tableName.split('__');
-
-			var attributeName = resolvedTableName[0];
-			return attributeName;
+            return resolvedTableName[0];
 		},
 		
 		/** Extracts the parameters form the table name.
@@ -2375,9 +2367,7 @@ define('storage',['easejs', 'attributeValue', 'attributeValueList', 'attributeTy
 				parameterList.put(parameter);
 			}
 			return parameterList;
-		},
-	
-	
+		}
 		
 	});
 
@@ -3853,9 +3843,9 @@ define('widgetDescription',['easejs', 'attributeTypeList'],
 			 * @params {String} _id Id of the described widget
 			 */
 			'public setId' : function(_id){
-				if(typeof _id === 'string'){
+				if(typeof _id === 'string') {
 					this.id = _id;
-				};
+				}
 			},
 			
 			/**
@@ -3880,7 +3870,7 @@ define('widgetDescription',['easejs', 'attributeTypeList'],
 			 */
 			'public setOutAttributeTypes' : function(_outAttributeTypes){
 				this.outAttributeTypes.putAll(_outAttributeTypes);
-			},
+			}
 			
 			});
 
@@ -4481,6 +4471,10 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @memberof Widget#
 			 */
 			'virtual public notify' : function() {
+                var callbacks = this.queryCallbacks().getItems();
+                for (var i in callbacks) {
+                    this.sendToSubscriber(callbacks[i]);
+                }
 			},
 
 			/**
@@ -4691,7 +4685,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 				if (this.discoverer) {
 					this.discoverer.registerNewComponent(this);
 				}
-			},
+			}
 			
 //			/**
 //			 * Unregisters the component to the associated discoverer
@@ -5116,8 +5110,8 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 				this.attributeTypes.put(_attributeType);
 				var attVal = new AttributeValue().buildFromAttributeType(_attributeType);
 				this.attributes.put(attVal);
-			};
-		},
+            }
+        },
 		
 		/**
 		 * Sets WidgetHandles.
@@ -5187,9 +5181,9 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 					} else {
 						this.removeWidget(widgetHandle.getName());
 					}
-				};
-			};
-		},
+                }
+            }
+        },
 		
 		/**
 		 * Retrieves all ConstantAttributes of the specified widgets.
@@ -5210,11 +5204,10 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 						this.setConstantAttributes(widgetInstance.queryConstantAttributes());
 					} else {
 						this.removeWidget(widgetHandle.getName());
-					};
-				};
-			};
-
-		},
+                    }
+                }
+            }
+        },
 		
 		/**
 		 * Retrieves all actual Callbacks of the specified Widgets.
@@ -5229,9 +5222,9 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 				for(var i in widgetList){
 					var widgetHandle = widgetList[i];
 					this.initWidgetSubscription(widgetHandle);
-				};
-			};
-		},
+                }
+            }
+        },
 		
 		/**
 		 * InitMethod for Aggregators. Called by constructor.
@@ -5326,8 +5319,8 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 									withConditions(_conditions);	
 				console.log(this.name + ' subscribeTo: ' + _widget.getName());
 				_widget.addSubscriber(subscriber);
-			};
-		},
+            }
+        },
 		
 		/**
 		 * Subscribes to the widgets that are defined in the WidgetHandleList
@@ -5352,9 +5345,9 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 					this.subscribeTo(widget, calls);
 				} else {
 					this.removeWidget(_widgetHandle.getName());
-				};			
-			};			
-			return calls;
+                }
+            }
+            return calls;
 		},
 		
 		/**
@@ -5379,12 +5372,12 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 						for(var y in typeList){
 							var singleType = typeList[y];
 							this.addAttributeType(singleType);
-						};				
-					};
-					this.addWidget(_widgetHandle);
-				};
-			};		
-		},
+                        }
+                    }
+                    this.addWidget(_widgetHandle);
+                }
+            }
+        },
 		
 		/**
 		 * Removes subscribed Widgets and deletes the entry 
@@ -5402,9 +5395,9 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 					console.log('aggregator unsubscribeFrom: ' + widget.getName());
 					widget.removeSubscriber(this.id);
 					this.widgets.removeItem(_widgetHandle.getName());
-				};				
-			};	
-		},
+                }
+            }
+        },
 		
 		/**
 		 * Puts context data to Widget and expects an array.
@@ -5416,7 +5409,7 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 		 * @param {(AttributeValueList|Array)}  _data data that shall be input
 	     */
 		'override public putData' : function(_data){
-			var list = new Array();
+			var list = [];
 			if(_data instanceof Array){
 				list = _data;
 			} else if (Class.isA( AttributeValueList, _data)) {
@@ -5429,10 +5422,9 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 					if(this.db){
 						this.store(x);
 					}
-				};
-			};
-			
-		},
+                }
+            }
+        },
 		
 		/**
 		 * Calls the given Interpreter for interpretation the data.
@@ -5473,9 +5465,9 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 						if(this.db){
 							this.store(x);
 						}
-					};
-				};
-			}
+                    }
+                }
+            }
 			return response;
 		},
 		
@@ -5572,60 +5564,11 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 		 */
 		'virtual public getAggregatorDescription' : function(){
 			return this.getWidgetDescription();
-		},
-		
-	});
+		}
+
+    });
 
 	return Aggregator;
-});
-define('testAggregator',['easejs',
-        'aggregator', 'attributeValue'],
- 	function( easejs, Aggregator, AttributeValue){
-
- 	var Class = easejs.Class;
-	var TestAggregator =  Class('TestAggregator').
-				extend(Aggregator, 
-			
-	{
-		'public name' : 'TestAggregator', 
-		
-		'public interpreterId' : '',
-		
-		'public setInterpreterId' : function(_id){
-			this.interpreterId = _id;
-		},
-		
-		'public getInterpreterId' : function(){
-			return this.interpreterId;
-		},
-		
-		'protected initWidgetHandles' : function(){},
-		
-		'protected setAggregatorAttributeValues' : function(){
-			var latitude = new AttributeValue().withName('latitude')
-						.withType('double')
-						.withValue('undefined');
-			this.addAttribute(latitude);
-			var longitude = new AttributeValue().withName('longitude')
-						.withType('double')
-						.withValue('undefined');
-			this.addAttribute(longitude);
-			var address = new AttributeValue().withName('formattedAddress')
-						.withType('string')
-						.withValue('undefined');
-			this.addAttribute(address);
-		},
-		'protected setAggregatorConstantAttributeValues' : function(){},
-		'protected setAggregatorCallbacks' : function(){},
-
-		'public queryReferencedWidget' :function(_widgetHandle, _function){
-			var widget = this.discoverer.getWidget(_widgetHandle.getId());
-			widget.updateWidgetInformation(_function);			
-		},
-		
-	});
-
-	return TestAggregator;
 });
 /**
  * This module represents the conditionMethod Equals. 
@@ -5667,6 +5610,47 @@ define('equals',['easejs', 'conditionMethod'],
 		});
 
 	return Equals;
+});
+/**
+ * This module represents the conditionMethod Equals. 
+ * 
+ * @module Equals
+ * @fileOverview
+ */
+define('unequals',['easejs', 'conditionMethod'],
+ 	function(easejs, ConditionMethod){
+ 	var Class = easejs.Class;
+ 	/**
+	 * @class Equals
+	 * @implements {ConditionMethod}
+	 * @classdesc This class is the conditionMethod equals. 
+	 * 			  It compares the values of two attributes.
+	 * @requires easejs
+	 * @requires conditionMethod
+	 */
+	var UnEquals = Class('UnEquals').implement( ConditionMethod ).extend(
+	{
+		/**
+		 * Processes the equation.
+		 * 
+		 * @public
+		 * @alias process
+		 * @memberof Equals#
+		 * @param {*} reference Is not used.
+		 * @param {*} firstValue Value (from an attribute) that should be compared.
+		 * @param {*} secondValue Value (from an attribute) for comparison.
+		 * @returns {boolean}
+		 */
+		'public process': function( reference, firstValue, secondValue){
+			if(firstValue !== secondValue){
+				return true;
+			}
+			return false;
+		},
+		
+		});
+
+	return UnEquals;
 });
 /**
  * This module represents the InterpreterDescription. 
@@ -5777,174 +5761,13 @@ define('interpreterDescription',['easejs','attributeTypeList','widgetDescription
 	
 });
 /**
- * This module represents a GeoLocationWidget. It is a subclass of Widget.
- * 
- * @module GeoLocationWidget
- * @fileOverview
- */
-define('geoLocationWidget',[ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
-		'attributeValue', 'attributeValueList', 'callback', 'parameter' ],
-	function(easejs, Widget, AttributeType, AttributeTypeList,
-				AttributeValue, AttributeValueList, Callback, Parameter) {
-
-		var Class = easejs.Class;
-		/**
-		 * @class GeoLocationWidget
-		 * @classdesc This Widget provides the current position of the
-		 *            device.
-		 * @extends Widget
-		 * @requires easejs
-		 * @requires Widget
-		 * @requires AttributeType
-		 * @requires AttributeValue
-		 * @requires AttributeTypeList
-		 * @requires AttributeValueList
-		 * @requires Callback
-		 * @requires Parameter
-		 */
-	
-		var GeoLocationWidget = Class('GeoLocationWidget').extend(Widget,{
-
-			/**
-			 * @alias name
-			 * @public
-			 * @type {string}
-			 * @memberof GeoLocationWidget#
-			 * @desc Name of the Widget. In this case: GeoLocationWidget
-			 */
-			'public name' : 'GeoLocationWidget',
-
-			/**
-			 * Initializes attributes. For this class: Latitude and
-			 * Longitude
-			 * 
-			 * @protected
-			 * @alias initAttributes
-			 * @memberof GeoLocationWidget#
-			 */
-			'protected initAttributes' : function() {
-				var latitude = new AttributeValue().withName('latitude')
-											.withType('double')
-											.withValue('undefined');
-				this.addAttribute(latitude);
-				var longitude = new AttributeValue().withName('longitude')
-											.withType('double')
-											.withValue('undefined');
-				this.addAttribute(longitude);
-			},
-
-			/**
-			 * Initializes constantAttributes. For this class: no
-			 * constantAttributes available
-			 * 
-			 * @protected
-			 * @alias initConstantAttributes
-			 * @memberof GeoLocationWidget#
-			 */
-			'protected initConstantAttributes' : function() {
-			},
-
-			/**
-			 * Initializes Callbacks. For this class:
-			 * UPDATE (latitude and longitude)
-			 * 
-			 * @protected
-			 * @alias initCallbacks
-			 * @memberof GeoLocationWidget#
-			 */
-			'protected initCallbacks' : function() {
-				var latitudeType = new AttributeType().withName('latitude')
-													.withType('double');
-				var longitudeType = new AttributeType().withName('longitude')
-													.withType('double');
-				var list = new AttributeTypeList();
-				list.put(latitudeType);
-				list.put(longitudeType);
-				var call = new Callback().withName('UPDATE').withAttributeTypes(list);
-				this.addCallback(call);
-			},
-
-			
-			'override public notify' : function() {
-				var callbacks = this.queryCallbacks().getItems();
-				for(var i in callbacks){
-					this.sendToSubscriber(callbacks[i]);
-				}
-			},
-
-			/**
-			 * Implements queryGenerator(). Query latitude and
-			 * longitude by calling
-			 * navigator.geolocation.getCurrentPosition().
-			 * 
-			 * @override
-			 * @protected
-			 * @alias queryGenerator
-			 * @memberof GeoLocationWidget#
-			 */
-			'override protected queryGenerator' : function(_function) {
-				var self = this;
-				if(navigator.geolocation){
-					navigator.geolocation.getCurrentPosition(function(_position) {self.onSuccess(_position, self, _function);}, 
-						function(error) {self.onError(error);});
-				} else {
-					alert("Keine Ortung moeglich");
-				}
-				
-			},
-
-			/**
-			 * Success function for navigator.geolocation.getCurrentPosition() used in
-			 * queryGenerator(). Stores the values in the associated attributes.
-			 * 
-			 * @callback
-			 * @private
-			 * @alias onSuccess
-			 * @memberof GeoLocationWidget#
-			 * @param _position
-			 * @param {this} self
-			 */
-			'private onSuccess' : function(_position, self, _function) {
-				var latitude = new AttributeValue().withName('latitude')
-												.withType('double')
-												.withValue(_position.coords.latitude);
-				var longitude = new AttributeValue().withName('longitude')
-												.withType('double')
-												.withValue(_position.coords.longitude);
-				var response = new AttributeValueList();
-				response.put(latitude);
-				response.put(longitude);
-				self.putData(response);
-				self.notify();
-				if (_function && typeof(_function) == 'function'){
-					_function();
-				}
-			},
-
-			/**
-			 * Error function for navigator.geolocation.getCurrentPosition() used in
-			 * queryGenerator().
-			 * 
-			 * @callback
-			 * @private
-			 * @alias onError
-			 * @memberof GeoLocationWidget#
-			 * @param error
-			 */
-			'private onError' : function(error) {
-				alert('code: ' + error.code + '\n' + 'message: '+ error.message + '\n');
-			},
-		});
-		return GeoLocationWidget;
-	});
-/**
  * This module representing a Context Discoverer.
  * 
  * @module Discoverer
  * @fileOverview
  */
-define('discoverer',[ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], function(easejs,
-		AttributeTypeList, GeoLocationWidget) {
+define('discoverer',[ 'easejs', 'attributeTypeList' ], function(easejs,
+		AttributeTypeList) {
 	var Class = easejs.Class;
 	
 	var Discoverer = Class('Discoverer', {
@@ -5983,7 +5806,6 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], func
 		 * @classdesc The Discoverer handles requests for components and attributes. 
 		 * @requires easejs
 		 * @requires AttributeTypeList
-		 * @requires GeoLocationWidget
 		 * @constructs Discoverer
 		 */
 		'public __construct' : function() {
@@ -6028,8 +5850,6 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], func
 		 * @memberof Discoverer#
 		 */
 		'private registerWidgets' : function() {
-//			var geoLocationWidget = new GeoLocationWidget();
-//			geoLocationWidget.setDiscoverer(this);
 		},
 
 		/**
@@ -6254,11 +6074,11 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], func
 			}
 			if (list) {
 				var descriptions = this.getDescriptions();
-				for ( var i in descriptions) {
+				for (var i in descriptions) {
 					var description = descriptions[i];
-						if(_all && this.containsAllAttributes(description,list)){
+						if(_all && this.containsAllAttributes(description, list)){
 							componentList.push(this.getComponent(description.getId()));
-						} else if(!_all && this.containsAtLeastOneAttribute(description,list)){
+						} else if(!_all && this.containsAtLeastOneAttribute(description, list)){
 							componentList.push(this.getComponent(description.getId()));
 					}
 				}
@@ -6345,7 +6165,7 @@ define('discoverer',[ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], func
 			} else {
 				return null;
 			}
-		},
+		}
 
 	});
 
@@ -6975,174 +6795,9 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList
 
 			return Interpreter;
 		});
-/**
- * This module representing an AddressInterpreter.
- * 
- * @module AddressInterpreter
- * @fileOverview
- */
-define('addressInterpreter',['easejs', 'jquery', 'interpreter', 'attributeType', 'attributeValue'],
-	function(easejs, $, Interpreter, AttributeType, AttributeValue) {
-		var Class = easejs.Class;
-		/**
-		 * @class AddressInterpreter
-		 * @classdesc This Widget returns the address of specified coordinates.
-		 * @extends Interpreter
-		 * @requires easejs
-		 * @requires jquery
-		 * @requires Interpreter
-		 * @requires AttributeType
-		 * @requires AttributeValue
-		 * @requires Parameter
-		 */
-		var AddressInterpreter = Class('AddressInterpreter').extend(Interpreter,{
-			/**
-			 * @alias name
-			 * @public
-			 * @type {String}
-			 * @memberof AddressInterpreter#
-			 * @desc Name of the Interpreter. In this case: AddressInterpreter
-			 */
-			'public name' : 'AddressInterpreter',
-			/**
-			 * @alias adress
-			 * @private
-			 * @type {Array}
-			 * @memberof AddressInterpreter#
-			 */
-			'private address' : [],
-
-			/**
-			 * Initializes inAttributes. For this class: Latitude and
-			 * Longitude
-			 * 
-			 * @protected
-			 * @alias initInAttributes
-			 * @memberof AddressInterpreter#
-			 */
-			'protected initInAttributes' : function() {
-				var latitude = new AttributeType()
-						.withName('latitude').withType('double');
-				this.inAttributeTypes.put(latitude);
-				var longitude = new AttributeType()
-						.withName('longitude').withType('double');
-				this.inAttributeTypes.put(longitude);
-			},
-
-			/**
-			 * Initializes outAttributes. For this class: Address as String
-			 * 
-			 * @protected
-			 * @alias initOutAttributes
-			 * @memberof AddressInterpreter#
-			 */
-			'protected initOutAttributes' : function() {
-				var formattedAddress = new AttributeType()
-						.withName('formattedAddress')
-						.withType('string');
-				this.outAttributeTypes.put(formattedAddress);
-			},
-
-			/**
-			 * Changes coordinates to address
-			 * 
-			 * @protected
-			 * @alias interpretData
-			 * @memberof AddressInterpreter#
-			 * @param {AttributeValueList} _data list of data that should be interpreted
-			 * @param {?function} _function for additional actions, if an asynchronous function is used
-			 */
-			'protected interpretData' : function(_data, _function) {
-				if(navigator.onLine){
-					var self = this;
-					var lat = _data.getItem('latitude');
-					var lng = _data.getItem('longitude');
-					if (lat.getValue() && lng.getValue()) {
-						var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="
-								+ lat.getValue()+ ","+ lng.getValue()+ "&sensor=false";
-						$.getJSON(url, function(json) {self.createAddress(json,	self.response, self, _function);});
-					}
-				} else {
-					alert("Keine Internetverbindung verfuegbar");
-				};
-			},
-
-			/**
-			 * Success function for callback createAddress() used in interpretData().
-			 * Sets the outAttributes.
-			 * 
-			 * @callback
-			 * @private
-			 * @alias response
-			 * @memberof AddressInterpreter#
-			 * @param {AddressInterpreter} self 
-			 * @param {?function} _function for additional actions, if an asynchronous function is used
-			   
-			 */
-			'private response' : function(self, _function) {
-				self.setOutAttribute('formattedAddress','string', self.address["formatted_address"]);
-				if (_function && typeof(_function) == 'function'){
-					_function();
-				}
-			},
-
-			/**
-			 * Creates the address.
-			 * 
-			 * @callback
-			 * @private
-			 * @alias createAddress
-			 * @memberof AddressInterpreter#
-			 * @param {Array} json
-			 * @param {function} _function for additional actions, because an asynchronous function is used
-			 * @param {AddressInterpreter} self for usage in callback
-			 * @param {?function} secondFunction for additional actions, if an asynchronous function is used
-			 */
-			'private createAddress' : function(json, _function, self, secondFunction) {
-				if (!self.checkStatus(json)){
-					alert("Keine Adresse ermittelbar");
-				} else {
-					self.address['formatted_address'] = self.googleGetAddress(json, self);
-					_function(self, secondFunction);
-				}
-			},
-
-			/**
-			 * Check status.
-			 * 
-			 * @private
-			 * @alias checkStatus
-			 * @memberof AddressInterpreter#
-			 * @param {Array} json
-			 */
-			'private checkStatus' : function(json) {
-				if (json["status"] == "OK")
-					return true;
-				return false;
-			},
-
-			/**
-			 * Stores address in array.
-			 * 
-			 * @private
-			 * @alias googleGetAddress
-			 * @memberof AddressInterpreter#
-			 * @param {Array} json
-			 * @param {AddressInterpreter} self
-			 */
-			'private googleGetAddress' : function(json,
-					self) {
-				return json["results"][0]["formatted_address"];
-			},
-
-							});
-
-			return AddressInterpreter;
-		});
 	define('contactJS',['retrievalResult',
 			'storage',
 			'aggregator',
-			'testAggregator',   
 		    'attributeType',
 		    'attributeValue',
 		    'attributeTypeList',
@@ -7152,18 +6807,17 @@ define('addressInterpreter',['easejs', 'jquery', 'interpreter', 'attributeType',
 		    'condition',
 		    'conditionList',
 		    'conditionMethod',
-		    'equals',	
+		    'equals',
+            'unequals',
 		    'interpreterDescription',
 		    'widgetDescription',	    
-		    'discoverer',	    
-		    'addressInterpreter',
+		    'discoverer',
 		    'interpreter',
 		    'interpreterResult',
 		    'callback',   
 		    'callbackList',
 		    'subscriber',
-		    'subscriberList', 
-		    'geoLocationWidget',
+		    'subscriberList',
 		    'widget',      
 		    'widgetHandle',  		
 		    'widgetHandleList',    
@@ -7171,7 +6825,6 @@ define('addressInterpreter',['easejs', 'jquery', 'interpreter', 'attributeType',
 		function(RetrievalResult,
 				Storage,
 				Aggregator,
-				TestAggregator,   
 			    AttributeType,
 			    AttributeValue,
 			    AttributeTypeList,
@@ -7181,18 +6834,17 @@ define('addressInterpreter',['easejs', 'jquery', 'interpreter', 'attributeType',
 			    Condition,
 			    ConditionList,
 			    ConditionMethod,
-			    Equals,	
+			    Equals,
+                UnEquals,
 			    InterpreterDescription,
 			    WidgetDescription,	    
-			    Discoverer,	    
-			    AddressInterpreter,
+			    Discoverer,
 			    Interpreter, 
 			    InterpreterResult,
 			    Callback,   
 			    CallbackList,
 			    Subscriber,
-			    SubscriberList, 
-			    GeoLocationWidget,
+			    SubscriberList,
 			    Widget,      
 			    WidgetHandle,  		
 			    WidgetHandleList,    
@@ -7202,33 +6854,31 @@ define('addressInterpreter',['easejs', 'jquery', 'interpreter', 'attributeType',
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '1.0.0';
+	contactJS.VERSION = '1.0.1';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
-	contactJS.TestAggregator = TestAggregator;   
 	contactJS.AttributeType = AttributeType;
 	contactJS.AttributeValue = AttributeValue;
 	contactJS.AttributeTypeList = AttributeTypeList;
 	contactJS.AttributeValueList = AttributeValueList;
 	contactJS.Parameter = Parameter;
-	contactJS.PArameterList = ParameterList;		
+	contactJS.ParameterList = ParameterList;
 	contactJS.Condition = Condition;
 	contactJS.ConditionList = ConditionList;
 	contactJS.ConditionMethod = ConditionMethod;
 	contactJS.Equals = Equals;
+    contactJS.UnEquals = UnEquals;
 	contactJS.InterpreterDescription = InterpreterDescription;
 	contactJS.WidgetDescription = WidgetDescription;
 	contactJS.Discoverer = Discoverer;
-	contactJS.AddressInterpreter = AddressInterpreter;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
-	contactJS.Callback =Callback;
+	contactJS.Callback = Callback;
 	contactJS.CallbackList = CallbackList;
 	contactJS.Subscriber =Subscriber;
-	contactJS.SubscriberList = SubscriberList; 
-	contactJS.GeoLocationWidget = GeoLocationWidget;
+	contactJS.SubscriberList = SubscriberList;
 	contactJS.Widget = Widget;
 	contactJS.WidgetHandle = WidgetHandle;  		
 	contactJS.WidgetHandleList = WidgetHandleList;    

@@ -1,13 +1,13 @@
 require(['configTest'], function() {
-	require(['widgetHandle'],function(WidgetHandle){
+	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "WidgetHandle", function( assert ) {
 				
-				var widgetHandle = new WidgetHandle().withName('testWidget').withId('testId');
-				var widgetHandle2 = new WidgetHandle().withName('testWidget').withId('testId');
-				var widgetHandle3 = new WidgetHandle().withName('testWidget2').withId('testId2');
-				var widgetHandle4 = new WidgetHandle().withName('testWidget').withId('testId2');
-				var widgetHandle5 = new WidgetHandle().withName('testWidget2').withId('testId');
+				var widgetHandle = new contactJS.WidgetHandle().withName('testWidget').withId('testId');
+				var widgetHandle2 = new contactJS.WidgetHandle().withName('testWidget').withId('testId');
+				var widgetHandle3 = new contactJS.WidgetHandle().withName('testWidget2').withId('testId2');
+				var widgetHandle4 = new contactJS.WidgetHandle().withName('testWidget').withId('testId2');
+				var widgetHandle5 = new contactJS.WidgetHandle().withName('testWidget2').withId('testId');
 				
 				assert.ok( widgetHandle.equals(widgetHandle2),"Passed!: equals -> true" );
 				assert.ok( !widgetHandle.equals(widgetHandle3),"Passed!: equals -> false" );

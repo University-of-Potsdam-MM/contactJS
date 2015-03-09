@@ -1,8 +1,6 @@
 require(['configTest'], function() {
-	require(['testAggregator', 'discoverer','attributeValue', 'attributeValueList', 'attributeType', 'attributeTypeList', 
-	         'callback', 'callbackList', 'widgetHandle', 'geoLocationWidget'],
-	         	function(TestAggregator, Discoverer, AttributeValue, AttributeValueList, AttributeType, AttributeTypeList, 
-	         			Callback, CallbackList, WidgetHandle, GeoLocationWidget){
+	require(['../examples/TestAggregator', '../examples/GeoLocationWidget', 'contactJS'],
+	         	function(TestAggregator, GeoLocationWidget, contactJS){
 		
 			QUnit.test( "TestAggregator ", function( assert ) {
 				
@@ -20,7 +18,7 @@ require(['configTest'], function() {
 				assert.equal( widgetHandles.size(), 0,"Passed!: no subscribed Widgets" );
 			
 				//initializes the infrastructure
-				var discoverer = new Discoverer();
+				var discoverer = new contactJS.Discoverer();
 				testAggregator.setDiscoverer(discoverer);
 				
 				var geoLocationWidget = new GeoLocationWidget();
@@ -29,20 +27,20 @@ require(['configTest'], function() {
 				//subscription
 				var widget = discoverer.getWidgetDescriptions();
 		    	   	
-		    	var handle = new WidgetHandle().withName('GeoLocationWidget').withId(widget[0].getId());
+		    	var handle = new contactJS.WidgetHandle().withName('GeoLocationWidget').withId(widget[0].getId());
 		    	
-		    	var latitudeType = new AttributeType().withName('latitude')
+		    	var latitudeType = new contactJS.AttributeType().withName('latitude')
 								.withType('double');
-				var longitudeType = new AttributeType().withName('longitude')
+				var longitudeType = new contactJS.AttributeType().withName('longitude')
 								.withType('double');
-				var list = new AttributeTypeList();
+				var list = new contactJS.AttributeTypeList();
 				list.put(latitudeType);
 				list.put(longitudeType);
 
-				var call = new Callback().withName('UPDATE').withAttributeTypes(list);
+				var call = new contactJS.Callback().withName('UPDATE').withAttributeTypes(list);
 				var callarray = new Array();
 				callarray.push(call);
-				var callList = new CallbackList().withItems(callarray);
+				var callList = new contactJS.CallbackList().withItems(callarray);
 
 				testAggregator.addWidgetSubscription(handle, callList);
 				

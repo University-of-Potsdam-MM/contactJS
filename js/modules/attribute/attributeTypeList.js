@@ -7,7 +7,6 @@
 define([ 'easejs', 'abstractList', 'attributeType' ],
 	function(easejs, AbstractList, AttributeType) {
 		var Class = easejs.Class;
-			
 		/**
 		 * @class AttributeTypeList
 		 * @classdesc This class represents a list for AttributeType.
@@ -123,6 +122,7 @@ define([ 'easejs', 'abstractList', 'attributeType' ],
 			'public contains' : function(_item) {
 				if (Class.isA(AttributeType, _item)) {
 					var tmp = this.getItem(_item.getName());
+                    console.log(tmp);
 					if (!(typeof tmp === 'undefined')
 							&& tmp.equals(_item)) {
 						return true;
@@ -152,9 +152,8 @@ define([ 'easejs', 'abstractList', 'attributeType' ],
 					return true;
 				}
 				return false;
-			},
+			}
+        });
 
-							});
-
-			return AttributeTypeList;
-		});
+		return AttributeTypeList;
+	});

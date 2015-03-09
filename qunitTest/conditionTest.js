@@ -1,19 +1,19 @@
 require(['configTest'], function() {
-	require(['condition', 'equals', 'unequals', 'attributeValue'],function(Condition, Equals, UnEquals, AttributeValue){
+	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "Condition", function( assert ) {
 				
-				var testA = new AttributeValue().withName('test').withType('string').withValue('blubb');
-		    	var testA2 = new AttributeValue().withName('test').withType('string').withValue('blubb2');
+				var testA = new contactJS.AttributeValue().withName('test').withType('string').withValue('blubb');
+		    	var testA2 = new contactJS.AttributeValue().withName('test').withType('string').withValue('blubb2');
 		    	
-		    	var method = new Equals();
-		    	var method2 = new UnEquals();
+		    	var method = new contactJS.Equals();
+		    	var method2 = new contactJS.UnEquals();
 
-		    	var conditionTest = new Condition().withAttributeType(testA.getAttributeType())
+		    	var conditionTest = new contactJS.Condition().withAttributeType(testA.getAttributeType())
 		    									.withComparisonMethod(method);
-		    	var conditionTest2 = new Condition().withAttributeType(testA.getAttributeType())
+		    	var conditionTest2 = new contactJS.Condition().withAttributeType(testA.getAttributeType())
 												.withComparisonMethod(method);	
-		    	var conditionTest3 = new Condition().withAttributeType(testA.getAttributeType())
+		    	var conditionTest3 = new contactJS.Condition().withAttributeType(testA.getAttributeType())
 												.withComparisonMethod(method2);	
 		    	
 		    	

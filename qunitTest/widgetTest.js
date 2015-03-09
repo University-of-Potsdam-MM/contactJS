@@ -1,16 +1,16 @@
 require(['configTest'], function() {
-	require(['geoLocationWidget', 'attributeValue', 'attributeValueList', 'attributeType', 'attributeTypeList'],
-	         	function(GeoLocationWidget, AttributeValue, AttributeValueList, AttributeType, AttributeTypeList){
+	require(['../examples/GeoLocationWidget', 'contactJS'],
+	         	function(GeoLocationWidget, contactJS){
 		
 			QUnit.asyncTest( "GeoLocationWidget ", function( assert ) {
 				
 				
-				var testWidget =new GeoLocationWidget();
+				var testWidget = new GeoLocationWidget();
 		    				        
 		        var id = testWidget.getId();
-				assert.ok( id && id !== "null" && id !== "undefined","Passed!: id is not null" );
-				assert.equal( testWidget.getType(), 'Widget',"Passed!: type -> Widget" );
-				assert.equal( testWidget.getName(), 'GeoLocationWidget',"Passed!: name -> GeoLocationWidget" );
+				assert.ok( id && id !== "null" && id !== "undefined", "Passed!: id is not null" );
+				assert.equal( testWidget.getType(), 'Widget', "Passed!: type -> Widget" );
+				assert.equal( testWidget.getName(), 'GeoLocationWidget', "Passed!: name -> GeoLocationWidget" );
 					
 				//attributeTypes
 				var types = testWidget.getWidgetAttributeTypes();
@@ -51,21 +51,18 @@ require(['configTest'], function() {
 				
 				//updateAndQuery with callback
 				var testUpdateAndQuery = function(){
-					var attributes2= testWidget.queryWidget();
-					assert.equal(attributes2.size(), 2,"updateAndQueryWidget with callback Passed!: two attributes were returned" );
+					var attributes2 = testWidget.queryWidget();
+					assert.equal(attributes2.size(), 2, "updateAndQueryWidget with callback Passed!: two attributes were returned" );
 					var latitude2 = attributes2.getItem('latitude');
-					assert.equal(latitude2.getName(), 'latitude',"updateAndQueryWidget with callback Passed!: latitude exists" );
-					assert.notEqual(latitude2.getValue(), 'undefined',"value of latitude is: " +latitude2.getValue() );
+					assert.equal(latitude2.getName(), 'latitude', "updateAndQueryWidget with callback Passed!: latitude exists" );
+					assert.notEqual(latitude2.getValue(), 'undefined', "value of latitude is: " +latitude2.getValue() );
 					
 					var longitude2 = attributes.getItem('longitude');
 					assert.equal(longitude2.getName(), 'longitude',"updateAndQueryWidget with callback Passed!: longitude exists" );
-					assert.notEqual(longitude2.getValue(), 'undefined',"value of longitude is: " + longitude2.getValue() );
-				}
+					assert.notEqual(longitude2.getValue(), 'undefined', "value of longitude is: " + longitude2.getValue() );
+				};
+
 				testWidget.updateAndQueryWidget(function () {testUpdateAndQuery(); QUnit.start();});
-				
 			});
-			
-
-
 	});
 });

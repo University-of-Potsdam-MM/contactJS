@@ -4,10 +4,8 @@
  * @module GeoLocationWidget
  * @fileOverview
  */
-define([ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
-		'attributeValue', 'attributeValueList', 'callback', 'parameter' ],
-	function(easejs, Widget, AttributeType, AttributeTypeList,
-				AttributeValue, AttributeValueList, Callback, Parameter) {
+define([ 'easejs', 'contactJS' ],
+	function(easejs, contactJS) {
 
 		var Class = easejs.Class;
 		/**
@@ -25,7 +23,7 @@ define([ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
 		 * @requires Parameter
 		 */
 	
-		var GeoLocationWidget = Class('GeoLocationWidget').extend(Widget,{
+		var GeoLocationWidget = Class('GeoLocationWidget').extend(contactJS.Widget,{
 
 			/**
 			 * @alias name
@@ -45,11 +43,11 @@ define([ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
 			 * @memberof GeoLocationWidget#
 			 */
 			'protected initAttributes' : function() {
-				var latitude = new AttributeValue().withName('latitude')
+				var latitude = new contactJS.AttributeValue().withName('latitude')
 											.withType('double')
 											.withValue('undefined');
 				this.addAttribute(latitude);
-				var longitude = new AttributeValue().withName('longitude')
+				var longitude = new contactJS.AttributeValue().withName('longitude')
 											.withType('double')
 											.withValue('undefined');
 				this.addAttribute(longitude);
@@ -75,14 +73,10 @@ define([ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
 			 * @memberof GeoLocationWidget#
 			 */
 			'protected initCallbacks' : function() {
-				var latitudeType = new AttributeType().withName('latitude')
-													.withType('double');
-				var longitudeType = new AttributeType().withName('longitude')
-													.withType('double');
-				var list = new AttributeTypeList();
-				list.put(latitudeType);
-				list.put(longitudeType);
-				var call = new Callback().withName('UPDATE').withAttributeTypes(list);
+				var list = new contactJS.AttributeTypeList();
+				list.put(this.getWidgetAttributeTypes().getItem("latitude"));
+				list.put(this.getWidgetAttributeTypes().getItem("longitude"));
+				var call = new contactJS.Callback().withName('UPDATE').withAttributeTypes(list);
 				this.addCallback(call);
 			},
 
@@ -107,8 +101,11 @@ define([ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
 			'override protected queryGenerator' : function(_function) {
 				var self = this;
 				if(navigator.geolocation){
-					navigator.geolocation.getCurrentPosition(function(_position) {self.onSuccess(_position, self, _function);}, 
-						function(error) {self.onError(error);});
+					navigator.geolocation.getCurrentPosition(function(_position) {
+                            self.onSuccess(_position, self, _function);
+                        }, function(error) {
+                            self.onError(error, self, _function);
+                        });
 				} else {
 					alert("Keine Ortung moeglich");
 				}
@@ -127,13 +124,13 @@ define([ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
 			 * @param {this} self
 			 */
 			'private onSuccess' : function(_position, self, _function) {
-				var latitude = new AttributeValue().withName('latitude')
+				var latitude = new contactJS.AttributeValue().withName('latitude')
 												.withType('double')
 												.withValue(_position.coords.latitude);
-				var longitude = new AttributeValue().withName('longitude')
+				var longitude = new contactJS.AttributeValue().withName('longitude')
 												.withType('double')
 												.withValue(_position.coords.longitude);
-				var response = new AttributeValueList();
+				var response = new contactJS.AttributeValueList();
 				response.put(latitude);
 				response.put(longitude);
 				self.putData(response);
@@ -153,8 +150,22 @@ define([ 'easejs', 'widget', 'attributeType', 'attributeTypeList',
 			 * @memberof GeoLocationWidget#
 			 * @param error
 			 */
-			'private onError' : function(error) {
-				alert('code: ' + error.code + '\n' + 'message: '+ error.message + '\n');
+			'private onError' : function(error, self, _function) {
+                var latitude = new contactJS.AttributeValue().withName('latitude')
+                    .withType('double')
+                    .withValue("undefined");
+                var longitude = new contactJS.AttributeValue().withName('longitude')
+                    .withType('double')
+                    .withValue("undefined");
+
+                var response = new contactJS.AttributeValueList();
+                response.put(latitude);
+                response.put(longitude);
+                self.putData(response);
+                self.notify();
+                if (_function && typeof(_function) == 'function'){
+                    _function();
+                }
 			}
 		});
 		return GeoLocationWidget;

@@ -8,11 +8,9 @@ requirejs.config({
         jquery: '../libs/jquery/jquery',
         easejs: '../libs/ease.js/ease-full',
         MathUuid: '../libs/uuid/Math.uuid',
-        contAcT: '../dist/contAcT',
         retrievalResult: 'modules/aggregator/storage/retrievalResult',
 		storage: 'modules/aggregator/storage/storage',
 		aggregator: 'modules/aggregator/aggregator',
-		testAggregator: 'modules/aggregator/testAggregator',   
 	    attributeType: 'modules/attribute/attributeType',
 	    attributeValue: 'modules/attribute/attributeValue',
 	    attributeTypeList: 'modules/attribute/attributeTypeList',
@@ -26,15 +24,13 @@ requirejs.config({
 	    unequals: 'modules/subscriber/condition/unequals',	
 	    interpreterDescription: 'modules/descriptions/interpreterDescription',
 	    widgetDescription: 'modules/descriptions/widgetDescription',	    
-	    discoverer: 'modules/discoverer/discoverer',	    
-	    addressInterpreter: 'modules/interpreter/addressInterpreter',
+	    discoverer: 'modules/discoverer/discoverer',
 	    interpreter: 'modules/interpreter/interpreter', 
 	    interpreterResult: 'modules/interpreter/interpreterResult',
 	    callback: 'modules/subscriber/callback',   
 	    callbackList: 'modules/subscriber/callbackList',
 	    subscriber: 'modules/subscriber/subscriber',
-	    subscriberList: 'modules/subscriber/subscriberList', 
-	    geoLocationWidget: 'modules/widget/geoLocationWidget',
+	    subscriberList: 'modules/subscriber/subscriberList',
 	    widget: 'modules/widget/widget',      
 	    widgetHandle: 'modules/widget/widgetHandle',  		
 	    widgetHandleList: 'modules/widget/widgetHandleList',    
@@ -44,15 +40,15 @@ requirejs.config({
     shim:{
     	
       'easejs' : {
-        exports : 'easejs',
+        exports : 'easejs'
       },
       'jquery' : {
-          exports : '$',
+          exports : '$'
         },
         
       'MathUuid' : {
-          exports : 'MathUuid',
-        },
+          exports : 'MathUuid'
+        }
          
     }
 });

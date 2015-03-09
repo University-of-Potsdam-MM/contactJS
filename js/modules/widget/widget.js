@@ -592,6 +592,10 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @memberof Widget#
 			 */
 			'virtual public notify' : function() {
+                var callbacks = this.queryCallbacks().getItems();
+                for (var i in callbacks) {
+                    this.sendToSubscriber(callbacks[i]);
+                }
 			},
 
 			/**

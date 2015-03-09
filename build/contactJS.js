@@ -1,7 +1,6 @@
 	define(['retrievalResult',
 			'storage',
 			'aggregator',
-			'testAggregator',   
 		    'attributeType',
 		    'attributeValue',
 		    'attributeTypeList',
@@ -11,18 +10,17 @@
 		    'condition',
 		    'conditionList',
 		    'conditionMethod',
-		    'equals',	
+		    'equals',
+            'unequals',
 		    'interpreterDescription',
 		    'widgetDescription',	    
-		    'discoverer',	    
-		    'addressInterpreter',
+		    'discoverer',
 		    'interpreter',
 		    'interpreterResult',
 		    'callback',   
 		    'callbackList',
 		    'subscriber',
-		    'subscriberList', 
-		    'geoLocationWidget',
+		    'subscriberList',
 		    'widget',      
 		    'widgetHandle',  		
 		    'widgetHandleList',    
@@ -30,7 +28,6 @@
 		function(RetrievalResult,
 				Storage,
 				Aggregator,
-				TestAggregator,   
 			    AttributeType,
 			    AttributeValue,
 			    AttributeTypeList,
@@ -40,18 +37,17 @@
 			    Condition,
 			    ConditionList,
 			    ConditionMethod,
-			    Equals,	
+			    Equals,
+                UnEquals,
 			    InterpreterDescription,
 			    WidgetDescription,	    
-			    Discoverer,	    
-			    AddressInterpreter,
+			    Discoverer,
 			    Interpreter, 
 			    InterpreterResult,
 			    Callback,   
 			    CallbackList,
 			    Subscriber,
-			    SubscriberList, 
-			    GeoLocationWidget,
+			    SubscriberList,
 			    Widget,      
 			    WidgetHandle,  		
 			    WidgetHandleList,    
@@ -61,33 +57,31 @@
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '1.0.0';
+	contactJS.VERSION = '1.0.1';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
-	contactJS.TestAggregator = TestAggregator;   
 	contactJS.AttributeType = AttributeType;
 	contactJS.AttributeValue = AttributeValue;
 	contactJS.AttributeTypeList = AttributeTypeList;
 	contactJS.AttributeValueList = AttributeValueList;
 	contactJS.Parameter = Parameter;
-	contactJS.PArameterList = ParameterList;		
+	contactJS.ParameterList = ParameterList;
 	contactJS.Condition = Condition;
 	contactJS.ConditionList = ConditionList;
 	contactJS.ConditionMethod = ConditionMethod;
 	contactJS.Equals = Equals;
+    contactJS.UnEquals = UnEquals;
 	contactJS.InterpreterDescription = InterpreterDescription;
 	contactJS.WidgetDescription = WidgetDescription;
 	contactJS.Discoverer = Discoverer;
-	contactJS.AddressInterpreter = AddressInterpreter;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
-	contactJS.Callback =Callback;
+	contactJS.Callback = Callback;
 	contactJS.CallbackList = CallbackList;
 	contactJS.Subscriber =Subscriber;
-	contactJS.SubscriberList = SubscriberList; 
-	contactJS.GeoLocationWidget = GeoLocationWidget;
+	contactJS.SubscriberList = SubscriberList;
 	contactJS.Widget = Widget;
 	contactJS.WidgetHandle = WidgetHandle;  		
 	contactJS.WidgetHandleList = WidgetHandleList;    

@@ -4,8 +4,8 @@
  * @module Discoverer
  * @fileOverview
  */
-define([ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], function(easejs,
-		AttributeTypeList, GeoLocationWidget) {
+define([ 'easejs', 'attributeTypeList' ], function(easejs,
+		AttributeTypeList) {
 	var Class = easejs.Class;
 	
 	var Discoverer = Class('Discoverer', {
@@ -44,7 +44,6 @@ define([ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], function(easejs,
 		 * @classdesc The Discoverer handles requests for components and attributes. 
 		 * @requires easejs
 		 * @requires AttributeTypeList
-		 * @requires GeoLocationWidget
 		 * @constructs Discoverer
 		 */
 		'public __construct' : function() {
@@ -89,8 +88,6 @@ define([ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], function(easejs,
 		 * @memberof Discoverer#
 		 */
 		'private registerWidgets' : function() {
-//			var geoLocationWidget = new GeoLocationWidget();
-//			geoLocationWidget.setDiscoverer(this);
 		},
 
 		/**
@@ -315,11 +312,11 @@ define([ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], function(easejs,
 			}
 			if (list) {
 				var descriptions = this.getDescriptions();
-				for ( var i in descriptions) {
+				for (var i in descriptions) {
 					var description = descriptions[i];
-						if(_all && this.containsAllAttributes(description,list)){
+						if(_all && this.containsAllAttributes(description, list)){
 							componentList.push(this.getComponent(description.getId()));
-						} else if(!_all && this.containsAtLeastOneAttribute(description,list)){
+						} else if(!_all && this.containsAtLeastOneAttribute(description, list)){
 							componentList.push(this.getComponent(description.getId()));
 					}
 				}
@@ -406,7 +403,7 @@ define([ 'easejs', 'attributeTypeList', 'geoLocationWidget' ], function(easejs,
 			} else {
 				return null;
 			}
-		},
+		}
 
 	});
 

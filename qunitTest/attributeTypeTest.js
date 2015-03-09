@@ -1,13 +1,13 @@
 require(['configTest'], function() {
-	require(['attributeType', 'parameter'],function(AttributeType, Parameter){
+	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "AttributeType", function( assert ) {
 				
-				var attributeType = new AttributeType();
+				var attributeType = new contactJS.AttributeType();
 				
-				var parameter = new Parameter().withKey('testKey').withValue('testValue');
+				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
 				
-				var attributeType2 = new AttributeType().withName('testName').
+				var attributeType2 = new contactJS.AttributeType().withName('testName').
 										withType('integer').withParameter(parameter);
 				assert.ok( attributeType2.equals(attributeType2),"Passed!: equals -> true" );
 				assert.ok( !attributeType2.equals(attributeType),"Passed!: equals -> false" );

@@ -1,9 +1,9 @@
 require(['configTest'], function() {
-	require(['equals', 'attributeType'],function(Equals, AttributeType){
+	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "Equals", function( assert ) {
 				
-		    	var method = new Equals();
+		    	var method = new contactJS.Equals();
 		    	
 //		    	var testA = new AttributeType().withName('test').withType('string');
 //		    	var testA2 = new AttributeType().withName('test').withType('string');

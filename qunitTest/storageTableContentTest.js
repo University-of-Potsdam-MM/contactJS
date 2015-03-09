@@ -1,6 +1,6 @@
 require(['configTest'], function() {
-	require(['testAggregator', 'attributeValue', 'attributeValueList'],
-	         	function(TestAggregator, AttributeValue, AttributeValueList){
+	require(['../examples/TestAggregator', 'contactJS'],
+	         	function(TestAggregator, contactJS){
 		
 			QUnit.asyncTest( "Storage Table Content", function( assert ) {
 				
@@ -9,11 +9,11 @@ require(['configTest'], function() {
 
 				
 				//put data into aggregator
-				var latitudeValue = new AttributeValue().withName('latitude')
+				var latitudeValue = new contactJS.AttributeValue().withName('latitude')
 								.withType('double').withValue(52.3992404);
-				var longitudeValue = new AttributeValue().withName('longitude')
+				var longitudeValue = new contactJS.AttributeValue().withName('longitude')
 								.withType('double').withValue(13.066132);				
-				var list = new AttributeValueList();
+				var list = new contactJS.AttributeValueList();
 				list.put(latitudeValue);
 				list.put(longitudeValue);
 				testAggregator.putData(list);		

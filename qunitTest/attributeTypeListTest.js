@@ -1,25 +1,25 @@
 require(['configTest'], function() {
-	require(['attributeType', 'attributeTypeList', 'parameter'],function(AttributeType, AttributeTypeList, Parameter){
+	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "AttributeTypeList", function( assert ) {
 				
 				
-				var parameter = new Parameter().withKey('testKey').withValue('testValue');
+				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
 								
-		    	var latitudeType = new AttributeType().withName('latitude')
+		    	var latitudeType = new contactJS.AttributeType().withName('latitude')
 											.withType('double').withParameter(parameter);
-				var longitudeType = new AttributeType().withName('longitude')
+				var longitudeType = new contactJS.AttributeType().withName('longitude')
 											.withType('double');
-				var attributeType = new AttributeType().withName('testName')
+				var attributeType = new contactJS.AttributeType().withName('testName')
 											.withType('integer');
 				
 				var array = new Array();
 				array.push(latitudeType);
 				array.push(longitudeType);
-				var list = new AttributeTypeList().withItems(array);
+				var list = new contactJS.AttributeTypeList().withItems(array);
 				assert.equal( list.size(), 2, "Passed!: Builder (withItems)" );
 				
-				var list2 = new AttributeTypeList();
+				var list2 = new contactJS.AttributeTypeList();
 				list2.put(attributeType);
 				
 				assert.equal( list2.size(), 1, "Passed!: Put type to list (put)" );
@@ -61,7 +61,7 @@ require(['configTest'], function() {
 				assert.ok( list2.getItems()[1].equals(longitudeType), "Passed!: getItems -> longitude" );
 				
 				//empty
-				var list3 = new AttributeTypeList();
+				var list3 = new contactJS.AttributeTypeList();
 				assert.ok( !list2.isEmpty(), "Passed!: isEmpty ->true" );
 				assert.ok( list3.isEmpty(), "Passed!: isEmpty ->false" );
 				
