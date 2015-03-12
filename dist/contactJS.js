@@ -1451,12 +1451,10 @@ define('attributeTypeList',[ 'easejs', 'abstractList', 'attributeType' ],
 			 * @public
 			 * @alias withItems
 			 * @memberof AttributeTypeList#
-			 * @param {(AttributeTypeList|Array)}
-			 *            _attributeTypeList AttributeTypeList
+			 * @param {(AttributeTypeList|Array)} _attributeTypeList AttributeTypeList
 			 * @returns {AttributeTypeList}
 			 */
-			'public withItems' : function(
-					_attributeTypeList) {
+			'public withItems' : function(_attributeTypeList) {
 				var list = new Array();
 				if (_attributeTypeList instanceof Array) {
 					list = _attributeTypeList;
@@ -1479,8 +1477,7 @@ define('attributeTypeList',[ 'easejs', 'abstractList', 'attributeType' ],
 			 * @public
 			 * @alias put
 			 * @memberof AttributeTypeList#
-			 * @param {AttributeType}
-			 *            _attributeType AttributeType
+			 * @param {AttributeType} _attributeType AttributeType
 			 */
 			'public put' : function(_attributeType) {
 				if (Class.isA(AttributeType, _attributeType)) {
@@ -1498,8 +1495,7 @@ define('attributeTypeList',[ 'easejs', 'abstractList', 'attributeType' ],
 			 * @public
 			 * @alias putAll
 			 * @memberof AttributeTypeList#
-			 * @param {(AttributeTypeList|Array)}
-			 *            _attributeTypeList AttributeTypeList
+			 * @param {(AttributeTypeList|Array)} _attributeTypeList AttributeTypeList
 			 */
 			'public putAll' : function(_attributeTypeList) {
 				var list = new Array();
@@ -1534,7 +1530,6 @@ define('attributeTypeList',[ 'easejs', 'abstractList', 'attributeType' ],
 			'public contains' : function(_item) {
 				if (Class.isA(AttributeType, _item)) {
 					var tmp = this.getItem(_item.getName());
-                    console.log(tmp);
 					if (!(typeof tmp === 'undefined')
 							&& tmp.equals(_item)) {
 						return true;
@@ -1779,6 +1774,18 @@ define('attributeValueList',['easejs', 'abstractList', 'attributeValue', 'attrib
 				}
 				return response;
 			},
+
+            /**
+             * Alias for {#getItem}.
+             *
+             * @public
+             * @alias getValue
+             * @param _key The value key.
+             * @returns {*}
+             */
+            'public getValue': function(_key) {
+                return this.getItem(_key);
+            }
 
 		});
 
@@ -2493,10 +2500,10 @@ define('callback',['easejs', 'attributeType', 'attributeTypeList'],
 		 * @public
 		 * @alias setAttributeTypes
 		 * @memberof Callback#
-		 * @param {AttributeTypeList} attributeTypes AttributeTypeList
+		 * @param {AttributeTypeList} _attributeTypes AttributeTypeList
 		 */
 		'public setAttributeTypes' : function(_attributeTypes){
-			var list = new Array();
+			var list = [];
 			if(_attributeTypes instanceof Array){
 				list = _attributeTypes;
 			} else if (Class.isA( AttributeTypeList, _attributeTypes)) {
@@ -2506,8 +2513,8 @@ define('callback',['easejs', 'attributeType', 'attributeTypeList'],
 				var attributeType = list[i];
 				if(Class.isA( AttributeType, attributeType )){
 					this.attributeTypes.put(attributeType);
-				};
-			};
+				}
+			}
 		},
 
 		/**
@@ -4234,16 +4241,26 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			},
 
 			/**
-			 * Returns the last acquired Attributes.
+			 * Returns the last acquired attribute values.
 			 * 
 			 * @public
 			 * @alias getAttributes
 			 * @memberof Widget#
 			 * @returns {AttributeValueList}
 			 */
-			'public getAttributes' : function() {
+			'public getAttributeValues' : function() {
 				return this.attributes;
 			},
+
+            /**
+             * Returns the last acquired attribute value with the given attribute type.
+             *
+             * @param {AttributeType} _attributeType The attribute type to return the last value for.
+             * @returns {*}
+             */
+            'public getAttributeValue': function(_attributeType) {
+                return this.getAttributeValues().getItem(_attributeType.getName()).getValue();
+            },
 			
 			/**
 			 * Returns the old Attributes.
@@ -4496,7 +4513,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			'protected addCallback' : function(_callback) {
 				if (Class.isA(Callback, _callback)) {
 					this.callbacks.put(_callback);
-				};
+				}
 			},
 
 			'protected setServices' : function(_services) {
@@ -4648,7 +4665,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @memberof Widget#
 			 */
 			'virtual public notify' : function() {
-                var callbacks = this.queryCallbacks().getItems();
+                var callbacks = this.getCallbacks();
                 for (var i in callbacks) {
                     this.sendToSubscriber(callbacks[i]);
                 }
@@ -4656,7 +4673,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 
 			/**
 			 * Queries the associated sensor and updates the attributes with new values. 
-			 * Must be overridden by the subclasses.
+			 * Must be overridden by the subclasses. Overriding subclasses can call
+             * this.__super(_function) to invoke the provided callback function.
 			 * 
 			 * @virtual
 			 * @public
@@ -4665,6 +4683,9 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 * @param {?function} _function For alternative actions, because an asynchronous function can be used.
 			 */
 			'virtual protected queryGenerator' : function(_function) {
+                if (_function && typeof(_function) == 'function') {
+                    _function();
+                }
 			},
 
 			/**
@@ -4717,7 +4738,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 			 */
 			'public queryWidget' : function() {
 				var response = new AttributeValueList();
-				response.putAll(this.getAttributes());
+				response.putAll(this.getAttributeValues());
 				response.putAll(this.getConstantAttributes());
 				return response;
 			},
@@ -4738,7 +4759,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeTy
 				} else {
 					this.queryGenerator();
 					var response = new AttributeValueList();
-					response.putAll(this.getAttributes());
+					response.putAll(this.getAttributeValues());
 					response.putAll(this.getConstantAttributes());
 					return response;
 				}
@@ -4937,7 +4958,7 @@ define('widgetHandleList',[ 'easejs', 'abstractList', 'widgetHandle', 'widget'],
 			 * @returns {WidgetHandleList}
 			 */
 			'public withItems' : function(_widgetHandleList) {
-				var list = new Array();
+				var list = [];
 				if (_widgetHandleList instanceof Array) {
 					list = _widgetHandleList;
 				} else if (Class.isA(WidgetHandleList, _widgetHandleList)) {
@@ -5458,7 +5479,7 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 			var list = [];
 			if(_data instanceof Array){
 				list = _data;
-			} else if (Class.isA( AttributeValueList, _data)) {
+			} else if (Class.isA(AttributeValueList, _data)) {
 				list = _data.getItems();
 			}
 			for(var i in list){
@@ -5598,8 +5619,45 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 	     */
 		'public queryTables' : function(_function){
 			this.db.getAttributeNames(_function);
-		}
+        },
 
+        /**
+         * Updates the information for the widget with the provided handle and calls the callback afterwards.
+         *
+         * @public
+         * @virtual
+         * @alias queryReferencedWidget
+         * @memberof Aggregator#
+         * @param {WidgetHandle} _widgetHandle The handle of the widget to query.
+         * @param {Callback} _callback The callback to query after the widget was updated.
+         */
+        'virtual public queryReferencedWidget' :function(_widgetHandle, _callback){
+            var widget = this.discoverer.getWidget(_widgetHandle.getId());
+            widget.updateWidgetInformation(_callback);
+        },
+
+        /**
+         * Updates all the widgets referenced by the aggregator and calls the callback afterwards.
+         *
+         * @param {Callback} _callback The callback to query after all the widget where updated.
+         */
+        'virtual public queryReferencedWidgets': function(_callback) {
+            var self = this;
+            var completedQueriesCounter = 0;
+            var referencedWidgetHandles = this.getWidgets().getItems();
+
+            for (var index in referencedWidgetHandles) {
+                var theWidgetHandle = referencedWidgetHandles[index];
+                this.queryReferencedWidget(theWidgetHandle, function () {
+                    completedQueriesCounter++;
+                    if (completedQueriesCounter == self.widgets.size()) {
+                        if (_callback && typeof(_callback) == 'function') {
+                            _callback();
+                        }
+                    }
+                });
+            }
+        }
     });
 
 	return Aggregator;

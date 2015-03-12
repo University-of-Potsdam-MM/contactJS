@@ -118,10 +118,10 @@ define(['easejs', 'attributeType', 'attributeTypeList'],
 		 * @public
 		 * @alias setAttributeTypes
 		 * @memberof Callback#
-		 * @param {AttributeTypeList} attributeTypes AttributeTypeList
+		 * @param {AttributeTypeList} _attributeTypes AttributeTypeList
 		 */
 		'public setAttributeTypes' : function(_attributeTypes){
-			var list = new Array();
+			var list = [];
 			if(_attributeTypes instanceof Array){
 				list = _attributeTypes;
 			} else if (Class.isA( AttributeTypeList, _attributeTypes)) {
@@ -131,8 +131,8 @@ define(['easejs', 'attributeType', 'attributeTypeList'],
 				var attributeType = list[i];
 				if(Class.isA( AttributeType, attributeType )){
 					this.attributeTypes.put(attributeType);
-				};
-			};
+				}
+			}
 		},
 
 		/**

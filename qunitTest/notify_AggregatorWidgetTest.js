@@ -26,7 +26,7 @@ require(['configTest'], function() {
 				list.put(longitudeType);
 
 				var call = new contactJS.Callback().withName('UPDATE').withAttributeTypes(list);
-				var callarray = new Array();
+				var callarray = [];
 				callarray.push(call);
 				var callList = new contactJS.CallbackList().withItems(callarray);
 
@@ -36,7 +36,7 @@ require(['configTest'], function() {
 				var geoLocationWidget = discoverer.getComponent(widget[0].getId());
 				var checkValues = function(){
 					geoLocationWidget.notify();
-					var newValues = testAggregator.getAttributes();
+					var newValues = testAggregator.getAttributeValues();
 					assert.equal( newValues.size(), 3,"notify Passed!: two available attributes" );
 
 					var latitude = newValues.getItem('latitude');

@@ -39,12 +39,10 @@ define([ 'easejs', 'abstractList', 'attributeType' ],
 			 * @public
 			 * @alias withItems
 			 * @memberof AttributeTypeList#
-			 * @param {(AttributeTypeList|Array)}
-			 *            _attributeTypeList AttributeTypeList
+			 * @param {(AttributeTypeList|Array)} _attributeTypeList AttributeTypeList
 			 * @returns {AttributeTypeList}
 			 */
-			'public withItems' : function(
-					_attributeTypeList) {
+			'public withItems' : function(_attributeTypeList) {
 				var list = new Array();
 				if (_attributeTypeList instanceof Array) {
 					list = _attributeTypeList;
@@ -67,8 +65,7 @@ define([ 'easejs', 'abstractList', 'attributeType' ],
 			 * @public
 			 * @alias put
 			 * @memberof AttributeTypeList#
-			 * @param {AttributeType}
-			 *            _attributeType AttributeType
+			 * @param {AttributeType} _attributeType AttributeType
 			 */
 			'public put' : function(_attributeType) {
 				if (Class.isA(AttributeType, _attributeType)) {
@@ -86,8 +83,7 @@ define([ 'easejs', 'abstractList', 'attributeType' ],
 			 * @public
 			 * @alias putAll
 			 * @memberof AttributeTypeList#
-			 * @param {(AttributeTypeList|Array)}
-			 *            _attributeTypeList AttributeTypeList
+			 * @param {(AttributeTypeList|Array)} _attributeTypeList AttributeTypeList
 			 */
 			'public putAll' : function(_attributeTypeList) {
 				var list = new Array();
@@ -122,7 +118,6 @@ define([ 'easejs', 'abstractList', 'attributeType' ],
 			'public contains' : function(_item) {
 				if (Class.isA(AttributeType, _item)) {
 					var tmp = this.getItem(_item.getName());
-                    console.log(tmp);
 					if (!(typeof tmp === 'undefined')
 							&& tmp.equals(_item)) {
 						return true;

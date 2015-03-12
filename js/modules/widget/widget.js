@@ -198,16 +198,26 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			},
 
 			/**
-			 * Returns the last acquired Attributes.
+			 * Returns the last acquired attribute values.
 			 * 
 			 * @public
 			 * @alias getAttributes
 			 * @memberof Widget#
 			 * @returns {AttributeValueList}
 			 */
-			'public getAttributes' : function() {
+			'public getAttributeValues' : function() {
 				return this.attributes;
 			},
+
+            /**
+             * Returns the last acquired attribute value with the given attribute type.
+             *
+             * @param {AttributeType} _attributeType The attribute type to return the last value for.
+             * @returns {*}
+             */
+            'public getAttributeValue': function(_attributeType) {
+                return this.getAttributeValues().getItem(_attributeType.getName()).getValue();
+            },
 			
 			/**
 			 * Returns the old Attributes.
@@ -460,7 +470,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			'protected addCallback' : function(_callback) {
 				if (Class.isA(Callback, _callback)) {
 					this.callbacks.put(_callback);
-				};
+				}
 			},
 
 			'protected setServices' : function(_services) {
@@ -612,7 +622,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @memberof Widget#
 			 */
 			'virtual public notify' : function() {
-                var callbacks = this.queryCallbacks().getItems();
+                var callbacks = this.getCallbacks();
                 for (var i in callbacks) {
                     this.sendToSubscriber(callbacks[i]);
                 }
@@ -620,7 +630,8 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 
 			/**
 			 * Queries the associated sensor and updates the attributes with new values. 
-			 * Must be overridden by the subclasses.
+			 * Must be overridden by the subclasses. Overriding subclasses can call
+             * this.__super(_function) to invoke the provided callback function.
 			 * 
 			 * @virtual
 			 * @public
@@ -629,6 +640,9 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @param {?function} _function For alternative actions, because an asynchronous function can be used.
 			 */
 			'virtual protected queryGenerator' : function(_function) {
+                if (_function && typeof(_function) == 'function') {
+                    _function();
+                }
 			},
 
 			/**
@@ -681,7 +695,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 */
 			'public queryWidget' : function() {
 				var response = new AttributeValueList();
-				response.putAll(this.getAttributes());
+				response.putAll(this.getAttributeValues());
 				response.putAll(this.getConstantAttributes());
 				return response;
 			},
@@ -702,7 +716,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 				} else {
 					this.queryGenerator();
 					var response = new AttributeValueList();
-					response.putAll(this.getAttributes());
+					response.putAll(this.getAttributeValues());
 					response.putAll(this.getConstantAttributes());
 					return response;
 				}

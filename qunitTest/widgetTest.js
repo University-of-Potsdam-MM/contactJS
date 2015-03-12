@@ -26,7 +26,7 @@ require(['configTest'], function() {
 				assert.equal(subscriber.size(), 0,"getSubscriber Passed!: zero subscriber was returned" );
 				
 				//attributes
-				var attributes= testWidget.getAttributes();
+				var attributes= testWidget.getAttributeValues();
 				assert.equal(attributes.size(), 2,"queryAttributes Passed!: two attributes were returned" );
 				var latitude = attributes.getItem('latitude');
 				assert.equal(latitude.getName(), 'latitude',"queryAttributes Passed!: latitude exists" );

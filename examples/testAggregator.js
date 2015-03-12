@@ -35,12 +35,7 @@ define(['easejs', 'contactJS'],
 			this.addAttribute(address);
 		},
 		'protected setAggregatorConstantAttributeValues' : function(){},
-		'protected setAggregatorCallbacks' : function(){},
-
-		'public queryReferencedWidget' :function(_widgetHandle, _function){
-			var widget = this.discoverer.getWidget(_widgetHandle.getId());
-			widget.updateWidgetInformation(_function);			
-		}
+		'protected setAggregatorCallbacks' : function(){}
 		
 	});
 

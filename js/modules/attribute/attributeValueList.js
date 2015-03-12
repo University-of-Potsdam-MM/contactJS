@@ -209,6 +209,18 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 				return response;
 			},
 
+            /**
+             * Alias for {#getItem}.
+             *
+             * @public
+             * @alias getValue
+             * @param _key The value key.
+             * @returns {*}
+             */
+            'public getValue': function(_key) {
+                return this.getItem(_key);
+            }
+
 		});
 
 		return AttributeValueList;

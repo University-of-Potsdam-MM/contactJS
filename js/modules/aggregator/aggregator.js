@@ -555,11 +555,43 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 			this.db.getAttributeNames(_function);
         },
 
+        /**
+         * Updates the information for the widget with the provided handle and calls the callback afterwards.
+         *
+         * @public
+         * @virtual
+         * @alias queryReferencedWidget
+         * @memberof Aggregator#
+         * @param {WidgetHandle} _widgetHandle The handle of the widget to query.
+         * @param {Callback} _callback The callback to query after the widget was updated.
+         */
         'virtual public queryReferencedWidget' :function(_widgetHandle, _callback){
             var widget = this.discoverer.getWidget(_widgetHandle.getId());
             widget.updateWidgetInformation(_callback);
-        }
+        },
 
+        /**
+         * Updates all the widgets referenced by the aggregator and calls the callback afterwards.
+         *
+         * @param {Callback} _callback The callback to query after all the widget where updated.
+         */
+        'virtual public queryReferencedWidgets': function(_callback) {
+            var self = this;
+            var completedQueriesCounter = 0;
+            var referencedWidgetHandles = this.getWidgets().getItems();
+
+            for (var index in referencedWidgetHandles) {
+                var theWidgetHandle = referencedWidgetHandles[index];
+                this.queryReferencedWidget(theWidgetHandle, function () {
+                    completedQueriesCounter++;
+                    if (completedQueriesCounter == self.widgets.size()) {
+                        if (_callback && typeof(_callback) == 'function') {
+                            _callback();
+                        }
+                    }
+                });
+            }
+        }
     });
 
 	return Aggregator;
