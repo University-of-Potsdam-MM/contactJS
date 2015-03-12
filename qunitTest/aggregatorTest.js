@@ -3,8 +3,10 @@ require(['configTest'], function() {
 	         	function(TestAggregator, GeoLocationWidget, contactJS){
 		
 			QUnit.test( "TestAggregator ", function( assert ) {
-				
-		    	var testAggregator = new TestAggregator();
+
+                //initializes the infrastructure
+                var discoverer = new contactJS.Discoverer();
+		    	var testAggregator = new TestAggregator(discoverer);
 		    	
 		    	var id = testAggregator.getId();
 				assert.ok( id && id !== "null" && id !== "undefined","Passed!: id is not null" );
@@ -16,16 +18,11 @@ require(['configTest'], function() {
 				
 				var widgetHandles = testAggregator.getWidgets();
 				assert.equal( widgetHandles.size(), 0,"Passed!: no subscribed Widgets" );
-			
-				//initializes the infrastructure
-				var discoverer = new contactJS.Discoverer();
-				testAggregator.setDiscoverer(discoverer);
 				
-				var geoLocationWidget = new GeoLocationWidget();
-				geoLocationWidget.setDiscoverer(discoverer);
+				var geoLocationWidget = new GeoLocationWidget(discoverer);
 				
 				//subscription
-				var widget = discoverer.getWidgetDescriptions();
+				var widget = discoverer.getDescriptions([contactJS.Widget]);
 		    	   	
 		    	var handle = new contactJS.WidgetHandle().withName('GeoLocationWidget').withId(widget[0].getId());
 		    	
@@ -51,7 +48,7 @@ require(['configTest'], function() {
 		    	var subscriber = geoLocationWidget.getSubscriber();
 				assert.equal(subscriber.size(), 1,"subscribe Passed!: one subscribed Widget in geolocationWidget too");
 				
-				var values = testAggregator.queryAttributes();
+				var values = testAggregator.getAttributes();
 				assert.equal( values.size(), 3,"Passed!: two available attributes" );
 				var latitude = values.getItem('latitude');
 				assert.equal(latitude.getName(), 'latitude',"subscribed Attributes Passed!: latitude exists" );

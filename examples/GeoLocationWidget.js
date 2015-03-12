@@ -56,7 +56,7 @@ define([ 'easejs', 'contactJS' ],
 			/**
 			 * Initializes constantAttributes. For this class: no
 			 * constantAttributes available
-			 * 
+			 *
 			 * @protected
 			 * @alias initConstantAttributes
 			 * @memberof GeoLocationWidget#
@@ -67,22 +67,21 @@ define([ 'easejs', 'contactJS' ],
 			/**
 			 * Initializes Callbacks. For this class:
 			 * UPDATE (latitude and longitude)
-			 * 
+			 *
 			 * @protected
 			 * @alias initCallbacks
 			 * @memberof GeoLocationWidget#
 			 */
 			'protected initCallbacks' : function() {
 				var list = new contactJS.AttributeTypeList();
-				list.put(this.getWidgetAttributeTypes().getItem("latitude"));
-				list.put(this.getWidgetAttributeTypes().getItem("longitude"));
+				list.put(this.getAttributeTypes().getItem("latitude"));
+				list.put(this.getAttributeTypes().getItem("longitude"));
 				var call = new contactJS.Callback().withName('UPDATE').withAttributeTypes(list);
 				this.addCallback(call);
 			},
 
-			
 			'override public notify' : function() {
-				var callbacks = this.queryCallbacks().getItems();
+				var callbacks = this.getCallbackList().getItems();
 				for(var i in callbacks){
 					this.sendToSubscriber(callbacks[i]);
 				}
@@ -92,7 +91,7 @@ define([ 'easejs', 'contactJS' ],
 			 * Implements queryGenerator(). Query latitude and
 			 * longitude by calling
 			 * navigator.geolocation.getCurrentPosition().
-			 * 
+			 *
 			 * @override
 			 * @protected
 			 * @alias queryGenerator
@@ -109,13 +108,13 @@ define([ 'easejs', 'contactJS' ],
 				} else {
 					alert("Keine Ortung moeglich");
 				}
-				
+
 			},
 
 			/**
 			 * Success function for navigator.geolocation.getCurrentPosition() used in
 			 * queryGenerator(). Stores the values in the associated attributes.
-			 * 
+			 *
 			 * @callback
 			 * @private
 			 * @alias onSuccess
@@ -143,12 +142,13 @@ define([ 'easejs', 'contactJS' ],
 			/**
 			 * Error function for navigator.geolocation.getCurrentPosition() used in
 			 * queryGenerator().
-			 * 
+			 *
 			 * @callback
 			 * @private
 			 * @alias onError
 			 * @memberof GeoLocationWidget#
 			 * @param error
+             * @param {this} self
 			 */
 			'private onError' : function(error, self, _function) {
                 var latitude = new contactJS.AttributeValue().withName('latitude')

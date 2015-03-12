@@ -92,8 +92,10 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @requires InterpreterDescription
 				 * @constructs Interpreter
 				 */
-				'public __construct' : function() {
+				'public __construct' : function(_discoverer) {
 					this.id = Math.uuid();
+                    this.discoverer = _discoverer;
+                    this.register();
 					this.inAttributeTypes = new AttributeTypeList();
 					this.outAttributeTypes = new AttributeTypeList();
 					this.inAttributeValues = new AttributeValueList();
@@ -382,10 +384,10 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @memberof Interpreter#
 				 * @returns {InterpreterDescription} 
 				 */
-				'virtual public getInterpreterDescription' : function() {
+				'virtual public getDescription' : function() {
 					var description = new InterpreterDescription().withId(
 							this.id).withName(this.name);
-					description.setOutAttributeTypes(this.outAttributeTypes);
+					description.addOutAttributeTypes(this.outAttributeTypes);
 					description.setInAttributeTypes(this.inAttributeTypes);
 					return description;
 				},

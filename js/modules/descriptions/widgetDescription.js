@@ -5,8 +5,8 @@
  * @module WidgetDescription
  * @fileOverview
  */
-define(['easejs', 'attributeTypeList'],
-    function(easejs, AttributeTypeList){
+define(['easejs', 'attributeTypeList', 'widgetHandle'],
+    function(easejs, AttributeTypeList, WidgetHandle){
     	var Class = easejs.Class;
 		var WidgetDescription = Class('WidgetDescription',{
 			
@@ -33,7 +33,15 @@ define(['easejs', 'attributeTypeList'],
 			 * @memberof WidgetDescription#
 			 * @desc List of attributeTypes that are provided.
 			 */
-			'protected outAttributeTypes' : [], 
+			'protected outAttributeTypes' : [],
+            /**
+             * @alias callbackNames
+             * @protected
+             * @type {array}
+             * @memberof WidgetDescription#
+             * @desc Array of available callback names.
+             */
+            'protected callbackNames' : [],
 
 			/**
 			 * Constructor: Initializes the inAttributeTypes.
@@ -152,7 +160,7 @@ define(['easejs', 'attributeTypeList'],
 			'public setName' : function(_name){
 				if(typeof _name === 'string'){
 					this.name = _name;
-				};
+				}
 			},
 
 			/**
@@ -173,11 +181,11 @@ define(['easejs', 'attributeTypeList'],
 			 * Adds an outAttributeType to the list
 			 * 
 			 * @public
-			 * @alias setOutAttributeType
+			 * @alias addOutAttributeType
 			 * @memberof WidgetDescription#
 			 * @param {AttributeType} _outAttributeType AttributeType that are provided
 			 */
-			'public setOutAttributeType' : function(_outAttributeType){
+			'public addOutAttributeType' : function(_outAttributeType){
 					this.outAttributeTypes.put(_outAttributeType);
 			},
 			
@@ -185,16 +193,28 @@ define(['easejs', 'attributeTypeList'],
 			 * Adds outAttributeTypes that are provided by the Widget
 			 * 
 			 * @public
-			 * @alias setOutAttributeTypes
+			 * @alias addOutAttributeTypes
 			 * @memberof WidgetDescription#
 			 * @param {(AttributeTypeList|Array)} _outAttributeTypes List of AttributeType that are provided
 			 */
-			'public setOutAttributeTypes' : function(_outAttributeTypes){
+			'public addOutAttributeTypes' : function(_outAttributeTypes){
 				this.outAttributeTypes.putAll(_outAttributeTypes);
-			}
-			
-			});
+			},
 
-		return WidgetDescription;
+            'public setCallbackNames' : function(_callbackNames) {
+                this.callbackNames = _callbackNames;
+            },
+
+            'public addCallbackName' : function(_callbackName) {
+                this.callbackNames.push(_callbackName);
+            },
+
+            'public getHandle' : function() {
+                return new WidgetHandle().withName(this.name).withId(this.id);
+            }
+			
+		});
+
+        return WidgetDescription;
 	
 });

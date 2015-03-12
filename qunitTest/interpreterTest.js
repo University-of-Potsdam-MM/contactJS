@@ -32,7 +32,7 @@ require(['configTest'], function() {
 			
 				
 				//interpreterDescription				
-				var desc = testInterpreter.getInterpreterDescription();
+				var desc = testInterpreter.getDescription();
 				assert.ok( desc,"Passed!: InterpreterDescription exists" );
 				assert.equal ( desc.getId(), id, "Passed!: InterpreterDescription contains expected id" );
 				assert.equal ( desc.getName(), 'AddressInterpreter', "Passed!: InterpreterDescription contains expected id" );
@@ -63,7 +63,7 @@ require(['configTest'], function() {
 		    			var att = list[i];
 		    			assert.ok(att,"Callback passed!: interpreted data exists" );
 		    			assert.ok(att.getAttributeType().equals(formattedAddress),"Callback passed!: interpreted data equals expected type" );
-		    			var add = "Charlottenstraﬂe 70, 14467 Potsdam, Deutschland";
+		    			var add = "Charlottenstra√üe 70, 14467 Potsdam, Deutschland";
 		    			assert.equal(att.getValue(), add ,"Passed!: interpreted data equals expected value" );
 		    		};
 	    		};	  

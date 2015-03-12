@@ -13,7 +13,7 @@ require(['configTest'], function() {
 				geoLocationWidget.setDiscoverer(discoverer);
 				
 				//subscription
-				var widget = discoverer.getWidgetDescriptions();
+				var widget = discoverer.getDescriptions([contactJS.Widget]);
 		    	   	
 		    	var handle = new contactJS.WidgetHandle().withName('GeoLocationWidget').withId(widget[0].getId());
 		    	
@@ -36,7 +36,7 @@ require(['configTest'], function() {
 				var geoLocationWidget = discoverer.getComponent(widget[0].getId());
 				var checkValues = function(){
 					geoLocationWidget.notify();
-					var newValues = testAggregator.queryAttributes();
+					var newValues = testAggregator.getAttributes();
 					assert.equal( newValues.size(), 3,"notify Passed!: two available attributes" );
 
 					var latitude = newValues.getItem('latitude');

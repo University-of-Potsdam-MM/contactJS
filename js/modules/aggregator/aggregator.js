@@ -75,12 +75,12 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 		 * @requires WidgetHandleList
 		 * @constructs Aggregator
 		 */
-		'override public __construct': function()
+		'override virtual public __construct': function(_discoverer)
         {
 			this.id = Math.uuid();
 			this.widgets = new WidgetHandleList();
 			this.initWidgetHandles();
-			this.__super();	
+			this.__super(_discoverer);
 			this.aggregatorSetup();
         },
         
@@ -352,7 +352,7 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 		},
 		
 		/**
-		 * Adds a new subscription to this Aggregator.
+		 * Adds the specified callbacks of a widget to the aggregator.
          * 
 		 * @public
 	   	 * @alias addWidgetSubscription
@@ -360,7 +360,7 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 		 * @param {WidgetHandle} _widgetHandle Widget that should be subscribed.
 		 * @param {CallbackList} _callbacks required Callbacks
 	     */
-		'public addWidgetSubscription' : function(_widgetHandle, _callbackList){			
+		'public addWidgetSubscription' : function(_widgetHandle, _callbackList){
 			if(Class.isA(WidgetHandle, _widgetHandle) && Class.isA(CallbackList, _callbackList)){
 				var widget = this.discoverer.getComponent(_widgetHandle.getId());
 				if(widget && widget.getName() === _widgetHandle.getName()){
@@ -413,7 +413,7 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 			var list = [];
 			if(_data instanceof Array){
 				list = _data;
-			} else if (Class.isA( AttributeValueList, _data)) {
+			} else if (Class.isA(AttributeValueList, _data)) {
 				list = _data.getItems();
 			}
 			for(var i in list){
@@ -541,31 +541,24 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 		'public getStorageOverview' : function(){
 			return this.db.getAttributesOverview();
 		},
-		
+
 		/**
 		 * Only actualizes the attributeType cache in th database.
 		 * For an alternativ action can be used a callback.
-		 * 
+		 *
 		 * @public
 	   	 * @alias queryTables
 		 * @memberof Aggregator#
 		 * @param {?function} _function for alternative actions, because an asynchronous function is used
 	     */
 		'public queryTables' : function(_function){
-			this.db.getAttributeNames(_function);		
-		},
-		
-		/**
-		 * Returns the description of this component.
-		 * @virtual
-		 * @public
-		 * @alias getAggregatorDescription
-		 * @memberof Aggregator#
-		 * @returns {WidgetDescription} 
-		 */
-		'virtual public getAggregatorDescription' : function(){
-			return this.getWidgetDescription();
-		}
+			this.db.getAttributeNames(_function);
+        },
+
+        'virtual public queryReferencedWidget' :function(_widgetHandle, _callback){
+            var widget = this.discoverer.getWidget(_widgetHandle.getId());
+            widget.updateWidgetInformation(_callback);
+        }
 
     });
 

@@ -3,9 +3,8 @@ require(['configTest'], function() {
 	         	function(GeoLocationWidget, contactJS){
 		
 			QUnit.asyncTest( "GeoLocationWidget ", function( assert ) {
-				
-				
-				var testWidget = new GeoLocationWidget();
+                var discoverer = new contactJS.Discoverer();
+				var testWidget = new GeoLocationWidget(discoverer);
 		    				        
 		        var id = testWidget.getId();
 				assert.ok( id && id !== "null" && id !== "undefined", "Passed!: id is not null" );
@@ -13,13 +12,13 @@ require(['configTest'], function() {
 				assert.equal( testWidget.getName(), 'GeoLocationWidget', "Passed!: name -> GeoLocationWidget" );
 					
 				//attributeTypes
-				var types = testWidget.getWidgetAttributeTypes();
+				var types = testWidget.getAttributeTypes();
 				assert.equal(types.size(), 2,"getWidgetAttributeTypes Passed!: two types were returned" );
 				var constantTypes = testWidget.getWidgetConstantAttributeTypes();
 				assert.equal(constantTypes.size(), 0,"getWidgetConstantAttributeTypes Passed!: zero constantTypes was returned" );
 			
 				//callbacks
-				var callbacks = testWidget.queryCallbacks();
+				var callbacks = testWidget.getCallbackList();
 				assert.equal(callbacks.size(), 1,"queryCallbacks Passed!: one callback was returned" );
 				
 				//subscriber
@@ -27,7 +26,7 @@ require(['configTest'], function() {
 				assert.equal(subscriber.size(), 0,"getSubscriber Passed!: zero subscriber was returned" );
 				
 				//attributes
-				var attributes= testWidget.queryAttributes();
+				var attributes= testWidget.getAttributes();
 				assert.equal(attributes.size(), 2,"queryAttributes Passed!: two attributes were returned" );
 				var latitude = attributes.getItem('latitude');
 				assert.equal(latitude.getName(), 'latitude',"queryAttributes Passed!: latitude exists" );
@@ -47,8 +46,7 @@ require(['configTest'], function() {
 				var longitude2 = attributes.getItem('longitude');
 				assert.equal(longitude2.getName(), 'longitude',"updateAndQueryWidget without callbackPassed!: longitude exists" );
 				assert.equal(longitude2.getValue(), 'undefined',"value of longitude is not updated yet: " + longitude2.getValue() );
-				
-				
+
 				//updateAndQuery with callback
 				var testUpdateAndQuery = function(){
 					var attributes2 = testWidget.queryWidget();

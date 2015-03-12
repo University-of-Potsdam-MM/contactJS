@@ -4,8 +4,8 @@
  * @module Discoverer
  * @fileOverview
  */
-define([ 'easejs', 'attributeTypeList' ], function(easejs,
-		AttributeTypeList) {
+define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ], function(easejs,
+		AttributeTypeList, Widget, Interpreter, Aggregator) {
 	var Class = easejs.Class;
 	
 	var Discoverer = Class('Discoverer', {
@@ -228,12 +228,12 @@ define([ 'easejs', 'attributeTypeList' ], function(easejs,
 		 * @memberof Discoverer#
 		 * @returns {Array}
 		 */
-		'public getWidgetDescriptions' : function() {
-			var widgetDescription = new Array();
+		'private getWidgetDescriptions' : function() {
+			var widgetDescription = [];
 			var widgets = this.widgets;
-			for ( var i in widgets) {
+			for (var i in widgets) {
 				var singleWidget = widgets[i];
-				widgetDescription.push(singleWidget.getWidgetDescription());
+				widgetDescription.push(singleWidget.getDescription());
 			}
 			return widgetDescription;
 		},
@@ -246,12 +246,12 @@ define([ 'easejs', 'attributeTypeList' ], function(easejs,
 		 * @memberof Discoverer#
 		 * @returns {Array}
 		 */
-		'public getAggregatorDescriptions' : function() {
-			var aggregatorDescription = new Array();
+		'private getAggregatorDescriptions' : function() {
+			var aggregatorDescription = [];
 			var aggregators = this.aggregators;
-			for ( var i in aggregators) {
+			for (var i in aggregators) {
 				var singleAggregator = aggregators[i];
-				aggregatorDescription.push(singleAggregator.getAggregatorDescription());
+				aggregatorDescription.push(singleAggregator.getDescription());
 			}
 			return aggregatorDescription;
 		},
@@ -264,12 +264,12 @@ define([ 'easejs', 'attributeTypeList' ], function(easejs,
 		 * @memberof Discoverer#
 		 * @returns {Array}
 		 */
-		'public getInterpreterDescriptions' : function() {
-			var interpreterDescription = new Array();
+		'private getInterpreterDescriptions' : function() {
+			var interpreterDescription = [];
 			var interpreters = this.interpreter;
 			for ( var i in interpreters) {
 				var singleInterpreter = interpreters[i];
-				interpreterDescription.push(singleInterpreter.getInterpreterDescription());
+				interpreterDescription.push(singleInterpreter.getDescription());
 			}
 			return interpreterDescription;
 		},
@@ -280,13 +280,15 @@ define([ 'easejs', 'attributeTypeList' ], function(easejs,
 		 * @public
 		 * @alias getDescriptions
 		 * @memberof Discoverer#
+         * @param {Array} _componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
 		 * @returns {Array}
 		 */
-		'public getDescriptions' : function() {
-			var response = new Array();
-			response = response.concat(this.getWidgetDescriptions());
-			response = response.concat(this.getAggregatorDescriptions());
-			response = response.concat(this.getInterpreterDescriptions());
+		'public getDescriptions' : function(_componentTypes) {
+            if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
+			var response = [];
+			if (jQuery.inArray(Widget, _componentTypes) != -1) response = response.concat(this.getWidgetDescriptions());
+            if (jQuery.inArray(Aggregator, _componentTypes) != -1) response = response.concat(this.getAggregatorDescriptions());
+            if (jQuery.inArray(Interpreter, _componentTypes) != -1) response = response.concat(this.getInterpreterDescriptions());
 			return response;
 		},
 
@@ -300,18 +302,20 @@ define([ 'easejs', 'attributeTypeList' ], function(easejs,
 		 * @memberof Discoverer#
 		 * @param {(AttributeTypeList|Array)} _attributeTypeList list of searched attributes
 		 * @param {boolean} _all choise of the verification mode
+         * @param {Array} _componentTypes Components types to search for
 		 * @returns {Array}
 		 */
-		'public getComponentsByAttributes' : function(_attributeTypeList, _all) {
-			var componentList = new Array();
-			var list = new Array();
+		'public getComponentsByAttributes' : function(_attributeTypeList, _all, _componentTypes) {
+			var componentList = [];
+			var list = [];
+            if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
 			if (_attributeTypeList instanceof Array) {
 				list = _attributeTypeList;
 			} else if (Class.isA(AttributeTypeList, _attributeTypeList)) {
 				list = _attributeTypeList.getItems();
 			}
 			if (list) {
-				var descriptions = this.getDescriptions();
+				var descriptions = this.getDescriptions(_componentTypes);
 				for (var i in descriptions) {
 					var description = descriptions[i];
 						if(_all && this.containsAllAttributes(description, list)){

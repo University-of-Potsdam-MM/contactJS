@@ -5,8 +5,8 @@
  * @module WidgetHandleList
  * @fileOverview
  */
-define([ 'easejs', 'abstractList', 'widgetHandle' ],
-	function(easejs, AbstractList, WidgetHandle) {
+define([ 'easejs', 'abstractList', 'widgetHandle', 'widget'],
+	function(easejs, AbstractList, WidgetHandle, Widget) {
 		var Class = easejs.Class;
 		/**
 		 * @class WidgetHandleList
@@ -45,7 +45,7 @@ define([ 'easejs', 'abstractList', 'widgetHandle' ],
 			 * @returns {WidgetHandleList}
 			 */
 			'public withItems' : function(_widgetHandleList) {
-				var list = new Array();
+				var list = [];
 				if (_widgetHandleList instanceof Array) {
 					list = _widgetHandleList;
 				} else if (Class.isA(WidgetHandleList, _widgetHandleList)) {
@@ -62,20 +62,20 @@ define([ 'easejs', 'abstractList', 'widgetHandle' ],
 			},
 			
 			/**
-			 * Adds the specified item to theitem list.
+			 * Adds a widget handle to the list.
 			 * 
 			 * @public
 			 * @alias put
 			 * @memberof WidgetHandleList#
-			 * @param {WidgetHandle}
-			 *            _widgetHandle WidgetHandle
+			 * @param {WidgetHandle|Widget} _widgetHandleOrWidget WidgetHandle
 			 */
-			'public put' : function(_widgetHandle) {
-				if (Class.isA(WidgetHandle, _widgetHandle)) {
-					if (!(this.containsKey(_widgetHandle.getName()))) {
+			'public put' : function(_widgetHandleOrWidget) {
+				if (Class.isA(Widget, _widgetHandleOrWidget)) _widgetHandleOrWidget = _widgetHandleOrWidget.getHandle();
+                if (Class.isA(WidgetHandle, _widgetHandleOrWidget)) {
+					if (!(this.containsKey(_widgetHandleOrWidget.getName()))) {
 						this.counter++;
 					}
-					this.items[_widgetHandle.getName()] = _widgetHandle;
+					this.items[_widgetHandleOrWidget.getName()] = _widgetHandleOrWidget;
 				}
 			},
 			
@@ -147,7 +147,7 @@ define([ 'easejs', 'abstractList', 'widgetHandle' ],
 					return true;
 				}
 				return false;
-			},
+			}
 		});
 		return WidgetHandleList;
 	});

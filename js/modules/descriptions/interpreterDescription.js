@@ -9,8 +9,7 @@ define(['easejs','attributeTypeList','widgetDescription'],
     function(easejs,AttributeTypeList,WidgetDescription){
     	var Class = easejs.Class;
 		var InterpreterDescription = Class('InterpreterDescription').
-						extend(WidgetDescription,
-			{
+						extend(WidgetDescription, {
 			/**
 			* @alias inAttributeTypes
 			* @private
@@ -99,10 +98,9 @@ define(['easejs','attributeTypeList','widgetDescription'],
 			 */
 			'public setInAttributeTypes' : function(_inAttributeTypes){
 				this.inAttributeTypes.putAll(_inAttributeTypes);
-			},
-			
-			});
+			}
 
-		return InterpreterDescription;
-	
+            });
+
+        return InterpreterDescription;
 });

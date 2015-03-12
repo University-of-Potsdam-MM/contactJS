@@ -46,7 +46,7 @@ define(['easejs', 'abstractList', 'callback'],
 		 * @returns {CallbackList}
 		 */
 		'public withItems': function(_callbackList){
-			var list = new Array();
+			var list = [];
 			if(_callbackList instanceof Array){
 				list = _callbackList;
 			} else if (Class.isA(CallbackList, _callbackList)) {
@@ -86,11 +86,10 @@ define(['easejs', 'abstractList', 'callback'],
 		 * @public
 		 * @alias putAll
 		 * @memberof CallbackList#
-		 * @param {(CallbackList|Array)}
-		 *            _callbackList CallbackList
+		 * @param {(CallbackList|Array)} _callbackList CallbackList
 		 */
 		'public putAll' : function(_callbackList){
-			var list = new Array();
+			var list = [];
 			if(_callbackList instanceof Array){
 				list = _callbackList;
 			} else if (Class.isA(CallbackList, _callbackList)) {
@@ -147,7 +146,7 @@ define(['easejs', 'abstractList', 'callback'],
 				return true;
 			} 
 			return false;
-		},
+		}
 
 	});
 

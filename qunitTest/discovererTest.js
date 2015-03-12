@@ -8,18 +8,17 @@ require(['configTest'], function() {
 				assert.equal( discoverer.getType(), 'Discoverer',"Passed!: type -> Discoverer" );
 				
 				//register Widget
-				var geo = new GeoLocationWidget();
-				geo.setDiscoverer(discoverer);
+				var geo = new GeoLocationWidget(discoverer);
 				
 				//initWidgets ->geoLocationWidget expected
 				//tested with getWidgetDescriptions
-				var wDescs = discoverer.getWidgetDescriptions();		        
-				assert.equal( wDescs.length, 1,"getWidgetDescriptions passed!: One Widget is registerd" );	
-				assert.equal( wDescs[0].getName(), 'GeoLocationWidget',"getWidgetDescriptions passed!: Name of the registerd Widget is the expected one" );
+				var wDescs = discoverer.getDescriptions([contactJS.Widget]);
+				assert.equal( wDescs.length, 1,"getWidgetDescriptions passed!: One Widget is registered" );
+				assert.equal( wDescs[0].getName(), 'GeoLocationWidget',"getWidgetDescriptions passed!: Name of the registered Widget is the expected one" );
 				//same procedure with getDescriptions
 				var wDescs2 = discoverer.getDescriptions();		        
-				assert.equal( wDescs2.length, 1,"getDescriptions passed!: One Widget is registerd" );	
-				assert.equal( wDescs2[0].getName(), 'GeoLocationWidget',"getDescriptions passed!: Name of the registerd Widget is the expected one" );
+				assert.equal( wDescs2.length, 1,"getDescriptions passed!: One Widget is registered" );
+				assert.equal( wDescs2[0].getName(), 'GeoLocationWidget',"getDescriptions passed!: Name of the registered Widget is the expected one" );
 				//getWidgets
 				var widget = discoverer.getWidget(wDescs[0].getId());
 				assert.ok( widget,"getWidget passed!: an instance was returned" );	
@@ -32,15 +31,14 @@ require(['configTest'], function() {
 				assert.equal( widget2.getName(), 'GeoLocationWidget',"getComponent passed!: name of the instance is te expected one" );
 						
 				//register Interpreter
-				var testInterpreter =new AddressInterpreter();
-				testInterpreter.setDiscoverer(discoverer);
+				var testInterpreter = new AddressInterpreter(discoverer);
 				//tested with getWidgetDescriptions
-				var iDescs = discoverer.getInterpreterDescriptions();		        
-				assert.equal( iDescs.length, 1,"getInterpreterDescriptions passed!: One Interpreter is registerd" );	
-				assert.equal( iDescs[0].getName(), 'AddressInterpreter',"getInterpreterDescriptions passed!: Name of the registerd Interpreter is the expected one" );
+				var iDescs = discoverer.getDescriptions([contactJS.Interpreter]);
+				assert.equal( iDescs.length, 1,"getInterpreterDescriptions passed!: One Interpreter is registered" );
+				assert.equal( iDescs[0].getName(), 'AddressInterpreter',"getInterpreterDescriptions passed!: Name of the registered Interpreter is the expected one" );
 				//same procedure with getDescriptions
 				var iDescs2 = discoverer.getDescriptions();		        
-				assert.equal( iDescs2.length, 2,"getDescriptions passed!: three instances are registerd" );	
+				assert.equal( iDescs2.length, 2,"getDescriptions passed!: three instances are registered" );
 				//getWidgets
 				var interpreter = discoverer.getInterpreter(iDescs[0].getId());
 				assert.ok( interpreter,"getInterpreter passed!: an instance was returned" );	
@@ -56,7 +54,7 @@ require(['configTest'], function() {
 				var testAggregator =new TestAggregator();
 				testAggregator.setDiscoverer(discoverer);
 				//tested with getWidgetDescriptions
-				var aDescs = discoverer.getAggregatorDescriptions();		        
+				var aDescs = discoverer.getDescriptions([contactJS.Aggregator]);
 				assert.equal( aDescs.length, 1,"getAggregatorDescriptions passed!: One Aggregator is registered" );
 				assert.equal( aDescs[0].getName(), 'TestAggregator',"getAggregatorDescriptions passed!: Name of the registered Interpreter is the expected one" );
 				//same procedure with getDescriptions
@@ -80,7 +78,7 @@ require(['configTest'], function() {
 											.withType('double').withParameter(testParameter);			
 				var longitudeType = new contactJS.AttributeType().withName('longitude')
 								.withType('double');
-				var array = new Array();
+				var array = [];
 				array.push(longitudeType);
 
 				//one searched attribute
@@ -92,15 +90,23 @@ require(['configTest'], function() {
 				assert.equal( list2.length, 2," getComponentsByAttributes passed!: returned 2 components which provided at least one attribute (one attribute was specified)" );
 				assert.equal( list2[0].getName(), 'GeoLocationWidget'," getComponentsByAttributes passed!: returned expected instance (one attribute was specified)" );
 				assert.equal( list2[1].getName(), 'TestAggregator'," getComponentsByAttributes passed!: returned second expected instance (one attribute was specified)" );
-				
+
+                //one searched attribute with restricted component type
+                var list3 = discoverer.getComponentsByAttributes(array, false, [contactJS.Widget]);
+                assert.equal( list3.length, 1," getComponentsByAttributes passed!: returned 1 component which provided at least one attribute (one attribute was specified) and is a widget" );
+                assert.equal( list3[0].getName(), 'GeoLocationWidget'," getComponentsByAttributes passed!: returned expected instance (one attribute was specified)" );
+                var list4 = discoverer.getComponentsByAttributes(array, true, [contactJS.Widget]);
+                assert.equal( list4.length, 1," getComponentsByAttributes passed!: returned 1 component which provided at least one attribute (one attribute was specified) and is a widget" );
+                assert.equal( list4[0].getName(), 'GeoLocationWidget'," getComponentsByAttributes passed!: returned expected instance (one attribute was specified)" );
+
 				//two searched attributes
 				array.push(latitudeType);
-				var list3 = discoverer.getComponentsByAttributes(array, false);
-				assert.equal( list3.length, 2," getComponentsByAttributes passed!: returned 2 components which provided at least one attribute (two attributes were specified)" );
-				assert.equal( list3[0].getName(), 'GeoLocationWidget'," getComponentsByAttributes passed!: returned expected instance (two attributes were specified)" );
-				assert.equal( list3[1].getName(), 'TestAggregator'," getComponentsByAttributes passed!: returned second expected instance (two attributes were specified)" );
-				var list4 = discoverer.getComponentsByAttributes(array, true);
-				assert.equal( list4.length, 0," getComponentsByAttributes passed!: returned 0 components which provided all attribute (two attributes were specified)" );				
+				var list5 = discoverer.getComponentsByAttributes(array, false);
+				assert.equal( list5.length, 2," getComponentsByAttributes passed!: returned 2 components which provided at least one attribute (two attributes were specified)" );
+				assert.equal( list5[0].getName(), 'GeoLocationWidget'," getComponentsByAttributes passed!: returned expected instance (two attributes were specified)" );
+				assert.equal( list5[1].getName(), 'TestAggregator'," getComponentsByAttributes passed!: returned second expected instance (two attributes were specified)" );
+				var list6 = discoverer.getComponentsByAttributes(array, true);
+				assert.equal( list6.length, 0," getComponentsByAttributes passed!: returned 0 components which provided all attribute (two attributes were specified)" );
 			});
 			
 

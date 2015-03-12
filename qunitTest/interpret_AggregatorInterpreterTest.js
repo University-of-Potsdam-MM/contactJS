@@ -11,7 +11,7 @@ require(['configTest'], function() {
 				testAggregator.setDiscoverer(discoverer);			        
 				testInterpreter.setDiscoverer(discoverer);
 				
-				var interpreter = discoverer.getInterpreterDescriptions();
+				var interpreter = discoverer.getDescriptions([contactJS.Interpreter]);
 				
 				//put data into aggregator
 				var latitudeValue = new contactJS.AttributeValue().withName('latitude')
@@ -41,7 +41,7 @@ require(['configTest'], function() {
 					assert.equal( data2.size(), 3,"Passed!: three available attributes" );
 					var item = data2.getItem('formattedAddress');
 					assert.ok(item,"Callback passed!: interpreted data exists" );
-	    			var add = "Charlottenstraﬂe 70, 14467 Potsdam, Deutschland";
+	    			var add = "Charlottenstra√üe 70, 14467 Potsdam, Deutschland";
 	    			assert.equal(item.getValue(), add ,"Passed!: interpreted data equals expected value" );
 	    		
 				};
