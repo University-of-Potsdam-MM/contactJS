@@ -5423,13 +5423,19 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 		 * @public
 	   	 * @alias addWidgetSubscription
 		 * @memberof Aggregator#
-		 * @param {WidgetHandle} _widgetHandle Widget that should be subscribed.
-		 * @param {CallbackList} _callbacks required Callbacks
+		 * @param {WidgetHandle|Widget} _widgetHandleOrWidget Widget that should be subscribed.
+		 * @param {CallbackList} _callbackList required Callbacks
 	     */
-		'public addWidgetSubscription' : function(_widgetHandle, _callbackList){
-			if(Class.isA(WidgetHandle, _widgetHandle) && Class.isA(CallbackList, _callbackList)){
-				var widget = this.discoverer.getComponent(_widgetHandle.getId());
-				if(widget && widget.getName() === _widgetHandle.getName()){
+		'public addWidgetSubscription' : function(_widgetHandleOrWidget, _callbackList){
+            if (Class.isA(Widget, _widgetHandleOrWidget)) {
+                if (!_callbackList || !Class.isA(CallbackList, _callbackList)) {
+                    _callbackList = _widgetHandleOrWidget.getCallbackList();
+                }
+                _widgetHandleOrWidget = _widgetHandleOrWidget.getHandle();
+            }
+			if(Class.isA(WidgetHandle, _widgetHandleOrWidget) && Class.isA(CallbackList, _callbackList)){
+				var widget = this.discoverer.getComponent(_widgetHandleOrWidget.getId());
+				if(widget && widget.getName() === _widgetHandleOrWidget.getName()){
 					this.subscribeTo(widget, _callbackList);			
 					this.callbacks.putAll(_callbackList);			
 					var callsList = _callbackList.getItems();		
@@ -5441,7 +5447,7 @@ define('aggregator',['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandl
 							this.addAttributeType(singleType);
                         }
                     }
-                    this.addWidget(_widgetHandle);
+                    this.addWidget(_widgetHandleOrWidget);
                 }
             }
         },
