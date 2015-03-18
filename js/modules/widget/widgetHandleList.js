@@ -17,41 +17,41 @@ define([ 'easejs', 'abstractList', 'widgetHandle', 'widget'],
 		 * @requires WidgetHandle
 		 */
 		var WidgetHandleList = Class('WidgetHandleList').extend(AbstractList,{
-			/**
-			 * @alias counter
-			 * @protected
-			 * @type {integer}
-			 * @memberof WidgetHandleList#
-			 * @desc Number of items.
-			 */
-			'protected counter' : 0,
+
+            /**
+             * @alias counter
+             * @protected
+             * @type {int}
+             * @memberof AbstractList#
+             * @desc Number of Items.
+             */
+            'protected counter' : 0,
 			/**
 			 * @alias items
 			 * @protected
-			 * @type {WidgetHandleList}
+			 * @type {Array}
 			 * @memberof WidgetHandleList#
 			 * @desc ItemList.
 			 */
 			'protected items' : [],
-			
+
 			/**
 			 * Builder for item list.
 			 * 
 			 * @public
 			 * @alias withItems
 			 * @memberof WidgetHandleList#
-			 * @param {(WidgetHandleList|Array)}
-			 *            _widgetHandleList WidgetHandleList
+			 * @param {WidgetHandleList|Array} _widgetHandleListOrArray WidgetHandleList
 			 * @returns {WidgetHandleList}
 			 */
-			'public withItems' : function(_widgetHandleList) {
+			'public withItems' : function(_widgetHandleListOrArray) {
 				var list = [];
-				if (_widgetHandleList instanceof Array) {
-					list = _widgetHandleList;
-				} else if (Class.isA(WidgetHandleList, _widgetHandleList)) {
-					list = _widgetHandleList.getItems();
+				if (_widgetHandleListOrArray instanceof Array) {
+					list = _widgetHandleListOrArray;
+				} else if (Class.isA(WidgetHandleList, _widgetHandleListOrArray)) {
+					list = _widgetHandleListOrArray.getItems();
 				}
-				for ( var i in list) {
+				for (var i in list) {
 					var widgetHandle = list[i];
 					if (Class.isA(WidgetHandle,	widgetHandle)) {
 						this.items[widgetHandle.getName()] = widgetHandle;

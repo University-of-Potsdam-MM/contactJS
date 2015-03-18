@@ -305,7 +305,7 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 						for ( var i in list) {
 							this.setOutAttribute(list[i].getName(), list[i].getType(), 'unavailable');
 						}
-
+                        _function();
 					}
 				},
 
@@ -418,7 +418,7 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 						this.discoverer.registerNewComponent(this);
 					}
 
-				},
+				}
 				
 //				/**
 //				 * Unregisters the component to the associated discoverer

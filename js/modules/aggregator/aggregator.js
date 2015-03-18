@@ -44,7 +44,9 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 		 * @desc List of subscribed Widgets.
 		 */
 		'protected widgets' : [],		
-			
+
+        'protected interpreters' : [],
+
 		/**
 		 * @alias db
 		 * @protected
@@ -80,6 +82,7 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
 			this.id = Math.uuid();
 			this.widgets = new WidgetHandleList();
 			this.initWidgetHandles();
+            this.interpreters = [];
 			this.__super(_discoverer);
 			this.aggregatorSetup();
         },
@@ -597,6 +600,14 @@ define(['easejs', 'MathUuid','widget', 'widgetHandle', 'widgetHandleList',
                     }
                 });
             }
+        },
+
+        'public addInterpreter': function(_theInterpreter) {
+            this.interpreters.push(_theInterpreter.getId());
+        },
+
+        'public getInterpreters': function() {
+            return this.interpreters;
         }
     });
 

@@ -17,7 +17,7 @@ define([ 'easejs' ], function(easejs) {
 		/**
 		 * @alias counter
 		 * @protected
-		 * @type {integer}
+		 * @type {int}
 		 * @memberof AbstractList#
 		 * @desc Number of Items.
 		 */
@@ -100,10 +100,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @returns {boolean}
 		 */
 		'public containsKey' : function(_key) {
-			if (typeof _key !== 'undefined' && typeof this.items[_key] !== 'undefined') {
-				return true;
-			}
-			return false;
+			return !!(typeof _key !== 'undefined' && typeof this.items[_key] !== 'undefined');
 		},
 
 		/**
@@ -129,7 +126,7 @@ define([ 'easejs' ], function(easejs) {
 			if (this.containsKey(_key)) {
 				delete this.items[_key];				
 				this.counter--;
-			};
+			}
 		},
 
 		/**
@@ -169,7 +166,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @public
 		 * @alias size
 		 * @memberof AbstractList#
-		 * @returns {integer}
+		 * @returns {int}
 		 */
 		'public size' : function() {
 			return this.counter;
@@ -183,11 +180,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @returns {boolean}
 		 */
 		'public isEmpty' : function() {
-			if (this.counter == 0) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.counter == 0;
 		},
 		
 		/**
@@ -197,7 +190,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @memberof AbstractList#
 		 */
 		'public clear' : function() {
-			this.items = new Array();
+			this.items = [];
 			this.counter = 0;
 		}
 

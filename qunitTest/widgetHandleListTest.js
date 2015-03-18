@@ -8,7 +8,7 @@ require(['configTest'], function() {
 
                 var geoWidget = new GeoLocationWidget(new contactJS.Discoverer());
 				
-				var array = new Array();
+				var array = [];
 				array.push(widgetHandle2);
 				array.push(widgetHandle3);
 				var list = new contactJS.WidgetHandleList().withItems(array);
