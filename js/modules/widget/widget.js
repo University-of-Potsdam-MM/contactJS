@@ -121,7 +121,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @requires Discoverer
 			 * @constructs Widget
 			 */
-			'virtual public __construct' : function(_discoverer) {
+			'virtual public __construct' : function(_discoverer, _attributeTypes) {
 				this.id = Math.uuid();
                 this.discoverer = _discoverer;
                 this.register();
@@ -131,7 +131,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 				this.constantAttributes = new AttributeValueList();
 				this.subscribers = new SubscriberList();
 				this.callbacks = new CallbackList();
-				this.init();
+				this.init(_attributeTypes);
 			},
 
 			/**
@@ -203,10 +203,15 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @public
 			 * @alias getAttributes
 			 * @memberof Widget#
+             * @param {AttributeTypeList} _attributeTypeList
 			 * @returns {AttributeValueList}
 			 */
-			'public getAttributeValues' : function() {
-				return this.attributes;
+			'public getAttributeValues' : function(_attributeTypeList) {
+                if (Class.isA(AttributeTypeList, _attributeTypeList)) {
+                    return this.attributes.getSubset(_attributeTypeList);
+                } else {
+                    return this.attributes;
+                }
 			},
 
             /**
@@ -216,7 +221,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
              * @returns {*}
              */
             'public getAttributeValue': function(_attributeType) {
-                return this.getAttributeValues().getItem(_attributeType.getName()).getValue();
+                return this.getAttributeValues().getItem(_attributeType.getIdentifier()).getValue();
             },
 			
 			/**
@@ -329,7 +334,10 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			'protected setAttributes' : function(_attributes) {
 				var list = new Array();
 				if (_attributes instanceof Array) {
-					list = _attributes;
+					list = _attributes.reduce(function(o, v, i) {
+                        o[i] = v;
+                        return o;
+                    }, {});
 				} else if (Class.isA(AttributeValueList,_attributes)) {
 					list = _attributes.getItems();
 				}
@@ -550,14 +558,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @returns {boolean}
 			 */
 			'protected isAttribute' : function(_attribute) {
-				var type = new AttributeType().withName(_attribute.getName())
-											  .withType(_attribute.getType())
-											  .withParameters(_attribute.getParameters());
-				if (this.attributeTypes.contains(type)) {
-					return true;
-				} else {
-					return false;
-				}
+				return !!this.attributeTypes.contains(_attribute.getAttributeType());
 			},
 
 			/**
@@ -601,15 +602,25 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @alias init
 			 * @memberof Widget#
 			 */
-			'protected init' : function() {
+			'protected init' : function(_attributeTypes) {
 				this.initAttributes();
 				this.initConstantAttributes();
 				this.initCallbacks();
 
-                this.didFinishInitialization();
+                this.didFinishInitialization(_attributeTypes);
 			},
 
-            'public virtual didFinishInitialization' : function() {
+			/**
+			 * Method will be invoked after the initialization of the widget finished.
+			 * Can be overridden by inheriting classes to take action after initialization.
+			 *
+			 * @public
+			 * @virtual
+			 * @alias didFinishInitialization
+			 * @memberof Widget#
+			 * @param _attributeTypes
+			 */
+            'public virtual didFinishInitialization' : function(_attributeTypes) {
 
             },
 
@@ -793,7 +804,6 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 				var description = new WidgetDescription().withId(this.id).withName(this.name);
 				description.addOutAttributeTypes(this.attributeTypes);
 				description.addOutAttributeTypes(this.constantAttributeTypes);
-                // TODO: getCallbackNames for CallbackList
                 var widgetCallbacks = this.callbacks.getItems();
                 for(var i in widgetCallbacks) {
                     description.addCallbackName(widgetCallbacks[i].getName());
@@ -843,7 +853,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 				if (this.discoverer) {
 					this.discoverer.registerNewComponent(this);
 				}
-			},
+			}
 			
 //			/**
 //			 * Unregisters the component to the associated discoverer
@@ -859,10 +869,6 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 //					this.discoverer = null;
 //				}
 //			},
-
-            'public getHandle' : function() {
-                return this.getDescription().getHandle();
-            }
 
 		});
 

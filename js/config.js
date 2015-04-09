@@ -31,9 +31,7 @@ requirejs.config({
 	    callbackList: 'modules/subscriber/callbackList',
 	    subscriber: 'modules/subscriber/subscriber',
 	    subscriberList: 'modules/subscriber/subscriberList',
-	    widget: 'modules/widget/widget',      
-	    widgetHandle: 'modules/widget/widgetHandle',  		
-	    widgetHandleList: 'modules/widget/widgetHandleList',    
+	    widget: 'modules/widget/widget',
 	    abstractList: 'modules/abstractList'
     },
     

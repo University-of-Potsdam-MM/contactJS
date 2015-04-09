@@ -93,8 +93,8 @@ define(['easejs'],
 			'public setKey' : function(_key){
 				if(typeof _key === 'string'){
 					this.key = _key;
-				};
-			},
+                }
+            },
 
 			/**
 			 * Sets the value.
@@ -107,8 +107,8 @@ define(['easejs'],
 			'public setValue' : function(_value){
 				if(typeof _value === 'string'){
 					this.value = _value;
-				};
-			},
+                }
+            },
 			
 			/**
 			 * Compares this instance with the given one.
@@ -122,16 +122,48 @@ define(['easejs'],
 			 */
 			'public equals' : function(_parameter) {
 				if(Class.isA(Parameter, _parameter)){
-					if(_parameter.getKey() == this.getKey() && _parameter.getValue() == this.getValue()){
+					if(_parameter.getIdentifier() == this.getIdentifier()){
 						return true;
-					};
-				};
-				return false;
+					}
+                }
+                return false;
 
 			},
 
-			});
+			/**
+			 * Returns a string that describes the parameter.
+			 *
+			 * @public
+			 * @override
+			 * @alias toString
+			 * @memberof Parameter#
+			 * @returns {string}
+			 */
+            'public toString': function() {
+				return this.getIdentifier();
+            },
 
-		return Parameter;
+			/**
+			 * Returns an identifier that uniquely describes the parameter.
+			 * The identifier can be used to compare two parameters.
+			 * Format: [ParameterName:ParameterValue]
+			 *
+			 * @public
+			 * @alias getIdentifier
+			 * @memberof Parameter#
+			 * @returns {String}
+			 * @example [CP_UNIT:KILOMETERS]
+			 */
+            'public getIdentifier': function() {
+				if (this.value != "PV_INPUT") {
+					return "["+this.key+":"+this.value+"]";
+				} else {
+					return "["+this.key+"]";
+				}
+            }
+
+		});
+
+        return Parameter;
 	
 });

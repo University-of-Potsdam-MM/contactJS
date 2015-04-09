@@ -74,8 +74,8 @@ define([ 'easejs', 'contactJS' ],
 			 */
 			'protected initCallbacks' : function() {
 				var list = new contactJS.AttributeTypeList();
-				list.put(this.getAttributeTypes().getItem("latitude"));
-				list.put(this.getAttributeTypes().getItem("longitude"));
+				list.put(this.getAttributeTypes().getItem("(latitude:double)"));
+				list.put(this.getAttributeTypes().getItem("(longitude:double)"));
 				var call = new contactJS.Callback().withName('UPDATE').withAttributeTypes(list);
 				this.addCallback(call);
 			},
@@ -129,6 +129,7 @@ define([ 'easejs', 'contactJS' ],
 				var longitude = new contactJS.AttributeValue().withName('longitude')
 												.withType('double')
 												.withValue(_position.coords.longitude);
+
 				var response = new contactJS.AttributeValueList();
 				response.put(latitude);
 				response.put(longitude);
@@ -153,10 +154,10 @@ define([ 'easejs', 'contactJS' ],
 			'private onError' : function(error, self, _function) {
                 var latitude = new contactJS.AttributeValue().withName('latitude')
                     .withType('double')
-                    .withValue("undefined");
+                    .withValue("request_error");
                 var longitude = new contactJS.AttributeValue().withName('longitude')
                     .withType('double')
-                    .withValue("undefined");
+                    .withValue("request_error");
 
                 var response = new contactJS.AttributeValueList();
                 response.put(latitude);

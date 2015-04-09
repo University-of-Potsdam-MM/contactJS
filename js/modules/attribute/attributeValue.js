@@ -45,7 +45,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 				 */
 				'public withValue' : function(_value) {
 					this.setValue(_value);
-					this.setTimestamp(new Date());
+					this.setTimestamp(Date.now());
 					return this;
 				},
 
@@ -157,11 +157,23 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 				'public buildFromAttributeType' : function(_attributeType) {
 					if (Class.isA(AttributeType, _attributeType)) {
                         return new AttributeValue().withName(_attributeType.getName())
-                            .withType(_attributeType.getType()).withParameter(_attributeType.getParameters()).withValue('undefined');
+                            .withType(_attributeType.getType()).withParameters(_attributeType.getParameters()).withValue('undefined');
 					}
 					return null;
-				}
+				},
 
+				/**
+				 * Returns a string that describes the attribute type and its value.
+				 *
+				 * @public
+				 * @override
+				 * @alias toString
+				 * @memberof AttributeValue#
+				 * @returns {string}
+				 */
+                'override public toString': function() {
+                    return this.getIdentifier()+":"+this.getValue();
+                }
 			});
 
 	return AttributeValue;

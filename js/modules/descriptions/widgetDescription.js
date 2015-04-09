@@ -5,8 +5,8 @@
  * @module WidgetDescription
  * @fileOverview
  */
-define(['easejs', 'attributeTypeList', 'widgetHandle'],
-    function(easejs, AttributeTypeList, WidgetHandle){
+define(['easejs', 'attributeTypeList'],
+    function(easejs, AttributeTypeList){
     	var Class = easejs.Class;
 		var WidgetDescription = Class('WidgetDescription',{
 			
@@ -209,10 +209,18 @@ define(['easejs', 'attributeTypeList', 'widgetHandle'],
                 this.callbackNames.push(_callbackName);
             },
 
-            'public getHandle' : function() {
-                return new WidgetHandle().withName(this.name).withId(this.id);
+			/**
+			 * Returns true if the widget can satisfy the requested attribute type.
+			 *
+			 * @public
+			 * @alias doesSatisfyAttributeType
+			 * @memberof WidgetDescription#
+			 * @param {AttributeType} _attributeType
+			 * @returns {boolean}
+			 */
+            'public doesSatisfyAttributeType': function(_attributeType) {
+                return this.getOutAttributeTypes().contains(_attributeType);
             }
-			
 		});
 
         return WidgetDescription;

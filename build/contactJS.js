@@ -21,9 +21,7 @@
 		    'callbackList',
 		    'subscriber',
 		    'subscriberList',
-		    'widget',      
-		    'widgetHandle',  		
-		    'widgetHandleList',    
+		    'widget',
 		    'abstractList'], 
 		function(RetrievalResult,
 				Storage,
@@ -48,16 +46,14 @@
 			    CallbackList,
 			    Subscriber,
 			    SubscriberList,
-			    Widget,      
-			    WidgetHandle,  		
-			    WidgetHandleList,    
+			    Widget,
 			    AbstractList) {
 		
 	// Object Contructor
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '1.0.1';
+	contactJS.VERSION = '1.1.0';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
@@ -83,8 +79,6 @@
 	contactJS.Subscriber =Subscriber;
 	contactJS.SubscriberList = SubscriberList;
 	contactJS.Widget = Widget;
-	contactJS.WidgetHandle = WidgetHandle;  		
-	contactJS.WidgetHandleList = WidgetHandleList;    
 	contactJS.AbstractList = AbstractList;
 	return contactJS;
 });

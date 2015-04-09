@@ -1,15 +1,16 @@
 require(['configTest'], function() {
-	require(['../examples/AddressInterpreter', '../examples/TestAggregator', 'contactJS'],
-	         	function(AddressInterpreter, TestAggregator, contactJS){
+	require(['../examples/GeoLocationWidget', '../examples/AddressInterpreter', 'contactJS'],
+	         	function(GeoLocationWidget, AddressInterpreter, contactJS){
 		
 			QUnit.asyncTest( "interpret", function( assert ) {
 				
 				//initializes the test environment
-				var testInterpreter =new AddressInterpreter();
-				var testAggregator = new TestAggregator();
 				var discoverer = new contactJS.Discoverer();
-				testAggregator.setDiscoverer(discoverer);			        
-				testInterpreter.setDiscoverer(discoverer);
+				new GeoLocationWidget(discoverer);
+				new AddressInterpreter(discoverer);
+				var testAggregator = new contactJS.Aggregator(discoverer, [
+					new contactJS.AttributeType().withName('formattedAddress').withType('string')
+				]);
 				
 				var interpreter = discoverer.getDescriptions([contactJS.Interpreter]);
 				
@@ -17,7 +18,8 @@ require(['configTest'], function() {
 				var latitudeValue = new contactJS.AttributeValue().withName('latitude')
 								.withType('double').withValue(52.3992404);
 				var longitudeValue = new contactJS.AttributeValue().withName('longitude')
-								.withType('double').withValue(13.066132);				
+								.withType('double').withValue(13.066132);
+
 				var list = new contactJS.AttributeValueList();
 				list.put(latitudeValue);
 				list.put(longitudeValue);
@@ -30,7 +32,7 @@ require(['configTest'], function() {
 				
 				var aggData = testAggregator.getCurrentData();
 				var data = aggData.getSubset(typeList);
-				assert.equal( data.size(), 2,"Passed!: two available attributes" );
+				assert.equal( data.size(), 2, "Passed!: two available attributes" );
 			    
 				//call Interpreter
 				var callFunktion = function(){
@@ -39,15 +41,13 @@ require(['configTest'], function() {
 					testAggregator.addAttribute(formattedAddress.getItem('formattedAddress'));
 					var data2 = testAggregator.getCurrentData();
 					assert.equal( data2.size(), 3,"Passed!: three available attributes" );
-					var item = data2.getItem('formattedAddress');
+					var item = data2.getItem('(formattedAddress:string)');
 					assert.ok(item,"Callback passed!: interpreted data exists" );
 	    			var add = "Charlottenstraße 70, 14467 Potsdam, Deutschland";
 	    			assert.equal(item.getValue(), add ,"Passed!: interpreted data equals expected value" );
-	    		
 				};
 				
-				testAggregator.interpretData(interpreter[0].getId(), data, function () {callFunktion(); QUnit.start();});
-					
+				testAggregator.interpretData(interpreter[0].getId(), function () {callFunktion(); QUnit.start();});
 			});
 			
 

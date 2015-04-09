@@ -111,7 +111,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @param {string} _key key that should be searched for
 		 * @returns {*} 
 		 */
-		'public getItem' : function(_key) {
+		'virtual public getItem' : function(_key) {
 			return this.items[_key];
 		},
 

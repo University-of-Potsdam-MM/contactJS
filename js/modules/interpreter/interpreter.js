@@ -225,12 +225,7 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @return {boolean}
 				 */
 				'protected isInAttribute' : function(_attribute) {
-					var type = _attribute.getAttributeType();
-					if (this.inAttributeTypes.contains(type)) {
-						return true;
-					} else {
-						return false;
-					}
+					return !!this.inAttributeTypes.contains(_attribute.getAttributeType());
 				},
 
 				/**
@@ -274,12 +269,7 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @return {boolean}
 				 */
 				'protected isOutAttribute' : function(_attribute) {
-					var type = _attribute.getAttributeType();
-					if (this.outAttributeTypes.contains(type)) {
-						return true;
-					} else {
-						return false;
-					}
+					return !!this.outAttributeTypes.contains(_attribute.getAttributeType());
 				},
 
 				/**
@@ -331,7 +321,7 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @param {AttributeValueList} _inAtts Data that should be verified.
 				 */
 				'protected canHandle' : function(_inAtts) {
-					var list = new Array();
+					var list = []
 					if (_inAtts instanceof Array) {
 						list = _inAtts;
 					} else if (Class.isA(AttributeValueList, _inAtts)) {

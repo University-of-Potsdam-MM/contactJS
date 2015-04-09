@@ -3,8 +3,6 @@ require(['configTest'], function() {
 	         	function(AddressInterpreter, contactJS){
 		
 			QUnit.asyncTest( "AddressInterpreter", function( assert ) {
-				
-				
 				var testInterpreter = new AddressInterpreter();
 		    				        
 		        var id = testInterpreter.getId();
@@ -17,18 +15,19 @@ require(['configTest'], function() {
 				var longitudeType = new contactJS.AttributeType().withName('longitude')
 									.withType('double');
 				var inTypes = testInterpreter.getInAttributeTypes();
+
 				assert.ok( inTypes.size() == 2,"Passed!: 2 defined type in addressInterpreter" );
-				assert.ok( inTypes.getItem('latitude'),"Passed!:type latitude exists" );
-				assert.ok( inTypes.getItem('latitude').equals(latitudeType),"Passed!:type latitude equals expected type" );
-				assert.ok( inTypes.getItem('longitude'),"Passed!:type longitude exists" );
-				assert.ok( inTypes.getItem('longitude').equals(longitudeType),"Passed!: longitude equals expected type" );
+				assert.ok( inTypes.getItem('(latitude:double)'),"Passed!:type latitude exists" );
+				assert.ok( inTypes.getItem('(latitude:double)').equals(latitudeType),"Passed!:type latitude equals expected type" );
+				assert.ok( inTypes.getItem('(longitude:double)'),"Passed!:type longitude exists" );
+				assert.ok( inTypes.getItem('(longitude:double)').equals(longitudeType),"Passed!: longitude equals expected type" );
 			
 				//getOutAttributeTypes
 				var formattedAddress = new contactJS.AttributeType().withName('formattedAddress').withType('string');
 				var outTypes = testInterpreter.getOutAttributeTypes();
 				assert.ok( outTypes.size() == 1,"Passed!: 1 defined outType in addressInterpreter" );
-				assert.ok( outTypes.getItem('formattedAddress'),"Passed!: formattedAddress exists" );
-				assert.ok( outTypes.getItem('formattedAddress').equals(formattedAddress),"Passed!: formattedAddress equals expected type" );
+				assert.ok( outTypes.getItem('(formattedAddress:string)'),"Passed!: formattedAddress exists" );
+				assert.ok( outTypes.getItem('(formattedAddress:string)').equals(formattedAddress),"Passed!: formattedAddress equals expected type" );
 			
 				
 				//interpreterDescription				
@@ -46,7 +45,7 @@ require(['configTest'], function() {
 				var longitudeValue = new contactJS.AttributeValue().withName('longitude')
 								.withType('double').withValue(13.066132);
 						
-				var array = new Array();
+				var array = [];
 				array.push(latitudeValue);
 				array.push(longitudeValue);
 				var attributeList = new contactJS.AttributeValueList().withItems(array);
@@ -65,12 +64,10 @@ require(['configTest'], function() {
 		    			assert.ok(att.getAttributeType().equals(formattedAddress),"Callback passed!: interpreted data equals expected type" );
 		    			var add = "Charlottenstraße 70, 14467 Potsdam, Deutschland";
 		    			assert.equal(att.getValue(), add ,"Passed!: interpreted data equals expected value" );
-		    		};
+		    		}
 	    		};	  
 	    		
 	    		testInterpreter.callInterpreter(attributeList, function () {assertData2(); QUnit.start();});
-			
-					
 			});
 			
 

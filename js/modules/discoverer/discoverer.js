@@ -13,29 +13,29 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		/**
 		 * @alias widgets
 		 * @private
-		 * @type {Array}
+		 * @type {Object}
 		 * @memberof Discoverer#
 		 * @desc List of available Widgets.
 		 */
-		'private widgets' : [],
+		'private widgets' : {},
 		
 		/**
 		 * @alias aggregators
 		 * @private
-		 * @type {Array}
+		 * @type {Object}
 		 * @memberof Discoverer#
 		 * @desc List of available Aggregators.
 		 */
-		'private aggregators' : [],
+		'private aggregators' : {},
 		
 		/**
 		 * @alias interpreter
 		 * @private
-		 * @type {Array}
+		 * @type {Object}
 		 * @memberof Discoverer#
 		 * @desc List of available Interpreter.
 		 */
-		'private interpreter' : [],
+		'private interpreter' : {},
 
 		/**
 		 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -153,7 +153,7 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		'public getWidget' : function(_id) {
 			var widget =  this.widgets[_id];
 			if(!widget){
-				this.widgets.splice(_id, 1);
+				delete(this.widgets[_id]);
 				return null;
 			}
 			return widget;
@@ -171,7 +171,7 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		'public getAggregator' : function(_id) {
 			var aggregator = this.aggregators[_id];
 			if(!aggregator ){
-				this.aggregators.splice(_id, 1);
+				delete(this.aggregators[_id]);
 				return null;
 			}
 			return aggregator;
@@ -189,7 +189,7 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		'public getInterpreter' : function(_id) {
 			var interpret = this.interpreter[_id];
 			if(!interpret){
-				this.interpreter.splice(_id, 1);
+                delete(this.interpreter[_id]);
 				return null;
 			}
 			return interpret;
@@ -300,21 +300,21 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		 * @public
 		 * @alias getComponentsByAttributes
 		 * @memberof Discoverer#
-		 * @param {(AttributeTypeList|Array)} _attributeTypeList list of searched attributes
+		 * @param {AttributeTypeList} _attributeTypeList list of searched attributes
 		 * @param {boolean} _all choise of the verification mode
          * @param {Array} _componentTypes Components types to search for
 		 * @returns {Array}
 		 */
 		'public getComponentsByAttributes' : function(_attributeTypeList, _all, _componentTypes) {
 			var componentList = [];
-			var list = [];
+			var list = {};
             if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
 			if (_attributeTypeList instanceof Array) {
 				list = _attributeTypeList;
 			} else if (Class.isA(AttributeTypeList, _attributeTypeList)) {
 				list = _attributeTypeList.getItems();
 			}
-			if (list) {
+			if (typeof list != "undefined") {
 				var descriptions = this.getDescriptions(_componentTypes);
 				for (var i in descriptions) {
 					var description = descriptions[i];
@@ -344,7 +344,7 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		'private containsAllAttributes' : function(_description,_list) {
 			for ( var j in _list) {
 				var attribute = _list[j];
-				if (!_description.getOutAttributeTypes().contains(attribute)) {
+				if (!_description.doesSatisfyAttributeType(attribute)) {
 					return false;
 				}
 			}
@@ -361,10 +361,10 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		 * @param {Array} _list searched attributes
 		 * @returns {boolean}
 		 */
-		'private containsAtLeastOneAttribute' : function(_description,_list) {
-			for ( var j in _list) {
+		'private containsAtLeastOneAttribute' : function(_description, _list) {
+			for (var j in _list) {
 				var attribute = _list[j];
-				if (_description.getOutAttributeTypes().contains(attribute)) {
+				if (_description.doesSatisfyAttributeType(attribute)) {
 					return true;
 				}
 			}

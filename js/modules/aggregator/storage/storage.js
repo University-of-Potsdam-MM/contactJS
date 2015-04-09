@@ -144,7 +144,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 			if(!window.openDatabase) {
 		        console.log('Databases are not supported in this browser.');
 			}else{
-				this.db = window.openDatabase(_name, "1.0", "DB_" + _name, 1000000);			
+				this.db = window.openDatabase(_name, "1.0", "DB_" + _name, 1024*1024);
 				console.log('initStorage: ' + _name);
 			}
 		},
@@ -171,7 +171,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 				if(!this.attributeNames.indexOf(name) > -1){
 					this.attributeNames.push(tableName);
 				}
-				console.log('createTable: ' + tableName);
+				console.log('CREATE TABLE IF NOT EXISTS ' + tableName);
 			}
 		},
 		
@@ -199,7 +199,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 				} else {
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, this.successCB);
 				}
-				console.log('insertIntoTable: ' + tableName);
+				console.log('INSERT INTO '+tableName+' VALUES ('+_attributeValue.getValue()+", "+_attributeValue.getType()+", "+_attributeValue.getTimestamp());
 			}
 		},
 		
@@ -224,7 +224,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @memberof Storage#
 		 */	
 		'private successCB' : function() {
-		    console.log("success!");
+		    console.log("SQL processed successfully!");
 		},
 		
 		

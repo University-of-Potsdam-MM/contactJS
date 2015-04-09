@@ -44,7 +44,7 @@ define([ 'easejs', 'abstractList', 'parameter' ],
 			 * @returns {ParameterList}
 			 */
 			'public withItems' : function(_parameterList) {
-				var list = new Array();
+				var list = [];
 				if (_parameterList instanceof Array) {
 					list = _parameterList;
 				} else if (Class.isA(ParameterList, _parameterList)) {
@@ -87,7 +87,7 @@ define([ 'easejs', 'abstractList', 'parameter' ],
 			 * @param {ParameterList} _parameterList ParameterList
 			 */
 			'public putAll' : function(_parameterList) {
-				var list = new Array();
+				var list = [];
 				if (_parameterList instanceof Array) {
 					list = _parameterList;
 				} else if (Class.isA(ParameterList,	_parameterList)) {
@@ -136,35 +136,71 @@ define([ 'easejs', 'abstractList', 'parameter' ],
 			 */
 			'public equals' : function(_parameterList) {
 				if (Class.isA(ParameterList, _parameterList) && _parameterList.size() == this.size()) {
-					var keys = _parameterList.getKeys();
-					for ( var i in _parameterList.getKeys()) {
-						var parameter = new Parameter().withKey(keys[i])
-										.withValue(_parameterList.getItem(keys[i]));
-						if (!this.contains(parameter)) {
-							false;
-						}
-					}
+                    for (var index in _parameterList.getItems()) {
+                        var theParameter = _parameterList.getItems()[index];
+                        if (!this.contains(theParameter)) return false;
+                    }
 					return true;
 				}
 				return false;
 			},
 
 			/**
-			 * Returns all items.
+			 * Returns all items as parameter objects.
 			 * @public
 			 * @alias getItems
 			 * @memberof ParameterList#
-			 * @returns {Array}
+			 * @returns {Array<Parameter>}
 			 */
 			'override public getItems' : function() {
-				var parameters = new Array();
-				for ( var key in this.items) {
+				var parameters = [];
+				for (var key in this.items) {
 					var parameter = new Parameter().withKey(key)
 									.withValue(this.items[key]);
 					parameters.push(parameter);
 				}
 				return parameters;
 			},
+
+			/**
+			 * Returns the objects of the list as JSON objects.
+			 *
+			 * @public
+			 * @alias getItemsAsJson
+			 * @memberof ParameterList#
+			 * @returns {{}}
+			 */
+            'public getItemsAsJson': function() {
+                var parameters = {};
+                for (var key in this.items) {
+                    parameters[key] = this.items[key];
+                }
+                return parameters;
+            },
+
+			/**
+			 * Returns an identifier of all the parameters in the list.
+			 * The identifier can be used to compare two parameter lists. <br/>
+			 * Format: [FirstParameterName:FirstParameterValue][SecondParameterName:SecondParameterValue]…
+			 *
+			 * @public
+			 * @alias getIdentifier
+			 * @memberof ParameterList#
+			 * @returns {String}
+			 * @example [CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
+			 */
+            'public getIdentifier': function() {
+                var identifier = "";
+                for (var key in this.items) {
+                    var value = this.items[key];
+					if (value != "PV_INPUT") {
+						identifier += "["+key+":"+value+"]";
+					} else {
+						identifier += "["+key+"]";
+					}
+                }
+                return identifier;
+            }
 		});
 
 		return ParameterList;

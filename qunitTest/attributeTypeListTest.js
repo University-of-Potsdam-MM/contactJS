@@ -13,7 +13,7 @@ require(['configTest'], function() {
 				var attributeType = new contactJS.AttributeType().withName('testName')
 											.withType('integer');
 				
-				var array = new Array();
+				var array = [];
 				array.push(latitudeType);
 				array.push(longitudeType);
 				var list = new contactJS.AttributeTypeList().withItems(array);
@@ -36,24 +36,24 @@ require(['configTest'], function() {
 				assert.ok( !list.equals(list2), "Passed!: equals -> false" );
 				
 				//containsKey
-				assert.ok( list2.containsKey('testName'), "Passed!: containsKey -> true" );
-				assert.ok( !list.containsKey('testName'), "Passed!: containsKey -> false" );
+				assert.ok( list2.containsKey('(testName:integer)'), "Passed!: containsKey -> true" );
+				assert.ok( !list.containsKey('(testName:integer)'), "Passed!: containsKey -> false" );
 				
 				//getItem
-				assert.ok( list2.getItem('testName').equals(attributeType), "Passed!: getItem" );
-				assert.ok( !list.getItem('testName'), "Passed!: getItem -> undefined" );
+				assert.ok( list2.getItem('(testName:integer)').equals(attributeType), "Passed!: getItem" );
+				assert.ok( !list.getItem('(testName:integer)'), "Passed!: getItem -> undefined" );
 				
 				//removeItem
-				list2.removeItem('testName');
+				list2.removeItem('(testName:integer)');
 				assert.equal( list2.size(),2, "Passed!: removeItem" );
-				assert.ok( !list2.getItem('testName'), "Passed!: item removed" );
-				list.removeItem('testName');
+				assert.ok( !list2.getItem('(testName:integer)'), "Passed!: item removed" );
+				list.removeItem('(testName:integer)');
 				assert.equal( list.size(), 2, "Passed!: removeItem: key does not exist" );
 				
 				//getKeys
 				assert.equal( list2.getKeys().length, 2, "Passed!: getKeys" );
-				assert.equal( list2.getKeys()[0], 'latitude', "Passed!: getKeys -> latitude" );
-				assert.equal( list2.getKeys()[1], 'longitude', "Passed!: getKeys -> longitude" );
+				assert.equal( list2.getKeys()[0], '(latitude:double)#[testKey:testValue]', "Passed!: getKeys -> latitude" );
+				assert.equal( list2.getKeys()[1], '(longitude:double)', "Passed!: getKeys -> longitude" );
 				
 				//getItems
 				assert.equal( list2.getItems().length, 2, "Passed!: getItems" );

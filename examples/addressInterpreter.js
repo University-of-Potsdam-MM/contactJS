@@ -78,8 +78,8 @@ define(['easejs', 'jquery', 'contactJS'],
 			'protected interpretData' : function(_data, _function) {
 				if(navigator.onLine){
 					var self = this;
-					var lat = _data.getItem('latitude');
-					var lng = _data.getItem('longitude');
+					var lat = _data.getItem('(latitude:double)');
+					var lng = _data.getItem('(longitude:double)');
 					if (lat.getValue() && lng.getValue()) {
 						var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="
 								+ lat.getValue()+ ","+ lng.getValue()+ "&sensor=false";

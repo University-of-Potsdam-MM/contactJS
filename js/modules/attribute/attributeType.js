@@ -193,6 +193,10 @@ define(['easejs',
 				this.parameterList.putAll(_parameters);
 			},
 
+            'public hasParameters' : function() {
+                return this.parameterList.size() > 0;
+            },
+
 			/**
 			 * Compares this instance with the given one.
 			 * 
@@ -205,15 +209,45 @@ define(['easejs',
 			 */
 			'virtual public equals' : function(_attributeType) {				
 				if(Class.isA(AttributeType, _attributeType)){
-					if(_attributeType.getName() == this.getName() 
-								&& _attributeType.getType() == this.getType()
-								&& _attributeType.getParameters().equals(this.parameterList)){
+					if (this.getIdentifier() == _attributeType.getIdentifier()) {
 						return true;
                     }
                 }
                 return false;
+			},
 
-			}
+			/**
+			 * Returns a string that describes the attribute type.
+			 *
+			 * @virtual
+			 * @public
+			 * @alias toString
+			 * @memberof AttributeType#
+			 * @returns {String}
+			 */
+            'virtual public toString': function() {
+                return this.getIdentifier();
+            },
+
+			/**
+			 * Returns an identifier that uniquely describes the attribute type and its parameters.
+			 * The identifier can be used to compare two attribute types. <br/>
+			 * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterValue]…
+			 *
+			 * @public
+			 * @alias getIdentifier
+			 * @memberof AttributeType#
+			 * @returns {String}
+			 * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
+			 */
+            'public getIdentifier': function() {
+                var identifier = "("+this.name+":"+this.type+")";
+                if (this.hasParameters()) {
+                    identifier += "#";
+                    identifier += this.parameterList.getIdentifier();
+                }
+                return identifier;
+            }
 
         });
 

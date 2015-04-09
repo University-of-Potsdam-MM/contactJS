@@ -12,18 +12,15 @@ requirejs.config({
     },
     
     shim:{
-    	
       'easejs' : {
         exports : 'easejs'
       },
       'jquery' : {
           exports : '$'
         },
-        
       'MathUuid' : {
           exports : 'MathUuid'
         }
-         
     }
 
 });
