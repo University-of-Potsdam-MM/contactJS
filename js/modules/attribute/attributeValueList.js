@@ -20,14 +20,7 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 		 * @requires AttributeTypeList)
 		 */
 		var AttributeValueList = Class('AttributeValueList').extend(AbstractList,{
-			/**
-			 * @alias counter
-			 * @protected
-			 * @type {integer}
-			 * @memberof AttributeValueList#
-			 * @desc Number of items.
-			 */
-			'protected counter' : 0,
+
 			/**
 			 * @alias items
 			 * @protected
@@ -35,7 +28,7 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 			 * @memberof AttributeValueList#
 			 * @desc ItemList.
 			 */
-			'protected items' : {},
+			'protected items' : [],
 
 			/**
 			 * Builder for item list.
@@ -54,13 +47,7 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 						_attributeValueList)) {
 					list = _attributeValueList.getItems();
 				}
-				for (var i in list) {
-					var attributeValue = list[i];
-					if (Class.isA(AttributeValue, attributeValue)) {
-						this.items[attributeValue.getIdentifier()] = attributeValue;
-						this.counter++;
-					}
-				}
+				this.items = list;
 				return this;
 			},
 
@@ -72,12 +59,13 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 			 * @memberof AttributeValueList#
 			 * @param {AttributeValue} _attributeValue AttributeValue
 			 */
-			'public put' : function(_attributeValue) {
+			'public put' : function(_attributeValue, _multipleInstances) {
 				if (Class.isA(AttributeValue, _attributeValue)) {
-					if (!(this.containsKey(_attributeValue.getIdentifier()))) {
-						this.counter++;
+					if (_multipleInstances || !(this.containsAttributeType(_attributeValue.getAttributeType()))) {
+						this.items.push(_attributeValue);
+					} else {
+						this.updateValue(_attributeValue);
 					}
-					this.items[_attributeValue.getIdentifier()] = _attributeValue;
 				}
 			},
 
@@ -97,14 +85,8 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 				} else if (Class.isA(AttributeValueList, _attributeValueList)) {
 					list = _attributeValueList.getItems();
 				}
-				for ( var i in list) {
-					var attributeValue = list[i];
-					if (Class.isA(AttributeValue, attributeValue)) {
-						if (!(this.containsKey(attributeValue.getIdentifier()))) {
-							this.counter++;
-						}
-						this.items[attributeValue.getIdentifier()] = attributeValue;
-					}
+				for (var i in list) {
+					this.put(list[i]);
 				}
 			},
 
@@ -115,14 +97,28 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 			 * @public
 			 * @alias contains
 			 * @memberof AttributeValueList#
-			 * @param {AttributeValue} _item AttributeValue that should be verified.
+			 * @param {AttributeValue} _attributeValue AttributeValue that should be verified.
 			 * @returns {boolean}
 			 */
-			'public contains' : function(_item) {
-				if (Class.isA(AttributeValue, _item)) {
-					var tmp = this.getItem(_item.getIdentifier());
-					if (!(typeof tmp === 'undefined') && tmp.equals(_item)) {
-						return true;
+			'public contains' : function(_attributeValue) {
+				if (Class.isA(AttributeValue, _attributeValue)) {
+					for (var index in this.items) {
+						var tmp = this.items[index];
+						if (tmp.equals(_attributeValue)) {
+							return true;
+						}
+					}
+				}
+				return false;
+			},
+
+			'public containsAttributeType': function(_attributeType) {
+				if (Class.isA(AttributeType, _attributeType)) {
+					for (var index in this.items) {
+						var tmp = this.items[index].getAttributeType();
+						if (tmp.equals(_attributeType)) {
+							return true;
+						}
 					}
 				}
 				return false;
@@ -140,12 +136,9 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 			 */
 			'public equals' : function(_list) {
 				if (Class.isA(AttributeValueList, _list) && _list.size() == this.size()) {
-					var items = _list.getItems();
-					for ( var i in items) {
-						var item = items[i];
-						if (!this.contains(item)) {
-							return false;
-						}
+					for (var index in _list.getItems()) {
+						var theAttributeValue = _list.getItems()[index];
+						if (!this.contains(theAttributeValue)) return false;
 					}
 					return true;
 				}
@@ -173,7 +166,7 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 				for ( var i in list) {
 					var attributeType = list[i];
 					if (Class.isA(AttributeType, attributeType)) {
-						var attribute = this.items[attributeType.getIdentifier()];
+						var attribute = this.getValueObjectForAttributeType(attributeType);
 						if (typeof attribute != "undefined") {
 							response.put(attribute);
 						}
@@ -202,24 +195,11 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 				for (var i in list) {
 					var attributeType = list[i];
 					if (Class.isA(AttributeType, attributeType)) {
-						response.removeItem(attributeType.getIdentifier());
+						response.removeAttributeValuesWithAttributeType(attributeType);
 					}
 				}
 				return response;
 			},
-
-            /**
-             * Alias for {#getItem}.
-             *
-             * @public
-             * @alias getValue
-			 * @memberof AttributeValueList#
-             * @param _key The value key.
-             * @returns {*}
-             */
-            'public getAttributeValue': function(_key) {
-                return this.getItem(_key);
-            },
 
 			/**
 			 * Returns the attribute value that matches the provided attribute type.
@@ -231,9 +211,29 @@ define(['easejs', 'abstractList', 'attributeValue', 'attributeType', 'attributeT
 			 * @returns {AttributeValue}
 			 */
             'public getValueForAttributeType': function(_attributeType) {
-                return this.getAttributeValue(_attributeType.getIdentifier()).getValue();
-            }
+				return this.getValueObjectForAttributeType(_attributeType).getValue();
+            },
 
+			'public getValueObjectForAttributeType': function(_attributeType) {
+				for (var index in this.getItems()) {
+					var theAttributeValue = this.getItems()[index];
+					if (theAttributeValue.getAttributeType().equals(_attributeType)) return theAttributeValue;
+				}
+			},
+
+			'public removeAttributeValuesWithAttributeType': function(_attributeType) {
+				for (var index in this.items) {
+					var theAttributeValue = this.items[index];
+					if (theAttributeValue.getAttributeType().equals(_attributeType)) this.items.splice(index, 1);
+				}
+			},
+
+			'public updateValue': function(_attributeValue) {
+				for (var index in this.items) {
+					var theAttributeValue = this.items[index];
+					if (theAttributeValue.getAttributeType().equals(_attributeValue.getAttributeType())) this.items[index] = _attributeValue;
+				}
+			}
 		});
 
 		return AttributeValueList;

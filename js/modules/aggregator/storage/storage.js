@@ -162,16 +162,16 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		'private createTable' : function(_attribute, _function){
 			if(this.db){
 				var tableName = this.tableName(_attribute);
-				var statement = 'CREATE TABLE IF NOT EXISTS ' + tableName + ' (value_, type_, created_)';
+				var statement = 'CREATE TABLE IF NOT EXISTS "' + tableName + '" (value_, type_, created_)';
+				console.log('CREATE TABLE IF NOT EXISTS "' + tableName + '"');
 				if(_function && typeof(_function) == 'function'){
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, _function);	
 				} else {
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, this.successCB);			
 				}
-				if(!this.attributeNames.indexOf(name) > -1){
+				if(!this.attributeNames.indexOf(_attribute.getName()) > -1){
 					this.attributeNames.push(tableName);
 				}
-				console.log('CREATE TABLE IF NOT EXISTS ' + tableName);
 			}
 		},
 		
@@ -188,18 +188,17 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		'private insertIntoTable' : function(_attributeValue, _function){
 			if(this.db && _attributeValue && Class.isA(AttributeValue, _attributeValue)){
 				var tableName = this.tableName(_attributeValue);
-				var statement = 'INSERT INTO ' + tableName 
-									 + ' (value_, type_, created_) VALUES ("'
+				var statement = 'INSERT INTO "' + tableName
+									 + '" (value_, type_, created_) VALUES ("'
 									 + _attributeValue.getValue() + '", "' 
 									 + _attributeValue.getType() + '", "'
 									 + _attributeValue.getTimestamp() + '")';
-	
+				console.log('INSERT INTO "'+tableName+'" VALUES ('+_attributeValue.getValue()+", "+_attributeValue.getType()+", "+_attributeValue.getTimestamp());
 				if(_function && typeof(_function) == 'function'){
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, _function);	
 				} else {
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, this.successCB);
 				}
-				console.log('INSERT INTO '+tableName+' VALUES ('+_attributeValue.getValue()+", "+_attributeValue.getType()+", "+_attributeValue.getTimestamp());
 			}
 		},
 		
@@ -465,10 +464,8 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 			if(self.data.size() == 0){
 				return;
 			}
-			var keys = self.data.getKeys();
-			for(var i in keys){
-				var key = keys[i];
-				var item = self.data.getItem(key);
+			for(var i in self.data.getItems()){
+				var item = self.data.getItems()[i];
 				if(!self.tableExists(item)){
 					self.createTable(item, function(){self.insertIntoTable(item);});
 				} else {
@@ -538,15 +535,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @returns{String}
 		 */
 		'private tableName' : function(_attribute){
-			var tableName = _attribute.getName();
-			var parameterList = _attribute.getParameters();
-			if(!parameterList.isEmpty()){
-				var keys = parameterList.getKeys();
-				for(var i in keys){
-					tableName = tableName + '__' +keys[i] + '_'+parameterList.getItem(keys[i]);
-				}
-			}
-			return tableName;
+			return _attribute.getAttributeType().toString();
 		},
 		
 		/**

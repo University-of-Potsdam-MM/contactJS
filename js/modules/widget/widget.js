@@ -221,7 +221,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
              * @returns {*}
              */
             'public getAttributeValue': function(_attributeType) {
-                return this.getAttributeValues().getItem(_attributeType.getIdentifier()).getValue();
+                return this.getAttributeValues().getItemForAttributeType(_attributeType).getValue();
             },
 			
 			/**
@@ -680,7 +680,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * 
 			 */
 			'virtual public putData' : function(_data) {
-				var list = new Array();
+				var list = [];
 				if (_data instanceof Array) {
 					list = _data;
 				} else if (Class.isA(AttributeValueList, _data)) {

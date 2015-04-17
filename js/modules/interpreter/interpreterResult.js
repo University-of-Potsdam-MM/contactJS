@@ -134,12 +134,12 @@ define(['easejs', 'attributeValueList'],
     		 * @public
     		 * @alias setTimestamp
     		 * @memberof InterpreterResult#
-    		 * @param {date} _timstamp interpretation time
+    		 * @param {date} _timestamp interpretation time
     		 */
-			'public setTimestamp' : function(_timesstamp){
-				if(_timesstamp instanceof Date){
-					this.type = _timesstamp;
-				};
+			'public setTimestamp' : function(_timestamp){
+				if(_timestamp instanceof Date){
+					this.type = _timestamp;
+				}
 			},
 			
 			/**
@@ -154,10 +154,10 @@ define(['easejs', 'attributeValueList'],
 				if (_outAttributes instanceof Array) {
 					for(var i in _outAttributes){
 						this.outAttributes.put(_outAttributes[i]);
-					};
+					}
 				} else if (Class.isA(AttributeValueList, _outAttributes)) {
 					this.outAttributes = _outAttributes;
-				};
+				}
 			},
 			
 			/**
@@ -172,10 +172,10 @@ define(['easejs', 'attributeValueList'],
 				if (_inAttributes instanceof Array) {
 					for(var i in _outAttributes){
 						this.inAttributes.put(_inAttributes[i]);
-					};
+					}
 				} else if (Class.isA(AttributeValueList, _inAttributes)) {
 					this.inAttributes = _inAttributes;
-				};
+				}
 			}
 
 		});

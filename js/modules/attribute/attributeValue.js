@@ -122,9 +122,8 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 				 */
 				'override public equals' : function(_attributeValue) {
 					if (Class.isA(AttributeValue, _attributeValue)) {
-						if (this.__super(_attributeValue.getAttributeType())
-								&& _attributeValue.getValue() == this
-										.getValue()) {
+						if (_attributeValue.getAttributeType().equals(this.getAttributeType()) &&
+							_attributeValue.getValue() == this.getValue()) {
 							return true;
 						}
 					}
@@ -157,7 +156,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 				'public buildFromAttributeType' : function(_attributeType) {
 					if (Class.isA(AttributeType, _attributeType)) {
                         return new AttributeValue().withName(_attributeType.getName())
-                            .withType(_attributeType.getType()).withParameters(_attributeType.getParameters()).withValue('undefined');
+                            .withType(_attributeType.getType()).withParameters(_attributeType.getParameters()).withValue('NO_VALUE');
 					}
 					return null;
 				},
@@ -172,7 +171,7 @@ define([ 'easejs', 'attributeType' ], function(easejs, AttributeType) {
 				 * @returns {string}
 				 */
                 'override public toString': function() {
-                    return this.getIdentifier()+":"+this.getValue();
+                    return this.__super().toString()+":"+this.getValue();
                 }
 			});
 

@@ -207,26 +207,18 @@ define(['easejs',
 			 * @param {AttributeType} _attributeType AttributeType that should be compared
 			 * @returns {boolean}
 			 */
-			'virtual public equals' : function(_attributeType) {				
-				if(Class.isA(AttributeType, _attributeType)){
-					if (this.getIdentifier() == _attributeType.getIdentifier()) {
-						return true;
-                    }
+			'virtual public equals' : function(_attributeType) {
+				if (Class.isA(AttributeType, _attributeType)) {
+                    if (this.getName() == _attributeType.getName() &&
+                        this.getType() == _attributeType.getType() &&
+                        this.getParameters().equals(_attributeType.getParameters()))
+                    return true;
                 }
                 return false;
 			},
 
-			/**
-			 * Returns a string that describes the attribute type.
-			 *
-			 * @virtual
-			 * @public
-			 * @alias toString
-			 * @memberof AttributeType#
-			 * @returns {String}
-			 */
-            'virtual public toString': function() {
-                return this.getIdentifier();
+            'public hasInputParameter': function() {
+                return this.hasParameters() && this.parameterList.hasInputParameter();
             },
 
 			/**
@@ -235,16 +227,19 @@ define(['easejs',
 			 * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterValue]…
 			 *
 			 * @public
-			 * @alias getIdentifier
+			 * @alias toString
 			 * @memberof AttributeType#
 			 * @returns {String}
 			 * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
 			 */
-            'public getIdentifier': function() {
+            'virtual public toString': function() {
                 var identifier = "("+this.name+":"+this.type+")";
                 if (this.hasParameters()) {
                     identifier += "#";
-                    identifier += this.parameterList.getIdentifier();
+                    for (var index in this.parameterList.getItems()) {
+						var theParameter = this.parameterList.getItems()[index];
+						identifier += theParameter.toString();
+					}
                 }
                 return identifier;
             }

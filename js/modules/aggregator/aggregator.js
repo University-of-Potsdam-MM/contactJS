@@ -7,10 +7,10 @@
  */
 define(['easejs', 'MathUuid','widget',
         'attributeType', 'attributeValue', 'attributeValueList', 'subscriber', 
-        'subscriberList', 'callbackList', 'storage', 'widgetDescription', 'interpreter', 'attributeTypeList'],
+        'subscriberList', 'callbackList', 'storage', 'widgetDescription', 'interpreter', 'attributeTypeList', 'interpretation'],
  	function(easejs, MathUuid, Widget, AttributeType,
  			AttributeValue, AttributeValueList, Subscriber, SubscriberList,
- 			CallbackList, Storage, WidgetDescription, Interpreter, AttributeTypeList){
+ 			CallbackList, Storage, WidgetDescription, Interpreter, AttributeTypeList, Interpretation){
 
  	var Class = easejs.Class;
 	var Aggregator =  Class('Aggregator').
@@ -44,14 +44,10 @@ define(['easejs', 'MathUuid','widget',
 		 */
 		'protected widgets' : [],
 
-        /**
-         * @alias interpreters
-         * @protected
-         * @type {Array}
-         * @memberof Aggregator#
-         * @desc List of subscribed interpreters referenced by ID.
-         */
-        'protected interpreters' : [],
+		/**
+		 * @type {Array.<Interpretation>}
+		 */
+		'protected interpretations' : [],
 
 		/**
 		 * @alias db
@@ -85,7 +81,7 @@ define(['easejs', 'MathUuid','widget',
         {
 			this.id = Math.uuid();
 			this.widgets = [];
-            this.interpreters = [];
+            this.interpretations = [];
 			this.__super(_discoverer, _attributeTypes);
         },
         
@@ -111,11 +107,11 @@ define(['easejs', 'MathUuid','widget',
 		 * @memberof Aggregator#
 		 * @param {AttributeType} _attributeType attributeType
 	     */
-		'protected addAttributeType' : function(_attributeType){
+		'protected addAttributeType' : function(_attributeType, _multipleInstances){
 			if(Class.isA( AttributeType, _attributeType )){			
-				this.attributeTypes.put(_attributeType);
+				this.attributeTypes.put(_attributeType, _multipleInstances);
 				var attVal = new AttributeValue().buildFromAttributeType(_attributeType);
-				this.attributes.put(attVal);
+				this.attributes.put(attVal, _multipleInstances);
             }
         },
 		
@@ -306,30 +302,6 @@ define(['easejs', 'MathUuid','widget',
         },
 
 		/**
-		 * Adds an interpreter to the aggregator.
-		 *
-		 * @public
-		 * @alias addInterpreter
-		 * @memberof Aggregator#
-		 * @param _theInterpreter
-		 */
-        'public addInterpreter': function(_theInterpreter) {
-            this.interpreters.push(_theInterpreter.getId());
-        },
-
-		/**
-		 * Returns an array with the UUIDs of the interpreters that where added to the aggregator.
-		 *
-		 * @public
-		 * @alias getInterpreters
-		 * @memberof Aggregator#
-		 * @returns {Array} The UUIDs of the connected interpreters.
-		 */
-        'public getInterpreters': function() {
-            return this.interpreters;
-        },
-
-		/**
 		 * Returns the current Attributes that are saved in the cache.
 		 * 
 		 * @public
@@ -475,42 +447,13 @@ define(['easejs', 'MathUuid','widget',
 	   	 * @alias interpretData
 		 * @memberof Aggregator#
 		 * @param {String} _interpreterId ID of the searched Interpreter
-		 * @param {(AttributeValueList|Array)} _data data that should be interpreted
 		 * @param {?function} _function for additional actions, if an asynchronous function is used
 	     */
-		'public interpretData' : function(_interpreterId, _function){
+		'public interpretData' : function(_interpreterId, _inAttributeValues, _outAttributeValues, _function){
 			var interpreter = this.discoverer.getComponent(_interpreterId);
 			if (Class.isA(Interpreter, interpreter)) {
-				interpreter.callInterpreter(this.getAttributeValues(interpreter.getInAttributeTypes()), _function);
+				interpreter.callInterpreter(_inAttributeValues, _outAttributeValues, _function);
 			}
-		},
-		
-		/**
-		 * Calls the given Interpreter for getting the data.
-		 * 
-		 * @public
-	   	 * @alias getInterpretedData
-		 * @memberof Aggregator#
-		 * @param {String} _interpreterId ID of the searched Interpreter
-		 * @returns {?AttributeValueList}
-	     */
-		'public getInterpretedData' : function(_interpreterId){
-			var response = 'undefined';
-			var interpreter = this.discoverer.getComponent(_interpreterId);
-			if (interpreter) {
-				response = interpreter.getInterpretedData();
-				var attributeList = response.getOutAttributes().getItems();
-				for (var i in attributeList) {
-					var theAttribute = attributeList[i];
-					if (Class.isA(AttributeValue, theAttribute) && this.isAttribute(theAttribute)) {
-						this.addAttribute(theAttribute);
-						if(this.db){
-							this.store(theAttribute);
-						}
-                    }
-                }
-            }
-			return response;
 		},
 		
 		/**
@@ -619,7 +562,14 @@ define(['easejs', 'MathUuid','widget',
 		 * @returns {Array.<T>} The UUIDs.
 		 */
         'private getComponentUUIDs': function() {
-            return this.widgets.concat(this.interpreters);
+            var uuids = [];
+			uuids = uuids.concat(this.widgets);
+			for (var index in this.interpretations) {
+				var theInterpretation = this.interpretations[index];
+				uuids.push(theInterpretation.interpreterId);
+
+			}
+			return uuids;
         },
 
 		/**
@@ -692,8 +642,8 @@ define(['easejs', 'MathUuid','widget',
                             var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
 							// add the attribute type to the aggregators list of handled attribute types
                             if (!this.getAttributeTypes().contains(widgetOutAttribute)) this.addAttributeType(widgetOutAttribute);
-                            console.log("I can now satisfy attribute "+widgetOutAttribute.getIdentifier()+" with the help of "+theComponent.getName()+"! That was easy :)");
-                            _unsatisfiedAttributes.removeItem(widgetOutAttribute.getIdentifier());
+                            console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
+                            _unsatisfiedAttributes.removeAttributeType(widgetOutAttribute);
                         }
                     } else if (Class.isA(Interpreter, theComponent)) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
                         console.log("It's an interpreter.");
@@ -705,39 +655,44 @@ define(['easejs', 'MathUuid','widget',
                         for (var inAttributeIdentifier in inAttributes) {
 							// get the attribute
                             var theInAttribute = inAttributes[inAttributeIdentifier];
-                            console.log("The interpreter needs the attribute "+theInAttribute.getIdentifier()+".");
+                            console.log("The interpreter needs the attribute "+theInAttribute+".");
 
 							// if required attribute is not already satisfied by the aggregator search for components that do
                             if (!this.doesSatisfyAttributeType(theInAttribute)) {
-                                console.log("It seems that I can't satisfy "+theInAttribute.getIdentifier()+", but I will search for components that can.");
+                                console.log("It seems that I can't satisfy "+theInAttribute+", but I will search for components that can.");
                                 var newAttributeList = new AttributeTypeList();
                                 newAttributeList.put(theInAttribute);
                                 this.getComponentsForUnsatisfiedAttributeTypes(newAttributeList, false, [Widget, Interpreter]);
 								// if the attribute still can't be satisfied drop the interpreter
                                 if (!this.doesSatisfyAttributeType(theInAttribute)) {
-                                    console.log("I couldn't find a component to satisfy "+theInAttribute.getIdentifier()+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
+                                    console.log("I couldn't find a component to satisfy "+theInAttribute+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
                                     canSatisfyInAttributes = false;
                                     break;
                                 }
                             } else {
-                                console.log("It seems that I already satisfy the attribute "+theInAttribute.getIdentifier()+". Let's move on.");
+                                console.log("It seems that I already satisfy the attribute "+theInAttribute+". Let's move on.");
                             }
                         }
 
                         if (canSatisfyInAttributes) {
-                            this.addInterpreter(theComponent);
                             // remove satisfied attribute
                             for (var interpreterOutAttributeIndex in outAttributes) {
                                 var interpreterOutAttribute = outAttributes[interpreterOutAttributeIndex];
 								// add the attribute type to the aggregators list of handled attribute types
-                                if (!this.getAttributeTypes().contains(interpreterOutAttribute)) this.addAttributeType(interpreterOutAttribute);
-                                console.log("I can now satisfy attribute "+interpreterOutAttribute.getIdentifier()+" with the help of "+theComponent.getName()+"! Great!");
-                                _unsatisfiedAttributes.removeItem(interpreterOutAttribute.getIdentifier());
+								for (var unsatisfiedAttributeIndex in _unsatisfiedAttributes.getItems()) {
+									var theUnsatisfiedAttribute = _unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+									if (theUnsatisfiedAttribute.equals(interpreterOutAttribute)) {
+										this.addAttributeType(theUnsatisfiedAttribute);
+										console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
+										this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributeTypes(), new AttributeTypeList().withItems([theUnsatisfiedAttribute])));
+									}
+								}
+								_unsatisfiedAttributes.removeAttributeType(interpreterOutAttribute, true);
                             }
-                        } else {
+						} else {
                             console.log("Found interpreter but can't satisfy required attributes.");
                             for (var j in theComponent.getDescription().getInAttributeTypes().getItems()) {
-                                console.log("Missing "+theComponent.getDescription().getInAttributeTypes().getItems()[j].getIdentifier()+".");
+                                console.log("Missing "+theComponent.getDescription().getInAttributeTypes().getItems()[j]+".");
                             }
                         }
                     }
@@ -763,8 +718,9 @@ define(['easejs', 'MathUuid','widget',
             // get all interpreters that satisfy attribute types
             this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Interpreter]);
 
-			//console.log(unsatisfiedAttributes);
-			//console.log(this.attributeTypes);
+			console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
+			console.log("Satisfied attributes: "+this.getAttributeTypes().size());
+			console.log("Interpretations "+this.interpretations.length);
         },
 
         /**
@@ -811,26 +767,36 @@ define(['easejs', 'MathUuid','widget',
             var self = this;
             var completedQueriesCounter = 0;
 
-            if (this.interpreters.length > 0) {
-                for(var index in this.interpreters) {
-                    var theInterpreterId = this.interpreters[index];
+			if (this.interpretations.length > 0) {
+				for (var index in this.interpretations) {
+					var theInterpretation = this.interpretations[index];
+					var theInterpreterId = theInterpretation.interpreterId;
+					var interpretationInAttributeValues = this.getAttributeValues(theInterpretation.inAttributeTypes);
+					var interpretationOutAttributeValues = this.getAttributeValues(theInterpretation.outAttributeTypes);
 
-                    self.interpretData(theInterpreterId, function() {
-                        self.getInterpretedData(theInterpreterId);
+					self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(_interpretedData) {
+						for (var j in _interpretedData.getItems()) {
+							var theInterpretedData = _interpretedData.getItems()[j];
 
-                        completedQueriesCounter++;
-                        if (completedQueriesCounter == self.interpreters.length) {
-                            if (_callback && typeof(_callback) == 'function') {
-                                _callback(self.getAttributeValues());
-                            }
-                        }
-                    });
-                }
-            } else {
-                if (_callback && typeof(_callback) == 'function') {
-                    _callback(self.getAttributeValues());
-                }
-            }
+							self.addAttribute(theInterpretedData);
+							if(self.db){
+								self.store(theInterpretedData);
+							}
+						}
+
+						completedQueriesCounter++;
+						if (completedQueriesCounter == self.interpretations.length) {
+							if (_callback && typeof(_callback) == 'function') {
+								_callback(self.getAttributeValues());
+							}
+						}
+					});
+				}
+			} else {
+				if (_callback && typeof(_callback) == 'function') {
+					_callback(self.getAttributeValues());
+				}
+			}
         },
 
 		/**

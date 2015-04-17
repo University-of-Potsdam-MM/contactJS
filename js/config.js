@@ -11,6 +11,7 @@ requirejs.config({
         retrievalResult: 'modules/aggregator/storage/retrievalResult',
 		storage: 'modules/aggregator/storage/storage',
 		aggregator: 'modules/aggregator/aggregator',
+		interpretation: 'modules/aggregator/interpretation',
 	    attributeType: 'modules/attribute/attributeType',
 	    attributeValue: 'modules/attribute/attributeValue',
 	    attributeTypeList: 'modules/attribute/attributeTypeList',

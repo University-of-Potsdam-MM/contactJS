@@ -121,9 +121,12 @@ define(['easejs'],
 			 * @returns {boolean}
 			 */
 			'public equals' : function(_parameter) {
+				var ignoreValue = false;
 				if(Class.isA(Parameter, _parameter)){
-					if(_parameter.getIdentifier() == this.getIdentifier()){
-						return true;
+					if (_parameter.getValue() == "PV_INPUT" || this.getValue() == "PV_INPUT") {
+						return this.getKey() == _parameter.getKey();
+					} else {
+						return this.getKey() == _parameter.getKey() && this.getValue() == _parameter.getValue();
 					}
                 }
                 return false;
@@ -131,35 +134,18 @@ define(['easejs'],
 			},
 
 			/**
-			 * Returns a string that describes the parameter.
-			 *
-			 * @public
-			 * @override
-			 * @alias toString
-			 * @memberof Parameter#
-			 * @returns {string}
-			 */
-            'public toString': function() {
-				return this.getIdentifier();
-            },
-
-			/**
 			 * Returns an identifier that uniquely describes the parameter.
 			 * The identifier can be used to compare two parameters.
 			 * Format: [ParameterName:ParameterValue]
 			 *
 			 * @public
-			 * @alias getIdentifier
+			 * @alias toString
 			 * @memberof Parameter#
 			 * @returns {String}
 			 * @example [CP_UNIT:KILOMETERS]
 			 */
-            'public getIdentifier': function() {
-				if (this.value != "PV_INPUT") {
-					return "["+this.key+":"+this.value+"]";
-				} else {
-					return "["+this.key+"]";
-				}
+            'public toString': function() {
+				return "["+this.key+":"+this.value+"]";
             }
 
 		});

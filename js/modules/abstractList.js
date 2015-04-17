@@ -14,14 +14,7 @@ define([ 'easejs' ], function(easejs) {
 	 */
 	var AbstractList = AbstractClass('AbstractList', {
 
-		/**
-		 * @alias counter
-		 * @protected
-		 * @type {int}
-		 * @memberof AbstractList#
-		 * @desc Number of Items.
-		 */
-		'protected counter' : 0,
+
 		/**
 		 * @alias items
 		 * @protected
@@ -137,7 +130,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @returns {Array}
 		 */
 		'public getKeys' : function() {
-			var listKeys = new Array();
+			var listKeys = [];
 			for ( var key in this.items) {
 				listKeys.push(key);
 			}
@@ -153,11 +146,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @returns {Array}
 		 */
 		'virtual public getItems' : function() {
-			var listValues = new Array();
-			for ( var key in this.items) {
-				listValues.push(this.items[key]);
-			}
-			return listValues;
+			return this.items;
 		},
 
 		/**
@@ -169,7 +158,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @returns {int}
 		 */
 		'public size' : function() {
-			return this.counter;
+			return this.items.length;
 		},
 
 		/**
@@ -180,7 +169,7 @@ define([ 'easejs' ], function(easejs) {
 		 * @returns {boolean}
 		 */
 		'public isEmpty' : function() {
-			return this.counter == 0;
+			return this.size() == 0;
 		},
 		
 		/**
@@ -191,7 +180,6 @@ define([ 'easejs' ], function(easejs) {
 		 */
 		'public clear' : function() {
 			this.items = [];
-			this.counter = 0;
 		}
 
 	});
