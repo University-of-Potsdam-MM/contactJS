@@ -1,10 +1,8 @@
 	define(['retrievalResult',
 			'storage',
 			'aggregator',
-		    'attributeType',
-		    'attributeValue',
-		    'attributeTypeList',
-		    'attributeValueList',
+		    'attribute',
+		    'attributeList',
 		    'parameter',
 		    'parameterList',		
 		    'condition',
@@ -26,10 +24,8 @@
 		function(RetrievalResult,
 				Storage,
 				Aggregator,
-			    AttributeType,
-			    AttributeValue,
-			    AttributeTypeList,
-			    AttributeValueList,
+			    Attribute,
+			    AttributeList,
 			    Parameter,
 			    ParameterList,		
 			    Condition,
@@ -53,15 +49,13 @@
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '1.1.0';
+	contactJS.VERSION = '1.2.0';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
-	contactJS.AttributeType = AttributeType;
-	contactJS.AttributeValue = AttributeValue;
-	contactJS.AttributeTypeList = AttributeTypeList;
-	contactJS.AttributeValueList = AttributeValueList;
+	contactJS.Attribute = Attribute;
+	contactJS.AttributeList = AttributeList;
 	contactJS.Parameter = Parameter;
 	contactJS.ParameterList = ParameterList;
 	contactJS.Condition = Condition;

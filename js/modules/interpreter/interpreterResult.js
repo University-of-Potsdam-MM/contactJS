@@ -4,8 +4,8 @@
  * @module InterpreterResult
  * @fileOverview
  */
-define(['easejs', 'attributeValueList'],
-    function(easejs, AttributeValueList){
+define(['easejs', 'attributeList'],
+    function(easejs, AttributeList){
     	var Class = easejs.Class;
     	
 		var InterpreterResult = Class('InterpreterResult',{

@@ -15,8 +15,7 @@ define([ 'easejs', 'abstractList', 'parameter' ],
 		 * @requires AbstractList
 		 * @requires Parameter
 		 */
-		var ParameterList = Class('ParameterList').extend(AbstractList,{
-
+		var ParameterList = Class('ParameterList').extend(AbstractList, {
 			/**
 			 * @alias counter
 			 * @protected

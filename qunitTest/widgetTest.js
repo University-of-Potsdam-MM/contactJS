@@ -5,7 +5,10 @@ require(['configTest'], function() {
 			QUnit.asyncTest( "GeoLocationWidget ", function( assert ) {
                 var discoverer = new contactJS.Discoverer();
 				var testWidget = new GeoLocationWidget(discoverer);
-		    				        
+
+				var latitudeType = new contactJS.Attribute().withName('latitude').withType('double');
+				var longitudeType = new contactJS.Attribute().withName('longitude').withType('double');
+
 		        var id = testWidget.getId();
 				assert.ok( id && id !== "null" && id !== "undefined", "Passed!: id is not null" );
 				assert.equal( testWidget.getType(), 'Widget', "Passed!: type -> Widget" );
@@ -28,34 +31,34 @@ require(['configTest'], function() {
 				//attributes
 				var attributes= testWidget.getAttributeValues();
 				assert.equal(attributes.size(), 2,"queryAttributes Passed!: two attributes were returned" );
-				var latitude = attributes.getItem('(latitude:double)');
+				var latitude = attributes.getAttributeWithTypeOf(latitudeType);
 				assert.equal(latitude.getName(), 'latitude',"queryAttributes Passed!: latitude exists" );
-				assert.equal(latitude.getValue(), 'undefined',"queryAttributes Passed!: value of latitude is undefined" );
+				assert.equal(latitude.getValue(), 'NO_VALUE',"queryAttributes Passed!: value of latitude is undefined" );
 				
-				var longitude = attributes.getItem('(longitude:double)');
+				var longitude = attributes.getAttributeWithTypeOf(longitudeType);
 				assert.equal(longitude.getName(), 'longitude',"queryAttributes Passed!: longitude exists" );
-				assert.equal(longitude.getValue(), 'undefined',"queryAttributes Passed!: value of longitude is undefined" );
+				assert.equal(longitude.getValue(), 'NO_VALUE',"queryAttributes Passed!: value of longitude is undefined" );
 				
 				//updateAndQuery without callback
 				var attributes2 = testWidget.updateAndQueryWidget();
 				assert.equal(attributes2.size(), 2,"updateAndQueryWidget without callback Passed!: two attributes were returned" );
-				var latitude2 = attributes2.getItem('(latitude:double)');
+				var latitude2 = attributes2.getAttributeWithTypeOf(latitudeType);
 				assert.equal(latitude2.getName(), 'latitude',"updateAndQueryWidget without callbackPassed!: latitude exists" );
-				assert.equal(latitude2.getValue(), 'undefined',"value of latitude is not updated yet: " +latitude2.getValue() );
+				assert.equal(latitude2.getValue(), 'NO_VALUE',"value of latitude is not updated yet: " +latitude2.getValue() );
 				
-				var longitude2 = attributes.getItem('(longitude:double)');
+				var longitude2 = attributes.getAttributeWithTypeOf(longitudeType);
 				assert.equal(longitude2.getName(), 'longitude',"updateAndQueryWidget without callbackPassed!: longitude exists" );
-				assert.equal(longitude2.getValue(), 'undefined',"value of longitude is not updated yet: " + longitude2.getValue() );
+				assert.equal(longitude2.getValue(), 'NO_VALUE',"value of longitude is not updated yet: " + longitude2.getValue() );
 
 				//updateAndQuery with callback
 				var testUpdateAndQuery = function(){
 					var attributes2 = testWidget.queryWidget();
 					assert.equal(attributes2.size(), 2, "updateAndQueryWidget with callback Passed!: two attributes were returned" );
-					var latitude2 = attributes2.getItem('(latitude:double)');
+					var latitude2 = attributes2.getAttributeWithTypeOf(latitudeType);
 					assert.equal(latitude2.getName(), 'latitude', "updateAndQueryWidget with callback Passed!: latitude exists" );
 					assert.notEqual(latitude2.getValue(), 'undefined', "value of latitude is: " +latitude2.getValue() );
 					
-					var longitude2 = attributes.getItem('(longitude:double)');
+					var longitude2 = attributes.getAttributeWithTypeOf(longitudeType);
 					assert.equal(longitude2.getName(), 'longitude',"updateAndQueryWidget with callback Passed!: longitude exists" );
 					assert.notEqual(longitude2.getValue(), 'undefined', "value of longitude is: " + longitude2.getValue() );
 				};

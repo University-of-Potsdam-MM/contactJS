@@ -6,8 +6,8 @@
  * @module Condition
  * @fileOverview
  */
-define(['easejs','attributeType','attributeValue', 'conditionMethod'],
- 	function(easejs, AttributeType, AttributeValue, ConditionMethod){
+define(['easejs','attribute', 'conditionMethod'],
+ 	function(easejs, Attribute, ConditionMethod){
  	var Class = easejs.Class;
  	/**
 	 * @class Condition
@@ -126,11 +126,11 @@ define(['easejs','attributeType','attributeValue', 'conditionMethod'],
 		 * @public
 		 * @alias setAttributeType
 		 * @memberof Condition#
-		 * @param {AttributeType} _attributeType AttributeType
+		 * @param {Attribute} _attribute AttributeType
 		 */
-		'public setAttributeType' : function(_attributeType){
-			if(Class.isA(AttributeType,_attributeType)){
-				this.attributeType = _attributeType;
+		'public setAttributeType' : function(_attribute){
+			if(Class.isA(Attribute, _attribute)){
+				this.attributeType = _attribute;
 			}
 		},
 
@@ -214,21 +214,20 @@ define(['easejs','attributeType','attributeValue', 'conditionMethod'],
 		 * @public
 		 * @alias compare
 		 * @memberof Condition#
-		 * @param {AttributeValue} _newAttributeValue new Attribute that should be compared
-		 * @param {AttributeValue} _oldAttributeValue old Attribute 
+		 * @param {Attribute} _newAttributeValue new Attribute that should be compared
+		 * @param {Attribute} _oldAttributeValue old Attribute
 		 * @returns {boolean}
 		 */
 		'public compare' : function(_newAttributeValue, _oldAttributeValue){
-			if(!this.attributeType.equals(_newAttributeValue.getAttributeType())
-					&& !this.attributeType.equals(_oldAttributeValue.getAttributeType())){
+			if(!this.attributeType.equalsTypeOf(_newAttributeValue)&& !this.attributeType.equalsTypeOf(_oldAttributeValue)){
 				return false;
-			};
+			}
 			if(!this.comparisonMethod){
 				return false;
-			};
-			if(Class.isA(AttributeValue,_newAttributeValue) && Class.isA(AttributeValue,_oldAttributeValue)){
+			}
+			if(Class.isA(Attribute, _newAttributeValue) && Class.isA(Attribute, _oldAttributeValue)){
 				return this.comparisonMethod.process(this.referenceValue, _newAttributeValue.getValue(), _oldAttributeValue.getValue());
-			};
+			}
 			return false;
 		},
 		
@@ -245,7 +244,7 @@ define(['easejs','attributeType','attributeValue', 'conditionMethod'],
 			if(Class.isA(Condition, _condition)){
 				if(_condition.getName() == this.getName()
 						&& _condition.getReferenceValue() == this.getReferenceValue()
-						&& _condition.getAttributeType().equals(this.attributeType)
+						&& _condition.getAttributeType().equalsTypeOf(this.attributeType)
 						&& _condition.getComparisonMethod() === this.comparisonMethod){
 					return true;
 				};

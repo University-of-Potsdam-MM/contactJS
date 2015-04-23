@@ -5,8 +5,8 @@
  * @module WidgetDescription
  * @fileOverview
  */
-define(['easejs', 'attributeTypeList'],
-    function(easejs, AttributeTypeList){
+define(['easejs', 'attributeList'],
+    function(easejs, AttributeList){
     	var Class = easejs.Class;
 		var WidgetDescription = Class('WidgetDescription',{
 			
@@ -54,7 +54,7 @@ define(['easejs', 'attributeTypeList'],
 			 * @constructs WidgetDescription
 			 */
 			'virtual public __construct' : function(){
-				this.outAttributeTypes = new AttributeTypeList();
+				this.outAttributeTypes = new AttributeList();
 			},
 
 			/**

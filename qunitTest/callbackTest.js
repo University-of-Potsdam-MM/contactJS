@@ -3,20 +3,20 @@ require(['configTest'], function() {
 		
 			QUnit.test( "Callback", function( assert ) {
 				
-				var attributeType = new contactJS.AttributeType();
+				var attributeType = new contactJS.Attribute();
 				
 				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
 				
-				var attributeType2 = new contactJS.AttributeType().withName('testName').
-										withType('integer').withParameter(parameter);
-				var array = new Array();
+				var attributeType2 = new contactJS.Attribute().withName('testName').withType('integer').withParameter(parameter);
+
+				var array = [];
 				array.push(attributeType);
-				var attList = new contactJS.AttributeTypeList().withItems(array);
+				var attList = new contactJS.AttributeList().withItems(array);
 				var call = new contactJS.Callback().withName('test').withAttributeTypes(array);
 				var call2 = new contactJS.Callback().withName('test').withAttributeTypes(attList);
 				
 				array.push(attributeType2);
-				var attList2 = new contactJS.AttributeTypeList().withItems(array);
+				var attList2 = new contactJS.AttributeList().withItems(array);
 				var call3 = new contactJS.Callback().withName('test').withAttributeTypes(attList2);
 				var call4 = new contactJS.Callback().withName('test1').withAttributeTypes(attList2);
 				

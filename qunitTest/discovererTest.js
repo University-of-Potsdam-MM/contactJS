@@ -52,7 +52,7 @@ require(['configTest'], function() {
 				
 				//register Aggregator
 				new contactJS.Aggregator(discoverer, [
-					new contactJS.AttributeType().withName('formattedAddress').withType('string')
+					new contactJS.Attribute().withName('formattedAddress').withType('string')
 				]);
 				//tested with getWidgetDescriptions
 				var aDescs = discoverer.getDescriptions([contactJS.Aggregator]);
@@ -75,10 +75,9 @@ require(['configTest'], function() {
 				
 				//getComponentByAttribute
 				var testParameter = new contactJS.Parameter().withKey('foo').withValue('bar');
-				var latitudeType = new contactJS.AttributeType().withName('latitude')
-											.withType('double').withParameter(testParameter);			
-				var longitudeType = new contactJS.AttributeType().withName('longitude')
-								.withType('double');
+				var latitudeType = new contactJS.Attribute().withName('latitude').withType('double').withParameter(testParameter);
+				var longitudeType = new contactJS.Attribute().withName('longitude').withType('double');
+
 				var array = [];
 				array.push(longitudeType);
 

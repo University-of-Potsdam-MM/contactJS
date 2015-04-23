@@ -4,8 +4,8 @@
  * @module Subscriber
  * @fileOverview
  */
-define(['easejs', 'attributeTypeList', 'callbackList', 'condition', 'conditionList'],
- 	function(easejs, AttributeTypeList, CallbackList, Condition, ConditionList){
+define(['easejs', 'attributeList', 'callbackList', 'condition', 'conditionList'],
+ 	function(easejs, AttributeList, CallbackList, Condition, ConditionList){
 
  	/*
  	* Callback: name and associated Attributes
@@ -73,8 +73,8 @@ define(['easejs', 'attributeTypeList', 'callbackList', 'condition', 'conditionLi
 		'virtual public __construct': function()
         {
 			this.subscriptionCallbacks = new CallbackList();
-			this.subscriptionCallbacks = new AttributeTypeList();
-			this.attributesSubset = new AttributeTypeList();
+			this.subscriptionCallbacks = new AttributeList();
+			this.attributesSubset = new AttributeList();
 			this.conditions = new ConditionList();
         },
 			
@@ -172,7 +172,7 @@ define(['easejs', 'attributeTypeList', 'callbackList', 'condition', 'conditionLi
 		'public setSubscriberName' : function(_subscriberName){
 			if(typeof _subscriberName === 'string'){
 				this.subscriberName = _subscriberName;
-			};
+			}
 			
 		},
 		
@@ -225,7 +225,7 @@ define(['easejs', 'attributeTypeList', 'callbackList', 'condition', 'conditionLi
 		'public setSubscriptionCallbacks' : function(_subscriptionCallbacks){
 			if(Class.isA(CallbackList, _subscriptionCallbacks)){
 				this.subscriptionCallbacks = _subscriptionCallbacks;
-			};
+			}
 		},
 		
 		/**
@@ -246,12 +246,12 @@ define(['easejs', 'attributeTypeList', 'callbackList', 'condition', 'conditionLi
 		 * @public
 		 * @alias setAttributesSubset
 		 * @memberof Subscriber#
-		 * @param {AttributeTypeList} _attributesSubset attributesSubset
+		 * @param {AttributeList} _attributesSubset attributesSubset
 		 */
 		'public setAttributesSubset' : function(_attributesSubset){
-			if(Class.isA(AttributeTypeList, _attributesSubset)){
+			if(Class.isA(AttributeList, _attributesSubset)){
 				this.attributesSubset = _attributesSubset;
-			};
+			}
 		},
 		
 		/**

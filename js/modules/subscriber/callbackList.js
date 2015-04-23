@@ -16,9 +16,7 @@ define(['easejs', 'abstractList', 'callback'],
 	 * @requires AbstractList
 	 * @requires Callback
 	 */
-	var CallbackList = Class('CallbackList').
-					extend(AbstractList,{
-
+	var CallbackList = Class('CallbackList').extend(AbstractList,{
 		/**
 		 * @alias counter
 		 * @protected
@@ -46,18 +44,10 @@ define(['easejs', 'abstractList', 'callback'],
 		 * @returns {CallbackList}
 		 */
 		'public withItems': function(_callbackList){
-			var list = [];
-			if(_callbackList instanceof Array){
-				list = _callbackList;
+			if (_callbackList instanceof Array) {
+				this.items = _callbackList;
 			} else if (Class.isA(CallbackList, _callbackList)) {
-				list = _callbackList.getItems();
-			}
-			for(var i in list){
-				var callback = list[i];
-				if(Class.isA( Callback, callback )){
-					this.items[callback.getName()] = callback;
-					this.counter++;
-				}
+				this.items = _callbackList.getItems();
 			}
 			return this;
 		},
@@ -71,11 +61,10 @@ define(['easejs', 'abstractList', 'callback'],
 		 * @param {Callback} _callback Callback
 		 */
 		'public put' : function(_callback){
-			if(Class.isA(Callback, _callback)){
-				if(!(this.containsKey(_callback.getName()))){
-					this.counter++;
+			if (Class.isA(Callback, _callback)) {
+				if (!(this.contains(_callback))) {
+					this.items.push(_callback);
 				}
-				this.items[_callback.getName()] = _callback;
 			}
 		},
 
@@ -90,19 +79,13 @@ define(['easejs', 'abstractList', 'callback'],
 		 */
 		'public putAll' : function(_callbackList){
 			var list = [];
-			if(_callbackList instanceof Array){
+			if (_callbackList instanceof Array) {
 				list = _callbackList;
-			} else if (Class.isA(CallbackList, _callbackList)) {
+			} else if (Class.isA(CallbackList,	_callbackList)) {
 				list = _callbackList.getItems();
 			}
-			for(var i in list){
-				var callback = list[i];
-				if(Class.isA(Callback, callback)){
-					if(!(this.containsKey(callback.getName()))){
-						this.counter++;
-					}
-					this.items[callback.getName()] = callback;
-				}
+			for (var i in list) {
+				this.put(list[i]);
 			}
 		},
 
@@ -113,16 +96,18 @@ define(['easejs', 'abstractList', 'callback'],
 		 * @public
 		 * @alias contains
 		 * @memberof CallbackList#
-		 * @param {Callback} _item CallbackType that should be verified.
+		 * @param {Callback} _callback CallbackType that should be verified.
 		 * @returns {boolean}
 		 */
-		'public contains' : function(_item){
-			if(Class.isA(Callback,_item)){
-				var tmp = this.getItem(_item.getName());
-				if(!(typeof tmp === 'undefined') && tmp.equals(_item)){
-					return true;
+		'public contains' : function(_callback){
+			if (Class.isA(Callback, _callback)) {
+				for (var index in this.items) {
+					var tmp = this.items[index];
+					if (tmp.equals(_callback)) {
+						return true;
+					}
 				}
-			} 
+			}
 			return false;
 		},
 		
@@ -131,20 +116,17 @@ define(['easejs', 'abstractList', 'callback'],
 		 * @public
 		 * @alias equals
 		 * @memberof CallbackList#
-		 * @param {CallbackList} _list CallbackList that should be compared.
+		 * @param {CallbackList} _callbackList CallbackList that should be compared.
 		 * @returns {boolean}
 		 */
-		'public equals' : function(_list){
-			if(Class.isA(CallbackList,_list) && _list.size() == this.size()){
-				var items = _list.getItems();
-				for(var i in items){
-					var item = items[i];
-					if(!this.contains(item)){
-						return false;
-					}
+		'public equals' : function(_callbackList){
+			if (Class.isA(CallbackList, _callbackList) && _callbackList.size() == this.size()) {
+				for (var index in _callbackList.getItems()) {
+					var theCallback = _callbackList.getItems()[index];
+					if (!this.contains(theCallback)) return false;
 				}
 				return true;
-			} 
+			}
 			return false;
 		}
 

@@ -1,13 +1,13 @@
 /**
  * Created by tobias on 15.04.15.
  */
-define(['easejs', 'interpreter', 'attributeTypeList'],
-    function(easejs, Interpreter, AttributeTypeList) {
+define(['easejs', 'interpreter', 'attributeList'],
+    function(easejs, Interpreter, AttributeList) {
         var Class = easejs.Class;
         var Interpretation = Class('Interpretation', {
             'public interpreterId' : null,
-            'public inAttributeTypes' : new AttributeTypeList(),
-            'public outAttributeTypes' : new AttributeTypeList(),
+            'public inAttributeTypes' : new AttributeList(),
+            'public outAttributeTypes' : new AttributeList(),
 
             'public __construct' : function(_interpreterId, _inAttributes, _outAttributes){
                 this.interpreterId = _interpreterId;

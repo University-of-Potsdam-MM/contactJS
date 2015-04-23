@@ -6,11 +6,11 @@
  * @fileOverview
  */
 define(['easejs', 'MathUuid','widget',
-        'attributeType', 'attributeValue', 'attributeValueList', 'subscriber', 
-        'subscriberList', 'callbackList', 'storage', 'widgetDescription', 'interpreter', 'attributeTypeList', 'interpretation'],
- 	function(easejs, MathUuid, Widget, AttributeType,
- 			AttributeValue, AttributeValueList, Subscriber, SubscriberList,
- 			CallbackList, Storage, WidgetDescription, Interpreter, AttributeTypeList, Interpretation){
+        'attribute', 'attributeList', 'subscriber',
+        'subscriberList', 'callbackList', 'storage', 'widgetDescription', 'interpreter', 'interpretation'],
+ 	function(easejs, MathUuid, Widget, Attribute,
+ 			AttributeList, Subscriber, SubscriberList,
+ 			CallbackList, Storage, WidgetDescription, Interpreter, Interpretation){
 
  	var Class = easejs.Class;
 	var Aggregator =  Class('Aggregator').
@@ -69,8 +69,8 @@ define(['easejs', 'MathUuid','widget',
 		 * @requires MathUuid
 		 * @requires CallbackList
 		 * @requires AttributeType
-		 * @requires AttributeValue
-		 * @requires AttributeValueList
+		 * @requires Attribute
+		 * @requires AttributeList
 		 * @requires Subscriber
 		 * @requires SubscriberList
 		 * @requires Storage
@@ -105,13 +105,13 @@ define(['easejs', 'MathUuid','widget',
 		 * @protected
 	   	 * @alias addAttributeType
 		 * @memberof Aggregator#
-		 * @param {AttributeType} _attributeType attributeType
+		 * @param {AttributeType} _attribute attributeType
+		 * @param {boolean} _multipleInstances
 	     */
-		'protected addAttributeType' : function(_attributeType, _multipleInstances){
-			if(Class.isA( AttributeType, _attributeType )){			
-				this.attributeTypes.put(_attributeType, _multipleInstances);
-				var attVal = new AttributeValue().buildFromAttributeType(_attributeType);
-				this.attributes.put(attVal, _multipleInstances);
+		'protected addAttributeType' : function(_attribute, _multipleInstances){
+			if(Class.isA(Attribute, _attribute )){
+				this.attributeTypes.put(_attribute, _multipleInstances);
+				this.attributes.put(_attribute, _multipleInstances);
             }
         },
 		
@@ -266,10 +266,10 @@ define(['easejs', 'MathUuid','widget',
 		 * @alias setAggregatorAttributeValues
 		 * @memberof Aggregator#
 		 */
-		'virtual protected setAggregatorAttributeValues' : function(_attributeTypes) {
-            for (var index in _attributeTypes) {
-                var theAttributeType = _attributeTypes[index];
-                this.addAttribute(new AttributeValue().buildFromAttributeType(theAttributeType));
+		'virtual protected setAggregatorAttributeValues' : function(_attributes) {
+            for (var index in _attributes) {
+                var theAttribute = _attributes[index];
+                this.addAttribute(theAttribute);
             }
         },
 
@@ -310,7 +310,7 @@ define(['easejs', 'MathUuid','widget',
 		 * @returns {AttributeValueList}
 	     */
 		'public getCurrentData' : function(){
-			var response = new AttributeValueList();
+			var response = new AttributeList();
 			response.putAll(this.attributes);
 			return response;
 		},
@@ -420,18 +420,18 @@ define(['easejs', 'MathUuid','widget',
 		 * @public
 	   	 * @alias putData
 		 * @memberof Aggregator#
-		 * @param {(AttributeValueList|Array)}  _data data that shall be input
+		 * @param {(AttributeList|Array)}  _data data that shall be input
 	     */
 		'override public putData' : function(_data){
 			var list = [];
 			if(_data instanceof Array){
 				list = _data;
-			} else if (Class.isA(AttributeValueList, _data)) {
+			} else if (Class.isA(AttributeList, _data)) {
 				list = _data.getItems();
 			}
 			for(var i in list){
 				var x = list[i];
-				if(Class.isA( AttributeValue, x ) && this.isAttribute(x)){
+				if(Class.isA(Attribute, x ) && this.isAttribute(x)){
 					this.addAttribute(x);
 					if(this.db){
 						this.store(x);
@@ -613,7 +613,7 @@ define(['easejs', 'MathUuid','widget',
 		 * @private
 		 * @alias getComponentsForUnsatisfiedAttributeTypes
 		 * @memberof Aggregator#
-		 * @param {AttributeTypeList} _unsatisfiedAttributes A list of attributes that components should be searched for.
+		 * @param {AttributeList} _unsatisfiedAttributes A list of attributes that components should be searched for.
 		 * @param {boolean} _all If true all attributes must be satisfied by a single component.
 		 * @param {Array} _componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
 		 */
@@ -643,7 +643,7 @@ define(['easejs', 'MathUuid','widget',
 							// add the attribute type to the aggregators list of handled attribute types
                             if (!this.getAttributeTypes().contains(widgetOutAttribute)) this.addAttributeType(widgetOutAttribute);
                             console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
-                            _unsatisfiedAttributes.removeAttributeType(widgetOutAttribute);
+                            _unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
                         }
                     } else if (Class.isA(Interpreter, theComponent)) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
                         console.log("It's an interpreter.");
@@ -660,7 +660,7 @@ define(['easejs', 'MathUuid','widget',
 							// if required attribute is not already satisfied by the aggregator search for components that do
                             if (!this.doesSatisfyAttributeType(theInAttribute)) {
                                 console.log("It seems that I can't satisfy "+theInAttribute+", but I will search for components that can.");
-                                var newAttributeList = new AttributeTypeList();
+                                var newAttributeList = new AttributeList();
                                 newAttributeList.put(theInAttribute);
                                 this.getComponentsForUnsatisfiedAttributeTypes(newAttributeList, false, [Widget, Interpreter]);
 								// if the attribute still can't be satisfied drop the interpreter
@@ -681,13 +681,13 @@ define(['easejs', 'MathUuid','widget',
 								// add the attribute type to the aggregators list of handled attribute types
 								for (var unsatisfiedAttributeIndex in _unsatisfiedAttributes.getItems()) {
 									var theUnsatisfiedAttribute = _unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-									if (theUnsatisfiedAttribute.equals(interpreterOutAttribute)) {
+									if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
 										this.addAttributeType(theUnsatisfiedAttribute);
 										console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
-										this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributeTypes(), new AttributeTypeList().withItems([theUnsatisfiedAttribute])));
+										this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributeTypes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
 									}
 								}
-								_unsatisfiedAttributes.removeAttributeType(interpreterOutAttribute, true);
+								_unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
                             }
 						} else {
                             console.log("Found interpreter but can't satisfy required attributes.");

@@ -4,8 +4,8 @@
  * @module Discoverer
  * @fileOverview
  */
-define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ], function(easejs,
-		AttributeTypeList, Widget, Interpreter, Aggregator) {
+define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], function(easejs,
+		AttributeList, Widget, Interpreter, Aggregator) {
 	var Class = easejs.Class;
 	
 	var Discoverer = Class('Discoverer', {
@@ -311,7 +311,7 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
             if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
 			if (_attributeTypeList instanceof Array) {
 				list = _attributeTypeList;
-			} else if (Class.isA(AttributeTypeList, _attributeTypeList)) {
+			} else if (Class.isA(AttributeList, _attributeTypeList)) {
 				list = _attributeTypeList.getItems();
 			}
 			if (typeof list != "undefined") {

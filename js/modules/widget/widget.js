@@ -4,11 +4,11 @@
  * @module Widget
  * @fileOverview
  */
-define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
-		 'attributeValue', 'attributeTypeList', 'attributeValueList', 'conditionList',
+define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
+		 'attributeList', 'conditionList',
 		 'subscriber', 'subscriberList', 'widgetDescription'],
-	function(easejs, MathUuid, Callback, CallbackList, AttributeType,
-			AttributeValue, AttributeTypeList, AttributeValueList, ConditionList,
+	function(easejs, MathUuid, Callback, CallbackList, Attribute,
+			AttributeList, ConditionList,
 			Subscriber, SubscriberList, WidgetDescription) {
 		
 		var AbstractClass = easejs.AbstractClass;
@@ -125,10 +125,10 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 				this.id = Math.uuid();
                 this.discoverer = _discoverer;
                 this.register();
-				this.attributeTypes = new AttributeTypeList();
-				this.constantAttributeTypes = new AttributeTypeList();
-				this.attributes = new AttributeValueList();
-				this.constantAttributes = new AttributeValueList();
+				this.attributeTypes = new AttributeList();
+				this.constantAttributeTypes = new AttributeList();
+				this.attributes = new AttributeList();
+				this.constantAttributes = new AttributeList();
 				this.subscribers = new SubscriberList();
 				this.callbacks = new CallbackList();
 				this.init(_attributeTypes);
@@ -191,7 +191,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @public
 			 * @alias getWidgetConstantAttributeTypes
 			 * @memberof Widget#
-			 * @returns {AttributeTypeList}
+			 * @returns {AttributeList}
 			 */
 			'public getWidgetConstantAttributeTypes' : function() {
 				return this.constantAttributeTypes;
@@ -203,12 +203,12 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @public
 			 * @alias getAttributes
 			 * @memberof Widget#
-             * @param {AttributeTypeList} _attributeTypeList
-			 * @returns {AttributeValueList}
+             * @param {AttributeList} _attributeList
+			 * @returns {AttributeList}
 			 */
-			'public getAttributeValues' : function(_attributeTypeList) {
-                if (Class.isA(AttributeTypeList, _attributeTypeList)) {
-                    return this.attributes.getSubset(_attributeTypeList);
+			'public getAttributeValues' : function(_attributeList) {
+                if (Class.isA(AttributeList, _attributeList)) {
+                    return this.attributes.getSubset(_attributeList);
                 } else {
                     return this.attributes;
                 }
@@ -230,7 +230,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @private
 			 * @alias getOldAttributes
 			 * @memberof Widget#
-			 * @returns {AttributeValueList}
+			 * @returns {AttributeList}
 			 */
 			'public getOldAttributes' : function() {
 				return this.oldAttributes;
@@ -242,7 +242,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @public
 			 * @alias getConstantAttributes
 			 * @memberof Widget#
-			 * @returns {AttributeValueList}
+			 * @returns {AttributeList}
 			 */
 			'public getConstantAttributes' : function() {
 				return this.constantAttributes;
@@ -365,14 +365,13 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @public
 			 * @alias addAttribute
 			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _attribute AttributeValue
+			 * @param {Attribute} _attribute AttributeValue
 			 */
 			'public addAttribute' : function(_attribute) {
-				if (Class.isA(AttributeValue, _attribute)) {
+				if (Class.isA(Attribute, _attribute)) {
 					if (!this.attributes.contains(_attribute)) {
 
-						var type = new AttributeType().withName(_attribute.getName())
+						var type = new Attribute().withName(_attribute.getName())
 													.withType(_attribute.getType())
 													.withParameters(_attribute.getParameters());
 						this.attributeTypes.put(type);
@@ -531,7 +530,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @param {Subscriber} _subscriber Subscriber
 			 */
 			'public removeSubscriber' : function(_subscriberId) {
-					this.subscribers.removeItem(_subscriberId);
+					this.subscribers.removeSubscriberWithId(_subscriberId);
 			},
 
 			/**
@@ -558,7 +557,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @returns {boolean}
 			 */
 			'protected isAttribute' : function(_attribute) {
-				return !!this.attributeTypes.contains(_attribute.getAttributeType());
+				return !!this.attributeTypes.containsTypeOf(_attribute);
 			},
 
 			/**
@@ -683,12 +682,12 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 				var list = [];
 				if (_data instanceof Array) {
 					list = _data;
-				} else if (Class.isA(AttributeValueList, _data)) {
+				} else if (Class.isA(AttributeList, _data)) {
 					list = _data.getItems();
 				}
 				for ( var i in list) {
 					var x = list[i];
-					if (Class.isA(AttributeValue, x) && this.isAttribute(x)) {
+					if (Class.isA(Attribute, x) && this.isAttribute(x)) {
 						this.addAttribute(x);
 					}
 				}
@@ -702,10 +701,10 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @public
 			 * @alias queryWidget
 			 * @memberof Widget#
-			 * @returns {AttributeValueList}
+			 * @returns {AttributeList}
 			 */
 			'public queryWidget' : function() {
-				var response = new AttributeValueList();
+				var response = new AttributeList();
 				response.putAll(this.getAttributeValues());
 				response.putAll(this.getConstantAttributes());
 				return response;
@@ -719,14 +718,14 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 * @alias updateAndQueryWidget
 			 * @memberof Widget#
 			 * @param {?function} _function For alternative  actions, because an asynchronous function can be used.
-			 * @returns {?AttributeValueList}
+			 * @returns {?AttributeList}
 			 */
 			'virtual public updateAndQueryWidget' : function(_function) {
 				if(_function && typeof(_function) === 'function'){
 					this.queryGenerator(_function);
 				} else {
 					this.queryGenerator();
-					var response = new AttributeValueList();
+					var response = new AttributeList();
 					response.putAll(this.getAttributeValues());
 					response.putAll(this.getConstantAttributes());
 					return response;
@@ -746,7 +745,7 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 					var subscriberList = this.subscribers.getItems();
 					for ( var i in subscriberList) {
 						var subscriber = subscriberList[i];
-						if (subscriber.getSubscriptionCallbacks().containsKey( _callback.getName())) {
+						if (subscriber.getSubscriptionCallbacks().contains(_callback)) {
 							if(this.dataValid(subscriber.getConditions())){
 								var subscriberInstance = this.discoverer.getComponent(subscriber.getSubscriberId());
 								var callSubset =  _callback.getAttributeTypes();

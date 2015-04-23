@@ -5,9 +5,9 @@
  * @module Widget
  * @fileOverview
  */
-define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
+define(['easejs', 'attribute', 'attributeList',
         'retrievalResult', 'parameter', 'parameterList'],
- 	function( easejs, AttributeValue, AttributeValueList, AttributeType,
+ 	function( easejs, Attribute, AttributeList,
  			RetrievalResult, Parameter, ParameterList){
  	var Class = easejs.Class;
 	var Storage =  Class('Storage',		
@@ -32,7 +32,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		/**
 		 * @alias data
 		 * @private
-		 * @type {AttributeValueList}
+		 * @type {AttributeList}
 		 * @memberof Storage#
 		 * @desc Cache before storing the new data in the database.
 		 */
@@ -88,8 +88,8 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @class Storage
 		 * @classdesc Storage handles the access to the database.
 		 * @requires easejs
-		 * @requires AttributeValue
-		 * @requires AttributeValueList
+		 * @requires Attribute
+		 * @requires AttributeList
 		 * @requires Parameter
 		 * @requires ParameterList
 		 * @requires RetrievalResult
@@ -99,7 +99,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		'public __construct' : function(_name, _time, _counter){
 			this.initStorage(_name);
 			this.attributes = new RetrievalResult();
-			this.data = new AttributeValueList();
+			this.data = new AttributeList();
 			this.dataCount = 0;
 			this.lastFlush = new Date();
 			if(_time && _time === parseInt(_time) && _time!=0)
@@ -182,18 +182,18 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @private
 		 * @alias insertIntoTable
 		 * @memberof Storage#
-		 * @param {AttributeValue} _attributeValue Attribute that should be stored.
+		 * @param {Attribute} _attribute Attribute that should be stored.
 		 * @param {?function} _function For alternative actions, if an asynchronous function is used.
 		 */	
-		'private insertIntoTable' : function(_attributeValue, _function){
-			if(this.db && _attributeValue && Class.isA(AttributeValue, _attributeValue)){
-				var tableName = this.tableName(_attributeValue);
+		'private insertIntoTable' : function(_attribute, _function){
+			if(this.db && _attribute && Class.isA(Attribute, _attribute)){
+				var tableName = this.tableName(_attribute);
 				var statement = 'INSERT INTO "' + tableName
 									 + '" (value_, type_, created_) VALUES ("'
-									 + _attributeValue.getValue() + '", "' 
-									 + _attributeValue.getType() + '", "'
-									 + _attributeValue.getTimestamp() + '")';
-				console.log('INSERT INTO "'+tableName+'" VALUES ('+_attributeValue.getValue()+", "+_attributeValue.getType()+", "+_attributeValue.getTimestamp());
+									 + _attribute.getValue() + '", "'
+									 + _attribute.getType() + '", "'
+									 + _attribute.getTimestamp() + '")';
+				console.log('INSERT INTO "'+tableName+'" VALUES ('+_attribute.getValue()+", "+_attribute.getType()+", "+_attribute.getTimestamp());
 				if(_function && typeof(_function) == 'function'){
 					this.db.transaction(function(tx){tx.executeSql(statement);}, this.errorCB, _function);	
 				} else {
@@ -298,7 +298,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @returns {boolean}
 		 */	
 		'private tableExists' : function(_attribute){
-			if(Class.isA(AttributeValue, _attribute) || Class.isA(AttributeType, _attribute)){
+			if(Class.isA(Attribute, _attribute)){
 				var name = this.tableName(_attribute);
 				return this.attributeNames.indexOf(name) > -1;				
 			} else if(typeof _attribute === 'string'){
@@ -317,11 +317,16 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @param {?function} _function For additional actions, if an asynchronous function is used.
 		 */	
 		'public retrieveAttributes' : function(_tableName, _function){
+			console.log("retrieveAttributes from "+_tableName);
+
 			if(this.db){
 				var self = this;	
 				self.flushStorage();
-				this.db.transaction(function(_tx){self.queryValues(_tx,_tableName,self, _function);},
-		    						function(error){self.errorCB(error);} );	
+				this.db.transaction(function(_tx) {
+					self.queryValues(_tx,_tableName,self, _function);
+				}, function(error) {
+					self.errorCB(error);
+				});
 			}
 		},
 		
@@ -337,9 +342,10 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @param {@this} self
 		 * @param {?function} _function For additional actions, if an asynchronous function is used.
 		 */	
-		'private queryValues' : function(_tx,_tableName,self, _function){
-			if(self.tableExists(_tableName)){	
-				var statement = 'SELECT * FROM ' + _tableName;
+		'private queryValues' : function(_tx, _tableName, self, _function){
+			if(self.tableExists(_tableName)){
+				console.log('SELECT * FROM "' +_tableName+"'");
+				var statement = 'SELECT * FROM "' + _tableName+'"';
 				_tx.executeSql(statement, [], 
 					function(_tx,results){self.queryValuesSuccess(_tx,results,_tableName, self, _function);}, 
 					function(error){self.errorCB(error);});			
@@ -368,7 +374,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 			var attributeName = this.resolveAttributeName(_tableName);
 			var parameterList = this.resolveParameters(_tableName);
 			for(var i=0; i<len; i++){
-				var attribute = new AttributeValue().
+				var attribute = new Attribute().
 								withName(attributeName).withValue(results.rows.item(i).value_).
 								withType(results.rows.item(i).type_).
 								withTimestamp(results.rows.item(i).created_).
@@ -411,11 +417,11 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @private 
 		 * @alias addData
 		 * @memberof Storage#
-		 * @param {AttributeValue} _attributeValue Value that should be stored.
+		 * @param {Attribute} _attribute Value that should be stored.
 		 */		
-		'private addData' : function(_attributeValue){
-			if(Class.isA(AttributeValue, _attributeValue)){
-				this.data.put(_attributeValue);
+		'private addData' : function(_attribute){
+			if(Class.isA(Attribute, _attribute)){
+				this.data.put(_attribute);
 				this.dataCount++;
 			}
 		},
@@ -447,7 +453,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @memberof Storage#
 		 */	
 		'private resetForFlush' : function(){
-			this.data = new AttributeValueList();
+			this.data = new AttributeList();
 			this.dataCount = 0;
 			this.lastFlush = new Date();
 		},
@@ -535,7 +541,7 @@ define(['easejs', 'attributeValue', 'attributeValueList', 'attributeType',
 		 * @returns{String}
 		 */
 		'private tableName' : function(_attribute){
-			return _attribute.getAttributeType().toString();
+			return _attribute.toString(true);
 		},
 		
 		/**
