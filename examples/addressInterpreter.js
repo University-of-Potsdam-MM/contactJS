@@ -9,21 +9,18 @@ define(['easejs', 'contactJS'],
 			'public name' : 'AddressInterpreter',
 
 			'protected initInAttributes' : function() {
-				this.inAttributeTypes.put(
+				this.setInAttributes([
 					new contactJS.Attribute()
 						.withName('latitude')
-						.withType('double')
-				);
-
-				this.inAttributeTypes.put(
+						.withType('double'),
 					new contactJS.Attribute()
 						.withName('longitude')
 						.withType('double')
-				);
+				]);
 			},
 
 			'protected initOutAttributes' : function() {
-				this.outAttributeTypes.put(
+				this.setOutAttribute(
 					new contactJS.Attribute()
 						.withName('formattedAddress')
 						.withType('string')
@@ -33,8 +30,8 @@ define(['easejs', 'contactJS'],
 			'protected interpretData' : function(_inAttributeValues, _outAttributeValues, _callback) {
 				var addressValue = _outAttributeValues.getItems()[0];
 
-				var latitude = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributeTypes.getItems()[0]);
-				var longitude = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributeTypes.getItems()[1]);
+				var latitude = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[0]);
+				var longitude = _inAttributeValues.getValueForAttributeWithTypeOf(this.inAttributes.getItems()[1]);
 
 				if(navigator.onLine){
 					if (latitude && longitude) {

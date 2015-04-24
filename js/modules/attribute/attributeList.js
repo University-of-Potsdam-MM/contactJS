@@ -144,19 +144,19 @@ define(['easejs', 'abstractList', 'attribute', 'parameterList' ],
 
             'public equals': function(_attributeList, _typeOnly) {
                 _typeOnly = typeof _typeOnly == "undefined" ? false : _typeOnly;
-                return _typeOnly ? this.equalsAllTypesOf(_attributeList) : this.equalsAllValuesOf(_attributeList);
+                return _typeOnly ? this.equalsTypesIn(_attributeList) : this.equalsValuesIn(_attributeList);
             },
 
             /**
              * Compare the specified AttributeList with this instance.
              *
              * @public
-             * @alias equals
+             * @alias equalsTypesIn
              * @memberof AttributeList#
              * @param {AttributeList} _attributeList AttributeList that should be compared.
              * @returns {boolean}
              */
-            'public equalsAllTypesOf' : function(_attributeList) {
+            'public equalsTypesIn' : function(_attributeList) {
                 if (Class.isA(AttributeList, _attributeList)	&& _attributeList.size() == this.size()) {
                     for (var index in _attributeList.getItems()) {
                         var theAttributeType = _attributeList.getItems()[index];
@@ -172,12 +172,12 @@ define(['easejs', 'abstractList', 'attribute', 'parameterList' ],
              * this instance.
              *
              * @public
-             * @alias equals
+             * @alias equalsValuesIn
              * @memberof AttributeList#
              * @param {AttributeList} _attributeList AttributeList that should be compared.
              * @returns {boolean}
              */
-            'public equalsAllValuesOf' : function(_attributeList) {
+            'public equalsValuesIn' : function(_attributeList) {
                 if (Class.isA(AttributeList, _attributeList) && _attributeList.size() == this.size()) {
                     for (var index in _attributeList.getItems()) {
                         var theAttribute = _attributeList.getItems()[index];
@@ -210,7 +210,7 @@ define(['easejs', 'abstractList', 'attribute', 'parameterList' ],
                     var attribute = list[i];
                     if (Class.isA(Attribute, attribute)) {
                         var attribute = this.getAttributeWithTypeOf(attribute);
-                        if (typeof attribute != "undefined") {
+                        if (typeof attribute != "NO_VALUE") {
                             response.put(attribute);
                         }
                     }

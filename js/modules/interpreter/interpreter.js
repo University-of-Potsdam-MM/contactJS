@@ -29,37 +29,21 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 				 */
 				'public id' : '',
 				/**
-				 * @alias inAttributeTypes
+				 * @alias inAttributes
 				 * @protected
 				 * @type {AttributeList}
 				 * @memberof Interpreter#
 				 * @desc Types of all attributes that can be handled.
 				 */
-				'protected inAttributeTypes' : [],
+				'protected inAttributes' : [],
 				/**
-				 * @alias outAttributeTypes
+				 * @alias outAttributes
 				 * @protected
 				 * @type {AttributeList}
 				 * @memberof Interpreter#
 				 * @desc Types of all attributes that will be returned.
 				 */
-				'protected outAttributeTypes' : [],
-				/**
-				 * @alias inAttributeValues
-				 * @protected
-				 * @type {AttributeList}
-				 * @memberof Interpreter#
-				 * @desc List of the data that should be interpreted.
-				 */
-				'protected inAttributeValues' : [],
-				/**
-				 * @alias outAttributeValues
-				 * @protected
-				 * @type {AttributeList}
-				 * @memberof Interpreter#
-				 * @desc List of interpreted data.
-				 */
-				'protected outAttributeValues' : [],
+				'protected outAttributes' : [],
 				/**
 				 * @alias lastInterpretation
 				 * @protected
@@ -94,10 +78,8 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 					this.id = Math.uuid();
                     this.discoverer = _discoverer;
                     this.register();
-					this.inAttributeTypes = new AttributeList();
-					this.outAttributeTypes = new AttributeList();
-					this.inAttributeValues = new AttributeList();
-					this.outAttributeValues = new AttributeList();
+					this.inAttributes = new AttributeList();
+					this.outAttributes = new AttributeList();
 					this.initInterpreter();
 				},
 				
@@ -177,10 +159,10 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 				 * @public
 				 * @alias getInAttributeTypes
 				 * @memberof Interpreter#
-				 * @returns {AttributeTypeList} 
+				 * @returns {AttributeList}
 				 */
-				'public getInAttributeTypes' : function() {
-					return this.inAttributeTypes;
+				'public getInAttributes' : function() {
+					return this.inAttributes;
 				},
 
 				/**
@@ -189,53 +171,46 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 				 * @protected
 				 * @alias setInAttribute
 				 * @memberof Interpreter#
-				 * @param {string} _name name of the attribute
-				 * @param {string} _type type of the attribute
-				 * @param {string} _value value of the attribute
-				 * @param {ParameterList|Array} _parameter Parameter of the attribute.
 				 */
-				'protected setInAttribute' : function(_name, _type, _value,	_parameters) {
-					var attributeValue = new Attribute().withName(_name)
-							.withValue(_value).withType(_type).withParameters(_parameters);
-					if (this.isInAttribute(attributeValue)) {
-						this.inAttributeValues.put(attributeValue);
-					}
+				'protected setInAttribute' : function(_attribute) {
+					this.inAttributes.put(_attribute);
 				},
 
 				/**
 				 * Sets an inAttributes.
 				 * 
 				 * @protected
-				 * @alias setInAttributeValues
+				 * @alias setInAttributes
 				 * @memberof Interpreter#
 				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
 				 */
-				'protected setInAttributeValues' : function(_attributeList) {
-					this.inAttributeValues = new AttributeList().withItems(_attributeList);
+				'protected setInAttributes' : function(_attributeList) {
+					this.inAttributes = new AttributeList().withItems(_attributeList);
 				},
+
 				/**
 				 * Verifies whether the specified attribute is contained in inAttributeList.
 				 * 
 				 * @protected
 				 * @alias isInAttribute
 				 * @memberof Interpreter#
-				 * @param {AttributeValue} _attribute Attribute that should be verified.
+				 * @param {Attribute} _attribute Attribute that should be verified.
 				 * @return {boolean}
 				 */
 				'protected isInAttribute' : function(_attribute) {
-					return !!this.inAttributeTypes.containsTypeOf(_attribute);
+					return !!this.inAttributes.containsTypeOf(_attribute);
 				},
 
 				/**
 				 * Returns the provided outAttributeTypes.
 				 * 
 				 * @public
-				 * @alias getOutAttributeTypes
+				 * @alias getOutAttributes
 				 * @memberof Interpreter#
-				 * @returns {AttributeTypeList} 
+				 * @returns {AttributeList}
 				 */
-				'public getOutAttributeTypes' : function() {
-					return this.outAttributeTypes;
+				'public getOutAttributes' : function() {
+					return this.outAttributes;
 				},
 
 				/**
@@ -244,17 +219,21 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 				 * @protected
 				 * @alias setOutAttribute
 				 * @memberof Interpreter#
-				 * @param {string} _name name of the attribute
-				 * @param {string} _type type of the attribute
-				 * @param {string} _value value of the attribute
-				 * @param {ParameterList|Array} _parameters Parameter of the attribute.
 				 */
-				'protected setOutAttribute' : function(_name, _type, _value,_parameters) {
-					var attributeValue = new AttributeValue().withName(_name)
-							.withValue(_value).withType(_type).withParameters(_parameters);
-					if (this.isOutAttribute(attributeValue)) {
-						this.outAttributeValues.put(attributeValue);
-					}
+				'protected setOutAttribute' : function(_attribute) {
+					this.outAttributes.put(_attribute);
+				},
+
+				/**
+				 * Sets an outAttributes.
+				 *
+				 * @protected
+				 * @alias setOutAttributes
+				 * @memberof Interpreter#
+				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
+				 */
+				'protected setOutAttributes' : function(_attributeList) {
+					this.outAttributes = new AttributeList().withItems(_attributeList);
 				},
 
 				/**
@@ -263,11 +242,11 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 				 * @protected
 				 * @alias isOutAttribute
 				 * @memberof Interpreter#
-				 * @param {AttributeValue} _attribute Attribute that should be verified.
+				 * @param {Attribute} _attribute Attribute that should be verified.
 				 * @return {boolean}
 				 */
 				'protected isOutAttribute' : function(_attribute) {
-					return !!this.outAttributeTypes.containsTypeOf(_attribute);
+					return !!this.outAttributes.containsTypeOf(_attribute);
 				},
 
 				/**
@@ -291,7 +270,7 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 
 						if (!self.canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
 
-						self.setInAttributeValues(_inAttributeValues);
+						self.setInAttributes(_inAttributeValues);
 						self.lastInterpretation = new Date();
 
 						if (_function && typeof(_function) == 'function'){
@@ -328,7 +307,7 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 					} else if (Class.isA(AttributeList, _inAttributes)) {
 						list = _inAttributes.getItems();
 					}
-					if (list.length == 0 || _inAttributes.size() != this.getInAttributeTypes().size()) {
+					if (list.length == 0 || _inAttributes.size() != this.getInAttributes().size()) {
 						return false;
 					}
 					for ( var i in list) {
@@ -355,7 +334,7 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 					} else if (Class.isA(AttributeList, _outAttributes)) {
 						list = _outAttributes.getItems();
 					}
-					if (list.length == 0 || _outAttributes.size() != this.getOutAttributeTypes().size()) {
+					if (list.length == 0 || _outAttributes.size() != this.getOutAttributes().size()) {
 						return false;
 					}
 					for ( var i in list) {
@@ -388,10 +367,9 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 				 * @returns {InterpreterDescription} 
 				 */
 				'virtual public getDescription' : function() {
-					var description = new InterpreterDescription().withId(
-							this.id).withName(this.name);
-					description.addOutAttributeTypes(this.outAttributeTypes);
-					description.setInAttributeTypes(this.inAttributeTypes);
+					var description = new InterpreterDescription().withId(this.id).withName(this.name);
+					description.addOutAttributeTypes(this.outAttributes);
+					description.setInAttributeTypes(this.inAttributes);
 					return description;
 				},
 
@@ -420,7 +398,6 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 					if (this.discoverer) {
 						this.discoverer.registerNewComponent(this);
 					}
-
 				},
 
 				/**
@@ -428,28 +405,12 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 				 * @returns {boolean}
 				 */
 				'public hasOutAttributesWithInputParameters': function() {
-					return this.outAttributeTypes.hasAttributesWithInputParameters();
+					return this.outAttributes.hasAttributesWithInputParameters();
 				},
 
 				'public getOutAttributesWithInputParameters': function() {
-					return this.outAttributeTypes.getAttributesWithInputParameters();
+					return this.outAttributes.getAttributesWithInputParameters();
 				}
-				
-//				/**
-//				 * Unregisters the component to the associated discoverer
-//				 * and deletes the reference.
-//				 * 
-//				 * @public
-//				 * @alias register
-//				 * @memberof Widget#
-//				 */
-//				'protected unregister' : function() {
-//					if (this.discoverer) {
-//						this.discoverer.unregisterComponent(this.getId());
-//						this.discoverer = null;
-//					}
-//				},
-
 			});
 
 			return Interpreter;

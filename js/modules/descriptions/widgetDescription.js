@@ -195,7 +195,7 @@ define(['easejs', 'attributeList'],
 			 * @public
 			 * @alias addOutAttributeTypes
 			 * @memberof WidgetDescription#
-			 * @param {(AttributeTypeList|Array)} _outAttributeTypes List of AttributeType that are provided
+			 * @param {(AttributeList|Array)} _outAttributeTypes List of AttributeType that are provided
 			 */
 			'public addOutAttributeTypes' : function(_outAttributeTypes){
 				this.outAttributeTypes.putAll(_outAttributeTypes);
@@ -215,11 +215,12 @@ define(['easejs', 'attributeList'],
 			 * @public
 			 * @alias doesSatisfyAttributeType
 			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _attributeType
+			 * @param {AttributeType} _attribute
 			 * @returns {boolean}
 			 */
-            'public doesSatisfyAttributeType': function(_attributeType) {
-                return this.getOutAttributeTypes().contains(_attributeType);
+
+            'public doesSatisfyAttributeType': function(_attribute) {
+                return this.getOutAttributeTypes().containsTypeOf(_attribute);
             }
 		});
 

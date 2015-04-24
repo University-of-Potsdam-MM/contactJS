@@ -26,7 +26,7 @@ require(['configTest'], function() {
 				
 				//if aggregator provides more attributes
 				var typeList = new contactJS.AttributeList().withItems([latitudeValue, longitudeValue]);
-				
+
 				var aggData = testAggregator.getCurrentData();
 				var data = aggData.getSubset(typeList);
 				assert.equal( data.size(), 2, "Passed!: two available attributes" );

@@ -70,7 +70,7 @@
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;
 	contactJS.CallbackList = CallbackList;
-	contactJS.Subscriber =Subscriber;
+	contactJS.Subscriber = Subscriber;
 	contactJS.SubscriberList = SubscriberList;
 	contactJS.Widget = Widget;
 	contactJS.AbstractList = AbstractList;

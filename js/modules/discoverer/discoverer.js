@@ -43,7 +43,7 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @class Discoverer
 		 * @classdesc The Discoverer handles requests for components and attributes. 
 		 * @requires easejs
-		 * @requires AttributeTypeList
+		 * @requires AttributeList
 		 * @constructs Discoverer
 		 */
 		'public __construct' : function() {
@@ -300,27 +300,27 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @public
 		 * @alias getComponentsByAttributes
 		 * @memberof Discoverer#
-		 * @param {AttributeTypeList} _attributeTypeList list of searched attributes
+		 * @param {AttributeList} _attributeList list of searched attributes
 		 * @param {boolean} _all choise of the verification mode
          * @param {Array} _componentTypes Components types to search for
 		 * @returns {Array}
 		 */
-		'public getComponentsByAttributes' : function(_attributeTypeList, _all, _componentTypes) {
+		'public getComponentsByAttributes' : function(_attributeList, _all, _componentTypes) {
 			var componentList = [];
 			var list = {};
             if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
-			if (_attributeTypeList instanceof Array) {
-				list = _attributeTypeList;
-			} else if (Class.isA(AttributeList, _attributeTypeList)) {
-				list = _attributeTypeList.getItems();
+			if (_attributeList instanceof Array) {
+				list = _attributeList;
+			} else if (Class.isA(AttributeList, _attributeList)) {
+				list = _attributeList.getItems();
 			}
 			if (typeof list != "undefined") {
 				var descriptions = this.getDescriptions(_componentTypes);
 				for (var i in descriptions) {
 					var description = descriptions[i];
-						if(_all && this.containsAllAttributes(description, list)){
+						if(_all && this.containsAllAttributes(description, list)) {
 							componentList.push(this.getComponent(description.getId()));
-						} else if(!_all && this.containsAtLeastOneAttribute(description, list)){
+						} else if(!_all && this.containsAtLeastOneAttribute(description, list)) {
 							componentList.push(this.getComponent(description.getId()));
 					}
 				}

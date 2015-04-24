@@ -3,7 +3,8 @@ require(['configTest'], function() {
 	         	function(AddressInterpreter, contactJS){
 		
 			QUnit.asyncTest( "AddressInterpreter", function( assert ) {
-				var testInterpreter = new AddressInterpreter();
+				var discoverer = new contactJS.Discoverer();
+				var testInterpreter = new AddressInterpreter(discoverer);
 		    				        
 		        var id = testInterpreter.getId();
 				assert.ok( id && id !== "null" && id !== "undefined","Passed!: id is not null" );
@@ -12,7 +13,7 @@ require(['configTest'], function() {
 				//getInAttributeTypes
 				var latitudeType = new contactJS.Attribute().withName('latitude').withType('double');
 				var longitudeType = new contactJS.Attribute().withName('longitude').withType('double');
-				var inTypes = testInterpreter.getInAttributeTypes();
+				var inTypes = testInterpreter.getInAttributes();
 
 				assert.ok( inTypes.size() == 2,"Passed!: 2 defined type in addressInterpreter" );
 				assert.ok( inTypes.getAttributeWithTypeOf(latitudeType),"Passed!:type latitude exists" );
@@ -22,12 +23,11 @@ require(['configTest'], function() {
 			
 				//getOutAttributeTypes
 				var formattedAddress = new contactJS.Attribute().withName('formattedAddress').withType('string');
-				var outTypes = testInterpreter.getOutAttributeTypes();
+				var outTypes = testInterpreter.getOutAttributes();
 				assert.ok( outTypes.size() == 1,"Passed!: 1 defined outType in addressInterpreter" );
 				assert.ok( outTypes.getAttributeWithTypeOf(formattedAddress),"Passed!: formattedAddress exists" );
 				assert.ok( outTypes.getAttributeWithTypeOf(formattedAddress).equalsTypeOf(formattedAddress),"Passed!: formattedAddress equals expected type" );
-			
-				
+
 				//interpreterDescription				
 				var desc = testInterpreter.getDescription();
 				assert.ok( desc,"Passed!: InterpreterDescription exists" );
@@ -44,7 +44,7 @@ require(['configTest'], function() {
 				var attributeList = new contactJS.AttributeList().withItems([latitudeValue, longitudeValue]);
 					    		    		
 		    	var assertData2 = function(result){
-		    		assert.ok( testInterpreter.getLastInterpretionTime(),"Callback passed!: getLastInterpretionTime exists" );
+		    		assert.ok(testInterpreter.getLastInterpretionTime(),"Callback passed!: getLastInterpretionTime exists" );
 		    		assert.equal(result.size(), 1, "Callback passed!: one outAttribute");
 		    		var list = result.getItems();
 		    		for(var i in list){

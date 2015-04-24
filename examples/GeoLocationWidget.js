@@ -25,7 +25,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
 		},
 
 		'protected initCallbacks': function () {
-			this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getAttributeTypes()));
+			this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getAttributes()));
 		},
 
 		'override protected queryGenerator': function (_function) {
@@ -34,8 +34,8 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
 
 			if(navigator.geolocation){
 				navigator.geolocation.getCurrentPosition(function(_position) {
-					response.put(self.getAttributeValues().getItems()[0].setValue(_position.coords.latitude));
-					response.put(self.getAttributeValues().getItems()[1].setValue(_position.coords.longitude));
+					response.put(self.getAttributes().getItems()[0].setValue(_position.coords.latitude));
+					response.put(self.getAttributes().getItems()[1].setValue(_position.coords.longitude));
 
 					self.sendResponse(response, _function);
 				}, function(error) {

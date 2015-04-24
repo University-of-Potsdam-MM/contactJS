@@ -37,7 +37,7 @@ require(['configTest'], function() {
 
 				assert.equal(subscriber.size(), 1,"subscribe Passed!: one subscribed Widget in geolocationWidget too");
 				
-				var values = testAggregator.getAttributeValues();
+				var values = testAggregator.getAttributes();
 				assert.equal( values.size(), 2, "Passed!: two available attributes" );
 				var latitude = values.getAttributeWithTypeOf(latitudeType);
 				assert.equal(latitude.getName(), 'latitude',"subscribed Attributes Passed!: latitude exists" );

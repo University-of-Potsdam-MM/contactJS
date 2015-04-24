@@ -15,9 +15,9 @@ require(['configTest'], function() {
 				assert.equal( testWidget.getName(), 'GeoLocationWidget', "Passed!: name -> GeoLocationWidget" );
 					
 				//attributeTypes
-				var types = testWidget.getAttributeTypes();
+				var types = testWidget.getAttributes();
 				assert.equal(types.size(), 2,"getWidgetAttributeTypes Passed!: two types were returned" );
-				var constantTypes = testWidget.getWidgetConstantAttributeTypes();
+				var constantTypes = testWidget.getConstantAttributes();
 				assert.equal(constantTypes.size(), 0,"getWidgetConstantAttributeTypes Passed!: zero constantTypes was returned" );
 			
 				//callbacks
@@ -29,7 +29,7 @@ require(['configTest'], function() {
 				assert.equal(subscriber.size(), 0,"getSubscriber Passed!: zero subscriber was returned" );
 				
 				//attributes
-				var attributes= testWidget.getAttributeValues();
+				var attributes = testWidget.getAttributes();
 				assert.equal(attributes.size(), 2,"queryAttributes Passed!: two attributes were returned" );
 				var latitude = attributes.getAttributeWithTypeOf(latitudeType);
 				assert.equal(latitude.getName(), 'latitude',"queryAttributes Passed!: latitude exists" );
