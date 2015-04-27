@@ -15,6 +15,7 @@
 		    'interpreterDescription',
 		    'widgetDescription',	    
 		    'discoverer',
+		    'translation',
 		    'interpreter',
 		    'interpreterResult',
 		    'callback',   
@@ -40,6 +41,7 @@
 			    InterpreterDescription,
 			    WidgetDescription,	    
 			    Discoverer,
+			    Translation,
 			    Interpreter, 
 			    InterpreterResult,
 			    Callback,   
@@ -72,11 +74,12 @@
 	contactJS.InterpreterDescription = InterpreterDescription;
 	contactJS.WidgetDescription = WidgetDescription;
 	contactJS.Discoverer = Discoverer;
+	contactJS.Translation = Translation;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;
 	contactJS.CallbackList = CallbackList;
-	contactJS.Subscriber =Subscriber;
+	contactJS.Subscriber = Subscriber;
 	contactJS.SubscriberList = SubscriberList;
 	contactJS.Widget = Widget;
 	contactJS.AbstractList = AbstractList;
