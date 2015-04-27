@@ -1,6 +1,6 @@
 /**
  * This module represents a Callback.
- * Callbacks defines events for sending data to subscribers
+ * Callbacks define events for sending data to subscribers
  * 
  * @module Callback
  * @fileOverview

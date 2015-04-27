@@ -1,5 +1,5 @@
 /**
- * This module represents a InterpreterResult.
+ * This module represents an InterpreterResult.
  * 
  * @module InterpreterResult
  * @fileOverview

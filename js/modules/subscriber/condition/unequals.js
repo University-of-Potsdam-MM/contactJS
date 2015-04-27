@@ -1,16 +1,16 @@
 /**
- * This module represents the conditionMethod Equals. 
+ * This module represents the conditionMethod UnEquals. 
  * 
- * @module Equals
+ * @module UnEquals
  * @fileOverview
  */
 define(['easejs', 'conditionMethod'],
  	function(easejs, ConditionMethod){
  	var Class = easejs.Class;
  	/**
-	 * @class Equals
+	 * @class UnEquals
 	 * @implements {ConditionMethod}
-	 * @classdesc This class is the conditionMethod equals. 
+	 * @classdesc This class is the conditionMethod unequals. 
 	 * 			  It compares the values of two attributes.
 	 * @requires easejs
 	 * @requires conditionMethod
@@ -22,7 +22,7 @@ define(['easejs', 'conditionMethod'],
 		 * 
 		 * @public
 		 * @alias process
-		 * @memberof Equals#
+		 * @memberof UnEquals#
 		 * @param {*} reference Is not used.
 		 * @param {*} firstValue Value (from an attribute) that should be compared.
 		 * @param {*} secondValue Value (from an attribute) for comparison.
