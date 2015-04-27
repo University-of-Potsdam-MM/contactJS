@@ -26,6 +26,7 @@ requirejs.config({
 	    interpreterDescription: 'modules/descriptions/interpreterDescription',
 	    widgetDescription: 'modules/descriptions/widgetDescription',	    
 	    discoverer: 'modules/discoverer/discoverer',
+	    translation: 'modules/discoverer/translation',
 	    interpreter: 'modules/interpreter/interpreter', 
 	    interpreterResult: 'modules/interpreter/interpreterResult',
 	    callback: 'modules/subscriber/callback',   

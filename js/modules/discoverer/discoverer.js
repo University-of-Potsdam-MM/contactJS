@@ -38,6 +38,15 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		'private interpreter' : {},
 
 		/**
+		 * @alias translations
+		 * @private
+		 * @type {Array}
+		 * @memberof Discoverer#
+		 * @desc List of available attributeType translations (or synonyms).
+		 */
+		'private translations' : {},
+
+		/**
 		 * Constructor: All known components given in the associated functions will be registered as startup.
 		 * 
 		 * @class Discoverer
@@ -46,7 +55,8 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 		 * @requires AttributeTypeList
 		 * @constructs Discoverer
 		 */
-		'public __construct' : function() {
+		'public __construct' : function(_translations) {
+			this.translations = _translations;
 			this.register();
 		},
 
@@ -326,6 +336,18 @@ define([ 'easejs', 'attributeTypeList', 'widget', 'interpreter', 'aggregator' ],
 				}
 			}
 			return componentList;
+		},
+		
+		/**
+		 * Returns the (associative array of) this discoverer's translations.
+		 * 
+		 * @public
+		 * @alias getTranslations
+		 * @memberof Discoverer#
+		 * @returns {Object}
+		 */
+		'public getTranslations' : function() {
+			return this.translations;
 		},
 
 		/***********************************************************************
