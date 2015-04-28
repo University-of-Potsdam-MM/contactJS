@@ -23,21 +23,21 @@ require(['configTest'], function() {
 				assert.equal(widgetIds.length, 0,"Passed!: no subscribed Widgets" );
 				
 				//subscription
-				var widgetDescriptions = discoverer.getDescriptions([contactJS.Widget]);
+				var widgets = discoverer.getComponents([contactJS.Widget]);
 
 				var list = new contactJS.AttributeList().withItems([latitudeType, longitudeType]);
 				var callList = new contactJS.CallbackList().withItems([new contactJS.Callback().withName('UPDATE').withAttributeTypes(list)]);
-				testAggregator.addWidgetSubscription(widgetDescriptions[0], callList);
+				testAggregator.addWidgetSubscription(widgets[0], callList);
 				
 		    	widgetIds = testAggregator.getWidgets();
 				assert.equal( widgetIds.length, 1,"subscribe Passed!: one subscribed Widget" );
 				
-				geoLocationWidget = discoverer.getComponent(widgetDescriptions[0].getId());
+				geoLocationWidget = discoverer.getComponent(widgets[0].getId());
 		    	subscriber = geoLocationWidget.getSubscriber();
 
 				assert.equal(subscriber.size(), 1,"subscribe Passed!: one subscribed Widget in geolocationWidget too");
 				
-				var values = testAggregator.getAttributes();
+				var values = testAggregator.getOutAttributes();
 				assert.equal( values.size(), 2, "Passed!: two available attributes" );
 				var latitude = values.getAttributeWithTypeOf(latitudeType);
 				assert.equal(latitude.getName(), 'latitude',"subscribed Attributes Passed!: latitude exists" );

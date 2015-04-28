@@ -7,7 +7,7 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
 	var GeoLocationWidget = Class('GeoLocationWidget').extend(contactJS.Widget, {
 		'public name': 'GeoLocationWidget',
 
-		'protected initAttributes': function () {
+		'protected initOutAttributes': function () {
 			var latitude = new contactJS.Attribute()
 				.withName('latitude')
 				.withType('double');
@@ -16,16 +16,16 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
 				.withName('longitude')
 				.withType('double');
 
-			this.addAttribute(latitude);
-			this.addAttribute(longitude);
+			this.addOutAttribute(latitude);
+			this.addOutAttribute(longitude);
 		},
 
-		'protected initConstantAttributes': function () {
+		'protected initConstantOutAttributes': function () {
 
 		},
 
 		'protected initCallbacks': function () {
-			this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getAttributes()));
+			this.addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
 		},
 
 		'override protected queryGenerator': function (_function) {
@@ -34,8 +34,8 @@ define(['easejs', 'contactJS'], function (easejs, contactJS) {
 
 			if(navigator.geolocation){
 				navigator.geolocation.getCurrentPosition(function(_position) {
-					response.put(self.getAttributes().getItems()[0].setValue(_position.coords.latitude));
-					response.put(self.getAttributes().getItems()[1].setValue(_position.coords.longitude));
+					response.put(self.getOutAttributes().getItems()[0].setValue(_position.coords.latitude));
+					response.put(self.getOutAttributes().getItems()[1].setValue(_position.coords.longitude));
 
 					self.sendResponse(response, _function);
 				}, function(error) {

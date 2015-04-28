@@ -10,8 +10,7 @@
 		    'conditionMethod',
 		    'equals',
             'unequals',
-		    'interpreterDescription',
-		    'widgetDescription',	    
+
 		    'discoverer',
 		    'translation',
 		    'interpreter',
@@ -34,8 +33,6 @@
 			    ConditionMethod,
 			    Equals,
                 UnEquals,
-			    InterpreterDescription,
-			    WidgetDescription,	    
 			    Discoverer,
 			    Translation,
 			    Interpreter, 
@@ -65,8 +62,6 @@
 	contactJS.ConditionMethod = ConditionMethod;
 	contactJS.Equals = Equals;
     contactJS.UnEquals = UnEquals;
-	contactJS.InterpreterDescription = InterpreterDescription;
-	contactJS.WidgetDescription = WidgetDescription;
 	contactJS.Discoverer = Discoverer;
 	contactJS.Translation = Translation;
 	contactJS.Interpreter = Interpreter;

@@ -7,10 +7,10 @@
  */
 define(['easejs', 'MathUuid','widget',
         'attribute', 'attributeList', 'subscriber',
-        'subscriberList', 'callbackList', 'storage', 'widgetDescription', 'interpreter', 'interpretation'],
+        'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
  	function(easejs, MathUuid, Widget, Attribute,
  			AttributeList, Subscriber, SubscriberList,
- 			CallbackList, Storage, WidgetDescription, Interpreter, Interpretation){
+ 			CallbackList, Storage, Interpreter, Interpretation){
 
  	var Class = easejs.Class;
 	var Aggregator =  Class('Aggregator').
@@ -160,14 +160,14 @@ define(['easejs', 'MathUuid','widget',
 	   	 * @alias initAttributes
 		 * @memberof Aggregator#
 	     */
-		'protected initAttributes' : function(){
+		'protected initOutAttributes' : function(){
 			if(this.widgets.length > 0){
 				var widgetIdList = this.widgets;
 				for(var i in widgetIdList){
 					var widgetId = widgetIdList[i];
 					var widgetInstance = this.discoverer.getComponent(widgetId);
 					if (widgetInstance) {
-						this.setAttributes(widgetInstance.queryAttributes());
+						this.setOutAttributes(widgetInstance.queryAttributes());
 					}
                 }
             }
@@ -180,7 +180,7 @@ define(['easejs', 'MathUuid','widget',
 	   	 * @alias initConstantAttributes
 		 * @memberof Aggregator#
 	     */
-		'protected initConstantAttributes' : function(){
+		'protected initConstantOutAttributes' : function(){
 			if(this.widgets.length > 0){
                 var widgetIdList = this.widgets;
 				for(var i in widgetIdList){
@@ -252,7 +252,7 @@ define(['easejs', 'MathUuid','widget',
 		'virtual protected setAggregatorAttributeValues' : function(_attributes) {
             for (var index in _attributes) {
                 var theAttribute = _attributes[index];
-                this.addAttribute(theAttribute);
+                this.addOutAttribute(theAttribute);
             }
         },
 
@@ -293,7 +293,7 @@ define(['easejs', 'MathUuid','widget',
 		 * @returns {AttributeList}
 	     */
 		'public getCurrentData' : function(){
-			return this.attributes;
+			return this.outAttributes;
 		},
 		
 		/**
@@ -345,11 +345,11 @@ define(['easejs', 'MathUuid','widget',
 		 * @public
 	   	 * @alias addWidgetSubscription
 		 * @memberof Aggregator#
-		 * @param {String|Widget|WidgetDescription} _widgetIdOrWidget Widget that should be subscribed.
+		 * @param {String|Widget} _widgetIdOrWidget Widget that should be subscribed.
 		 * @param {CallbackList} _callbackList required Callbacks
 	     */
 		'public addWidgetSubscription' : function(_widgetIdOrWidget, _callbackList){
-            if (Class.isA(Widget, _widgetIdOrWidget) || Class.isA(WidgetDescription, _widgetIdOrWidget)) {
+            if (Class.isA(Widget, _widgetIdOrWidget)) {
                 if (Class.isA(Widget, _widgetIdOrWidget) && (!_callbackList || !Class.isA(CallbackList, _callbackList))) {
                     _callbackList = _widgetIdOrWidget.getCallbackList();
                 }
@@ -366,7 +366,7 @@ define(['easejs', 'MathUuid','widget',
 						var typeList = singleCallback.getAttributeTypes().getItems();
 						for(var y in typeList){
 							var singleType = typeList[y];
-							this.addAttribute(singleType);
+							this.addOutAttribute(singleType);
                         }
                     }
                     this.addWidget(_widgetIdOrWidget);
@@ -412,8 +412,8 @@ define(['easejs', 'MathUuid','widget',
 			}
 			for(var i in list){
 				var x = list[i];
-				if(Class.isA(Attribute, x ) && this.isAttribute(x)){
-					this.addAttribute(x);
+				if(Class.isA(Attribute, x ) && this.isOutAttribute(x)){
+					this.addOutAttribute(x);
 					if(this.db){
 						this.store(x);
 					}
@@ -568,18 +568,19 @@ define(['easejs', 'MathUuid','widget',
 
 		/**
 		 *
-		 * @private
+		 * @override
+		 * @public
 		 * @alias doesSatisfyAttributeType
 		 * @param _attribute
 		 * @returns {boolean}
 		 */
-        'private doesSatisfyAttributeType': function(_attribute) {
+        'override public doesSatisfyAttributeType': function(_attribute) {
             var componentUUIDs = this.getComponentUUIDs();
             var doesSatisfy = false;
 
             for (var index in componentUUIDs) {
                 var theComponent = this.discoverer.getComponent(componentUUIDs[index]);
-                if (theComponent.getDescription().doesSatisfyAttributeType(_attribute)) {
+                if (theComponent.doesSatisfyAttributeType(_attribute)) {
                     doesSatisfy = true;
                 }
             }
@@ -611,7 +612,7 @@ define(['easejs', 'MathUuid','widget',
 
 				// if the component was added before, ignore it
                 if (!this.hasComponent(theComponent.getId())) {
-                    var outAttributes = theComponent.getDescription().getOutAttributeTypes().getItems();
+                    var outAttributes = theComponent.getOutAttributes().getItems();
 
                     // if component is a widget and it wasn't added before, subscribe to its callbacks
                     if (Class.isA(Widget, theComponent)) {
@@ -622,7 +623,7 @@ define(['easejs', 'MathUuid','widget',
                         for (var widgetOutAttributeIndex in outAttributes) {
                             var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
 							// add the attribute type to the aggregators list of handled attribute types
-                            if (!this.getAttributes().containsTypeOf(widgetOutAttribute)) this.addAttribute(widgetOutAttribute);
+                            if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
                             console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
                             _unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
                         }
@@ -663,7 +664,7 @@ define(['easejs', 'MathUuid','widget',
 								for (var unsatisfiedAttributeIndex in _unsatisfiedAttributes.getItems()) {
 									var theUnsatisfiedAttribute = _unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 									if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
-										this.addAttribute(theUnsatisfiedAttribute);
+										this.addOutAttribute(theUnsatisfiedAttribute);
 										console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
 										this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
 									}
@@ -672,8 +673,8 @@ define(['easejs', 'MathUuid','widget',
                             }
 						} else {
                             console.log("Found interpreter but can't satisfy required attributes.");
-                            for (var j in theComponent.getDescription().getInAttributeTypes().getItems()) {
-                                console.log("Missing "+theComponent.getDescription().getInAttributeTypes().getItems()[j]+".");
+                            for (var j in theComponent.getInAttributes().getItems()) {
+                                console.log("Missing "+theComponent.getInAttributes().getItems()[j]+".");
                             }
                         }
                     }
@@ -692,7 +693,7 @@ define(['easejs', 'MathUuid','widget',
 		 * @memberof Aggregator#
 		 */
         'virtual public didFinishSetup': function() {
-            unsatisfiedAttributes = this.getAttributes().clone();
+            unsatisfiedAttributes = this.getOutAttributes().clone();
 
             // get all widgets that satisfy attribute types
             this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Widget]);
@@ -700,7 +701,7 @@ define(['easejs', 'MathUuid','widget',
             this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Interpreter]);
 
 			console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
-			console.log("Satisfied attributes: "+this.getAttributes().size());
+			console.log("Satisfied attributes: "+this.getOutAttributes().size());
 			console.log("Interpretations "+this.interpretations.length);
         },
 
@@ -724,14 +725,14 @@ define(['easejs', 'MathUuid','widget',
                         completedQueriesCounter++;
                         if (completedQueriesCounter == self.widgets.length) {
                             if (_callback && typeof(_callback) == 'function') {
-                                _callback(self.getAttributes());
+                                _callback(self.getOutAttributes());
                             }
                         }
                     });
                 }
             } else {
 				if (_callback && typeof(_callback) == 'function') {
-                    _callback(self.getAttributes());
+                    _callback(self.getOutAttributes());
                 }
             }
         },
@@ -752,14 +753,14 @@ define(['easejs', 'MathUuid','widget',
 				for (var index in this.interpretations) {
 					var theInterpretation = this.interpretations[index];
 					var theInterpreterId = theInterpretation.interpreterId;
-					var interpretationInAttributeValues = this.getAttributes(theInterpretation.inAttributeTypes);
-					var interpretationOutAttributeValues = this.getAttributes(theInterpretation.outAttributeTypes);
+					var interpretationInAttributeValues = this.getOutAttributes(theInterpretation.inAttributeTypes);
+					var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
 
 					self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(_interpretedData) {
 						for (var j in _interpretedData.getItems()) {
 							var theInterpretedData = _interpretedData.getItems()[j];
 
-							self.addAttribute(theInterpretedData);
+							self.addOutAttribute(theInterpretedData);
 							if (self.db){
 								self.store(theInterpretedData);
 							}
@@ -768,14 +769,14 @@ define(['easejs', 'MathUuid','widget',
 						completedQueriesCounter++;
 						if (completedQueriesCounter == self.interpretations.length) {
 							if (_callback && typeof(_callback) == 'function') {
-								_callback(self.getAttributes());
+								_callback(self.getOutAttributes());
 							}
 						}
 					});
 				}
 			} else {
 				if (_callback && typeof(_callback) == 'function') {
-					_callback(self.getAttributes());
+					_callback(self.getOutAttributes());
 				}
 			}
         },
