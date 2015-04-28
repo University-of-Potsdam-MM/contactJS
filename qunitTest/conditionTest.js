@@ -3,19 +3,15 @@ require(['configTest'], function() {
 		
 			QUnit.test( "Condition", function( assert ) {
 				
-				var testA = new contactJS.AttributeValue().withName('test').withType('string').withValue('blubb');
-		    	var testA2 = new contactJS.AttributeValue().withName('test').withType('string').withValue('blubb2');
+				var testA = new contactJS.Attribute().withName('test').withType('string').withValue('blubb');
+		    	var testA2 = new contactJS.Attribute().withName('test').withType('string').withValue('blubb2');
 		    	
 		    	var method = new contactJS.Equals();
 		    	var method2 = new contactJS.UnEquals();
 
-		    	var conditionTest = new contactJS.Condition().withAttributeType(testA.getAttributeType())
-		    									.withComparisonMethod(method);
-		    	var conditionTest2 = new contactJS.Condition().withAttributeType(testA.getAttributeType())
-												.withComparisonMethod(method);	
-		    	var conditionTest3 = new contactJS.Condition().withAttributeType(testA.getAttributeType())
-												.withComparisonMethod(method2);	
-		    	
+		    	var conditionTest = new contactJS.Condition().withAttributeType(testA).withComparisonMethod(method);
+		    	var conditionTest2 = new contactJS.Condition().withAttributeType(testA).withComparisonMethod(method);
+		    	var conditionTest3 = new contactJS.Condition().withAttributeType(testA).withComparisonMethod(method2);
 		    	
 		    	assert.ok( conditionTest.equals(conditionTest2),"Passed!: equals -> true" );
 				assert.ok( !conditionTest.equals(conditionTest3),"Passed!: equals -> false" );

@@ -5,8 +5,8 @@
  * @module WidgetDescription
  * @fileOverview
  */
-define(['easejs', 'attributeTypeList'],
-    function(easejs, AttributeTypeList){
+define(['easejs', 'attributeList'],
+    function(easejs, AttributeList){
     	var Class = easejs.Class;
 		var WidgetDescription = Class('WidgetDescription',{
 			
@@ -54,7 +54,7 @@ define(['easejs', 'attributeTypeList'],
 			 * @constructs WidgetDescription
 			 */
 			'virtual public __construct' : function(){
-				this.outAttributeTypes = new AttributeTypeList();
+				this.outAttributeTypes = new AttributeList();
 			},
 
 			/**
@@ -195,7 +195,7 @@ define(['easejs', 'attributeTypeList'],
 			 * @public
 			 * @alias addOutAttributeTypes
 			 * @memberof WidgetDescription#
-			 * @param {(AttributeTypeList|Array)} _outAttributeTypes List of AttributeType that are provided
+			 * @param {(AttributeList|Array)} _outAttributeTypes List of AttributeType that are provided
 			 */
 			'public addOutAttributeTypes' : function(_outAttributeTypes){
 				this.outAttributeTypes.putAll(_outAttributeTypes);
@@ -215,11 +215,12 @@ define(['easejs', 'attributeTypeList'],
 			 * @public
 			 * @alias doesSatisfyAttributeType
 			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _attributeType
+			 * @param {AttributeType} _attribute
 			 * @returns {boolean}
 			 */
-            'public doesSatisfyAttributeType': function(_attributeType) {
-                return this.getOutAttributeTypes().contains(_attributeType);
+
+            'public doesSatisfyAttributeType': function(_attribute) {
+                return this.getOutAttributeTypes().containsTypeOf(_attribute);
             }
 		});
 

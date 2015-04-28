@@ -2,13 +2,13 @@ require(['configTest'], function() {
 	require(['contactJS', '../examples/AddressInterpreter', '../examples/GeoLocationWidget'],
 	         	function(contactJS, AddressInterpreter, GeoLocationWidget){
 		
-			QUnit.test( "Discoverer", function( assert ) {
+			QUnit.test("Discoverer", function(assert) {
 				var discoverer = new contactJS.Discoverer();
 				//type
-				assert.equal( discoverer.getType(), 'Discoverer',"Passed!: type -> Discoverer" );
+				assert.equal(discoverer.getType(), 'Discoverer', "Passed!: type -> Discoverer" );
 				
 				//register Widget
-				var geo = new GeoLocationWidget(discoverer);
+				new GeoLocationWidget(discoverer);
 				
 				//initWidgets ->geoLocationWidget expected
 				//tested with getWidgetDescriptions
@@ -31,7 +31,8 @@ require(['configTest'], function() {
 				assert.equal( widget2.getName(), 'GeoLocationWidget',"getComponent passed!: name of the instance is te expected one" );
 						
 				//register Interpreter
-				var testInterpreter = new AddressInterpreter(discoverer);
+				new AddressInterpreter(discoverer);
+
 				//tested with getWidgetDescriptions
 				var iDescs = discoverer.getDescriptions([contactJS.Interpreter]);
 				assert.equal( iDescs.length, 1,"getInterpreterDescriptions passed!: One Interpreter is registered" );
@@ -52,7 +53,7 @@ require(['configTest'], function() {
 				
 				//register Aggregator
 				new contactJS.Aggregator(discoverer, [
-					new contactJS.AttributeType().withName('formattedAddress').withType('string')
+					new contactJS.Attribute().withName('formattedAddress').withType('string')
 				]);
 				//tested with getWidgetDescriptions
 				var aDescs = discoverer.getDescriptions([contactJS.Aggregator]);
@@ -75,12 +76,10 @@ require(['configTest'], function() {
 				
 				//getComponentByAttribute
 				var testParameter = new contactJS.Parameter().withKey('foo').withValue('bar');
-				var latitudeType = new contactJS.AttributeType().withName('latitude')
-											.withType('double').withParameter(testParameter);			
-				var longitudeType = new contactJS.AttributeType().withName('longitude')
-								.withType('double');
-				var array = [];
-				array.push(longitudeType);
+				var latitudeType = new contactJS.Attribute().withName('latitude').withType('double').withParameter(testParameter);
+				var longitudeType = new contactJS.Attribute().withName('longitude').withType('double');
+
+				var array = [longitudeType];
 
 				//one searched attribute
 				var list = discoverer.getComponentsByAttributes(array, false);

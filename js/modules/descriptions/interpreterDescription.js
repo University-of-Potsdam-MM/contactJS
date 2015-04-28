@@ -5,8 +5,8 @@
  * @module InterpreterDescription
  * @fileOverview
  */
-define(['easejs','attributeTypeList','widgetDescription'],
-    function(easejs,AttributeTypeList,WidgetDescription){
+define(['easejs','attributeList', 'widgetDescription'],
+    function(easejs,AttributeList, WidgetDescription){
     	var Class = easejs.Class;
 		var InterpreterDescription = Class('InterpreterDescription').
 						extend(WidgetDescription, {
@@ -27,13 +27,13 @@ define(['easejs','attributeTypeList','widgetDescription'],
 			 * @classdesc The description of an interpreter and the communication with it.
 			 * @extends WidgetDescription
 			 * @requires easejs
-			 * @requires AttributeTypeList
+			 * @requires AttributeList
 			 * @requires WidgetDescription
 			 * @constructs InterpreterDescription
 			 */
 			'override public __construct' : function(){
 				this.__super();
-				this.inAttributeTypes = new AttributeTypeList();
+				this.inAttributeTypes = new AttributeList();
 			},
 			
 			/**
@@ -42,7 +42,7 @@ define(['easejs','attributeTypeList','widgetDescription'],
 			 * @public
 			 * @alias withInAttributeTypes
 			 * @memberof InterpreterDescription#
-			 * @param {(AttributeTypeList|Array)} _inAttributeTypes List of AttributeType that are expected
+			 * @param {(AttributeList|Array)} _inAttributeTypes List of AttributeType that are expected
 			 * @returns {InterpreterDescription}
 			 */
     		'public withInAttributeTypes' : function(_inAttributeTypes){

@@ -42,23 +42,14 @@ define(['easejs', 'abstractList', 'subscriber'],
 		 * @public
 		 * @alias withItems
 		 * @memberof SubscriberList#
-		 * @param {(SubscriberList|Array)}
-		 *            _subscriberList SubscriberList
+		 * @param {(SubscriberList|Array)} _subscriberList SubscriberList
 		 * @returns {SubscriberList}
 		 */
 		'public withItems': function(_subscriberList){
-			var list = new Array();
-			if(_subscriberList instanceof Array){
-				list = _subscriberList;
-			} else if (Class.isA( SubscriberList, _subscriberList)) {
-				list = _subscriberList.getItems();
-			}
-			for(var i in list){
-				var subscriber = list[i];
-				if(Class.isA( Subscriber, subscriber )){
-					this.items[subscriber.getSubscriberId()] = subscriber;
-					this.counter++;
-				}
+			if (_subscriberList instanceof Array) {
+				this.items = _subscriberList;
+			} else if (Class.isA(SubscriberList, _subscriberList)) {
+				this.items = _subscriberList.getItems();
 			}
 			return this;
 		},
@@ -69,15 +60,12 @@ define(['easejs', 'abstractList', 'subscriber'],
 		 * @public
 		 * @alias put
 		 * @memberof SubscriberList#
-		 * @param {Subscriber}
-		 *            _subscriber Subscriber
+		 * @param {Subscriber} _subscriber Subscriber
 		 */
 		'public put' : function(_subscriber){
-			if(Class.isA(Subscriber, _subscriber)){
-				if(!(this.containsKey(_subscriber.getSubscriberId()))){
-					this.counter++;
-				}
-				this.items[_subscriber.getSubscriberId()] = _subscriber;
+			if (Class.isA(Subscriber, _subscriber)) {
+				if (!(this.contains(_subscriber))) {
+					this.items.push(_subscriber);}
 			}
 		},
 
@@ -90,20 +78,14 @@ define(['easejs', 'abstractList', 'subscriber'],
 		 * @param {(SubscriberList|Array)} _subscriberList SubscriberList
 		 */
 		'public putAll' : function(_subscriberList){
-			var list = new Array();
-			if(_subscriberList instanceof Array){
+			var list = [];
+			if (_subscriberList instanceof Array) {
 				list = _subscriberList;
-			} else if (Class.isA(SubscriberList, _subscriberList)) {
+			} else if (Class.isA(SubscriberList,	_subscriberList)) {
 				list = _subscriberList.getItems();
 			}
-			for(var i in list){
-				var subscriber = list[i];
-				if(Class.isA(Subscriber, subscriber)){
-					if(!(this.containsKey(subscriber.getSubscriberId()))){
-						this.counter++;
-					}
-					this.items[subscriber.getSubscriberId()] = subscriber;
-				}
+			for (var i in list) {
+				this.put(list[i]);
 			}
 		},
 
@@ -113,17 +95,18 @@ define(['easejs', 'abstractList', 'subscriber'],
 		 * @public
 		 * @alias contains
 		 * @memberof SubscriberList#
-		 * @param {Subscriber}
-		 *            _item Subscriber that should be verified.
+		 * @param {Subscriber}_subscriber Subscriber that should be verified.
 		 * @returns {boolean}
 		 */
-		'public contains' : function(_item){
-			if(Class.isA(Subscriber,_item)){
-				var tmp = this.getItem(_item.getSubscriberId());
-				if(!(typeof tmp === 'undefined') && tmp.equals(_item)){
-					return true;
+		'public contains' : function(_subscriber){
+			if (Class.isA(Subscriber, _subscriber)) {
+				for (var index in this.items) {
+					var tmp = this.items[index];
+					if (tmp.equals(_subscriber)) {
+						return true;
+					}
 				}
-			} 
+			}
 			return false;
 		},
 		
@@ -132,23 +115,26 @@ define(['easejs', 'abstractList', 'subscriber'],
 		 * @public
 		 * @alias equals
 		 * @memberof SubscriberList#
-		 * @param {SubscriberList} _list SubscriberList that should be compared.
+		 * @param {SubscriberList} _subscriberList SubscriberList that should be compared.
 		 * @returns {boolean}
 		 */
-		'public equals' : function(_list){
-			if(Class.isA(SubscriberList,_list) && _list.size() == this.size()){
-				var items = _list.getItems();
-				for(var i in items){
-					var item = items[i];
-					if(!this.contains(item)){
-						return false;
-					}
+		'public equals' : function(_subscriberList) {
+			if (Class.isA(SubscriberList, _subscriberList) && _subscriberList.size() == this.size()) {
+				for (var index in _subscriberList.getItems()) {
+					var theSubscriber = _subscriberList.getItems()[index];
+					if (!this.contains(theSubscriber)) return false;
 				}
 				return true;
-			} 
+			}
 			return false;
 		},
 
+			'public removeSubscriberWithId': function(_subscriberId) {
+				for (var index in this.items) {
+					var theSubscriber = this.items[index];
+					if (theSubscriber.getSubscriberId() == _subscriberId) this.items.splice(index, 1);
+				}
+			}
 	});
 
 	return SubscriberList;

@@ -8,6 +8,7 @@ requirejs.config({
         jquery: '../libs/jquery/jquery',
         easejs: '../libs/ease.js/ease-full',
         MathUuid: '../libs/uuid/Math.uuid',
+        qunit: "../libs/qunit/qunit",
         contactJS: '../dist/contactJS'
     },
     
@@ -17,10 +18,9 @@ requirejs.config({
       },
       'jquery' : {
           exports : '$'
-        },
+      },
       'MathUuid' : {
           exports : 'MathUuid'
-        }
+      }
     }
-
 });

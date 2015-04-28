@@ -4,10 +4,10 @@
  * @module Interpreter
  * @fileOverview
  */
-define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
-		'attributeValue', 'attributeValueList', 'interpreterDescription', 'interpreterResult' ],
-		function(easejs, MathUuid, AttributeType, AttributeTypeList,
-				AttributeValue, AttributeValueList, InterpreterDescription, InterpreterResult) {
+define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
+		'interpreterDescription', 'interpreterResult' ],
+		function(easejs, MathUuid, Attribute, AttributeList,
+				InterpreterDescription, InterpreterResult) {
 			var Class = easejs.Class;
 			var AbstractClass = easejs.AbstractClass;
 			var Interpreter = AbstractClass('Interpreter',
@@ -29,37 +29,21 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 */
 				'public id' : '',
 				/**
-				 * @alias inAttributeTypes
+				 * @alias inAttributes
 				 * @protected
-				 * @type {AttributeTypeList}
+				 * @type {AttributeList}
 				 * @memberof Interpreter#
 				 * @desc Types of all attributes that can be handled.
 				 */
-				'protected inAttributeTypes' : [],
+				'protected inAttributes' : [],
 				/**
-				 * @alias outAttributeTypes
+				 * @alias outAttributes
 				 * @protected
-				 * @type {AttributeTypeList}
+				 * @type {AttributeList}
 				 * @memberof Interpreter#
 				 * @desc Types of all attributes that will be returned.
 				 */
-				'protected outAttributeTypes' : [],
-				/**
-				 * @alias inAttributeValues
-				 * @protected
-				 * @type {AttributeValueList}
-				 * @memberof Interpreter#
-				 * @desc List of the data that should be interpreted.
-				 */
-				'protected inAttributeValues' : [],
-				/**
-				 * @alias outAttributeValues
-				 * @protected
-				 * @type {AttributeValueList}
-				 * @memberof Interpreter#
-				 * @desc List of interpreted data.
-				 */
-				'protected outAttributeValues' : [],
+				'protected outAttributes' : [],
 				/**
 				 * @alias lastInterpretation
 				 * @protected
@@ -85,10 +69,8 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @classdesc The Widget handles the access to sensors.
 				 * @requires easejs
 				 * @requires MathUuid
-				 * @requires AttributeType
-				 * @requires AttributeValue
-				 * @requires AttributeTypeList
-				 * @requires AttributeValueList
+				 * @requires Attribute
+				 * @requires AttributeList
 				 * @requires InterpreterDescription
 				 * @constructs Interpreter
 				 */
@@ -96,10 +78,8 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 					this.id = Math.uuid();
                     this.discoverer = _discoverer;
                     this.register();
-					this.inAttributeTypes = new AttributeTypeList();
-					this.outAttributeTypes = new AttributeTypeList();
-					this.inAttributeValues = new AttributeValueList();
-					this.outAttributeValues = new AttributeValueList();
+					this.inAttributes = new AttributeList();
+					this.outAttributes = new AttributeList();
 					this.initInterpreter();
 				},
 				
@@ -179,10 +159,10 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @public
 				 * @alias getInAttributeTypes
 				 * @memberof Interpreter#
-				 * @returns {AttributeTypeList} 
+				 * @returns {AttributeList}
 				 */
-				'public getInAttributeTypes' : function() {
-					return this.inAttributeTypes;
+				'public getInAttributes' : function() {
+					return this.inAttributes;
 				},
 
 				/**
@@ -191,53 +171,46 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @protected
 				 * @alias setInAttribute
 				 * @memberof Interpreter#
-				 * @param {string} _name name of the attribute
-				 * @param {string} _type type of the attribute
-				 * @param {string} _value value of the attribute
-				 * @param {ParameterList|Array} _parameter Parameter of the attribute.
 				 */
-				'protected setInAttribute' : function(_name, _type, _value,	_parameters) {
-					var attributeValue = new AttributeValue().withName(_name)
-							.withValue(_value).withType(_type).withParameters(_parameters);
-					if (this.isInAttribute(attributeValue)) {
-						this.inAttributeValues.put(attributeValue);
-					}
+				'protected setInAttribute' : function(_attribute) {
+					this.inAttributes.put(_attribute);
 				},
 
 				/**
 				 * Sets an inAttributes.
 				 * 
 				 * @protected
-				 * @alias setInAttributeValues
+				 * @alias setInAttributes
 				 * @memberof Interpreter#
-				 * @param {(AttributeValueList|Array)} _attributeValueList Attributes to set.
+				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
 				 */
-				'protected setInAttributeValues' : function(_attributeValueList) {
-					this.inAttributeValues = new AttributeValueList().withItems(_attributeValueList);
+				'protected setInAttributes' : function(_attributeList) {
+					this.inAttributes = new AttributeList().withItems(_attributeList);
 				},
+
 				/**
 				 * Verifies whether the specified attribute is contained in inAttributeList.
 				 * 
 				 * @protected
 				 * @alias isInAttribute
 				 * @memberof Interpreter#
-				 * @param {AttributeValue} _attribute Attribute that should be verified.
+				 * @param {Attribute} _attribute Attribute that should be verified.
 				 * @return {boolean}
 				 */
 				'protected isInAttribute' : function(_attribute) {
-					return !!this.inAttributeTypes.contains(_attribute.getAttributeType());
+					return !!this.inAttributes.containsTypeOf(_attribute);
 				},
 
 				/**
 				 * Returns the provided outAttributeTypes.
 				 * 
 				 * @public
-				 * @alias getOutAttributeTypes
+				 * @alias getOutAttributes
 				 * @memberof Interpreter#
-				 * @returns {AttributeTypeList} 
+				 * @returns {AttributeList}
 				 */
-				'public getOutAttributeTypes' : function() {
-					return this.outAttributeTypes;
+				'public getOutAttributes' : function() {
+					return this.outAttributes;
 				},
 
 				/**
@@ -246,17 +219,21 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @protected
 				 * @alias setOutAttribute
 				 * @memberof Interpreter#
-				 * @param {string} _name name of the attribute
-				 * @param {string} _type type of the attribute
-				 * @param {string} _value value of the attribute
-				 * @param {ParameterList|Array} _parameters Parameter of the attribute.
 				 */
-				'protected setOutAttribute' : function(_name, _type, _value,_parameters) {
-					var attributeValue = new AttributeValue().withName(_name)
-							.withValue(_value).withType(_type).withParameters(_parameters);
-					if (this.isOutAttribute(attributeValue)) {
-						this.outAttributeValues.put(attributeValue);
-					}
+				'protected setOutAttribute' : function(_attribute) {
+					this.outAttributes.put(_attribute);
+				},
+
+				/**
+				 * Sets an outAttributes.
+				 *
+				 * @protected
+				 * @alias setOutAttributes
+				 * @memberof Interpreter#
+				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
+				 */
+				'protected setOutAttributes' : function(_attributeList) {
+					this.outAttributes = new AttributeList().withItems(_attributeList);
 				},
 
 				/**
@@ -265,11 +242,11 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @protected
 				 * @alias isOutAttribute
 				 * @memberof Interpreter#
-				 * @param {AttributeValue} _attribute Attribute that should be verified.
+				 * @param {Attribute} _attribute Attribute that should be verified.
 				 * @return {boolean}
 				 */
 				'protected isOutAttribute' : function(_attribute) {
-					return !!this.outAttributeTypes.contains(_attribute.getAttributeType());
+					return !!this.outAttributes.containsTypeOf(_attribute);
 				},
 
 				/**
@@ -278,21 +255,22 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @public
 				 * @alias callInterpreter
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList} _inAttributeValues Data that should be interpreted.
+				 * @param {AttributeList} _inAttributeValues Data that should be interpreted.
+				 * @param {AttributeList} _outAttributeValues
 				 * @param {?function} _function For additional actions, if an asynchronous function is used.
 				 */
 				'public callInterpreter' : function(_inAttributeValues, _outAttributeValues, _function) {
 					var self = this;
 
-					if (!_inAttributeValues || !this.canHandleInAttributeValues(_inAttributeValues)) throw "Empty input attribute list or unhandled input attribute.";
-					if (!_outAttributeValues || !this.canHandleOutAttributeValues(_outAttributeValues)) throw "Empty output attribute list or unhandled output attribute.";
+					if (!_inAttributeValues || !this.canHandleInAttributes(_inAttributeValues)) throw "Empty input attribute list or unhandled input attribute.";
+					if (!_outAttributeValues || !this.canHandleOutAttributes(_outAttributeValues)) throw "Empty output attribute list or unhandled output attribute.";
 
 					this.interpretData(_inAttributeValues, _outAttributeValues, function(interpretedData) {
-						var response = new AttributeValueList().withItems(interpretedData);
+						var response = new AttributeList().withItems(interpretedData);
 
-						if (!self.canHandleOutAttributeValues(response)) throw "Unhandled output attribute generated.";
+						if (!self.canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
 
-						self.setInAttributeValues(_inAttributeValues);
+						self.setInAttributes(_inAttributeValues);
 						self.lastInterpretation = new Date();
 
 						if (_function && typeof(_function) == 'function'){
@@ -309,27 +287,27 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @public
 				 * @alias interpretData
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList} _data Data that should be interpreted.
+				 * @param {AttributeList} _data Data that should be interpreted.
 				 * @param {?function} _function For additional actions, if an asynchronous function is used.
 				 */
-				'abstract protected interpretData' : ['_inAttributeValues', '_outAttributeValues', '_callback'],
+				'abstract protected interpretData' : ['_inAttributes', '_outAttributes', '_callback'],
 
 				/**
 				 * Checks whether the specified data match the expected.
 				 * 
 				 * @protected
-				 * @alias canHandleInAttributeValues
+				 * @alias canHandleInAttributes
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList|Array.<AttributeValue>} _inAttributeValues Data that should be verified.
+				 * @param {AttributeList|Array.<Attribute>} _inAttributes Data that should be verified.
 				 */
-				'protected canHandleInAttributeValues' : function(_inAttributeValues) {
+				'protected canHandleInAttributes' : function(_inAttributes) {
 					var list = [];
-					if (_inAttributeValues instanceof Array) {
-						list = _inAttributeValues;
-					} else if (Class.isA(AttributeValueList, _inAttributeValues)) {
-						list = _inAttributeValues.getItems();
+					if (_inAttributes instanceof Array) {
+						list = _inAttributes;
+					} else if (Class.isA(AttributeList, _inAttributes)) {
+						list = _inAttributes.getItems();
 					}
-					if (list.length == 0 || _inAttributeValues.size() != this.getInAttributeTypes().size()) {
+					if (list.length == 0 || _inAttributes.size() != this.getInAttributes().size()) {
 						return false;
 					}
 					for ( var i in list) {
@@ -345,18 +323,18 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * Checks whether the specified data match the expected.
 				 *
 				 * @protected
-				 * @alias canHandle
+				 * @alias canHandleOutAttributes
 				 * @memberof Interpreter#
-				 * @param {AttributeValueList|Array.<AttributeValue>} _outAttributeValues Data that should be verified.
+				 * @param {AttributeList|Array.<Attribute>} _outAttributes Data that should be verified.
 				 */
-				'protected canHandleOutAttributeValues' : function(_outAttributeValues) {
+				'protected canHandleOutAttributes' : function(_outAttributes) {
 					var list = [];
-					if (_outAttributeValues instanceof Array) {
-						list = _outAttributeValues;
-					} else if (Class.isA(AttributeValueList, _outAttributeValues)) {
-						list = _outAttributeValues.getItems();
+					if (_outAttributes instanceof Array) {
+						list = _outAttributes;
+					} else if (Class.isA(AttributeList, _outAttributes)) {
+						list = _outAttributes.getItems();
 					}
-					if (list.length == 0 || _outAttributeValues.size() != this.getOutAttributeTypes().size()) {
+					if (list.length == 0 || _outAttributes.size() != this.getOutAttributes().size()) {
 						return false;
 					}
 					for ( var i in list) {
@@ -389,10 +367,9 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @returns {InterpreterDescription} 
 				 */
 				'virtual public getDescription' : function() {
-					var description = new InterpreterDescription().withId(
-							this.id).withName(this.name);
-					description.addOutAttributeTypes(this.outAttributeTypes);
-					description.setInAttributeTypes(this.inAttributeTypes);
+					var description = new InterpreterDescription().withId(this.id).withName(this.name);
+					description.addOutAttributeTypes(this.outAttributes);
+					description.setInAttributeTypes(this.inAttributes);
 					return description;
 				},
 
@@ -421,7 +398,6 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 					if (this.discoverer) {
 						this.discoverer.registerNewComponent(this);
 					}
-
 				},
 
 				/**
@@ -429,28 +405,12 @@ define([ 'easejs', 'MathUuid', 'attributeType', 'attributeTypeList',
 				 * @returns {boolean}
 				 */
 				'public hasOutAttributesWithInputParameters': function() {
-					return this.outAttributeTypes.hasAttributesWithInputParameters();
+					return this.outAttributes.hasAttributesWithInputParameters();
 				},
 
 				'public getOutAttributesWithInputParameters': function() {
-					return this.outAttributeTypes.getAttributesWithInputParameters();
+					return this.outAttributes.getAttributesWithInputParameters();
 				}
-				
-//				/**
-//				 * Unregisters the component to the associated discoverer
-//				 * and deletes the reference.
-//				 * 
-//				 * @public
-//				 * @alias register
-//				 * @memberof Widget#
-//				 */
-//				'protected unregister' : function() {
-//					if (this.discoverer) {
-//						this.discoverer.unregisterComponent(this.getId());
-//						this.discoverer = null;
-//					}
-//				},
-
 			});
 
 			return Interpreter;

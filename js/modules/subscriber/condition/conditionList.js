@@ -45,18 +45,10 @@ define(['easejs','abstractList', 'condition'],
 		 * @returns {ConditionList}
 		 */
 		'public withItems': function(_conditionList){
-			var list = new Array();
-			if(_conditionList instanceof Array){
-				list = _conditionList;
+			if (_conditionList instanceof Array) {
+				this.items = _conditionList;
 			} else if (Class.isA(ConditionList, _conditionList)) {
-				list = _conditionList.getItems();
-			}
-			for(var i in list){
-				var condition = list[i];
-				if(Class.isA( Condition, condition )){
-					this.items[condition.getName()] = condition;
-					this.counter++;
-				}
+				this.items = _conditionList.getItems();
 			}
 			return this;
 		},		
@@ -70,11 +62,9 @@ define(['easejs','abstractList', 'condition'],
 		 * @param {Condition} _condition Condition
 		 */
 		'public put' : function(_condition){
-			if(Class.isA(Condition, _condition)){
-				if(!(this.containsKey(_condition.getName()))){
-					this.counter++;
-				}
-				this.items[_condition.getName()] = _condition;
+			if (Class.isA(Condition, _condition)) {
+				if (!(this.contains(_condition))) {
+					this.items.push(_condition);}
 			}
 		},
 
@@ -88,20 +78,14 @@ define(['easejs','abstractList', 'condition'],
 		 * @param {(ConditioneList|Array)} _conditionList ConditionList
 		 */
 		'public putAll' : function(_conditionList){
-			var list = new Array();
-			if(_conditionList instanceof Array){
+			var list = [];
+			if (_conditionList instanceof Array) {
 				list = _conditionList;
-			} else if (Class.isA(ConditionList, _conditionList)) {
+			} else if (Class.isA(ConditionList,	_conditionList)) {
 				list = _conditionList.getItems();
 			}
-			for(var i in list){
-				var condition = list[i];
-				if(Class.isA(Condition, condition)){
-					if(!(this.containsKey(condition.getName()))){
-						this.counter++;
-					}
-					this.items[condition.getName()] = condition;
-				}
+			for (var i in list) {
+				this.put(list[i]);
 			}
 		},
 
@@ -112,16 +96,18 @@ define(['easejs','abstractList', 'condition'],
 		 * @public
 		 * @alias contains
 		 * @memberof ConditionList#
-		 * @param {Condition} _item Condition that should be verified.
+		 * @param {Condition} _condition Condition that should be verified.
 		 * @returns {boolean}
 		 */
-		'public contains' : function(_item){
-			if(Class.isA(Condition,_item)){
-				var tmp = this.getItem(_item.getName());
-				if(!(typeof tmp === 'undefined') && tmp.equals(_item)){
-					return true;
+		'public contains' : function(_condition){
+			if (Class.isA(Condition, _condition)) {
+				for (var index in this.items) {
+					var theCondition = this.items[index];
+					if (theCondition.equals(_condition)) {
+						return true;
+					}
 				}
-			} 
+			}
 			return false;
 		},
 		
@@ -131,24 +117,19 @@ define(['easejs','abstractList', 'condition'],
 		 * @public
 		 * @alias equals
 		 * @memberof ConditionList#
-		 * @param {ConditionList} _list ConditionList that should be compared.
+		 * @param {ConditionList} _conditionList ConditionList that should be compared.
 		 * @returns {boolean}
 		 */
-		'public equals' : function(_list){
-			if(Class.isA(ConditionList,_list) && _list.size() == this.size()){
-				var items = _list.getItems();
-				for(var i in items){
-					var item = items[i];
-					if(!this.contains(item)){
-						return false;
-					}
+		'public equals' : function(_conditionList){
+			if (Class.isA(ConditionList, _conditionList) && _conditionList.size() == this.size()) {
+				for (var index in _conditionList.getItems()) {
+					var theCondition = _conditionList.getItems()[index];
+					if (!this.contains(theCondition)) return false;
 				}
 				return true;
-			} 
+			}
 			return false;
-		},
-
-
+		}
 
 	});
 

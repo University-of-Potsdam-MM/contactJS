@@ -13,8 +13,6 @@ define([ 'easejs' ], function(easejs) {
 	 * @requires easejs
 	 */
 	var AbstractList = AbstractClass('AbstractList', {
-
-
 		/**
 		 * @alias items
 		 * @protected
@@ -82,19 +80,6 @@ define([ 'easejs' ], function(easejs) {
 		 * @param {*} list List that should be compared.
 		 */
 		'abstract public equals' : [ 'list' ],
-
-		/**
-		 * Verifies whether an item exists for the specified key.
-		 * 
-		 * @public
-		 * @alias containsKey
-		 * @memberof AbstractList#
-		 * @param {string} _key Key that should be verified.
-		 * @returns {boolean}
-		 */
-		'public containsKey' : function(_key) {
-			return !!(typeof _key !== 'undefined' && typeof this.items[_key] !== 'undefined');
-		},
 
 		/**
 		 * Returns the item for the specified key.

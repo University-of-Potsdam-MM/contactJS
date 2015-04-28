@@ -5,8 +5,8 @@
  * @module Callback
  * @fileOverview
  */
-define(['easejs', 'attributeType', 'attributeTypeList'],
- 	function(easejs, AttributeType, AttributeTypeList){
+define(['easejs', 'attribute', 'attributeList'],
+ 	function(easejs, Attribute, AttributeList){
  	var Class = easejs.Class;
  	
 	var Callback = Class('Callback',
@@ -43,7 +43,7 @@ define(['easejs', 'attributeType', 'attributeTypeList'],
 		 */
 		'public __construct': function()
         {
-			this.attributeTypes = new AttributeTypeList();
+			this.attributeTypes = new AttributeList();
         },
 
         /**
@@ -118,19 +118,19 @@ define(['easejs', 'attributeType', 'attributeTypeList'],
 		 * @public
 		 * @alias setAttributeTypes
 		 * @memberof Callback#
-		 * @param {AttributeTypeList} _attributeTypes AttributeTypeList
+		 * @param {AttributeList} _attributes AttributeTypeList
 		 */
-		'public setAttributeTypes' : function(_attributeTypes){
+		'public setAttributeTypes' : function(_attributes){
 			var list = [];
-			if(_attributeTypes instanceof Array){
-				list = _attributeTypes;
-			} else if (Class.isA( AttributeTypeList, _attributeTypes)) {
-				list = _attributeTypes.getItems();
+			if(_attributes instanceof Array){
+				list = _attributes;
+			} else if (Class.isA( AttributeList, _attributes)) {
+				list = _attributes.getItems();
 			}
 			for(var i in list){
-				var attributeType = list[i];
-				if(Class.isA( AttributeType, attributeType )){
-					this.attributeTypes.put(attributeType);
+				var theAttribute = list[i];
+				if(Class.isA(Attribute, theAttribute)){
+					this.attributeTypes.put(theAttribute);
 				}
 			}
 		},
@@ -141,14 +141,14 @@ define(['easejs', 'attributeType', 'attributeTypeList'],
 		 * @public
 		 * @alias addAttributeType
 		 * @memberof Callback#
-		 * @param {AttributeType} _attributeType AttributeType
+		 * @param {AttributeType} _attribute AttributeType
 		 */
-		'public addAttributeType' : function(_attributeType){
-			if(Class.isA( AttributeType, _attributeType )){
-				if(!this.attributeTypes.contains(_attributeType)){
-					this.attributeTypes.put(_attributeType);	
+		'public addAttributeType' : function(_attribute){
+			if(Class.isA(Attribute, _attribute )){
+				if(!this.attributeTypes.containsTypeOf(_attribute)){
+					this.attributeTypes.put(_attribute);
 				}
-			};
+			}
 		},
 
 		/**
@@ -160,9 +160,9 @@ define(['easejs', 'attributeType', 'attributeTypeList'],
 		 * @param {AttributeType} _attributeType AttributeType
 		 */
 		'public removeAttributeType' : function(_attributeType){
-			if(Class.isA( AttributeType, _attributeType )){
+			if(Class.isA(Attribute, _attributeType )){
 				this.attributeTypes.removeItem(_attributeType.getName());
-			};
+			}
 		},
 		
 		/**
