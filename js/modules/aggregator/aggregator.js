@@ -618,15 +618,6 @@ define(['easejs', 'MathUuid','widget',
 		 * @param {Array} _componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
 		 */
         'private getComponentsForUnsatisfiedAttributeTypes': function(_unsatisfiedAttributes, _all, _componentTypes) {
-        	var attrs = _unsatisfiedAttributes.getItems();
-        	var translations = this.discoverer.getTranslations();        	
-
-        	for (attribute in attrs) {        		
-            	for (translation in translations) {
-                	_unsatisfiedAttributes.put(translations[translation].getSynonym(attrs[attribute]));        		
-            	}
-        	}
-        	
         	// ask the discoverer for components that satisfy the requested components        	
             var relevantComponents = this.discoverer.getComponentsByAttributes(_unsatisfiedAttributes, _all, _componentTypes);
             console.log("I found "+relevantComponents.length+" component(s) of type "+_componentTypes+" that might satisfy the requested attributes.");

@@ -32,10 +32,17 @@ define(['easejs',
 			 * @protected
 			 * @type {ParameterList}
 			 * @memberof AttributeType#
-			 * @desc Name of the Attribute
+			 * @desc additional parameters of the Attribute
 			 */
 			'protected parameterList' : [],
-
+			/**
+			 * @alias synonymList
+			 * @protected
+			 * @type {Array}
+			 * @memberof AttributeType#
+			 * @desc Alternative names of the Attribute
+			 */
+			'protected synonymList' : [],
 			/**
 			 * Constructor: Initializes the ParameterList.
 			 * 
@@ -102,6 +109,20 @@ define(['easejs',
 			 */
     		'public withParameter' : function(_parameter){
     			this.addParameter(_parameter);
+    			return this;
+    		},
+    		
+    		/**
+			 * Builder for synonyms from translations, called by discoverer's buildAttribute().
+			 * 
+			 * @public
+			 * @alias withSynonyms
+			 * @memberof AttributeType#
+			 * @param {Translations} _translations Translations
+			 * @returns {AttributeType}
+			 */
+    		'public withSynonyms' : function(_translations){
+    			this.setSynonyms(_translations);
     			return this;
     		},
 
@@ -196,6 +217,22 @@ define(['easejs',
             'public hasParameters' : function() {
                 return this.parameterList.size() > 0;
             },
+            
+			
+			/**
+			 * Adds a list of synonyms.
+			 * 
+			 * @public
+			 * @alias setSynonyms
+			 * @memberof AttributeType#
+			 * @param {Array} _synonyms Array of synonyms
+			 */
+			'public setSynonyms' : function(_synonyms){
+				for (synIndex in _synonyms) {
+					// TODO: needs to be adjusted to match actual type
+					this.synonymList.push(_synonyms[synIndex]);
+				}
+			},
 
 			/**
 			 * Compares this instance with the given one.
