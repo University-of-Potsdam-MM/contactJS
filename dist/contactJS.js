@@ -3537,246 +3537,15 @@ define('subscriberList',['easejs', 'abstractList', 'subscriber'],
 	return SubscriberList;
 });
 /**
- * This module represents the WidgetDescription. 
- * It describes the most important information for the communication with a specific widget. 
- * 
- * @module WidgetDescription
- * @fileOverview
- */
-define('widgetDescription',['easejs', 'attributeList'],
-    function(easejs, AttributeList){
-    	var Class = easejs.Class;
-		var WidgetDescription = Class('WidgetDescription',{
-			
-			/**
-			 * @alias id
-			 * @protected
-			 * @type {string}
-			 * @memberof WidgetDescription#
-			 * @desc Id of the Widget that are described by this object.
-			 */
-			'protected id' : '', 
-			/**
-			 * @alias name
-			 * @protected
-			 * @type {string}
-			 * @memberof WidgetDescription#
-			 * @desc Name of the Widget that are described by this object.
-			 */
-			'protected name' : '', 
-			/**
-			 * @alias outAttributeTypes
-			 * @protected
-			 * @type {AttributeTypeList}
-			 * @memberof WidgetDescription#
-			 * @desc List of attributeTypes that are provided.
-			 */
-			'protected outAttributeTypes' : [],
-            /**
-             * @alias callbackNames
-             * @protected
-             * @type {array}
-             * @memberof WidgetDescription#
-             * @desc Array of available callback names.
-             */
-            'protected callbackNames' : [],
-
-			/**
-			 * Constructor: Initializes the inAttributeTypes.
-			 * 
-			 * @virtual
-			 * @class WidgetDescription
-			 * @classdesc The description of a Widget and the communication with it.
-			 * @requires easejs
-			 * @requires AttributeTypeList
-			 * @constructs WidgetDescription
-			 */
-			'virtual public __construct' : function(){
-				this.outAttributeTypes = new AttributeList();
-			},
-
-			/**
-			 * Builder for name
-			 * 
-			 * @public
-			 * @alias withName
-			 * @memberof WidgetDescription#
-			 * @param {string} _name Name of the Widget that are described by this object.
-			 * @returns {WidgetDescription}
-			 */
-    		'public withName' : function(_name){
-    			this.setName(_name);
-    			return this;
-    		},
-
-    		/**
-			 * Builder for id
-			 * 
-			 * @public
-			 * @alias withId
-			 * @memberof WidgetDescription#
-			 * @param {string} _id Id of the Widget that are described by this object.
-			 * @returns {WidgetDescription}
-			 */
-    		'public withId' : function(_id){
-    			this.setId(_id);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for outAttributeType list
-			 * 
-			 * @public
-			 * @alias withOutAttributeTypes
-			 * @memberof WidgetDescription#
-			 * @param {(AttributeTypeList|Array)} _outAttributeTypes List of AttributeType that are provided
-			 * @returns {WidgetDescription}
-			 */
-    		'public withOutAttributeTypes' : function(_outAttributeTypes){
-    			this.setOutAttributeTypes(_outAttributeTypes);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for outAttributeType
-			 * 
-			 * @public
-			 * @alias withInAttributeType
-			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _outAttributeType AttributeType that are provided
-			 * @returns {WidgetDescription}
-			 */
-    		'public withOutAttributeType' : function(_outAttributeType){
-    			this.setOutAttributeType(_outAttributeType);
-    			return this;
-    		},
-
-    		/**
-			 * Returns the name of the described widget.
-			 * 
-			 * @public
-			 * @alias getName
-			 * @memberof WidgetDescription#
-			 * @returns {String}
-			 */
-			'public getName' : function(){
-				return this.name;
-			},
-			
-			/**
-			 * Returns the id of the described widget.
-			 * 
-			 * @public
-			 * @alias getId
-			 * @memberof WidgetDescription#
-			 * @returns {String}
-			 */
-			'public getId' : function(){
-				return this.id;
-			},
-			
-			/**
-			 * Returns outAttributeTypes of the widget.
-			 * 
-			 * @public
-			 * @alias getOutAttributeTypes
-			 * @memberof WidgetDescription#
-			 * @returns {AttributeTypeList}
-			 */
-			'public getOutAttributeTypes' : function(){
-				return this.outAttributeTypes;
-			},
-
-			/**
-			 * Sets the name of the described widget.
-			 * 
-			 * @public
-			 * @alias setName
-			 * @memberof WidgetDescription#
-			 * @params {String} _name Name of the described widget
-			 */
-			'public setName' : function(_name){
-				if(typeof _name === 'string'){
-					this.name = _name;
-				}
-			},
-
-			/**
-			 * Sets the id of the described widget.
-			 * 
-			 * @public
-			 * @alias setId
-			 * @memberof WidgetDescription#
-			 * @params {String} _id Id of the described widget
-			 */
-			'public setId' : function(_id){
-				if(typeof _id === 'string') {
-					this.id = _id;
-				}
-			},
-			
-			/**
-			 * Adds an outAttributeType to the list
-			 * 
-			 * @public
-			 * @alias addOutAttributeType
-			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _outAttributeType AttributeType that are provided
-			 */
-			'public addOutAttributeType' : function(_outAttributeType){
-					this.outAttributeTypes.put(_outAttributeType);
-			},
-			
-			/**
-			 * Adds outAttributeTypes that are provided by the Widget
-			 * 
-			 * @public
-			 * @alias addOutAttributeTypes
-			 * @memberof WidgetDescription#
-			 * @param {(AttributeList|Array)} _outAttributeTypes List of AttributeType that are provided
-			 */
-			'public addOutAttributeTypes' : function(_outAttributeTypes){
-				this.outAttributeTypes.putAll(_outAttributeTypes);
-			},
-
-            'public setCallbackNames' : function(_callbackNames) {
-                this.callbackNames = _callbackNames;
-            },
-
-            'public addCallbackName' : function(_callbackName) {
-                this.callbackNames.push(_callbackName);
-            },
-
-			/**
-			 * Returns true if the widget can satisfy the requested attribute type.
-			 *
-			 * @public
-			 * @alias doesSatisfyAttributeType
-			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _attribute
-			 * @returns {boolean}
-			 */
-
-            'public doesSatisfyAttributeType': function(_attribute) {
-                return this.getOutAttributeTypes().containsTypeOf(_attribute);
-            }
-		});
-
-        return WidgetDescription;
-	
-});
-/**
  * This module representing a Context Widget.
  * 
  * @module Widget
  * @fileOverview
  */
 define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
-		 'attributeList', 'conditionList',
-		 'subscriber', 'subscriberList', 'widgetDescription'],
+		 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
 	function(easejs, MathUuid, Callback, CallbackList, Attribute,
-			AttributeList, ConditionList,
-			Subscriber, SubscriberList, WidgetDescription) {
+			AttributeList, ConditionList, Subscriber, SubscriberList) {
 		
 		var AbstractClass = easejs.AbstractClass;
 		var Class = easejs.Class;
@@ -3805,7 +3574,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @memberof Widget#
 			 * @desc All available Attributes and their values.
 			 */
-			'protected attributes' : [],
+			'protected outAttributes' : [],
 			/**
 			 * @alias oldAttributes
 			 * @protected
@@ -3814,7 +3583,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @desc This temporary variable is used for storing the old attribute values. 
 			 * 			So these can be used to check conditions.
 			 */
-			'protected oldAttributes' : [],
+			'protected oldOutAttributes' : [],
 			/**
 			 * @alias constantAttributes
 			 * @protected
@@ -3822,7 +3591,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @memberof Widget#
 			 * @desc All available constant Attributes and their values.
 			 */
-			'protected constantAttributes' : [],
+			'protected constantOutAttributes' : [],
 			/**
 			 * @alias callbacks
 			 * @protected
@@ -3874,8 +3643,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 				this.id = Math.uuid();
                 this.discoverer = _discoverer;
                 this.register();
-				this.attributes = new AttributeList();
-				this.constantAttributes = new AttributeList();
+				this.outAttributes = new AttributeList();
+				this.constantOutAttributes = new AttributeList();
 				this.subscribers = new SubscriberList();
 				this.callbacks = new CallbackList();
 				this.init(_attributeTypes);
@@ -3927,11 +3696,11 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @memberof Widget#
 			 * @returns {AttributeList}
 			 */
-			'public getAttributes' : function(_attributeList) {
+			'public getOutAttributes' : function(_attributeList) {
 				if (Class.isA(AttributeList, _attributeList)) {
-					return this.attributes.getSubset(_attributeList);
+					return this.outAttributes.getSubset(_attributeList);
 				} else {
-					return this.attributes;
+					return this.outAttributes;
 				}
 			},
 
@@ -3944,11 +3713,11 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @memberof Widget#
 			 * @returns {AttributeList}
 			 */
-			'public getConstantAttributes' : function(_attributeList) {
+			'public getConstantOutAttributes' : function(_attributeList) {
 				if (Class.isA(AttributeList, _attributeList)) {
-					return this.constantAttributes.getSubset(_attributeList);
+					return this.constantOutAttributes.getSubset(_attributeList);
 				} else {
-					return this.constantAttributes;
+					return this.constantOutAttributes;
 				}
 			},
 
@@ -3959,7 +3728,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
              * @returns {*}
              */
             'public getValueForAttributeWithTypeOf': function(_attributeType) {
-                return this.getAttributes().getAttributeWithTypeOf(_attributeType).getValue();
+                return this.getOutAttributes().getAttributeWithTypeOf(_attributeType).getValue();
             },
 			
 			/**
@@ -3971,7 +3740,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @returns {AttributeList}
 			 */
 			'public getOldAttributes' : function() {
-				return this.oldAttributes;
+				return this.oldOutAttributes;
 			},
 
 			/**
@@ -4053,12 +3822,10 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @protected
 			 * @alias setAttributes
 			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)}
-			 *            _attributes List or Array of
-			 *            AttributeValues
+			 * @param {(AttributeList|Array)} _attributes List or Array of AttributeValues
 			 */
-			'protected setAttributes' : function(_attributes) {
-				var list = new Array();
+			'protected setOutAttributes' : function(_attributes) {
+				var list = [];
 				if (_attributes instanceof Array) {
 					list = _attributes.reduce(function(o, v, i) {
                         o[i] = v;
@@ -4067,12 +3834,12 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 				} else if (Class.isA(AttributeValueList,_attributes)) {
 					list = _attributes.getItems();
 				}
-				this.oldAttributes = this.attributes;
+				this.oldOutAttributes = this.outAttributes;
 				for ( var i in list) {
 					var attribute = list[i];
 					if (Class.isA(AttributeValue, attribute)) {
 						attribute.setTimestamp(this.getCurrentTime());
-						this.attributes.put(attribute);
+						this.outAttributes.put(attribute);
 
 						var type = new AttributeType().withName(attribute.getName())
 													.withType(attribute.getType())
@@ -4089,17 +3856,17 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * updated.
 			 * 
 			 * @public
-			 * @alias addAttribute
+			 * @alias addOutAttribute
 			 * @memberof Widget#
 			 * @param {Attribute} _attribute AttributeValue
 			 */
-			'public addAttribute' : function(_attribute, _multipleInstances) {
+			'public addOutAttribute' : function(_attribute, _multipleInstances) {
 				_multipleInstances = typeof _multipleInstances == "undefined" ? false : _multipleInstances;
 				if (Class.isA(Attribute, _attribute)) {
-					if (!this.attributes.containsTypeOf(_attribute)) {
-						this.oldAttributes = this.attributes;
+					if (!this.outAttributes.containsTypeOf(_attribute)) {
+						this.oldOutAttributes = this.outAttributes;
 						_attribute.setTimestamp(this.getCurrentTime());
-						this.attributes.put(_attribute, _multipleInstances);
+						this.outAttributes.put(_attribute, _multipleInstances);
 					}
 				}
 			},
@@ -4109,14 +3876,12 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * associated AttributeTypes.
 			 * 
 			 * @protected
-			 * @alias setConstantAttributes
+			 * @alias setConstantOutAttributes
 			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)}
-			 *            _constantAttributes List or Array of
-			 *            AttributeValues
+			 * @param {(AttributeList|Array)} _constantAttributes List or Array of AttributeValues
 			 */
-			'protected setConstantAttributes' : function(_constantAttributes) {
-				var list = new Array();
+			'protected setConstantOutAttributes' : function(_constantAttributes) {
+				var list = [];
 				if (_constantAttributes instanceof Array) {
 					list = _constantAttributes;
 				} else if (Class.isA(AttributeValueList,_constantAttributes)) {
@@ -4142,12 +3907,11 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * updated.
 			 * 
 			 * @protected
-			 * @alias addConstantAttribute
+			 * @alias addConstantOutAttribute
 			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _constantAttribute AttributeValue
+			 * @param {AttributeValue} _constantAttribute AttributeValue
 			 */
-			'protected addConstantAttribute' : function(_constantAttribute) {
+			'protected addConstantOutAttribute' : function(_constantAttribute) {
 				if (Class.isA(AttributeValue, _constantAttribute)) {
 					if (!this.constantAttributes
 							.contains(_constantAttribute)) {
@@ -4270,14 +4034,13 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * provided Attribute.
 			 * 
 			 * @protected
-			 * @alias isAttribute
+			 * @alias isOutAttribute
 			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _attribute
+			 * @param {Attribute} _attribute
 			 * @returns {boolean}
 			 */
-			'protected isAttribute' : function(_attribute) {
-				return !!this.attributes.containsTypeOf(_attribute);
+			'protected isOutAttribute' : function(_attribute) {
+				return !!this.outAttributes.containsTypeOf(_attribute);
 			},
 
 			/**
@@ -4289,7 +4052,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @alias initAttributes
 			 * @memberof Widget#
 			 */
-			'abstract protected initAttributes' : [],
+			'abstract protected initOutAttributes' : [],
 			
 			/**
 			 * Initializes the provided ConstantAttributes.
@@ -4300,7 +4063,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @alias initConstantAttributes
 			 * @memberof Widget#
 			 */
-			'abstract protected initConstantAttributes' : [],
+			'abstract protected initConstantOutAttributes' : [],
 
 			/**
 			 * Initializes the provided Callbacks.
@@ -4322,8 +4085,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @memberof Widget#
 			 */
 			'protected init' : function(_attributeTypes) {
-				this.initAttributes();
-				this.initConstantAttributes();
+				this.initOutAttributes();
+				this.initConstantOutAttributes();
 				this.initCallbacks();
 
                 this.didFinishInitialization(_attributeTypes);
@@ -4395,7 +4158,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @public
 			 * @alias putData
 			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)} _data Data that should be entered.
+			 * @param {(AttributeList|Array)} _data Data that should be entered.
 			 * 
 			 */
 			'virtual public putData' : function(_data) {
@@ -4407,8 +4170,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 				}
 				for ( var i in list) {
 					var x = list[i];
-					if (Class.isA(Attribute, x) && this.isAttribute(x)) {
-						this.addAttribute(x);
+					if (Class.isA(Attribute, x) && this.isOutAttribute(x)) {
+						this.addOutAttribute(x);
 					}
 				}
 
@@ -4425,8 +4188,8 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 */
 			'public queryWidget' : function() {
 				var response = new AttributeList();
-				response.putAll(this.getAttributes());
-				response.putAll(this.getConstantAttributes());
+				response.putAll(this.getOutAttributes());
+				response.putAll(this.getConstantOutAttributes());
 				return response;
 			},
 
@@ -4445,10 +4208,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 					this.queryGenerator(_function);
 				} else {
 					this.queryGenerator();
-					var response = new AttributeList();
-					response.putAll(this.getAttributes());
-					response.putAll(this.getConstantAttributes());
-					return response;
+					return this.queryWidget();
 				}
 			},
 
@@ -4458,19 +4218,19 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @protected
 			 * @alias sendToSubscriber
 			 * @memberof Widget#
-			 * @param {string} _callbackName Name of the searched Callback.
+			 * @param {string} _callback Name of the searched Callback.
 			 */
 			'protected sendToSubscriber' : function(_callback) {
 				if (_callback && Class.isA(Callback, _callback)) {
 					var subscriberList = this.subscribers.getItems();
-					for ( var i in subscriberList) {
+					for (var i in subscriberList) {
 						var subscriber = subscriberList[i];
 						if (subscriber.getSubscriptionCallbacks().contains(_callback)) {
 							if(this.dataValid(subscriber.getConditions())){
 								var subscriberInstance = this.discoverer.getComponent(subscriber.getSubscriberId());
 								var callSubset =  _callback.getAttributeTypes();
 								var subscriberSubset = subscriber.getAttributesSubset();
-								var data = this.attributes.getSubset(callSubset);
+								var data = this.outAttributes.getSubset(callSubset);
 								if (subscriberSubset && subscriberSubset.size() > 0) {
 									data = data.getSubset(subscriberSubset);
 								}
@@ -4498,7 +4258,7 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 				}
 				if (!_conditions.isEmpty()) {
 					var items = _condition.getItems();
-					for ( var i in items) {
+					for (var i in items) {
 						var condition = items[i];
 						var conditionAttributeType = condition.getAttributeType();
 						var conditionAttributeTypeList = new AttributeTypeList()
@@ -4509,25 +4269,6 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 					}
 				}
 				return false;
-			},
-
-			/**
-			 * Returns the description of this component.
-			 * @virtual
-			 * @public
-			 * @alias getDescription
-			 * @memberof Widget#
-			 * @returns {WidgetDescription} 
-			 */
-			'virtual public getDescription' : function() {
-				var description = new WidgetDescription().withId(this.id).withName(this.name);
-				description.addOutAttributeTypes(this.attributes);
-				description.addOutAttributeTypes(this.constantAttributes);
-                var widgetCallbacks = this.callbacks.getItems();
-                for(var i in widgetCallbacks) {
-                    description.addCallbackName(widgetCallbacks[i].getName());
-                }
-				return description;
 			},
 
 			/**
@@ -4572,132 +4313,24 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 				if (this.discoverer) {
 					this.discoverer.registerNewComponent(this);
 				}
-			}
-			
-//			/**
-//			 * Unregisters the component to the associated discoverer
-//			 * and deletes the reference.
-//			 * 
-//			 * @public
-//			 * @alias register
-//			 * @memberof Widget#
-//			 */
-//			'protected unregister' : function() {
-//				if (this.discoverer) {
-//					this.discoverer.unregisterComponent(this.getId());
-//					this.discoverer = null;
-//				}
-//			},
+			},
 
+			/**
+			 * Returns true if the widget can satisfy the requested attribute type.
+			 *
+			 * @public
+			 * @alias doesSatisfyAttributeType
+			 * @memberof WidgetDescription#
+			 * @param {AttributeType} _attribute
+			 * @returns {boolean}
+			 */
+
+			'virtual public doesSatisfyAttributeType': function(_attribute) {
+				return this.outAttributes.containsTypeOf(_attribute);
+			}
 		});
 
 		return Widget;
-});
-/**
- * This module represents the InterpreterDescription. 
- * It describes the most important information for the communication with a specific interpreter. 
- * 
- * @module InterpreterDescription
- * @fileOverview
- */
-define('interpreterDescription',['easejs','attributeList', 'widgetDescription'],
-    function(easejs,AttributeList, WidgetDescription){
-    	var Class = easejs.Class;
-		var InterpreterDescription = Class('InterpreterDescription').
-						extend(WidgetDescription, {
-			/**
-			* @alias inAttributeTypes
-			* @private
-			* @type {AttributeTypeList}
-			* @memberof InterpreterDescription#
-			* @desc List of all Attributes that are expected for interpretation.
-			*/
-			'private inAttributeTypes' : [], 
-
-			/**
-			 * Constructor: Calls the constructor of the WidgetDescription
-			 * and initializes the inAttributeTypes.
-			 * 
-			 * @class InterpreterDescription
-			 * @classdesc The description of an interpreter and the communication with it.
-			 * @extends WidgetDescription
-			 * @requires easejs
-			 * @requires AttributeList
-			 * @requires WidgetDescription
-			 * @constructs InterpreterDescription
-			 */
-			'override public __construct' : function(){
-				this.__super();
-				this.inAttributeTypes = new AttributeList();
-			},
-			
-			/**
-			 * Builder for inAttributeType list
-			 * 
-			 * @public
-			 * @alias withInAttributeTypes
-			 * @memberof InterpreterDescription#
-			 * @param {(AttributeList|Array)} _inAttributeTypes List of AttributeType that are expected
-			 * @returns {InterpreterDescription}
-			 */
-    		'public withInAttributeTypes' : function(_inAttributeTypes){
-    			this.setInAttributeTypes(_inAttributeTypes);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for inAttributeType
-			 * 
-			 * @public
-			 * @alias withInAttributeType
-			 * @memberof InterpreterDescription#
-			 * @param {AttributeType} _inAttributeType AttributeType that are expected
-			 * @returns {InterpreterDescription}
-			 */
-    		'public withInAttributeType' : function(_inAttributeType){
-    			this.setInAttributeType(_inAttributeType);
-    			return this;
-    		},
-
-    		/**
-			 * Returns inAttributeTypes of the interpreter
-			 * 
-			 * @public
-			 * @alias getInAttributeTypes
-			 * @memberof InterpreterDescription#
-			 * @returns {AttributeTypeList}
-			 */
-			'public getInAttributeTypes' : function(){
-				return this.inAttributeTypes;
-			},
-
-			/**
-			 * Adds an inAttributeType to the list
-			 * 
-			 * @public
-			 * @alias setInAttributeType
-			 * @memberof InterpreterDescription#
-			 * @param {AttributeType} _inAttributeType AttributeType that are expected
-			 */
-			'public setInAttributeType' : function(_inAttributeType){
-					this.inAttributeTypes.put(_inAttributeType);
-			},
-			
-			/**
-			 * Adds inAttributeTypes that are expected
-			 * 
-			 * @public
-			 * @alias setInAttributeTypes
-			 * @memberof InterpreterDescription#
-			 * @param {(AttributeTypeList|Array)} _inAttributeTypes List of AttributeType that are expected
-			 */
-			'public setInAttributeTypes' : function(_inAttributeTypes){
-				this.inAttributeTypes.putAll(_inAttributeTypes);
-			}
-
-            });
-
-        return InterpreterDescription;
 });
 /**
  * This module represents a InterpreterResult.
@@ -4890,10 +4523,8 @@ define('interpreterResult',['easejs', 'attributeList'],
  * @module Interpreter
  * @fileOverview
  */
-define('interpreter',[ 'easejs', 'MathUuid', 'attribute', 'attributeList',
-		'interpreterDescription', 'interpreterResult' ],
-		function(easejs, MathUuid, Attribute, AttributeList,
-				InterpreterDescription, InterpreterResult) {
+define('interpreter',[ 'easejs', 'MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
+		function(easejs, MathUuid, Attribute, AttributeList, InterpreterResult) {
 			var Class = easejs.Class;
 			var AbstractClass = easejs.AbstractClass;
 			var Interpreter = AbstractClass('Interpreter',
@@ -5296,6 +4927,10 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 
 				'public getOutAttributesWithInputParameters': function() {
 					return this.outAttributes.getAttributesWithInputParameters();
+				},
+
+				'public doesSatisfyAttributeType': function(_attribute) {
+					return this.outAttributes.containsTypeOf(_attribute);
 				}
 			});
 
@@ -5332,10 +4967,10 @@ define('interpretation',['easejs', 'interpreter', 'attributeList'],
  */
 define('aggregator',['easejs', 'MathUuid','widget',
         'attribute', 'attributeList', 'subscriber',
-        'subscriberList', 'callbackList', 'storage', 'widgetDescription', 'interpreter', 'interpretation'],
+        'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
  	function(easejs, MathUuid, Widget, Attribute,
  			AttributeList, Subscriber, SubscriberList,
- 			CallbackList, Storage, WidgetDescription, Interpreter, Interpretation){
+ 			CallbackList, Storage, Interpreter, Interpretation){
 
  	var Class = easejs.Class;
 	var Aggregator =  Class('Aggregator').
@@ -5485,14 +5120,14 @@ define('aggregator',['easejs', 'MathUuid','widget',
 	   	 * @alias initAttributes
 		 * @memberof Aggregator#
 	     */
-		'protected initAttributes' : function(){
+		'protected initOutAttributes' : function(){
 			if(this.widgets.length > 0){
 				var widgetIdList = this.widgets;
 				for(var i in widgetIdList){
 					var widgetId = widgetIdList[i];
 					var widgetInstance = this.discoverer.getComponent(widgetId);
 					if (widgetInstance) {
-						this.setAttributes(widgetInstance.queryAttributes());
+						this.setOutAttributes(widgetInstance.queryAttributes());
 					}
                 }
             }
@@ -5505,7 +5140,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 	   	 * @alias initConstantAttributes
 		 * @memberof Aggregator#
 	     */
-		'protected initConstantAttributes' : function(){
+		'protected initConstantOutAttributes' : function(){
 			if(this.widgets.length > 0){
                 var widgetIdList = this.widgets;
 				for(var i in widgetIdList){
@@ -5577,7 +5212,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		'virtual protected setAggregatorAttributeValues' : function(_attributes) {
             for (var index in _attributes) {
                 var theAttribute = _attributes[index];
-                this.addAttribute(theAttribute);
+                this.addOutAttribute(theAttribute);
             }
         },
 
@@ -5618,7 +5253,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @returns {AttributeList}
 	     */
 		'public getCurrentData' : function(){
-			return this.attributes;
+			return this.outAttributes;
 		},
 		
 		/**
@@ -5670,11 +5305,11 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @public
 	   	 * @alias addWidgetSubscription
 		 * @memberof Aggregator#
-		 * @param {String|Widget|WidgetDescription} _widgetIdOrWidget Widget that should be subscribed.
+		 * @param {String|Widget} _widgetIdOrWidget Widget that should be subscribed.
 		 * @param {CallbackList} _callbackList required Callbacks
 	     */
 		'public addWidgetSubscription' : function(_widgetIdOrWidget, _callbackList){
-            if (Class.isA(Widget, _widgetIdOrWidget) || Class.isA(WidgetDescription, _widgetIdOrWidget)) {
+            if (Class.isA(Widget, _widgetIdOrWidget)) {
                 if (Class.isA(Widget, _widgetIdOrWidget) && (!_callbackList || !Class.isA(CallbackList, _callbackList))) {
                     _callbackList = _widgetIdOrWidget.getCallbackList();
                 }
@@ -5691,7 +5326,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 						var typeList = singleCallback.getAttributeTypes().getItems();
 						for(var y in typeList){
 							var singleType = typeList[y];
-							this.addAttribute(singleType);
+							this.addOutAttribute(singleType);
                         }
                     }
                     this.addWidget(_widgetIdOrWidget);
@@ -5737,8 +5372,8 @@ define('aggregator',['easejs', 'MathUuid','widget',
 			}
 			for(var i in list){
 				var x = list[i];
-				if(Class.isA(Attribute, x ) && this.isAttribute(x)){
-					this.addAttribute(x);
+				if(Class.isA(Attribute, x ) && this.isOutAttribute(x)){
+					this.addOutAttribute(x);
 					if(this.db){
 						this.store(x);
 					}
@@ -5893,18 +5528,19 @@ define('aggregator',['easejs', 'MathUuid','widget',
 
 		/**
 		 *
-		 * @private
+		 * @override
+		 * @public
 		 * @alias doesSatisfyAttributeType
 		 * @param _attribute
 		 * @returns {boolean}
 		 */
-        'private doesSatisfyAttributeType': function(_attribute) {
+        'override public doesSatisfyAttributeType': function(_attribute) {
             var componentUUIDs = this.getComponentUUIDs();
             var doesSatisfy = false;
 
             for (var index in componentUUIDs) {
                 var theComponent = this.discoverer.getComponent(componentUUIDs[index]);
-                if (theComponent.getDescription().doesSatisfyAttributeType(_attribute)) {
+                if (theComponent.doesSatisfyAttributeType(_attribute)) {
                     doesSatisfy = true;
                 }
             }
@@ -5936,7 +5572,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 
 				// if the component was added before, ignore it
                 if (!this.hasComponent(theComponent.getId())) {
-                    var outAttributes = theComponent.getDescription().getOutAttributeTypes().getItems();
+                    var outAttributes = theComponent.getOutAttributes().getItems();
 
                     // if component is a widget and it wasn't added before, subscribe to its callbacks
                     if (Class.isA(Widget, theComponent)) {
@@ -5947,7 +5583,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
                         for (var widgetOutAttributeIndex in outAttributes) {
                             var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
 							// add the attribute type to the aggregators list of handled attribute types
-                            if (!this.getAttributes().containsTypeOf(widgetOutAttribute)) this.addAttribute(widgetOutAttribute);
+                            if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
                             console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
                             _unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
                         }
@@ -5988,7 +5624,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 								for (var unsatisfiedAttributeIndex in _unsatisfiedAttributes.getItems()) {
 									var theUnsatisfiedAttribute = _unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 									if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
-										this.addAttribute(theUnsatisfiedAttribute);
+										this.addOutAttribute(theUnsatisfiedAttribute);
 										console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
 										this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
 									}
@@ -5997,8 +5633,8 @@ define('aggregator',['easejs', 'MathUuid','widget',
                             }
 						} else {
                             console.log("Found interpreter but can't satisfy required attributes.");
-                            for (var j in theComponent.getDescription().getInAttributeTypes().getItems()) {
-                                console.log("Missing "+theComponent.getDescription().getInAttributeTypes().getItems()[j]+".");
+                            for (var j in theComponent.getInAttributes().getItems()) {
+                                console.log("Missing "+theComponent.getInAttributes().getItems()[j]+".");
                             }
                         }
                     }
@@ -6017,7 +5653,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
 		 * @memberof Aggregator#
 		 */
         'virtual public didFinishSetup': function() {
-            unsatisfiedAttributes = this.getAttributes().clone();
+            unsatisfiedAttributes = this.getOutAttributes().clone();
 
             // get all widgets that satisfy attribute types
             this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Widget]);
@@ -6025,7 +5661,7 @@ define('aggregator',['easejs', 'MathUuid','widget',
             this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Interpreter]);
 
 			console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
-			console.log("Satisfied attributes: "+this.getAttributes().size());
+			console.log("Satisfied attributes: "+this.getOutAttributes().size());
 			console.log("Interpretations "+this.interpretations.length);
         },
 
@@ -6049,14 +5685,14 @@ define('aggregator',['easejs', 'MathUuid','widget',
                         completedQueriesCounter++;
                         if (completedQueriesCounter == self.widgets.length) {
                             if (_callback && typeof(_callback) == 'function') {
-                                _callback(self.getAttributes());
+                                _callback(self.getOutAttributes());
                             }
                         }
                     });
                 }
             } else {
 				if (_callback && typeof(_callback) == 'function') {
-                    _callback(self.getAttributes());
+                    _callback(self.getOutAttributes());
                 }
             }
         },
@@ -6077,14 +5713,14 @@ define('aggregator',['easejs', 'MathUuid','widget',
 				for (var index in this.interpretations) {
 					var theInterpretation = this.interpretations[index];
 					var theInterpreterId = theInterpretation.interpreterId;
-					var interpretationInAttributeValues = this.getAttributes(theInterpretation.inAttributeTypes);
-					var interpretationOutAttributeValues = this.getAttributes(theInterpretation.outAttributeTypes);
+					var interpretationInAttributeValues = this.getOutAttributes(theInterpretation.inAttributeTypes);
+					var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
 
 					self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(_interpretedData) {
 						for (var j in _interpretedData.getItems()) {
 							var theInterpretedData = _interpretedData.getItems()[j];
 
-							self.addAttribute(theInterpretedData);
+							self.addOutAttribute(theInterpretedData);
 							if (self.db){
 								self.store(theInterpretedData);
 							}
@@ -6093,14 +5729,14 @@ define('aggregator',['easejs', 'MathUuid','widget',
 						completedQueriesCounter++;
 						if (completedQueriesCounter == self.interpretations.length) {
 							if (_callback && typeof(_callback) == 'function') {
-								_callback(self.getAttributes());
+								_callback(self.getOutAttributes());
 							}
 						}
 					});
 				}
 			} else {
 				if (_callback && typeof(_callback) == 'function') {
-					_callback(self.getAttributes());
+					_callback(self.getOutAttributes());
 				}
 			}
         },
@@ -6229,7 +5865,7 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @memberof Discoverer#
 		 * @desc List of available Widgets.
 		 */
-		'private widgets' : {},
+		'private widgets' : [],
 		
 		/**
 		 * @alias aggregators
@@ -6238,16 +5874,16 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @memberof Discoverer#
 		 * @desc List of available Aggregators.
 		 */
-		'private aggregators' : {},
+		'private aggregators' : [],
 		
 		/**
-		 * @alias interpreter
+		 * @alias interpreters
 		 * @private
 		 * @type {Object}
 		 * @memberof Discoverer#
 		 * @desc List of available Interpreter.
 		 */
-		'private interpreter' : {},
+		'private interpreters' : [],
 
 		/**
 		 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -6259,7 +5895,7 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @constructs Discoverer
 		 */
 		'public __construct' : function() {
-			this.register();
+
 		},
 
 		/**
@@ -6275,53 +5911,6 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 			return 'Discoverer';
 		},
 
-		/*
-		 * single call for registering the different categories of components
-		 */
-		/**
-		 * Single call for registration of the different categories of components.
-		 * Calls: registerWidgets(), registerAggregators(), registerInterpreter()
-		 * 
-		 * @private
-		 * @alias register
-		 * @memberof Discoverer#
-		 */
-		'private register' : function() {
-			this.registerWidgets();
-			this.registerAggregators();
-			this.registerInterpreter();
-		},
-
-		/**
-		 * Registers all specified widgets.
-		 * 
-		 * @private
-		 * @alias registerWidgets
-		 * @memberof Discoverer#
-		 */
-		'private registerWidgets' : function() {
-		},
-
-		/**
-		 * Registers all specified aggregators.
-		 * 
-		 * @private
-		 * @alias registerAggregators
-		 * @memberof Discoverer#
-		 */
-		'private registerAggregators' : function() {
-		},
-
-		/**
-		 * Registers all specified interpreters.
-		 * 
-		 * @private
-		 * @alias registerInterpreter
-		 * @memberof Discoverer#
-		 */
-		'private registerInterpreter' : function() {
-		},
-
 		/**
 		 * Registers the specified component.
 		 * 
@@ -6331,10 +5920,9 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @param {Widget|Aggregator|Interpreter} _component the component that should be registered 
 		 */
 		'public registerNewComponent' : function(_component) {
-			var category = this.identificationHelper(_component);			
-			if (category) {
-				this.registryHelper(category, _component);
-			}
+			if (_component.getType() == "Widget" && this.getWidget(_component.getId()) == null) this.widgets.push(_component);
+			if (_component.getType() == "Interpreter" && this.getInterpreter(_component.getId()) == null) this.interpreters.push(_component);
+			if (_component.getType() == "Aggregator" && this.getAggregator(_component.getId()) == null) this.aggregators.push(_component);
 		},
 
 		/**
@@ -6346,10 +5934,17 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @param {string} _id id of the component that should be registered 
 		 */
 		'public unregisterComponent' : function(_id) {
-			var component = this.getComponent(_id);
-			var category = this.identificationHelper(component);
-			if (category) {
-				category.splice(_id, 1);
+			for (var wi in this.widgets) {
+				var theWidget = this.widgets[wi];
+				if (_id == theWidget.getId()) this.widgets.splice(wi, 1);
+			}
+			for (var ii in this.interpreters) {
+				var theInterpreter = this.interpreters[ii];
+				if (_id == theInterpreter.getId()) this.interpreters.splice(ii, 1);
+			}
+			for (var ai in this.aggregators) {
+				var theAggregator= this.aggregators[ai];
+				if (_id == theAggregator.getId()) this.aggregators.splice(ai, 1);
 			}
 		},
 
@@ -6363,12 +5958,11 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @returns {?Widget}
 		 */
 		'public getWidget' : function(_id) {
-			var widget =  this.widgets[_id];
-			if(!widget){
-				delete(this.widgets[_id]);
-				return null;
+			for (var index in this.widgets) {
+				var theWidget = this.widgets[index];
+				if (theWidget.getId() == _id) return theWidget;
 			}
-			return widget;
+			return null;
 		},
 
 		/**
@@ -6381,12 +5975,11 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @returns {Aggregator}
 		 */
 		'public getAggregator' : function(_id) {
-			var aggregator = this.aggregators[_id];
-			if(!aggregator ){
-				delete(this.aggregators[_id]);
-				return null;
+			for (var index in this.aggregators) {
+				var theAggregator = this.aggregators[index];
+				if (theAggregator.getId() == _id) return theAggregator;
 			}
-			return aggregator;
+			return null;
 		},
 
 		/**
@@ -6399,13 +5992,31 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @returns {Interpreter}
 		 */
 		'public getInterpreter' : function(_id) {
-			var interpret = this.interpreter[_id];
-			if(!interpret){
-                delete(this.interpreter[_id]);
-				return null;
+			for (var index in this.interpreters) {
+				var theInterpreter = this.interpreters[index];
+				if (theInterpreter.getId() == _id) return theInterpreter;
 			}
-			return interpret;
+			return null;
 		},
+
+		/**
+		 * Returns all registered components (widget, aggregator and interpreter).
+		 *
+		 * @public
+		 * @alias getComponents
+		 * @memberof Discoverer#
+		 * @param {Array} _componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
+		 * @returns {Array}
+		 */
+		'public getComponents' : function(_componentTypes) {
+			if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
+			var response = [];
+			if (jQuery.inArray(Widget, _componentTypes) != -1) response = response.concat(this.widgets);
+			if (jQuery.inArray(Aggregator, _componentTypes) != -1) response = response.concat(this.aggregators);
+			if (jQuery.inArray(Interpreter, _componentTypes) != -1) response = response.concat(this.interpreters);
+			return response;
+		},
+
 
 		/**
 		 * Returns the instance (widget, aggregator or interpreter) for the specified id.
@@ -6433,78 +6044,6 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		},
 
 		/**
-		 * Returns the description of all registered widgets.
-		 * 
-		 * @public
-		 * @alias getWidgetDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getWidgetDescriptions' : function() {
-			var widgetDescription = [];
-			var widgets = this.widgets;
-			for (var i in widgets) {
-				var singleWidget = widgets[i];
-				widgetDescription.push(singleWidget.getDescription());
-			}
-			return widgetDescription;
-		},
-
-		/**
-		 * Returns the description of all registered aggregators.
-		 * 
-		 * @public
-		 * @alias getAggregatorDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getAggregatorDescriptions' : function() {
-			var aggregatorDescription = [];
-			var aggregators = this.aggregators;
-			for (var i in aggregators) {
-				var singleAggregator = aggregators[i];
-				aggregatorDescription.push(singleAggregator.getDescription());
-			}
-			return aggregatorDescription;
-		},
-
-		/**
-		 * Returns the description of all registered interpreter.
-		 * 
-		 * @public
-		 * @alias getInterpreterDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getInterpreterDescriptions' : function() {
-			var interpreterDescription = [];
-			var interpreters = this.interpreter;
-			for ( var i in interpreters) {
-				var singleInterpreter = interpreters[i];
-				interpreterDescription.push(singleInterpreter.getDescription());
-			}
-			return interpreterDescription;
-		},
-
-		/**
-		 * Returns the description of all registered components (widget, aggregator and interpreter).
-		 * 
-		 * @public
-		 * @alias getDescriptions
-		 * @memberof Discoverer#
-         * @param {Array} _componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
-		 * @returns {Array}
-		 */
-		'public getDescriptions' : function(_componentTypes) {
-            if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
-			var response = [];
-			if (jQuery.inArray(Widget, _componentTypes) != -1) response = response.concat(this.getWidgetDescriptions());
-            if (jQuery.inArray(Aggregator, _componentTypes) != -1) response = response.concat(this.getAggregatorDescriptions());
-            if (jQuery.inArray(Interpreter, _componentTypes) != -1) response = response.concat(this.getInterpreterDescriptions());
-			return response;
-		},
-
-		/**
 		 * Returns all components that have the specified attribute as
 		 * outAttribute. It can be chosen between the verification of 
 		 * all attributes or at least one attribute.
@@ -6527,13 +6066,13 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 				list = _attributeList.getItems();
 			}
 			if (typeof list != "undefined") {
-				var descriptions = this.getDescriptions(_componentTypes);
-				for (var i in descriptions) {
-					var description = descriptions[i];
-						if(_all && this.containsAllAttributes(description, list)) {
-							componentList.push(this.getComponent(description.getId()));
-						} else if(!_all && this.containsAtLeastOneAttribute(description, list)) {
-							componentList.push(this.getComponent(description.getId()));
+				var components = this.getComponents(_componentTypes);
+				for (var i in components) {
+					var theComponent = components[i];
+						if(_all && this.containsAllAttributes(theComponent, list)) {
+							componentList.push(theComponent);
+						} else if(!_all && this.containsAtLeastOneAttribute(theComponent, list)) {
+							componentList.push(theComponent);
 					}
 				}
 			}
@@ -6549,14 +6088,14 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @private
 		 * @alias containsAllAttributes
 		 * @memberof Discoverer#
-		 * @param {(WidgetDescription|InterpreterDescription)} _description description of a component
+		 * @param {(WidgetDescription|InterpreterDescription)} _component description of a component
 		 * @param {Array} _list searched attributes
 		 * @returns {boolean}
 		 */
-		'private containsAllAttributes' : function(_description,_list) {
+		'private containsAllAttributes' : function(_component, _list) {
 			for ( var j in _list) {
 				var attribute = _list[j];
-				if (!_description.doesSatisfyAttributeType(attribute)) {
+				if (!_component.doesSatisfyAttributeType(attribute)) {
 					return false;
 				}
 			}
@@ -6569,58 +6108,19 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		 * @private
 		 * @alias containsAtLeastOneAttribute
 		 * @memberof Discoverer#
-		 * @param {(WidgetDescription|InterpreterDescription)} _description description of a component
+		 * @param {(WidgetDescription|InterpreterDescription)} _component description of a component
 		 * @param {Array} _list searched attributes
 		 * @returns {boolean}
 		 */
-		'private containsAtLeastOneAttribute' : function(_description, _list) {
+		'private containsAtLeastOneAttribute' : function(_component, _list) {
 			for (var j in _list) {
 				var attribute = _list[j];
-				if (_description.doesSatisfyAttributeType(attribute)) {
+				if (_component.doesSatisfyAttributeType(attribute)) {
 					return true;
 				}
 			}
 			return false;
-		},
-		
-		/**
-		 * Helper: Saves the given component in the category list.
-		 * 
-		 * @private
-		 * @alias registryHelper
-		 * @memberof Discoverer#
-		 * @param {string} _category category of component to register
-		 * @param {(Widget|Aggregator|Interpreter)} _component component that should be registered
-		 */
-		'private registryHelper' : function(_category, _component) {
-			_category[_component.getId()] = _component;
-		},
-
-		/*
-		 * identifies the category of an instance widgets, aggregators,
-		 * interpreter are currently supported
-		 */
-		/**
-		 * Helper: Identifies the category of an instance. Widgets, aggregators,
-		 * interpreter are currently supported.
-		 * 
-		 * @private
-		 * @alias identificationHelper
-		 * @memberof Discoverer#
-		 * @param {(Widget|Aggregator|Interpreter)} _component that should be identified
-		 */
-		'private identificationHelper' : function(_component) {
-			if (_component.getType() == 'Widget') {
-				return this.widgets;
-			} else if (_component.getType() == 'Aggregator') {
-				return this.aggregators;
-			} else if (_component.getType() == 'Interpreter') {
-				return this.interpreter;
-			} else {
-				return null;
-			}
 		}
-
 	});
 
 	return Discoverer;
@@ -6637,8 +6137,7 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		    'conditionMethod',
 		    'equals',
             'unequals',
-		    'interpreterDescription',
-		    'widgetDescription',	    
+
 		    'discoverer',
 		    'interpreter',
 		    'interpreterResult',
@@ -6660,8 +6159,6 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 			    ConditionMethod,
 			    Equals,
                 UnEquals,
-			    InterpreterDescription,
-			    WidgetDescription,	    
 			    Discoverer,
 			    Interpreter, 
 			    InterpreterResult,
@@ -6690,14 +6187,12 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 	contactJS.ConditionMethod = ConditionMethod;
 	contactJS.Equals = Equals;
     contactJS.UnEquals = UnEquals;
-	contactJS.InterpreterDescription = InterpreterDescription;
-	contactJS.WidgetDescription = WidgetDescription;
 	contactJS.Discoverer = Discoverer;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;
 	contactJS.CallbackList = CallbackList;
-	contactJS.Subscriber =Subscriber;
+	contactJS.Subscriber = Subscriber;
 	contactJS.SubscriberList = SubscriberList;
 	contactJS.Widget = Widget;
 	contactJS.AbstractList = AbstractList;

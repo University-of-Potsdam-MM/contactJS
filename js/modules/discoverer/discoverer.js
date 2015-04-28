@@ -17,7 +17,7 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @memberof Discoverer#
 		 * @desc List of available Widgets.
 		 */
-		'private widgets' : {},
+		'private widgets' : [],
 		
 		/**
 		 * @alias aggregators
@@ -26,16 +26,16 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @memberof Discoverer#
 		 * @desc List of available Aggregators.
 		 */
-		'private aggregators' : {},
+		'private aggregators' : [],
 		
 		/**
-		 * @alias interpreter
+		 * @alias interpreters
 		 * @private
 		 * @type {Object}
 		 * @memberof Discoverer#
 		 * @desc List of available Interpreter.
 		 */
-		'private interpreter' : {},
+		'private interpreters' : [],
 
 		/**
 		 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -47,7 +47,7 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @constructs Discoverer
 		 */
 		'public __construct' : function() {
-			this.register();
+
 		},
 
 		/**
@@ -63,53 +63,6 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 			return 'Discoverer';
 		},
 
-		/*
-		 * single call for registering the different categories of components
-		 */
-		/**
-		 * Single call for registration of the different categories of components.
-		 * Calls: registerWidgets(), registerAggregators(), registerInterpreter()
-		 * 
-		 * @private
-		 * @alias register
-		 * @memberof Discoverer#
-		 */
-		'private register' : function() {
-			this.registerWidgets();
-			this.registerAggregators();
-			this.registerInterpreter();
-		},
-
-		/**
-		 * Registers all specified widgets.
-		 * 
-		 * @private
-		 * @alias registerWidgets
-		 * @memberof Discoverer#
-		 */
-		'private registerWidgets' : function() {
-		},
-
-		/**
-		 * Registers all specified aggregators.
-		 * 
-		 * @private
-		 * @alias registerAggregators
-		 * @memberof Discoverer#
-		 */
-		'private registerAggregators' : function() {
-		},
-
-		/**
-		 * Registers all specified interpreters.
-		 * 
-		 * @private
-		 * @alias registerInterpreter
-		 * @memberof Discoverer#
-		 */
-		'private registerInterpreter' : function() {
-		},
-
 		/**
 		 * Registers the specified component.
 		 * 
@@ -119,10 +72,9 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @param {Widget|Aggregator|Interpreter} _component the component that should be registered 
 		 */
 		'public registerNewComponent' : function(_component) {
-			var category = this.identificationHelper(_component);			
-			if (category) {
-				this.registryHelper(category, _component);
-			}
+			if (_component.getType() == "Widget" && this.getWidget(_component.getId()) == null) this.widgets.push(_component);
+			if (_component.getType() == "Interpreter" && this.getInterpreter(_component.getId()) == null) this.interpreters.push(_component);
+			if (_component.getType() == "Aggregator" && this.getAggregator(_component.getId()) == null) this.aggregators.push(_component);
 		},
 
 		/**
@@ -134,10 +86,17 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @param {string} _id id of the component that should be registered 
 		 */
 		'public unregisterComponent' : function(_id) {
-			var component = this.getComponent(_id);
-			var category = this.identificationHelper(component);
-			if (category) {
-				category.splice(_id, 1);
+			for (var wi in this.widgets) {
+				var theWidget = this.widgets[wi];
+				if (_id == theWidget.getId()) this.widgets.splice(wi, 1);
+			}
+			for (var ii in this.interpreters) {
+				var theInterpreter = this.interpreters[ii];
+				if (_id == theInterpreter.getId()) this.interpreters.splice(ii, 1);
+			}
+			for (var ai in this.aggregators) {
+				var theAggregator= this.aggregators[ai];
+				if (_id == theAggregator.getId()) this.aggregators.splice(ai, 1);
 			}
 		},
 
@@ -151,12 +110,11 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @returns {?Widget}
 		 */
 		'public getWidget' : function(_id) {
-			var widget =  this.widgets[_id];
-			if(!widget){
-				delete(this.widgets[_id]);
-				return null;
+			for (var index in this.widgets) {
+				var theWidget = this.widgets[index];
+				if (theWidget.getId() == _id) return theWidget;
 			}
-			return widget;
+			return null;
 		},
 
 		/**
@@ -169,12 +127,11 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @returns {Aggregator}
 		 */
 		'public getAggregator' : function(_id) {
-			var aggregator = this.aggregators[_id];
-			if(!aggregator ){
-				delete(this.aggregators[_id]);
-				return null;
+			for (var index in this.aggregators) {
+				var theAggregator = this.aggregators[index];
+				if (theAggregator.getId() == _id) return theAggregator;
 			}
-			return aggregator;
+			return null;
 		},
 
 		/**
@@ -187,13 +144,31 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @returns {Interpreter}
 		 */
 		'public getInterpreter' : function(_id) {
-			var interpret = this.interpreter[_id];
-			if(!interpret){
-                delete(this.interpreter[_id]);
-				return null;
+			for (var index in this.interpreters) {
+				var theInterpreter = this.interpreters[index];
+				if (theInterpreter.getId() == _id) return theInterpreter;
 			}
-			return interpret;
+			return null;
 		},
+
+		/**
+		 * Returns all registered components (widget, aggregator and interpreter).
+		 *
+		 * @public
+		 * @alias getComponents
+		 * @memberof Discoverer#
+		 * @param {Array} _componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
+		 * @returns {Array}
+		 */
+		'public getComponents' : function(_componentTypes) {
+			if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
+			var response = [];
+			if (jQuery.inArray(Widget, _componentTypes) != -1) response = response.concat(this.widgets);
+			if (jQuery.inArray(Aggregator, _componentTypes) != -1) response = response.concat(this.aggregators);
+			if (jQuery.inArray(Interpreter, _componentTypes) != -1) response = response.concat(this.interpreters);
+			return response;
+		},
+
 
 		/**
 		 * Returns the instance (widget, aggregator or interpreter) for the specified id.
@@ -221,78 +196,6 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		},
 
 		/**
-		 * Returns the description of all registered widgets.
-		 * 
-		 * @public
-		 * @alias getWidgetDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getWidgetDescriptions' : function() {
-			var widgetDescription = [];
-			var widgets = this.widgets;
-			for (var i in widgets) {
-				var singleWidget = widgets[i];
-				widgetDescription.push(singleWidget.getDescription());
-			}
-			return widgetDescription;
-		},
-
-		/**
-		 * Returns the description of all registered aggregators.
-		 * 
-		 * @public
-		 * @alias getAggregatorDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getAggregatorDescriptions' : function() {
-			var aggregatorDescription = [];
-			var aggregators = this.aggregators;
-			for (var i in aggregators) {
-				var singleAggregator = aggregators[i];
-				aggregatorDescription.push(singleAggregator.getDescription());
-			}
-			return aggregatorDescription;
-		},
-
-		/**
-		 * Returns the description of all registered interpreter.
-		 * 
-		 * @public
-		 * @alias getInterpreterDescriptions
-		 * @memberof Discoverer#
-		 * @returns {Array}
-		 */
-		'private getInterpreterDescriptions' : function() {
-			var interpreterDescription = [];
-			var interpreters = this.interpreter;
-			for ( var i in interpreters) {
-				var singleInterpreter = interpreters[i];
-				interpreterDescription.push(singleInterpreter.getDescription());
-			}
-			return interpreterDescription;
-		},
-
-		/**
-		 * Returns the description of all registered components (widget, aggregator and interpreter).
-		 * 
-		 * @public
-		 * @alias getDescriptions
-		 * @memberof Discoverer#
-         * @param {Array} _componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
-		 * @returns {Array}
-		 */
-		'public getDescriptions' : function(_componentTypes) {
-            if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
-			var response = [];
-			if (jQuery.inArray(Widget, _componentTypes) != -1) response = response.concat(this.getWidgetDescriptions());
-            if (jQuery.inArray(Aggregator, _componentTypes) != -1) response = response.concat(this.getAggregatorDescriptions());
-            if (jQuery.inArray(Interpreter, _componentTypes) != -1) response = response.concat(this.getInterpreterDescriptions());
-			return response;
-		},
-
-		/**
 		 * Returns all components that have the specified attribute as
 		 * outAttribute. It can be chosen between the verification of 
 		 * all attributes or at least one attribute.
@@ -315,13 +218,13 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 				list = _attributeList.getItems();
 			}
 			if (typeof list != "undefined") {
-				var descriptions = this.getDescriptions(_componentTypes);
-				for (var i in descriptions) {
-					var description = descriptions[i];
-						if(_all && this.containsAllAttributes(description, list)) {
-							componentList.push(this.getComponent(description.getId()));
-						} else if(!_all && this.containsAtLeastOneAttribute(description, list)) {
-							componentList.push(this.getComponent(description.getId()));
+				var components = this.getComponents(_componentTypes);
+				for (var i in components) {
+					var theComponent = components[i];
+						if(_all && this.containsAllAttributes(theComponent, list)) {
+							componentList.push(theComponent);
+						} else if(!_all && this.containsAtLeastOneAttribute(theComponent, list)) {
+							componentList.push(theComponent);
 					}
 				}
 			}
@@ -337,14 +240,14 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @private
 		 * @alias containsAllAttributes
 		 * @memberof Discoverer#
-		 * @param {(WidgetDescription|InterpreterDescription)} _description description of a component
+		 * @param {(WidgetDescription|InterpreterDescription)} _component description of a component
 		 * @param {Array} _list searched attributes
 		 * @returns {boolean}
 		 */
-		'private containsAllAttributes' : function(_description,_list) {
+		'private containsAllAttributes' : function(_component, _list) {
 			for ( var j in _list) {
 				var attribute = _list[j];
-				if (!_description.doesSatisfyAttributeType(attribute)) {
+				if (!_component.doesSatisfyAttributeType(attribute)) {
 					return false;
 				}
 			}
@@ -357,58 +260,19 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @private
 		 * @alias containsAtLeastOneAttribute
 		 * @memberof Discoverer#
-		 * @param {(WidgetDescription|InterpreterDescription)} _description description of a component
+		 * @param {(WidgetDescription|InterpreterDescription)} _component description of a component
 		 * @param {Array} _list searched attributes
 		 * @returns {boolean}
 		 */
-		'private containsAtLeastOneAttribute' : function(_description, _list) {
+		'private containsAtLeastOneAttribute' : function(_component, _list) {
 			for (var j in _list) {
 				var attribute = _list[j];
-				if (_description.doesSatisfyAttributeType(attribute)) {
+				if (_component.doesSatisfyAttributeType(attribute)) {
 					return true;
 				}
 			}
 			return false;
-		},
-		
-		/**
-		 * Helper: Saves the given component in the category list.
-		 * 
-		 * @private
-		 * @alias registryHelper
-		 * @memberof Discoverer#
-		 * @param {string} _category category of component to register
-		 * @param {(Widget|Aggregator|Interpreter)} _component component that should be registered
-		 */
-		'private registryHelper' : function(_category, _component) {
-			_category[_component.getId()] = _component;
-		},
-
-		/*
-		 * identifies the category of an instance widgets, aggregators,
-		 * interpreter are currently supported
-		 */
-		/**
-		 * Helper: Identifies the category of an instance. Widgets, aggregators,
-		 * interpreter are currently supported.
-		 * 
-		 * @private
-		 * @alias identificationHelper
-		 * @memberof Discoverer#
-		 * @param {(Widget|Aggregator|Interpreter)} _component that should be identified
-		 */
-		'private identificationHelper' : function(_component) {
-			if (_component.getType() == 'Widget') {
-				return this.widgets;
-			} else if (_component.getType() == 'Aggregator') {
-				return this.aggregators;
-			} else if (_component.getType() == 'Interpreter') {
-				return this.interpreter;
-			} else {
-				return null;
-			}
 		}
-
 	});
 
 	return Discoverer;

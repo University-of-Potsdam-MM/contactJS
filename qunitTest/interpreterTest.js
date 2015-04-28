@@ -27,15 +27,6 @@ require(['configTest'], function() {
 				assert.ok( outTypes.size() == 1,"Passed!: 1 defined outType in addressInterpreter" );
 				assert.ok( outTypes.getAttributeWithTypeOf(formattedAddress),"Passed!: formattedAddress exists" );
 				assert.ok( outTypes.getAttributeWithTypeOf(formattedAddress).equalsTypeOf(formattedAddress),"Passed!: formattedAddress equals expected type" );
-
-				//interpreterDescription				
-				var desc = testInterpreter.getDescription();
-				assert.ok( desc,"Passed!: InterpreterDescription exists" );
-				assert.equal ( desc.getId(), id, "Passed!: InterpreterDescription contains expected id" );
-				assert.equal ( desc.getName(), 'AddressInterpreter', "Passed!: InterpreterDescription contains expected id" );
-				assert.equal ( desc.getInAttributeTypes().size(), 2, "Passed!: InterpreterDescription contains 2 inAttributes" );
-				assert.equal ( desc.getOutAttributeTypes().size(), 1, "Passed!: InterpreterDescription contains 1 outAttributes" );
-				
 				
 				//callInterpreter && getInterpretedData with callback
 				var latitudeValue = new contactJS.Attribute().withName('latitude').withType('double').withValue(52.3992404);

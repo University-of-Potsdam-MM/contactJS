@@ -4,10 +4,8 @@
  * @module Interpreter
  * @fileOverview
  */
-define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
-		'interpreterDescription', 'interpreterResult' ],
-		function(easejs, MathUuid, Attribute, AttributeList,
-				InterpreterDescription, InterpreterResult) {
+define([ 'easejs', 'MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
+		function(easejs, MathUuid, Attribute, AttributeList, InterpreterResult) {
 			var Class = easejs.Class;
 			var AbstractClass = easejs.AbstractClass;
 			var Interpreter = AbstractClass('Interpreter',
@@ -410,6 +408,10 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList',
 
 				'public getOutAttributesWithInputParameters': function() {
 					return this.outAttributes.getAttributesWithInputParameters();
+				},
+
+				'public doesSatisfyAttributeType': function(_attribute) {
+					return this.outAttributes.containsTypeOf(_attribute);
 				}
 			});
 

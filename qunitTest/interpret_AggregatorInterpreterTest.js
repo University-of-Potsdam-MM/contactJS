@@ -15,7 +15,7 @@ require(['configTest'], function() {
 					formattedAddressType
 				]);
 				
-				var interpreter = discoverer.getDescriptions([contactJS.Interpreter]);
+				var interpreters = discoverer.getComponents([contactJS.Interpreter]);
 				
 				//put data into aggregator
 				var latitudeValue = new contactJS.Attribute().withName('latitude').withType('double').withValue(52.3992404);
@@ -33,7 +33,7 @@ require(['configTest'], function() {
 			    
 				//call Interpreter
 				var callFunktion = function(interpret){
-					testAggregator.addAttribute(interpret.getAttributeWithTypeOf(formattedAddressType));
+					testAggregator.addOutAttribute(interpret.getAttributeWithTypeOf(formattedAddressType));
 					var data2 = testAggregator.getCurrentData();
 					assert.equal( data2.size(), 3,"Passed!: three available attributes" );
 					var item = data2.getAttributeWithTypeOf(formattedAddressType);
@@ -42,7 +42,7 @@ require(['configTest'], function() {
 	    			assert.equal(item.getValue(), add ,"Passed!: interpreted data equals expected value" );
 				};
 				
-				testAggregator.interpretData(interpreter[0].getId(), typeList, new contactJS.AttributeList().withItems([formattedAddressType]), function (result) {callFunktion(result); QUnit.start();});
+				testAggregator.interpretData(interpreters[0].getId(), typeList, new contactJS.AttributeList().withItems([formattedAddressType]), function (result) {callFunktion(result); QUnit.start();});
 			});
 			
 
