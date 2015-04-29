@@ -24,8 +24,8 @@ require(['configTest'], function() {
 				var assertion = function(){
 					var tables = testAggregator.getStorageOverview();
 
-					assert.notEqual(jQuery.inArray('latitude', tables), '-1', "Passed!: table latitude exists" );
-					assert.notEqual(jQuery.inArray('longitude', tables), '-1', "Passed!: table longitude exists" );
+					assert.notEqual(jQuery.inArray('latitude', tables), "-1", "Passed!: table latitude exists" );
+					assert.notEqual(jQuery.inArray('longitude', tables), "-1", "Passed!: table longitude exists" );
 				};
 
 				testAggregator.queryTables(function () {assertion(); QUnit.start();});				

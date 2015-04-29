@@ -4,52 +4,62 @@
  * @module Interpreter
  * @fileOverview
  */
-define([ 'easejs', 'MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
-		function(easejs, MathUuid, Attribute, AttributeList, InterpreterResult) {
-			var Class = easejs.Class;
-			var AbstractClass = easejs.AbstractClass;
-			var Interpreter = AbstractClass('Interpreter',
-			{
+define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
+	function(MathUuid, Attribute, AttributeList, InterpreterResult) {
+		return (function() {
+			/**
+			 * Constructor: Generates the id and initializes the (in and out) types and values.
+			 *
+			 * @abstract
+			 * @class Interpreter
+			 * @classdesc The Widget handles the access to sensors.
+			 * @requires easejs
+			 * @requires MathUuid
+			 * @requires Attribute
+			 * @requires AttributeList
+			 * @constructs Interpreter
+			 */
+			function Interpreter(discoverer) {
 				/**
-				 * @alias name
+				 * Name of the Interpreter.
+				 *
 				 * @public
 				 * @type {string}
-				 * @memberof Interpreter#
-				 * @desc Name of the Interpreter.
 				 */
-				'public name' : 'Interpreter',
+				this.name = 'Interpreter';
+
 				/**
-				 * @alias id
+				 * Id of the Interpreter. Will be generated.
+				 *
 				 * @public
 				 * @type {string}
-				 * @memberof Interpreter#
-				 * @desc Id of the Interpreter. Will be generated.
 				 */
-				'public id' : '',
+				this.id = Math.uuid();
+
 				/**
-				 * @alias inAttributes
+				 * Types of all attributes that can be handled.
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Interpreter#
-				 * @desc Types of all attributes that can be handled.
 				 */
-				'protected inAttributes' : [],
+				this._inAttributes = new AttributeList();
+
 				/**
-				 * @alias outAttributes
+				 * Types of all attributes that will be returned.
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Interpreter#
-				 * @desc Types of all attributes that will be returned.
 				 */
-				'protected outAttributes' : [],
+				this._outAttributes = new AttributeList();
+
 				/**
-				 * @alias lastInterpretation
+				 * Last interpretation time.
+				 *
 				 * @protected
-				 * @type {Date}
-				 * @memberof Interpreter#
-				 * @desc Last interpretation time.
+				 * @type {?Date}
 				 */
-				'protected lastInterpretation' : '',
+				this._lastInterpretation = null;
+
 				/**
 				 * @alias discoverer
 				 * @protected
@@ -57,363 +67,307 @@ define([ 'easejs', 'MathUuid', 'attribute', 'attributeList', 'interpreterResult'
 				 * @memberof Interpreter#
 				 * @desc Associated Discoverer.
 				 */
-				'protected discoverer' : '',
+				this._discoverer = discoverer;
 
-				/**
-				 * Constructor: Generates the id and initializes the (in and out) types and values.
-				 * 
-				 * @abstract
-				 * @class Interpreter
-				 * @classdesc The Widget handles the access to sensors.
-				 * @requires easejs
-				 * @requires MathUuid
-				 * @requires Attribute
-				 * @requires AttributeList
-				 * @requires InterpreterDescription
-				 * @constructs Interpreter
-				 */
-				'public __construct' : function(_discoverer) {
-					this.id = Math.uuid();
-                    this.discoverer = _discoverer;
-                    this.register();
-					this.inAttributes = new AttributeList();
-					this.outAttributes = new AttributeList();
-					this.initInterpreter();
-				},
-				
-				/**
-				 * Returns the name of the interpreter.
-				 * 
-				 * @public
-				 * @alias getName
-				 * @memberof Interpreter#
-				 * @returns {string}
-				 */
-				'public getName' : function() {
-					return this.name;
-				},
+				this._register();
+				this._initInterpreter();
 
-				/**
-				 * Returns the id of the interpreter.
-				 * 
-				 * @public
-				 * @alias getId
-				 * @memberof Interpreter#
-				 * @returns {string}
-				 */
-				'public getId' : function() {
-					return this.id;
-				},
-				
-				/**
-				 * Returns the type of this class, in this case
-				 * "Interpreter".
-				 * 
-				 * @public
-				 * @alias getType
-				 * @memberof Interpreter#
-				 * @returns {string}
-				 */
-				'public getType' : function() {
-					return 'Interpreter';
-				},
+				return this;
+			}
 
-				/**
-				 * Initializes interpreter and sets the expected inAttributes
-				 * and provided outAttributes.
-				 * @private
-				 * @alias initInterpreter
-				 * @memberof Interpreter#
-				 */
-				'private initInterpreter' : function() {
-					this.initInAttributes();
-					this.initOutAttributes();
-				},
+			/**
+			 * Returns the name of the interpreter.
+			 *
+			 * @public
+			 * @returns {string}
+			 */
+			Interpreter.prototype.getName = function() {
+				return this.name;
+			};
 
-				/**
-				 * Initializes the inAttributes.
-				 * 
-				 * @function
-				 * @abstract
-				 * @protected
-				 * @alias initInAttributes
-				 * @memberof Interpreter#
-				 */
-				'abstract protected initInAttributes' : [],
-				/**
-				 * Initializes the outAttributes.
-				 * 
-				 * @function
-				 * @abstract
-				 * @protected
-				 * @alias initOutAttributes
-				 * @memberof Interpreter#
-				 */
-				'abstract protected initOutAttributes' : [],
+			/**
+			 * Returns the id of the interpreter.
+			 *
+			 * @public
+			 * @returns {string}
+			 */
+			Interpreter.prototype.getId = function() {
+				return this.id;
+			};
 
-				/**
-				 * Returns the expected inAttributeTypes.
-				 * 
-				 * @public
-				 * @alias getInAttributeTypes
-				 * @memberof Interpreter#
-				 * @returns {AttributeList}
-				 */
-				'public getInAttributes' : function() {
-					return this.inAttributes;
-				},
+			/**
+			 * Returns the type of this class, in this case "Interpreter".
+			 *
+			 * @public
+			 * @returns {string}
+			 */
+			Interpreter.prototype.getType = function() {
+				return 'Interpreter';
+			};
 
-				/**
-				 * Sets an inAttribute.
-				 * 
-				 * @protected
-				 * @alias setInAttribute
-				 * @memberof Interpreter#
-				 */
-				'protected setInAttribute' : function(_attribute) {
-					this.inAttributes.put(_attribute);
-				},
+			/**
+			 * Initializes interpreter and sets the expected inAttributes and provided outAttributes.
+			 *
+			 * @private
+			 */
+			Interpreter.prototype._initInterpreter = function() {
+				this._initInAttributes();
+				this._initOutAttributes();
+			};
 
-				/**
-				 * Sets an inAttributes.
-				 * 
-				 * @protected
-				 * @alias setInAttributes
-				 * @memberof Interpreter#
-				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
-				 */
-				'protected setInAttributes' : function(_attributeList) {
-					this.inAttributes = new AttributeList().withItems(_attributeList);
-				},
+			/**
+			 * Initializes the inAttributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Interpreter.prototype._initInAttributes = function() {
+				throw Error("Abstract function call!");
+			};
 
-				/**
-				 * Verifies whether the specified attribute is contained in inAttributeList.
-				 * 
-				 * @protected
-				 * @alias isInAttribute
-				 * @memberof Interpreter#
-				 * @param {Attribute} _attribute Attribute that should be verified.
-				 * @return {boolean}
-				 */
-				'protected isInAttribute' : function(_attribute) {
-					return !!this.inAttributes.containsTypeOf(_attribute);
-				},
+			/**
+			 * Initializes the outAttributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Interpreter.prototype._initOutAttributes = function() {
+				throw Error("Abstract function call!");
+			};
 
-				/**
-				 * Returns the provided outAttributeTypes.
-				 * 
-				 * @public
-				 * @alias getOutAttributes
-				 * @memberof Interpreter#
-				 * @returns {AttributeList}
-				 */
-				'public getOutAttributes' : function() {
-					return this.outAttributes;
-				},
+			/**
+			 * Returns the expected inAttributeTypes.
+			 *
+			 * @public
+			 * @returns {AttributeList}
+			 */
+			Interpreter.prototype.getInAttributes = function() {
+				return this._inAttributes;
+			};
 
-				/**
-				 * Adds an outAttribute.
-				 * 
-				 * @protected
-				 * @alias setOutAttribute
-				 * @memberof Interpreter#
-				 */
-				'protected setOutAttribute' : function(_attribute) {
-					this.outAttributes.put(_attribute);
-				},
+			/**
+			 * Sets an inAttribute.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute
+			 */
+			Interpreter.prototype._setInAttribute = function(attribute) {
+				this._inAttributes.put(attribute);
+			};
 
-				/**
-				 * Sets an outAttributes.
-				 *
-				 * @protected
-				 * @alias setOutAttributes
-				 * @memberof Interpreter#
-				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
-				 */
-				'protected setOutAttributes' : function(_attributeList) {
-					this.outAttributes = new AttributeList().withItems(_attributeList);
-				},
+			/**
+			 * Sets an inAttributes.
+			 *
+			 * @protected
+			 * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
+			 */
+			Interpreter.prototype._setInAttributes = function(attributesOrArray) {
+				this._inAttributes = new AttributeList().withItems(attributesOrArray);
+			};
 
-				/**
-				 * Verifies whether the specified attribute is contained in outAttributeList.
-				 * 
-				 * @protected
-				 * @alias isOutAttribute
-				 * @memberof Interpreter#
-				 * @param {Attribute} _attribute Attribute that should be verified.
-				 * @return {boolean}
-				 */
-				'protected isOutAttribute' : function(_attribute) {
-					return !!this.outAttributes.containsTypeOf(_attribute);
-				},
+			/**
+			 * Verifies whether the specified attribute is contained in inAttributeList.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute Attribute that should be verified.
+			 * @return {boolean}
+			 */
+			Interpreter.prototype._isInAttribute = function(attribute) {
+				return !!this._inAttributes.containsTypeOf(attribute);
+			};
 
-				/**
-				 * Validates the data and calls interpretData.
-				 * 
-				 * @public
-				 * @alias callInterpreter
-				 * @memberof Interpreter#
-				 * @param {AttributeList} _inAttributeValues Data that should be interpreted.
-				 * @param {AttributeList} _outAttributeValues
-				 * @param {?function} _function For additional actions, if an asynchronous function is used.
-				 */
-				'public callInterpreter' : function(_inAttributeValues, _outAttributeValues, _function) {
-					var self = this;
+			/**
+			 * Returns the provided outAttributeTypes.
+			 *
+			 * @public
+			 * @returns {AttributeList}
+			 */
+			Interpreter.prototype.getOutAttributes = function() {
+				return this._outAttributes;
+			};
 
-					if (!_inAttributeValues || !this.canHandleInAttributes(_inAttributeValues)) throw "Empty input attribute list or unhandled input attribute.";
-					if (!_outAttributeValues || !this.canHandleOutAttributes(_outAttributeValues)) throw "Empty output attribute list or unhandled output attribute.";
+			/**
+			 * Adds an outAttribute.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute
+			 */
+			Interpreter.prototype._setOutAttribute = function(attribute) {
+				this._outAttributes.put(attribute);
+			};
 
-					this.interpretData(_inAttributeValues, _outAttributeValues, function(interpretedData) {
-						var response = new AttributeList().withItems(interpretedData);
+			/**
+			 * Sets an outAttributes.
+			 *
+			 * @protected
+			 * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
+			 */
+			Interpreter.prototype._setOutAttributes = function(attributesOrArray) {
+				this._outAttributes = new AttributeList().withItems(attributesOrArray);
+			};
 
-						if (!self.canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
+			/**
+			 * Verifies whether the specified attribute is contained in outAttributeList.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute Attribute that should be verified.
+			 * @return {boolean}
+			 */
+			Interpreter.prototype._isOutAttribute = function(attribute) {
+				return !!this._outAttributes.containsTypeOf(attribute);
+			};
 
-						self.setInAttributes(_inAttributeValues);
-						self.lastInterpretation = new Date();
+			/**
+			 * Validates the data and calls interpretData.
+			 *
+			 * @public
+			 * @param {AttributeList} inAttributes Data that should be interpreted.
+			 * @param {AttributeList} outAttributes
+			 * @param {?function} callback For additional actions, if an asynchronous function is used.
+			 */
+			Interpreter.prototype.callInterpreter = function(inAttributes, outAttributes, callback) {
+				var self = this;
 
-						if (_function && typeof(_function) == 'function'){
-							_function(response);
-						}
-					});
-				},
+				if (!inAttributes || !this._canHandleInAttributes(inAttributes)) throw "Empty input attribute list or unhandled input attribute.";
+				if (!outAttributes || !this._canHandleOutAttributes(outAttributes)) throw "Empty output attribute list or unhandled output attribute.";
 
-				/**
-				 * Interprets the data.
-				 * 
-				 * @function
-				 * @abstract
-				 * @public
-				 * @alias interpretData
-				 * @memberof Interpreter#
-				 * @param {AttributeList} _data Data that should be interpreted.
-				 * @param {?function} _function For additional actions, if an asynchronous function is used.
-				 */
-				'abstract protected interpretData' : ['_inAttributes', '_outAttributes', '_callback'],
+				this._interpretData(inAttributes, outAttributes, function(interpretedData) {
+					var response = new AttributeList().withItems(interpretedData);
 
-				/**
-				 * Checks whether the specified data match the expected.
-				 * 
-				 * @protected
-				 * @alias canHandleInAttributes
-				 * @memberof Interpreter#
-				 * @param {AttributeList|Array.<Attribute>} _inAttributes Data that should be verified.
-				 */
-				'protected canHandleInAttributes' : function(_inAttributes) {
-					var list = [];
-					if (_inAttributes instanceof Array) {
-						list = _inAttributes;
-					} else if (Class.isA(AttributeList, _inAttributes)) {
-						list = _inAttributes.getItems();
+					if (!self._canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
+
+					self._setInAttributes(inAttributes);
+					self.lastInterpretation = new Date();
+
+					if (callback && typeof(callback) == 'function'){
+						callback(response);
 					}
-					if (list.length == 0 || _inAttributes.size() != this.getInAttributes().size()) {
-						return false;
-					}
-					for ( var i in list) {
-						var inAtt = list[i];
-						if (!this.isInAttribute(inAtt)) {
-							return false;
-						}
-					}
-					return true;
-				},
+				});
+			};
 
-				/**
-				 * Checks whether the specified data match the expected.
-				 *
-				 * @protected
-				 * @alias canHandleOutAttributes
-				 * @memberof Interpreter#
-				 * @param {AttributeList|Array.<Attribute>} _outAttributes Data that should be verified.
-				 */
-				'protected canHandleOutAttributes' : function(_outAttributes) {
-					var list = [];
-					if (_outAttributes instanceof Array) {
-						list = _outAttributes;
-					} else if (Class.isA(AttributeList, _outAttributes)) {
-						list = _outAttributes.getItems();
-					}
-					if (list.length == 0 || _outAttributes.size() != this.getOutAttributes().size()) {
-						return false;
-					}
-					for ( var i in list) {
-						var inAtt = list[i];
-						if (!this.isOutAttribute(inAtt)) {
-							return false;
-						}
-					}
-					return true;
-				},
+			/**
+			 * Interprets the data.
+			 *
+			 * @abstract
+			 * @protected
+			 * @param {AttributeList} inAttributes
+			 * @param {AttributeList} outAttributes
+			 * @param {Function} callback
+			 */
+			Interpreter.prototype._interpretData = function (inAttributes, outAttributes, callback) {
+				throw Error("Abstract function call!");
+			};
 
-				/**
-				 * Returns the time of the last interpretation.
-				 * 
-				 * @protected
-				 * @alias getLastInterpretionTime
-				 * @memberof Interpreter#
-				 * @returns {Date} 
-				 */
-				'public getLastInterpretionTime' : function() {
-					return this.lastInterpretation;
-				},
-
-				/**
-				 * Returns the description of this component.
-				 * @virtual
-				 * @public
-				 * @alias getInterpreterDescription
-				 * @memberof Interpreter#
-				 * @returns {InterpreterDescription} 
-				 */
-				'virtual public getDescription' : function() {
-					var description = new InterpreterDescription().withId(this.id).withName(this.name);
-					description.addOutAttributeTypes(this.outAttributes);
-					description.setInAttributeTypes(this.inAttributes);
-					return description;
-				},
-
-				/**
-				 * Sets and registers to the associated Discoverer.
-				 * @public
-				 * @alias setDiscoverer
-				 * @memberof Interpreter#
-				 * @param {Discoverer} _discoverer Discoverer
-				 */
-				'public setDiscoverer' : function(_discoverer) {
-					if (!this.discoverer) {
-						this.discoverer = _discoverer;
-						this.register();
-					}
-				},
-
-				/**
-				 * Registers the component to the associated Discoverer.
-				 * 
-				 * @public
-				 * @alias register
-				 * @memberof Interpreter#
-				 */
-				'protected register' : function() {
-					if (this.discoverer) {
-						this.discoverer.registerNewComponent(this);
-					}
-				},
-
-				/**
-				 *
-				 * @returns {boolean}
-				 */
-				'public hasOutAttributesWithInputParameters': function() {
-					return this.outAttributes.hasAttributesWithInputParameters();
-				},
-
-				'public getOutAttributesWithInputParameters': function() {
-					return this.outAttributes.getAttributesWithInputParameters();
-				},
-
-				'public doesSatisfyAttributeType': function(_attribute) {
-					return this.outAttributes.containsTypeOf(_attribute);
+			/**
+			 * Checks whether the specified data match the expected.
+			 *
+			 * @protected
+			 * @param {AttributeList|Array.<Attribute>} attributeListOrArray Data that should be verified.
+			 */
+			Interpreter.prototype._canHandleInAttributes = function(attributeListOrArray) {
+				var list = [];
+				if (attributeListOrArray instanceof Array) {
+					list = attributeListOrArray;
+				} else if (attributeListOrArray.constructor === AttributeList) {
+					list = attributeListOrArray.getItems();
 				}
-			});
+				if (list.length == 0 || attributeListOrArray.size() != this.getInAttributes().size()) {
+					return false;
+				}
+				for ( var i in list) {
+					var inAtt = list[i];
+					if (!this._isInAttribute(inAtt)) {
+						return false;
+					}
+				}
+				return true;
+			};
+
+			/**
+			 * Checks whether the specified data match the expected.
+			 *
+			 * @protected
+			 * @param {AttributeList|Array.<Attribute>} attributeListOrArray Data that should be verified.
+			 */
+			Interpreter.prototype._canHandleOutAttributes = function(attributeListOrArray) {
+				var list = [];
+				if (attributeListOrArray instanceof Array) {
+					list = attributeListOrArray;
+				} else if (attributeListOrArray.constructor === AttributeList) {
+					list = attributeListOrArray.getItems();
+				}
+				if (list.length == 0 || attributeListOrArray.size() != this.getOutAttributes().size()) {
+					return false;
+				}
+				for ( var i in list) {
+					var inAtt = list[i];
+					if (!this._isOutAttribute(inAtt)) {
+						return false;
+					}
+				}
+				return true;
+			};
+
+			/**
+			 * Returns the time of the last interpretation.
+			 *
+			 * @public
+			 * @returns {Date}
+			 */
+			Interpreter.prototype.getLastInterpretionTime = function() {
+				return this._lastInterpretation;
+			};
+
+			/**
+			 * Sets and registers to the associated Discoverer.
+			 *
+			 * @public
+			 * @param {Discoverer} discoverer Discoverer
+			 */
+			Interpreter.prototype.setDiscoverer = function(discoverer) {
+				if (!this._discoverer) {
+					this._discoverer = discoverer;
+					this._register();
+				}
+			};
+
+			/**
+			 * Registers the component to the associated Discoverer.
+			 *
+			 * @public
+			 */
+			Interpreter.prototype._register = function() {
+				if (this._discoverer) {
+					this._discoverer.registerNewComponent(this);
+				}
+			};
+
+			/**
+			 *
+			 * @returns {boolean}
+			 */
+			Interpreter.prototype.hasOutAttributesWithInputParameters = function() {
+				return this._outAttributes.hasAttributesWithInputParameters();
+			};
+
+			/**
+			 *
+			 * @returns {boolean}
+			 */
+			Interpreter.prototype.getOutAttributesWithInputParameters = function() {
+				return this._outAttributes.getAttributesWithInputParameters();
+			};
+
+			/**
+			 *
+			 * @param {Attribute}attribute
+			 * @returns {boolean}
+			 */
+			Interpreter.prototype.doesSatisfyTypeOf = function(attribute) {
+				return this._outAttributes.containsTypeOf(attribute);
+			};
 
 			return Interpreter;
-		});
+		})();
+	}
+);

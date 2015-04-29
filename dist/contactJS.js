@@ -3542,91 +3542,17 @@ define('subscriberList',['easejs', 'abstractList', 'subscriber'],
  * @module Widget
  * @fileOverview
  */
-define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
-		 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
-	function(easejs, MathUuid, Callback, CallbackList, Attribute,
-			AttributeList, ConditionList, Subscriber, SubscriberList) {
-		
-		var AbstractClass = easejs.AbstractClass;
-		var Class = easejs.Class;
-		var Widget = AbstractClass('Widget',{
-			/**
-			 * @alias name
-			 * @public
-			 * @type {string}
-			 * @memberof Widget#
-			 * @desc Name of the Widget.
-			*/
-			'public name' : 'Widget',
-			/**
-			* @alias id
-			* @public
-			* @type {string}
-			* @memberof Widget#
-			* @desc ID of the Widget. Will be generated.
-			*/
-			'public id' : '',
-
-			/**
-			 * @alias attributes
-			 * @protected
-			 * @type {AttributeList}
-			 * @memberof Widget#
-			 * @desc All available Attributes and their values.
-			 */
-			'protected outAttributes' : [],
-			/**
-			 * @alias oldAttributes
-			 * @protected
-			 * @type {AttributeList}
-			 * @memberof Widget#
-			 * @desc This temporary variable is used for storing the old attribute values. 
-			 * 			So these can be used to check conditions.
-			 */
-			'protected oldOutAttributes' : [],
-			/**
-			 * @alias constantAttributes
-			 * @protected
-			 * @type {AttributeList}
-			 * @memberof Widget#
-			 * @desc All available constant Attributes and their values.
-			 */
-			'protected constantOutAttributes' : [],
-			/**
-			 * @alias callbacks
-			 * @protected
-			 * @type {CallbackList}
-			 * @memberof Widget#
-			 * @desc List of Callbacks.
-			 */
-			'protected callbacks' : [],
-			/**
-			 * @alias subscribers
-			 * @protected
-			 * @type {SubscriberList}
-			 * @memberof Widget#
-			 * @desc List of Subscriber.
-			 */
-			'protected subscribers' : [],
-
-			/**
-			 * @alias discoverer
-			 * @protected
-			 * @type {Discoverer}
-			 * @memberof Widget#
-			 * @desc Associated discoverer.
-			 */
-			'protected discoverer' : '',
-
+define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
+		return (function() {
 			/**
 			 * Constructor: Generates the ID and initializes the
 			 * Widget with attributes, callbacks and subscriber
 			 * that are specified in the provided functions.
-			 * 
+			 *
 			 * @abstract
 			 * @class Widget
 			 * @classdesc The Widget handles the access to sensors.
-			 * @requires easejs
 			 * @requires MathUuid
 			 * @requires Callback
 			 * @requires CallbackList
@@ -3635,462 +3561,514 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 * @requires ConditionList
 			 * @requires Subscriber
 			 * @requires SubscriberList
-			 * @requires WidgetDescription
 			 * @requires Discoverer
 			 * @constructs Widget
 			 */
-			'virtual public __construct' : function(_discoverer, _attributeTypes) {
+			function Widget(discoverer, attributes) {
+				var self = this;
+
+				/**
+				 * @alias name
+				 * @public
+				 * @type {string}
+				 * @memberof Widget#
+				 * @desc Name of the Widget.
+				 */
+				this.name = 'Widget';
+
+				/**
+				 * @alias id
+				 * @public
+				 * @type {string}
+				 * @memberof Widget#
+				 * @desc ID of the Widget. Will be generated.
+				 */
 				this.id = Math.uuid();
-                this.discoverer = _discoverer;
-                this.register();
-				this.outAttributes = new AttributeList();
-				this.constantOutAttributes = new AttributeList();
-				this.subscribers = new SubscriberList();
-				this.callbacks = new CallbackList();
-				this.init(_attributeTypes);
-			},
+
+				/**
+				 *
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc All available Attributes and their values.
+				 */
+				this._outAttributes = new AttributeList();
+
+				/**
+				 * @alias oldAttributes
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc This temporary variable is used for storing the old attribute values.
+				 * 			So these can be used to check conditions.
+				 */
+				this._oldOutAttributes = [];
+
+				/**
+				 * @alias constantAttributes
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc All available constant Attributes and their values.
+				 */
+				this._constantOutAttributes = new AttributeList();
+
+				/**
+				 * @alias callbacks
+				 * @protected
+				 * @type {CallbackList}
+				 * @memberof Widget#
+				 * @desc List of Callbacks.
+				 */
+				this._callbacks = new CallbackList();
+
+				/**
+				 * @alias subscribers
+				 * @protected
+				 * @type {SubscriberList}
+				 * @memberof Widget#
+				 * @desc List of Subscriber.
+				 */
+				this._subscribers = new SubscriberList();
+
+				/**
+				 * @alias discoverer
+				 * @protected
+				 * @type {Discoverer}
+				 * @memberof Widget#
+				 * @desc Associated discoverer.
+				 */
+				this._discoverer = discoverer;
+
+				this._register();
+				this._init(attributes);
+
+				return this;
+			}
 
 			/**
 			 * Returns the name of the widget.
-			 * 
+			 *
 			 * @public
 			 * @alias getName
 			 * @memberof Widget#
-			 * @returns {string} 
+			 * @returns {string}
 			 */
-			'public getName' : function() {
+			Widget.prototype.getName = function() {
 				return this.name;
-			},
+			};
 
 			/**
 			 * Returns the id of the widget.
-			 * 
+			 *
 			 * @public
 			 * @alias getId
 			 * @memberof Widget#
 			 * @returns {string}
 			 */
-			'public getId' : function() {
+			Widget.prototype.getId = function() {
 				return this.id;
-			},
+			};
 
 			/**
 			 * Returns the type of this class, in this case
 			 * "Widget".
-			 * 
+			 *
 			 * @virtual
 			 * @public
-			 * @alias getType
-			 * @memberof Widget#
 			 * @returns {string}
 			 */
-			'virtual public getType' : function() {
+			//TODO: remove and replace with constructor comparison
+			Widget.prototype.getType = function() {
 				return 'Widget';
-			},
+			};
 
 			/**
 			 * Returns the available AttributeTypes.
-			 * 
+			 *
 			 * @public
-			 * @alias getAttributes
-			 * @memberof Widget#
+			 * @param {?AttributeList} attributes
 			 * @returns {AttributeList}
 			 */
-			'public getOutAttributes' : function(_attributeList) {
-				if (Class.isA(AttributeList, _attributeList)) {
-					return this.outAttributes.getSubset(_attributeList);
+			Widget.prototype.getOutAttributes = function(attributes) {
+				// test if attributeList is a list
+				if (attributes && attributes.constructor === AttributeList) {
+					return this._outAttributes.getSubset(attributes);
 				} else {
-					return this.outAttributes;
+					return this._outAttributes;
 				}
-			},
+			};
 
 			/**
 			 * Returns the available ConstantAttributeTypes
 			 * (attributes that do not change).
-			 * 
+			 *
 			 * @public
-			 * @alias getWidgetConstantAttributeTypes
-			 * @memberof Widget#
+			 * @param {?AttributeList} attributes
 			 * @returns {AttributeList}
 			 */
-			'public getConstantOutAttributes' : function(_attributeList) {
-				if (Class.isA(AttributeList, _attributeList)) {
-					return this.constantOutAttributes.getSubset(_attributeList);
+			Widget.prototype.getConstantOutAttributes = function(attributes) {
+				if (attributes && attributes.constructor === AttributeList) {
+					return this._constantOutAttributes.getSubset(attributes);
 				} else {
-					return this.constantOutAttributes;
+					return this._constantOutAttributes;
 				}
-			},
+			};
 
-            /**
-             * Returns the last acquired attribute value with the given attribute type.
-             *
-             * @param {AttributeType} _attributeType The attribute type to return the last value for.
-             * @returns {*}
-             */
-            'public getValueForAttributeWithTypeOf': function(_attributeType) {
-                return this.getOutAttributes().getAttributeWithTypeOf(_attributeType).getValue();
-            },
-			
+			/**
+			 * Returns the last acquired attribute value with the given attribute type.
+			 *
+			 * @param {AttributeType} attributeType The attribute type to return the last value for.
+			 * @returns {*}
+			 */
+			Widget.prototype.getValueForAttributeWithTypeOf = function(attributeType) {
+				return this.getOutAttributes().getAttributeWithTypeOf(attributeType).getValue();
+			};
+
 			/**
 			 * Returns the old Attributes.
-			 * 
+			 *
 			 * @private
 			 * @alias getOldAttributes
 			 * @memberof Widget#
 			 * @returns {AttributeList}
 			 */
-			'public getOldAttributes' : function() {
-				return this.oldOutAttributes;
-			},
+			Widget.prototype.getOldAttributes = function() {
+				return this._oldOutAttributes;
+			};
 
 			/**
 			 * Returns a list of callbacks that can be
 			 * subscribed to.
-			 * 
+			 *
 			 * @public
 			 * @alias getCallbacks
 			 * @memberof Widget#
 			 * @returns {CallbackList}
 			 */
-			'public getCallbackList' : function() {
-				return this.callbacks;
-			},
+			Widget.prototype.getCallbackList = function() {
+				return this._callbacks;
+			};
 
-            /**
-             * Returns the specified callbacks that can be
-             * subscribed to.
-             *
-             * @public
-             * @alias getCallbacks
-             * @memberof Widget#
-             * @returns {Array}
-             */
-            'public getCallbacks' : function() {
-                return this.callbacks.getItems();
-            },
+			/**
+			 * Returns the specified callbacks that can be
+			 * subscribed to.
+			 *
+			 * @public
+			 * @alias getCallbacks
+			 * @memberof Widget#
+			 * @returns {Array}
+			 */
+			Widget.prototype.getCallbacks = function() {
+				return this._callbacks.getItems();
+			};
 
-			'public queryServices' : function() {
+			Widget.prototype.queryServices = function() {
 				return this.services;
-			},
+			};
 
 			/**
 			 * Returns the Subscriber.
-			 * 
+			 *
 			 * @public
 			 * @alias getSubscriber
 			 * @memberof Widget#
 			 * @returns {SubscriberList}
 			 */
-			'public getSubscriber' : function() {
-				return this.subscribers;
-			},
+			Widget.prototype.getSubscriber = function() {
+				return this._subscribers;
+			};
 
 			/**
 			 * Sets the name of the Widget.
-			 * 
+			 *
 			 * @protected
 			 * @alias setName
 			 * @memberof Widget#
-			 * @param {string}
-			 *            _name Name of the Widget.
+			 * @param {string} name Name of the Widget.
 			 */
-			'protected setName' : function(_name) {
-				if (typeof _name === 'string') {
-					this.name = _name;
+			Widget.prototype.setName = function(name) {
+				if (typeof name === 'string') {
+					this.name = name;
 				}
-			},
+			};
 
 			/**
 			 * Sets the id of the Widget.
-			 * 
+			 *
 			 * @protected
 			 * @alias setId
 			 * @memberof Widget#
-			 * @param {string}
-			 *            _id Id of the Widget.
+			 * @param {string} id Id of the Widget.
 			 */
-			'protected setId' : function(_id) {
-				if (typeof _id === 'string') {
-					this.id = _id;
+			Widget._setId = function(id) {
+				if (typeof id === 'string') {
+					this.id = id;
 				}
-			},
+			};
 
 			/**
 			 * Sets the AttributeValueList and also the associated
 			 * AttributeTypes.
-			 * 
+			 *
 			 * @protected
 			 * @alias setAttributes
 			 * @memberof Widget#
-			 * @param {(AttributeList|Array)} _attributes List or Array of AttributeValues
+			 * @param {(AttributeList|Array)} attributes List or Array of AttributeValues
 			 */
-			'protected setOutAttributes' : function(_attributes) {
+			Widget.prototype._setOutAttributes = function(attributes) {
 				var list = [];
-				if (_attributes instanceof Array) {
-					list = _attributes.reduce(function(o, v, i) {
-                        o[i] = v;
-                        return o;
-                    }, {});
-				} else if (Class.isA(AttributeValueList,_attributes)) {
-					list = _attributes.getItems();
+				if (attributes instanceof Array) {
+					list = attributes.reduce(function(o, v, i) {
+						o[i] = v;
+						return o;
+					}, {});
+				} else if (attributes.constructor === AttributeList) {
+					list = attributes.getItems();
 				}
-				this.oldOutAttributes = this.outAttributes;
+				this._oldOutAttributes = this._outAttributes;
 				for ( var i in list) {
 					var attribute = list[i];
-					if (Class.isA(AttributeValue, attribute)) {
+					if (attribute.constructor === Attribute) {
 						attribute.setTimestamp(this.getCurrentTime());
 						this.outAttributes.put(attribute);
 
+						//FIXME
 						var type = new AttributeType().withName(attribute.getName())
-													.withType(attribute.getType())
-													.withParameters(attribute.getParameters());
+							.withType(attribute.getType())
+							.withParameters(attribute.getParameters());
 						this.attributeTypes.put(type);
 					}
 				}
-			},
+			};
 
 			/**
 			 * Adds a new AttributeValue. If the given value is
 			 * not included in the list, the associated type will
 			 * be also added. Otherwise, only the value will be
 			 * updated.
-			 * 
+			 *
 			 * @public
-			 * @alias addOutAttribute
-			 * @memberof Widget#
-			 * @param {Attribute} _attribute AttributeValue
+			 * @param {Attribute} attribute
+			 * @param {Boolean} multipleInstances
 			 */
-			'public addOutAttribute' : function(_attribute, _multipleInstances) {
-				_multipleInstances = typeof _multipleInstances == "undefined" ? false : _multipleInstances;
-				if (Class.isA(Attribute, _attribute)) {
-					if (!this.outAttributes.containsTypeOf(_attribute)) {
-						this.oldOutAttributes = this.outAttributes;
-						_attribute.setTimestamp(this.getCurrentTime());
-						this.outAttributes.put(_attribute, _multipleInstances);
+			Widget.prototype.addOutAttribute = function(attribute, multipleInstances) {
+				multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+				if (attribute.constructor === Attribute) {
+					if (!this._outAttributes.containsTypeOf(attribute)) {
+						this._oldOutAttributes = this._outAttributes;
+						attribute.setTimestamp(this.getCurrentTime());
+						this._outAttributes.put(attribute, multipleInstances);
 					}
 				}
-			},
+			};
 
 			/**
 			 * Sets the ConstantAttributeValueList and also the
 			 * associated AttributeTypes.
-			 * 
+			 *
 			 * @protected
 			 * @alias setConstantOutAttributes
 			 * @memberof Widget#
-			 * @param {(AttributeList|Array)} _constantAttributes List or Array of AttributeValues
+			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
 			 */
-			'protected setConstantOutAttributes' : function(_constantAttributes) {
+			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
 				var list = [];
-				if (_constantAttributes instanceof Array) {
-					list = _constantAttributes;
-				} else if (Class.isA(AttributeValueList,_constantAttributes)) {
-					list = _constantAttributes.getItems();
+				if (constantAttributes instanceof Array) {
+					list = constantAttributes;
+				} else if (Class.isA(AttributeValueList, constantAttributes)) {
+					list = constantAttributes.getItems();
 				}
 				for ( var i in list) {
 					var constantAttribute = list[i];
 					if (Class.isA(AttributeValue, constantAttribute)) {
 						constantAttribute.setTimestamp(this.getCurrentTime());
 						this.constantAttributes.put(constantAttribute);
-						var type = new AttributeType().withName(constantAttribute.getName())	
-													  .withType(constantAttribute.getType())
-													  .withParameters(constantAttribute.getParameters());
+						var type = new AttributeType().withName(constantAttribute.getName())
+							.withType(constantAttribute.getType())
+							.withParameters(constantAttribute.getParameters());
 						this.constantAttributeTypes.put(type);
 					}
 				}
-			},
+			};
 
 			/**
 			 * Adds a new constantAttributeValue. If the given value is
 			 * not included in the list, the associated type will
 			 * be also added. Otherwise, only the value will be
 			 * updated.
-			 * 
+			 *
 			 * @protected
-			 * @alias addConstantOutAttribute
-			 * @memberof Widget#
-			 * @param {AttributeValue} _constantAttribute AttributeValue
+			 * @param {Attribute} constantAttribute AttributeValue
 			 */
-			'protected addConstantOutAttribute' : function(_constantAttribute) {
-				if (Class.isA(AttributeValue, _constantAttribute)) {
+			Widget.prototype._addConstantOutAttribute = function(constantAttribute) {
+				if (Class.isA(AttributeValue, constantAttribute)) {
 					if (!this.constantAttributes
-							.contains(_constantAttribute)) {
+							.contains(constantAttribute)) {
 
-						var type = new AttributeType().withName(_constantAttribute.getName())
-													  .withType(_constantAttribute.getType())
-													  .withParameters(_constantAttribute.getParameters());
+						var type = new AttributeType().withName(constantAttribute.getName())
+							.withType(constantAttribute.getType())
+							.withParameters(constantAttribute.getParameters());
 						this.constantAttributeTypes.put(type);
 					}
 					_attribute.setTimestamp(this.getCurrentTime());
-					this.constantAttributes.put(_constantAttribute);
+					this.constantAttributes.put(constantAttribute);
 				}
-
-			},
+			};
 
 			/**
 			 * Sets Callbacks.
-			 * 
+			 *
 			 * @protected
 			 * @alias setCallbacks
 			 * @memberof Widget#
-			 * @param {(CallbackList|Array)} _callbacks List or Array of Callbacks.
+			 * @param {(CallbackList|Array)} callbacks List or Array of Callbacks.
 			 */
-			'protected setCallbacks' : function(_callbacks) {
-				var list = new Array();
-				if (_callbacks instanceof Array) {
-					list = _subscriber;
-				} else if (Class.isA(CallbackList, _callbacks)) {
-					list = _callbacks.getItems();
+			Widget.prototype._setCallbacks = function(callbacks) {
+				var list = [];
+				if (callbacks instanceof Array) {
+					list = callbacks;
+				} else if (callbacks.constructor === CallbackList) {
+					list = callbacks.getItems();
 				}
 				for ( var i in list) {
 					var callback = list[i];
-					if (Class.isA(Callback, callback)) {
+					if (callback.constructor === Callback) {
 						this.callbacks.put(callback);
 					}
 				}
-			},
+			};
 
 			/**
 			 * Adds a new Callback.
-			 * 
+			 *
 			 * @protected
 			 * @alias addCallback
 			 * @memberof Widget#
-			 * @param {Callback} _callback List or Array of AttributeValues.
+			 * @param {Callback} callback List or Array of AttributeValues.
 			 */
-			'protected addCallback' : function(_callback) {
-				if (Class.isA(Callback, _callback)) {
-					this.callbacks.put(_callback);
+			Widget.prototype._addCallback = function(callback) {
+				if (callback.constructor === Callback) {
+					this._callbacks.put(callback);
 				}
-			},
+			};
 
-			'protected setServices' : function(_services) {
-				this.services = _services;
-			},
+			Widget.prototype._setServices = function(services) {
+				this.services = services;
+			};
 
 			/**
 			 * Sets SubscriberList.
-			 * 
+			 *
 			 * @protected
 			 * @alias setSubscriber
 			 * @memberof Widget#
-			 * @param {(SubscriberList|Array)}  _subscriber List or Array of Subscriber.
+			 * @param {(SubscriberList|Array)}  subscribers List or Array of Subscriber.
 			 */
-			'protected setSubscriber' : function(_subscriber) {
-				var list = new Array();
-				if (_subscriber instanceof Array) {
-					list = _subscriber;
-				} else if (Class.isA(SubscriberList, _subscriber)) {
-					list = _subscriber.getItems();
+			Widget.prototype._setSubscriber = function(subscribers) {
+				var list = [];
+				if (subscribers instanceof Array) {
+					list = subscribers;
+				} else if (subscribers.constructor === SubscriberList) {
+					list = subscribers.getItems();
 				}
-				for ( var i in list) {				
+				for ( var i in list) {
 					var singleSubscriber = list[i];
-					if (Class.isA(Subscriber, singleSubscriber)) {
+					if (singleSubscriber.constructor === Subscriber) {
 						this.subscribers.put(singleSubscriber);
 					}
 				}
-			},
+			};
 
 			/**
 			 * Adds a new Subscriber.
-			 * 
+			 *
 			 * @public
-			 * @alias addSubscriber
-			 * @memberof Widget#
-			 * @param {Subscriber}  _subscriber Subscriber
+			 * @param {?Subscriber} subscriber Subscriber
 			 */
-			'public addSubscriber' : function(_subscriber) {
-				if (Class.isA(Subscriber, _subscriber)) {
-					this.subscribers.put(_subscriber);
+			Widget.prototype.addSubscriber = function(subscriber) {
+				if (subscriber && subscriber.constructor === Subscriber) {
+					this._subscribers.put(subscriber);
 				}
-			},
+			};
 
 			/**
 			 * Removes the specified Subscriber.
-			 * 
+			 *
 			 * @public
-			 * @alias removeSubscriber
-			 * @memberof Widget#
-			 * @param {Subscriber} _subscriber Subscriber
+			 * @param {Subscriber} subscriberId Subscriber
 			 */
-			'public removeSubscriber' : function(_subscriberId) {
-					this.subscribers.removeSubscriberWithId(_subscriberId);
-			},
+			Widget.prototype.removeSubscriber = function(subscriberId) {
+				this._subscribers.removeSubscriberWithId(subscriberId);
+			};
 
 			/**
 			 * Returns the current time.
-			 * 
+			 *
 			 * @private
-			 * @alias getCurrentTime
-			 * @memberof Widget#
 			 * @returns {Date}
 			 */
-			'private getCurrentTime' : function() {
+			Widget.prototype.getCurrentTime = function() {
 				return new Date();
-			},
+			};
 
 			/**
 			 * Verifies whether the specified attributes is a
 			 * provided Attribute.
-			 * 
+			 *
 			 * @protected
 			 * @alias isOutAttribute
 			 * @memberof Widget#
-			 * @param {Attribute} _attribute
+			 * @param {Attribute} attribute
 			 * @returns {boolean}
 			 */
-			'protected isOutAttribute' : function(_attribute) {
-				return !!this.outAttributes.containsTypeOf(_attribute);
-			},
+			Widget.prototype._isOutAttribute = function(attribute) {
+				return !!this._outAttributes.containsTypeOf(attribute);
+			};
 
 			/**
 			 * Initializes the provided Attributes.
-			 * 
-			 * @function
+			 *
 			 * @abstract
 			 * @protected
-			 * @alias initAttributes
-			 * @memberof Widget#
 			 */
-			'abstract protected initOutAttributes' : [],
-			
+			Widget.prototype._initOutAttributes = function() {
+				throw new Error("Abstract function!");
+			};
+
 			/**
 			 * Initializes the provided ConstantAttributes.
-			 * 
-			 * @function
+			 *
 			 * @abstract
 			 * @protected
-			 * @alias initConstantAttributes
-			 * @memberof Widget#
 			 */
-			'abstract protected initConstantOutAttributes' : [],
+			Widget.prototype._initConstantOutAttributes = function() {
+				throw new Error("Abstract function!");
+			};
 
 			/**
 			 * Initializes the provided Callbacks.
-			 * 
-			 * @function
+			 *
 			 * @abstract
 			 * @protected
-			 * @alias initCallbacks
-			 * @memberof Widget#
 			 */
-			'abstract protected initCallbacks' : [],
+			Widget.prototype._initCallbacks = function() {
+				throw new Error("Abstract function!");
+			};
 
 			/**
 			 * Function for initializing. Calls all initFunctions
 			 * and will be called by the constructor.
-			 * 
+			 *
 			 * @protected
-			 * @alias init
-			 * @memberof Widget#
 			 */
-			'protected init' : function(_attributeTypes) {
-				this.initOutAttributes();
-				this.initConstantOutAttributes();
-				this.initCallbacks();
+			Widget.prototype._init = function(attributes) {
+				this._initOutAttributes();
+				this._initConstantOutAttributes();
+				this._initCallbacks();
 
-                this.didFinishInitialization(_attributeTypes);
-			},
+				this.didFinishInitialization(attributes);
+			};
 
 			/**
 			 * Method will be invoked after the initialization of the widget finished.
@@ -4098,137 +4076,126 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 			 *
 			 * @public
 			 * @virtual
-			 * @alias didFinishInitialization
-			 * @memberof Widget#
-			 * @param _attributeTypes
+			 * @param attributes
 			 */
-            'public virtual didFinishInitialization' : function(_attributeTypes) {
+			Widget.prototype.didFinishInitialization = function(attributes) {
 
-            },
+			};
 
 			/**
 			 * Notifies other components and sends the attributes.
-			 * 
+			 *
 			 * @virtual
 			 * @public
-			 * @alias initCallbacks
-			 * @memberof Widget#
 			 */
-			'virtual public notify' : function() {
-                var callbacks = this.getCallbacks();
-                for (var i in callbacks) {
-                    this.sendToSubscriber(callbacks[i]);
-                }
-			},
+			Widget.prototype.notify = function() {
+				var callbacks = this.getCallbacks();
+				for (var i in callbacks) {
+					this.sendToSubscriber(callbacks[i]);
+				}
+			};
 
 			/**
-			 * Queries the associated sensor and updates the attributes with new values. 
+			 * Queries the associated sensor and updates the attributes with new values.
 			 * Must be overridden by the subclasses. Overriding subclasses can call
-             * this.__super(_function) to invoke the provided callback function.
-			 * 
+			 * this.__super(_function) to invoke the provided callback function.
+			 *
 			 * @virtual
 			 * @public
-			 * @alias queryGenerator
-			 * @memberof Widget#
-			 * @param {?function} _function For alternative actions, because an asynchronous function can be used.
+			 * @param {?function} callback For alternative actions, because an asynchronous function can be used.
 			 */
-			'virtual protected queryGenerator' : function(_function) {
-                if (_function && typeof(_function) == 'function') {
-                    _function();
-                }
-			},
+			Widget.prototype.sendToSubscriber = function(callback) {
+				if (callback && typeof(callback) == 'function') {
+					callback();
+				}
+			};
 
 			/**
 			 * Updates the attributes by calling queryGenerator.
-			 * 
+			 *
 			 * @public
 			 * @alias updateWidgetInformation
 			 * @memberof Widget#
-			 * @param {?function} _function For alternative  actions, because an asynchronous function can be used.
+			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 *
 			 */
-			'public updateWidgetInformation' : function(_function) {
-				this.queryGenerator(_function);
-			},
+			Widget.prototype.updateWidgetInformation = function(callback) {
+				this.queryGenerator(callback);
+			};
 
 			/**
 			 * Updates the Attributes by external components.
-			 * 
+			 *
 			 * @virtual
 			 * @public
 			 * @alias putData
 			 * @memberof Widget#
-			 * @param {(AttributeList|Array)} _data Data that should be entered.
-			 * 
+			 * @param {(AttributeList|Array)} attributes Data that should be entered.
+			 *
 			 */
-			'virtual public putData' : function(_data) {
+			Widget.prototype.putData = function(attributes) {
 				var list = [];
-				if (_data instanceof Array) {
-					list = _data;
-				} else if (Class.isA(AttributeList, _data)) {
-					list = _data.getItems();
+				if (attributes instanceof Array) {
+					list = attributes;
+				} else if (attributes.constructor === AttributeList) {
+					list = attributes.getItems();
 				}
 				for ( var i in list) {
-					var x = list[i];
-					if (Class.isA(Attribute, x) && this.isOutAttribute(x)) {
-						this.addOutAttribute(x);
+					var theAttribute = list[i];
+					if (theAttribute.type === Attribute && this.isOutAttribute(theAttribute)) {
+						this.addOutAttribute(theAttribute);
 					}
 				}
-
-			},
+			};
 
 			/**
-			 * Returns all available AttributeValues, Attributes and
-			 * ConstantAtrributes.
-			 * 
+			 * Returns all available AttributeValues, Attributes and ConstantAttributes.
+			 *
 			 * @public
-			 * @alias queryWidget
-			 * @memberof Widget#
 			 * @returns {AttributeList}
 			 */
-			'public queryWidget' : function() {
+			Widget.prototype.queryWidget = function() {
 				var response = new AttributeList();
 				response.putAll(this.getOutAttributes());
 				response.putAll(this.getConstantOutAttributes());
 				return response;
-			},
+			};
 
 			/**
 			 * Updates and returns all available AttributeValues,
 			 * Attributes and ConstantAtrributes.
-			 * 
+			 *
 			 * @public
 			 * @alias updateAndQueryWidget
 			 * @memberof Widget#
-			 * @param {?function} _function For alternative  actions, because an asynchronous function can be used.
+			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 * @returns {?AttributeList}
 			 */
-			'virtual public updateAndQueryWidget' : function(_function) {
-				if(_function && typeof(_function) === 'function'){
-					this.queryGenerator(_function);
+			Widget.prototype.updateAndQueryWidget = function(callback) {
+				if(callback && typeof(callback) === 'function'){
+					this.queryGenerator(callback);
 				} else {
 					this.queryGenerator();
 					return this.queryWidget();
 				}
-			},
+			};
 
 			/**
-			 * Sends all Attributes, specified in the given callback, 
+			 * Sends all Attributes, specified in the given callback,
 			 * to components which are subscribed to this Callback.
+			 *
 			 * @protected
-			 * @alias sendToSubscriber
-			 * @memberof Widget#
-			 * @param {string} _callback Name of the searched Callback.
+			 * @param {string} callback Name of the searched Callback.
 			 */
-			'protected sendToSubscriber' : function(_callback) {
-				if (_callback && Class.isA(Callback, _callback)) {
+			Widget.prototype._sendToSubscriber = function(callback) {
+				if (callback && callback.constructor === Callback) {
 					var subscriberList = this.subscribers.getItems();
 					for (var i in subscriberList) {
 						var subscriber = subscriberList[i];
-						if (subscriber.getSubscriptionCallbacks().contains(_callback)) {
+						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
 							if(this.dataValid(subscriber.getConditions())){
-								var subscriberInstance = this.discoverer.getComponent(subscriber.getSubscriberId());
-								var callSubset =  _callback.getAttributeTypes();
+								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
+								var callSubset =  callback.getAttributeTypes();
 								var subscriberSubset = subscriber.getAttributesSubset();
 								var data = this.outAttributes.getSubset(callSubset);
 								if (subscriberSubset && subscriberSubset.size() > 0) {
@@ -4241,97 +4208,90 @@ define('widget',[ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attribute',
 						}
 					}
 				}
-			},
+			};
 
 			/**
 			 * Verifies if the attributes match to the specified conditions in case any exists.
-			 * 
+			 *
 			 * @private
 			 * @alias dataValid
 			 * @memberof Widget#
-			 * @param {string} _conditions List of Conditions that will be verified.
+			 * @param {string} conditions List of Conditions that will be verified.
 			 * @returns {boolean}
 			 */
-			'private dataValid' : function(_conditions) {
-				if (Class.isA(ConditionList, _conditions)) {
+			Widget.prototype._dataValid = function(conditions) {
+				if (conditions.constructor === ConditionList) {
 					return true;
 				}
-				if (!_conditions.isEmpty()) {
+				if (!conditions.isEmpty()) {
 					var items = _condition.getItems();
 					for (var i in items) {
 						var condition = items[i];
 						var conditionAttributeType = condition.getAttributeType();
 						var conditionAttributeTypeList = new AttributeTypeList()
-								.withItems(new Array(conditionAttributeType));
+							.withItems(new Array(conditionAttributeType));
 						var newValue = this.getAttributes().getSubset(conditionAttributeTypeList);
 						var oldValue = this.getOldAttributes.getSubset(conditionAttributeTypeList);
 						return condition.compare(newValue, oldValue);
 					}
 				}
 				return false;
-			},
+			};
 
 			/**
 			 * Runs the context acquisition constantly in an interval.
 			 * Can be called by init.
-			 * 
+			 *
 			 * @virtual
 			 * @protected
-			 * @alias intervalRunning
-			 * @memberof Widget#
-			 * @param {integer} _interval Interval in ms
+			 * @param {Number} interval Interval in ms
 			 */
-			'virtual protected intervalRunning' : function(_interval) {
+			Widget.prototype._intervalRunning = function(interval) {
 				var self = this;
-				if (_interval === parseInt(_interval)) {
-					setInterval(function() {self.queryGenerator();}, _interval);
+				if (interval === parseInt(interval)) {
+					setInterval(function() {self.queryGenerator();}, interval);
 				}
-			},
+			};
 
 			/**
 			 * Sets the associated Discoverer and registers to that.
+			 *
 			 * @public
-			 * @alias setDiscoverer
-			 * @memberof Widget#
 			 * @param {Discoverer} _discoverer Discoverer
 			 */
-			'public setDiscoverer' : function(_discoverer) {
-				if (!this.discoverer) {
-					this.discoverer = _discoverer;
+			Widget.prototype.setDiscoverer = function(_discoverer) {
+				if (!this._discoverer) {
+					this._discoverer = _discoverer;
 					this.register();
 				}
-			},
+			};
 
 			/**
 			 * Registers the component to the associated Discoverer.
-			 * 
-			 * @public
-			 * @alias register
-			 * @memberof Widget#
+			 *
+			 * @protected
 			 */
-			'protected register' : function() {
-				if (this.discoverer) {
-					this.discoverer.registerNewComponent(this);
+			Widget.prototype._register = function() {
+				if (this._discoverer) {
+					this._discoverer.registerNewComponent(this);
 				}
-			},
+			};
 
 			/**
 			 * Returns true if the widget can satisfy the requested attribute type.
 			 *
 			 * @public
-			 * @alias doesSatisfyAttributeType
-			 * @memberof WidgetDescription#
-			 * @param {AttributeType} _attribute
+			 * @param {AttributeType} attribute
 			 * @returns {boolean}
 			 */
+			Widget.prototype.doesSatisfyTypeOf = function(attribute) {
+				return this._outAttributes.containsTypeOf(attribute);
+			};
 
-			'virtual public doesSatisfyAttributeType': function(_attribute) {
-				return this.outAttributes.containsTypeOf(_attribute);
-			}
-		});
-
-		return Widget;
-});
+			return Widget;
+		})();
+	}
+);
 /**
  * This module represents a InterpreterResult.
  * 
@@ -4523,52 +4483,62 @@ define('interpreterResult',['easejs', 'attributeList'],
  * @module Interpreter
  * @fileOverview
  */
-define('interpreter',[ 'easejs', 'MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
-		function(easejs, MathUuid, Attribute, AttributeList, InterpreterResult) {
-			var Class = easejs.Class;
-			var AbstractClass = easejs.AbstractClass;
-			var Interpreter = AbstractClass('Interpreter',
-			{
+define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
+	function(MathUuid, Attribute, AttributeList, InterpreterResult) {
+		return (function() {
+			/**
+			 * Constructor: Generates the id and initializes the (in and out) types and values.
+			 *
+			 * @abstract
+			 * @class Interpreter
+			 * @classdesc The Widget handles the access to sensors.
+			 * @requires easejs
+			 * @requires MathUuid
+			 * @requires Attribute
+			 * @requires AttributeList
+			 * @constructs Interpreter
+			 */
+			function Interpreter(discoverer) {
 				/**
-				 * @alias name
+				 * Name of the Interpreter.
+				 *
 				 * @public
 				 * @type {string}
-				 * @memberof Interpreter#
-				 * @desc Name of the Interpreter.
 				 */
-				'public name' : 'Interpreter',
+				this.name = 'Interpreter';
+
 				/**
-				 * @alias id
+				 * Id of the Interpreter. Will be generated.
+				 *
 				 * @public
 				 * @type {string}
-				 * @memberof Interpreter#
-				 * @desc Id of the Interpreter. Will be generated.
 				 */
-				'public id' : '',
+				this.id = Math.uuid();
+
 				/**
-				 * @alias inAttributes
+				 * Types of all attributes that can be handled.
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Interpreter#
-				 * @desc Types of all attributes that can be handled.
 				 */
-				'protected inAttributes' : [],
+				this._inAttributes = new AttributeList();
+
 				/**
-				 * @alias outAttributes
+				 * Types of all attributes that will be returned.
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Interpreter#
-				 * @desc Types of all attributes that will be returned.
 				 */
-				'protected outAttributes' : [],
+				this._outAttributes = new AttributeList();
+
 				/**
-				 * @alias lastInterpretation
+				 * Last interpretation time.
+				 *
 				 * @protected
-				 * @type {Date}
-				 * @memberof Interpreter#
-				 * @desc Last interpretation time.
+				 * @type {?Date}
 				 */
-				'protected lastInterpretation' : '',
+				this._lastInterpretation = null;
+
 				/**
 				 * @alias discoverer
 				 * @protected
@@ -4576,384 +4546,328 @@ define('interpreter',[ 'easejs', 'MathUuid', 'attribute', 'attributeList', 'inte
 				 * @memberof Interpreter#
 				 * @desc Associated Discoverer.
 				 */
-				'protected discoverer' : '',
+				this._discoverer = discoverer;
 
-				/**
-				 * Constructor: Generates the id and initializes the (in and out) types and values.
-				 * 
-				 * @abstract
-				 * @class Interpreter
-				 * @classdesc The Widget handles the access to sensors.
-				 * @requires easejs
-				 * @requires MathUuid
-				 * @requires Attribute
-				 * @requires AttributeList
-				 * @requires InterpreterDescription
-				 * @constructs Interpreter
-				 */
-				'public __construct' : function(_discoverer) {
-					this.id = Math.uuid();
-                    this.discoverer = _discoverer;
-                    this.register();
-					this.inAttributes = new AttributeList();
-					this.outAttributes = new AttributeList();
-					this.initInterpreter();
-				},
-				
-				/**
-				 * Returns the name of the interpreter.
-				 * 
-				 * @public
-				 * @alias getName
-				 * @memberof Interpreter#
-				 * @returns {string}
-				 */
-				'public getName' : function() {
-					return this.name;
-				},
+				this._register();
+				this._initInterpreter();
 
-				/**
-				 * Returns the id of the interpreter.
-				 * 
-				 * @public
-				 * @alias getId
-				 * @memberof Interpreter#
-				 * @returns {string}
-				 */
-				'public getId' : function() {
-					return this.id;
-				},
-				
-				/**
-				 * Returns the type of this class, in this case
-				 * "Interpreter".
-				 * 
-				 * @public
-				 * @alias getType
-				 * @memberof Interpreter#
-				 * @returns {string}
-				 */
-				'public getType' : function() {
-					return 'Interpreter';
-				},
+				return this;
+			}
 
-				/**
-				 * Initializes interpreter and sets the expected inAttributes
-				 * and provided outAttributes.
-				 * @private
-				 * @alias initInterpreter
-				 * @memberof Interpreter#
-				 */
-				'private initInterpreter' : function() {
-					this.initInAttributes();
-					this.initOutAttributes();
-				},
+			/**
+			 * Returns the name of the interpreter.
+			 *
+			 * @public
+			 * @returns {string}
+			 */
+			Interpreter.prototype.getName = function() {
+				return this.name;
+			};
 
-				/**
-				 * Initializes the inAttributes.
-				 * 
-				 * @function
-				 * @abstract
-				 * @protected
-				 * @alias initInAttributes
-				 * @memberof Interpreter#
-				 */
-				'abstract protected initInAttributes' : [],
-				/**
-				 * Initializes the outAttributes.
-				 * 
-				 * @function
-				 * @abstract
-				 * @protected
-				 * @alias initOutAttributes
-				 * @memberof Interpreter#
-				 */
-				'abstract protected initOutAttributes' : [],
+			/**
+			 * Returns the id of the interpreter.
+			 *
+			 * @public
+			 * @returns {string}
+			 */
+			Interpreter.prototype.getId = function() {
+				return this.id;
+			};
 
-				/**
-				 * Returns the expected inAttributeTypes.
-				 * 
-				 * @public
-				 * @alias getInAttributeTypes
-				 * @memberof Interpreter#
-				 * @returns {AttributeList}
-				 */
-				'public getInAttributes' : function() {
-					return this.inAttributes;
-				},
+			/**
+			 * Returns the type of this class, in this case "Interpreter".
+			 *
+			 * @public
+			 * @returns {string}
+			 */
+			Interpreter.prototype.getType = function() {
+				return 'Interpreter';
+			};
 
-				/**
-				 * Sets an inAttribute.
-				 * 
-				 * @protected
-				 * @alias setInAttribute
-				 * @memberof Interpreter#
-				 */
-				'protected setInAttribute' : function(_attribute) {
-					this.inAttributes.put(_attribute);
-				},
+			/**
+			 * Initializes interpreter and sets the expected inAttributes and provided outAttributes.
+			 *
+			 * @private
+			 */
+			Interpreter.prototype._initInterpreter = function() {
+				this._initInAttributes();
+				this._initOutAttributes();
+			};
 
-				/**
-				 * Sets an inAttributes.
-				 * 
-				 * @protected
-				 * @alias setInAttributes
-				 * @memberof Interpreter#
-				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
-				 */
-				'protected setInAttributes' : function(_attributeList) {
-					this.inAttributes = new AttributeList().withItems(_attributeList);
-				},
+			/**
+			 * Initializes the inAttributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Interpreter.prototype._initInAttributes = function() {
+				throw Error("Abstract function call!");
+			};
 
-				/**
-				 * Verifies whether the specified attribute is contained in inAttributeList.
-				 * 
-				 * @protected
-				 * @alias isInAttribute
-				 * @memberof Interpreter#
-				 * @param {Attribute} _attribute Attribute that should be verified.
-				 * @return {boolean}
-				 */
-				'protected isInAttribute' : function(_attribute) {
-					return !!this.inAttributes.containsTypeOf(_attribute);
-				},
+			/**
+			 * Initializes the outAttributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Interpreter.prototype._initOutAttributes = function() {
+				throw Error("Abstract function call!");
+			};
 
-				/**
-				 * Returns the provided outAttributeTypes.
-				 * 
-				 * @public
-				 * @alias getOutAttributes
-				 * @memberof Interpreter#
-				 * @returns {AttributeList}
-				 */
-				'public getOutAttributes' : function() {
-					return this.outAttributes;
-				},
+			/**
+			 * Returns the expected inAttributeTypes.
+			 *
+			 * @public
+			 * @returns {AttributeList}
+			 */
+			Interpreter.prototype.getInAttributes = function() {
+				return this._inAttributes;
+			};
 
-				/**
-				 * Adds an outAttribute.
-				 * 
-				 * @protected
-				 * @alias setOutAttribute
-				 * @memberof Interpreter#
-				 */
-				'protected setOutAttribute' : function(_attribute) {
-					this.outAttributes.put(_attribute);
-				},
+			/**
+			 * Sets an inAttribute.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute
+			 */
+			Interpreter.prototype._setInAttribute = function(attribute) {
+				this._inAttributes.put(attribute);
+			};
 
-				/**
-				 * Sets an outAttributes.
-				 *
-				 * @protected
-				 * @alias setOutAttributes
-				 * @memberof Interpreter#
-				 * @param {(AttributeList|Array)} _attributeList Attributes to set.
-				 */
-				'protected setOutAttributes' : function(_attributeList) {
-					this.outAttributes = new AttributeList().withItems(_attributeList);
-				},
+			/**
+			 * Sets an inAttributes.
+			 *
+			 * @protected
+			 * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
+			 */
+			Interpreter.prototype._setInAttributes = function(attributesOrArray) {
+				this._inAttributes = new AttributeList().withItems(attributesOrArray);
+			};
 
-				/**
-				 * Verifies whether the specified attribute is contained in outAttributeList.
-				 * 
-				 * @protected
-				 * @alias isOutAttribute
-				 * @memberof Interpreter#
-				 * @param {Attribute} _attribute Attribute that should be verified.
-				 * @return {boolean}
-				 */
-				'protected isOutAttribute' : function(_attribute) {
-					return !!this.outAttributes.containsTypeOf(_attribute);
-				},
+			/**
+			 * Verifies whether the specified attribute is contained in inAttributeList.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute Attribute that should be verified.
+			 * @return {boolean}
+			 */
+			Interpreter.prototype._isInAttribute = function(attribute) {
+				return !!this._inAttributes.containsTypeOf(attribute);
+			};
 
-				/**
-				 * Validates the data and calls interpretData.
-				 * 
-				 * @public
-				 * @alias callInterpreter
-				 * @memberof Interpreter#
-				 * @param {AttributeList} _inAttributeValues Data that should be interpreted.
-				 * @param {AttributeList} _outAttributeValues
-				 * @param {?function} _function For additional actions, if an asynchronous function is used.
-				 */
-				'public callInterpreter' : function(_inAttributeValues, _outAttributeValues, _function) {
-					var self = this;
+			/**
+			 * Returns the provided outAttributeTypes.
+			 *
+			 * @public
+			 * @returns {AttributeList}
+			 */
+			Interpreter.prototype.getOutAttributes = function() {
+				return this._outAttributes;
+			};
 
-					if (!_inAttributeValues || !this.canHandleInAttributes(_inAttributeValues)) throw "Empty input attribute list or unhandled input attribute.";
-					if (!_outAttributeValues || !this.canHandleOutAttributes(_outAttributeValues)) throw "Empty output attribute list or unhandled output attribute.";
+			/**
+			 * Adds an outAttribute.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute
+			 */
+			Interpreter.prototype._setOutAttribute = function(attribute) {
+				this._outAttributes.put(attribute);
+			};
 
-					this.interpretData(_inAttributeValues, _outAttributeValues, function(interpretedData) {
-						var response = new AttributeList().withItems(interpretedData);
+			/**
+			 * Sets an outAttributes.
+			 *
+			 * @protected
+			 * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
+			 */
+			Interpreter.prototype._setOutAttributes = function(attributesOrArray) {
+				this._outAttributes = new AttributeList().withItems(attributesOrArray);
+			};
 
-						if (!self.canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
+			/**
+			 * Verifies whether the specified attribute is contained in outAttributeList.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute Attribute that should be verified.
+			 * @return {boolean}
+			 */
+			Interpreter.prototype._isOutAttribute = function(attribute) {
+				return !!this._outAttributes.containsTypeOf(attribute);
+			};
 
-						self.setInAttributes(_inAttributeValues);
-						self.lastInterpretation = new Date();
+			/**
+			 * Validates the data and calls interpretData.
+			 *
+			 * @public
+			 * @param {AttributeList} inAttributes Data that should be interpreted.
+			 * @param {AttributeList} outAttributes
+			 * @param {?function} callback For additional actions, if an asynchronous function is used.
+			 */
+			Interpreter.prototype.callInterpreter = function(inAttributes, outAttributes, callback) {
+				var self = this;
 
-						if (_function && typeof(_function) == 'function'){
-							_function(response);
-						}
-					});
-				},
+				if (!inAttributes || !this._canHandleInAttributes(inAttributes)) throw "Empty input attribute list or unhandled input attribute.";
+				if (!outAttributes || !this._canHandleOutAttributes(outAttributes)) throw "Empty output attribute list or unhandled output attribute.";
 
-				/**
-				 * Interprets the data.
-				 * 
-				 * @function
-				 * @abstract
-				 * @public
-				 * @alias interpretData
-				 * @memberof Interpreter#
-				 * @param {AttributeList} _data Data that should be interpreted.
-				 * @param {?function} _function For additional actions, if an asynchronous function is used.
-				 */
-				'abstract protected interpretData' : ['_inAttributes', '_outAttributes', '_callback'],
+				this._interpretData(inAttributes, outAttributes, function(interpretedData) {
+					var response = new AttributeList().withItems(interpretedData);
 
-				/**
-				 * Checks whether the specified data match the expected.
-				 * 
-				 * @protected
-				 * @alias canHandleInAttributes
-				 * @memberof Interpreter#
-				 * @param {AttributeList|Array.<Attribute>} _inAttributes Data that should be verified.
-				 */
-				'protected canHandleInAttributes' : function(_inAttributes) {
-					var list = [];
-					if (_inAttributes instanceof Array) {
-						list = _inAttributes;
-					} else if (Class.isA(AttributeList, _inAttributes)) {
-						list = _inAttributes.getItems();
+					if (!self._canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
+
+					self._setInAttributes(inAttributes);
+					self.lastInterpretation = new Date();
+
+					if (callback && typeof(callback) == 'function'){
+						callback(response);
 					}
-					if (list.length == 0 || _inAttributes.size() != this.getInAttributes().size()) {
-						return false;
-					}
-					for ( var i in list) {
-						var inAtt = list[i];
-						if (!this.isInAttribute(inAtt)) {
-							return false;
-						}
-					}
-					return true;
-				},
+				});
+			};
 
-				/**
-				 * Checks whether the specified data match the expected.
-				 *
-				 * @protected
-				 * @alias canHandleOutAttributes
-				 * @memberof Interpreter#
-				 * @param {AttributeList|Array.<Attribute>} _outAttributes Data that should be verified.
-				 */
-				'protected canHandleOutAttributes' : function(_outAttributes) {
-					var list = [];
-					if (_outAttributes instanceof Array) {
-						list = _outAttributes;
-					} else if (Class.isA(AttributeList, _outAttributes)) {
-						list = _outAttributes.getItems();
-					}
-					if (list.length == 0 || _outAttributes.size() != this.getOutAttributes().size()) {
-						return false;
-					}
-					for ( var i in list) {
-						var inAtt = list[i];
-						if (!this.isOutAttribute(inAtt)) {
-							return false;
-						}
-					}
-					return true;
-				},
+			/**
+			 * Interprets the data.
+			 *
+			 * @abstract
+			 * @protected
+			 * @param {AttributeList} inAttributes
+			 * @param {AttributeList} outAttributes
+			 * @param {Function} callback
+			 */
+			Interpreter.prototype._interpretData = function (inAttributes, outAttributes, callback) {
+				throw Error("Abstract function call!");
+			};
 
-				/**
-				 * Returns the time of the last interpretation.
-				 * 
-				 * @protected
-				 * @alias getLastInterpretionTime
-				 * @memberof Interpreter#
-				 * @returns {Date} 
-				 */
-				'public getLastInterpretionTime' : function() {
-					return this.lastInterpretation;
-				},
-
-				/**
-				 * Returns the description of this component.
-				 * @virtual
-				 * @public
-				 * @alias getInterpreterDescription
-				 * @memberof Interpreter#
-				 * @returns {InterpreterDescription} 
-				 */
-				'virtual public getDescription' : function() {
-					var description = new InterpreterDescription().withId(this.id).withName(this.name);
-					description.addOutAttributeTypes(this.outAttributes);
-					description.setInAttributeTypes(this.inAttributes);
-					return description;
-				},
-
-				/**
-				 * Sets and registers to the associated Discoverer.
-				 * @public
-				 * @alias setDiscoverer
-				 * @memberof Interpreter#
-				 * @param {Discoverer} _discoverer Discoverer
-				 */
-				'public setDiscoverer' : function(_discoverer) {
-					if (!this.discoverer) {
-						this.discoverer = _discoverer;
-						this.register();
-					}
-				},
-
-				/**
-				 * Registers the component to the associated Discoverer.
-				 * 
-				 * @public
-				 * @alias register
-				 * @memberof Interpreter#
-				 */
-				'protected register' : function() {
-					if (this.discoverer) {
-						this.discoverer.registerNewComponent(this);
-					}
-				},
-
-				/**
-				 *
-				 * @returns {boolean}
-				 */
-				'public hasOutAttributesWithInputParameters': function() {
-					return this.outAttributes.hasAttributesWithInputParameters();
-				},
-
-				'public getOutAttributesWithInputParameters': function() {
-					return this.outAttributes.getAttributesWithInputParameters();
-				},
-
-				'public doesSatisfyAttributeType': function(_attribute) {
-					return this.outAttributes.containsTypeOf(_attribute);
+			/**
+			 * Checks whether the specified data match the expected.
+			 *
+			 * @protected
+			 * @param {AttributeList|Array.<Attribute>} attributeListOrArray Data that should be verified.
+			 */
+			Interpreter.prototype._canHandleInAttributes = function(attributeListOrArray) {
+				var list = [];
+				if (attributeListOrArray instanceof Array) {
+					list = attributeListOrArray;
+				} else if (attributeListOrArray.constructor === AttributeList) {
+					list = attributeListOrArray.getItems();
 				}
-			});
+				if (list.length == 0 || attributeListOrArray.size() != this.getInAttributes().size()) {
+					return false;
+				}
+				for ( var i in list) {
+					var inAtt = list[i];
+					if (!this._isInAttribute(inAtt)) {
+						return false;
+					}
+				}
+				return true;
+			};
+
+			/**
+			 * Checks whether the specified data match the expected.
+			 *
+			 * @protected
+			 * @param {AttributeList|Array.<Attribute>} attributeListOrArray Data that should be verified.
+			 */
+			Interpreter.prototype._canHandleOutAttributes = function(attributeListOrArray) {
+				var list = [];
+				if (attributeListOrArray instanceof Array) {
+					list = attributeListOrArray;
+				} else if (attributeListOrArray.constructor === AttributeList) {
+					list = attributeListOrArray.getItems();
+				}
+				if (list.length == 0 || attributeListOrArray.size() != this.getOutAttributes().size()) {
+					return false;
+				}
+				for ( var i in list) {
+					var inAtt = list[i];
+					if (!this._isOutAttribute(inAtt)) {
+						return false;
+					}
+				}
+				return true;
+			};
+
+			/**
+			 * Returns the time of the last interpretation.
+			 *
+			 * @public
+			 * @returns {Date}
+			 */
+			Interpreter.prototype.getLastInterpretionTime = function() {
+				return this._lastInterpretation;
+			};
+
+			/**
+			 * Sets and registers to the associated Discoverer.
+			 *
+			 * @public
+			 * @param {Discoverer} discoverer Discoverer
+			 */
+			Interpreter.prototype.setDiscoverer = function(discoverer) {
+				if (!this._discoverer) {
+					this._discoverer = discoverer;
+					this._register();
+				}
+			};
+
+			/**
+			 * Registers the component to the associated Discoverer.
+			 *
+			 * @public
+			 */
+			Interpreter.prototype._register = function() {
+				if (this._discoverer) {
+					this._discoverer.registerNewComponent(this);
+				}
+			};
+
+			/**
+			 *
+			 * @returns {boolean}
+			 */
+			Interpreter.prototype.hasOutAttributesWithInputParameters = function() {
+				return this._outAttributes.hasAttributesWithInputParameters();
+			};
+
+			/**
+			 *
+			 * @returns {boolean}
+			 */
+			Interpreter.prototype.getOutAttributesWithInputParameters = function() {
+				return this._outAttributes.getAttributesWithInputParameters();
+			};
+
+			/**
+			 *
+			 * @param {Attribute}attribute
+			 * @returns {boolean}
+			 */
+			Interpreter.prototype.doesSatisfyTypeOf = function(attribute) {
+				return this._outAttributes.containsTypeOf(attribute);
+			};
 
 			return Interpreter;
-		});
+		})();
+	}
+);
 /**
  * Created by tobias on 15.04.15.
  */
-define('interpretation',['easejs', 'interpreter', 'attributeList'],
-    function(easejs, Interpreter, AttributeList) {
-        var Class = easejs.Class;
-        var Interpretation = Class('Interpretation', {
-            'public interpreterId' : null,
-            'public inAttributeTypes' : new AttributeList(),
-            'public outAttributeTypes' : new AttributeList(),
+define('interpretation',['interpreter', 'attributeList'],
+    function(Interpreter, AttributeList) {
 
-            'public __construct' : function(_interpreterId, _inAttributes, _outAttributes){
-                this.interpreterId = _interpreterId;
-                this.inAttributeTypes = _inAttributes;
-                this.outAttributeTypes = _outAttributes;
+        var Interpretation = (function() {
+
+            function Interpretation(interpreterId, inAttributes, outAttributes) {
+                this.interpreterId = interpreterId;
+                this.inAttributeTypes = inAttributes;
+                this.outAttributeTypes = outAttributes;
+
+                return this;
             }
 
-        });
+            return Interpretation;
+        })();
 
         return Interpretation;
     }
@@ -4965,805 +4879,708 @@ define('interpretation',['easejs', 'interpreter', 'attributeList'],
  * @module Aggregator
  * @fileOverview
  */
-define('aggregator',['easejs', 'MathUuid','widget',
-        'attribute', 'attributeList', 'subscriber',
-        'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
- 	function(easejs, MathUuid, Widget, Attribute,
- 			AttributeList, Subscriber, SubscriberList,
- 			CallbackList, Storage, Interpreter, Interpretation){
+define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
+ 	function(MathUuid, Widget, Attribute, AttributeList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
+		return (function() {
+			/**
+			 * Constructor: Generates the id and initializes the Aggregator.
+			 *
+			 * @class Aggregator
+			 * @extends Widget
+			 * @classdesc The Widget handles the access to sensors.
+			 * @requires MathUuid
+			 * @requires CallbackList
+			 * @requires Attribute
+			 * @requires AttributeList
+			 * @requires Subscriber
+			 * @requires SubscriberList
+			 * @requires Storage
+			 * @requires Widget
+			 * @constructs Aggregator
+			 */
+			function Aggregator(discoverer, attributes) {
+				/**
+				 * List of subscribed widgets referenced by ID.
+				 *
+				 * @protected
+				 * @type {Array.<Widget>}
+				 */
+				this._widgets = [];
 
- 	var Class = easejs.Class;
-	var Aggregator =  Class('Aggregator').
-				extend(Widget, 
-			
-	{
-	   /**
-	    * @alias name
-	    * @public
-	    * @type {string}
-	    * @memberof Aggregator#
-	    * @desc Name of the Widget.
-        */
-		'public name' : 'Aggregator',
-		
-		/**
-		 * @alias id
-		 * @public
-		 * @type {string}
-		 * @memberof Aggregator#
-		 * @desc ID of the Aggregator. Will be generated.
-		 */
-		'public id' : '', 
-		
-		/**
-		 * @alias widgets
-		 * @protected
-		 * @type {Array}
-		 * @memberof Aggregator#
-		 * @desc List of subscribed widgets referenced by ID.
-		 */
-		'protected widgets' : [],
+				/**
+				 *
+				 * @protected
+				 * @type {Array.<Interpretation>}
+				 */
+				this._interpretations = [];
 
-		/**
-		 * @type {Array.<Interpretation>}
-		 */
-		'protected interpretations' : [],
+				/**
+				 * Database of the Aggregator.
+				 *
+				 * @protected
+				 * @type {Storage}
+				 */
+				this._db = new Storage("DB_Aggregator", 7200000, 5);
 
-		/**
-		 * @alias db
-		 * @protected
-		 * @type {Storage}
-		 * @memberof Aggregator#
-		 * @desc Database of the Aggregator.
-		 */
-		'protected db' : '',
-		
-		/**
-		 * Constructor: Generates the id and initializes the Aggregator.
-		 * 
-		 * @abstract
-		 * @class Aggregator
-		 * @extends Widget
-		 * @classdesc The Widget handles the access to sensors.
-		 * @requires easejs
-		 * @requires MathUuid
-		 * @requires CallbackList
-		 * @requires Attribute
-		 * @requires AttributeList
-		 * @requires Subscriber
-		 * @requires SubscriberList
-		 * @requires Storage
-		 * @requires Widget
-		 * @constructs Aggregator
-		 */
-		'override virtual public __construct': function(_discoverer, _attributes)
-        {
-			this.id = Math.uuid();
-			this.widgets = [];
-            this.interpretations = [];
-			this.__super(_discoverer, _attributes);
-        },
-        
-        /**
-		 * Returns the type of this class, in this case
-		 * "Aggregator".
-		 * 
-		 * @override
-		 * @public
-		 * @alias getType
-		 * @memberof Aggregator#
-		 * @returns {string}
-		 */
-		'override public getType' : function(){
-		    return 'Aggregator';
-		 },
-		
-		/**
-		 * Sets Widget IDs.
-		 * 
-		 * @protected
-	   	 * @alias setWidgets
-		 * @memberof Aggregator#
-		 * @param {Array} _widgetIds List of Widget IDs
-	     */
-		'protected setWidgets' : function(_widgetIds){
-			this.widgets = _widgetIds;
-		},
-		
-		/**
-		 * Adds Widget ID.
-		 * 
-		 * @public
-	   	 * @alias addWidget
-		 * @memberof Aggregator#
-		 * @param {String|Widget} _widgetIdOrWidget Widget ID
-	     */
-		'public addWidget' : function(_widgetIdOrWidget){
-            if (Class.isA(Widget, _widgetIdOrWidget)) {
-                this.widgets.push(_widgetIdOrWidget.getId());
-            } else if(typeof _widgetIdOrWidget == "string") {
-                this.widgets.push(_widgetIdOrWidget);
-            }
-		},
-		
-		/**
-		 * Returns the available Widget IDs.
-		 * 
-		 * @public
-		 * @alias getWidgets
-		 * @memberof Aggregator#
-		 * @returns {Array}
-		 */
-		'public getWidgets' : function() {
-			return this.widgets;
-		},
-		
-		/**
-		 * Removes Widget ID from list.
-		 * 
-		 * @protected
-	   	 * @alias removeWidget
-		 * @memberof Aggregator#
-		 * @param {String} _widgetId Id of the Widget
-	     */
-		'protected removeWidget' : function(_widgetId){
-            var index = this.widgets.indexOf(_widgetId);
-            if (index > -1) {
-                this.widgets = this.widgets.splice(index, 1);
-            }
-		},
-		
-		/**
-		 * Retrieves all Attributes of the specified widgets.
-		 * 
-		 * @protected
-	   	 * @alias initAttributes
-		 * @memberof Aggregator#
-	     */
-		'protected initOutAttributes' : function(){
-			if(this.widgets.length > 0){
-				var widgetIdList = this.widgets;
-				for(var i in widgetIdList){
-					var widgetId = widgetIdList[i];
-					var widgetInstance = this.discoverer.getComponent(widgetId);
-					if (widgetInstance) {
-						this.setOutAttributes(widgetInstance.queryAttributes());
-					}
-                }
-            }
-        },
-		
-		/**
-		 * Retrieves all ConstantAttributes of the specified widgets.
-		 * 
-		 * @protected
-	   	 * @alias initConstantAttributes
-		 * @memberof Aggregator#
-	     */
-		'protected initConstantOutAttributes' : function(){
-			if(this.widgets.length > 0){
-                var widgetIdList = this.widgets;
-				for(var i in widgetIdList){
-					var widgetId = widgetIdList[i];
-					var widgetInstance = this.discoverer.getComponent(widgetId);
-					if (widgetInstance) {
-						this.setConstantAttributes(widgetInstance.queryConstantAttributes());
-					}
-                }
-            }
-        },
-		
-		/**
-		 * Retrieves all actual Callbacks of the specified Widgets.
-		 * 
-		 * @protected
-	   	 * @alias initCallbacks
-		 * @memberof Aggregator#
-	     */
-		'protected initCallbacks' : function(){
-			if(this.widgets.length > 0){
-				var widgetIdList = this.widgets;
-				for(var i in widgetIdList){
-					var widgetId = widgetIdList[i];
-					this.initWidgetSubscription(widgetId);
-                }
-            }
-        },
+				Widget.call(this, discoverer, attributes);
 
-		/**
-		 * Start the setup of the aggregator after the initialisation has finished.
-		 *
-		 * @public
-		 * @alias didFinishInitialization
-		 * @memberof Aggregator#
-		 * @param _attributes
-		 */
-        'override public didFinishInitialization': function(_attributes) {
-            this.aggregatorSetup(_attributes);
-        },
-		
-		/**
-		 * InitMethod for Aggregators. Called by constructor.
-		 * Initializes the associated Storage.
-		 * 
-		 * @protected
-	   	 * @alias aggregatorSetup
-		 * @memberof Aggregator#
-	     */
-		'protected aggregatorSetup' : function(_attributes){
-			this.initStorage('DB_'+this.name);
-			this.setAggregatorAttributeValues(_attributes);
-			this.setAggregatorConstantAttributeValues();
-			this.setAggregatorCallbacks();
+				/**
+				 * Name of the Aggregator.
+				 *
+				 * @public
+				 * @type {string}
+				 */
+				this.name = 'Aggregator';
+			}
 
-            this.didFinishSetup();
-		},
-		
-		/**
-		 * Initializes the provided attributeValues that are only specific to the Aggregator.
-		 * Called by aggregatorSetup().
-		 * 
-		 * @function
-		 * @abstract
-		 * @protected
-		 * @alias setAggregatorAttributeValues
-		 * @memberof Aggregator#
-		 */
-		'virtual protected setAggregatorAttributeValues' : function(_attributes) {
-            for (var index in _attributes) {
-                var theAttribute = _attributes[index];
-                this.addOutAttribute(theAttribute);
-            }
-        },
+			Aggregator.prototype = Object.create(Widget.prototype);
 
-		/**
-		 * Initializes the provided ConstantAttributeValues that are only specific to the Aggregator.
-		 * Called by aggregatorSetup().
-		 * 
-		 * @function
-		 * @abstract
-		 * @protected
-		 * @alias setAggregatorConstantAttributeValues
-		 * @memberof Aggregator#
-		 */
-		'virtual protected setAggregatorConstantAttributeValues' : function() {
+			/**
+			 * Returns the type of this class, in this case "Aggregator".
+			 *
+			 * @override
+			 * @public
+			 * @returns {string}
+			 */
+			Aggregator.prototype.getType = function() {
+				return 'Aggregator';
+			};
 
-        },
+			/**
+			 * Sets Widget IDs.
+			 *
+			 * @protected
+			 * @param {Array.<String>} widgetIds List of Widget IDs
+			 */
+			Aggregator.prototype._setWidgets = function(widgetIds){
+				this._widgets = widgetIds;
+			};
 
-		/**
-		 * Initializes the provided Callbacks that are only specific to the Aggregator.
-		 * Called by aggregatorSetup().
-		 * 
-		 * @function
-		 * @abstract
-		 * @protected
-		 * @alias setAggregatorCallbacks
-		 * @memberof Aggregator#
-		 */
-		'virtual protected setAggregatorCallbacks' : function() {
-
-        },
-
-		/**
-		 * Returns the current Attributes that are saved in the cache.
-		 * 
-		 * @public
-	   	 * @alias getCurrentData
-		 * @memberof Aggregator#
-		 * @returns {AttributeList}
-	     */
-		'public getCurrentData' : function(){
-			return this.outAttributes;
-		},
-		
-		/**
-		 * Subscribes to the given widget for the specified Callbacks.
-		 * 
-		 * @protected
-	   	 * @alias subscribeTo
-		 * @memberof Aggregator#
-		 * @param {Widget} _widget Widget that should be subscribed to.
-		 * @param {CallbackList} _callbacks required Callbacks
-	     */
-		'protected subscribeTo' : function(_widget, _callbacks, _subSet, _conditions){	
-			if(Class.isA(Widget, _widget)){
-				var subscriber = new Subscriber().withSubscriberId(this.id).
-									withSubscriberName(this.name).
-									withSubscriptionCallbacks(_callbacks).
-									withAttributesSubset(_subSet).
-									withConditions(_conditions);
-				_widget.addSubscriber(subscriber);
-            }
-        },
-		
-		/**
-		 * Subscribes to the widgets that are defined in the Widget ID List
-         * used in the initCallback method.
-		 * 
-		 * @protected
-	   	 * @alias initWidgetSubscription
-		 * @memberof Aggregator#
-		 * @param {String} _widgetId Widget that should be subscribed.
-		 * @returns {?CallbackList}
-	     */
-		'protected initWidgetSubscription' : function(_widgetId){
-			var calls = null;
-			if(Class.isA(String, _widgetId)){
-				var widget = this.discoverer.getComponent(_widgetId);
-				if (widget){
-					//subscribe to all callbacks
-					calls = widget.queryCallbacks();
-					this.subscribeTo(widget, calls);
+			/**
+			 * Adds Widget ID.
+			 *
+			 * @public
+			 * @param {String|Widget} widgetIdOrWidget Widget ID
+			 */
+			Aggregator.prototype.addWidget = function(widgetIdOrWidget){
+				if (widgetIdOrWidget.constructor === Widget) {
+					this._widgets.push(widgetIdOrWidget.getId());
+				} else if(typeof widgetIdOrWidget == "string") {
+					this._widgets.push(widgetIdOrWidget);
 				}
-            }
-            return calls;
-		},
-		
-		/**
-		 * Adds the specified callbacks of a widget to the aggregator.
-         * 
-		 * @public
-	   	 * @alias addWidgetSubscription
-		 * @memberof Aggregator#
-		 * @param {String|Widget} _widgetIdOrWidget Widget that should be subscribed.
-		 * @param {CallbackList} _callbackList required Callbacks
-	     */
-		'public addWidgetSubscription' : function(_widgetIdOrWidget, _callbackList){
-            if (Class.isA(Widget, _widgetIdOrWidget)) {
-                if (Class.isA(Widget, _widgetIdOrWidget) && (!_callbackList || !Class.isA(CallbackList, _callbackList))) {
-                    _callbackList = _widgetIdOrWidget.getCallbackList();
-                }
-                _widgetIdOrWidget = _widgetIdOrWidget.getId();
-            }
-			if(typeof _widgetIdOrWidget == "string" && Class.isA(CallbackList, _callbackList)){
-				var widget = this.discoverer.getComponent(_widgetIdOrWidget);
-				if (widget) {
-					this.subscribeTo(widget, _callbackList);			
-					this.callbacks.putAll(_callbackList);			
-					var callsList = _callbackList.getItems();		
-					for(var x in callsList){
-						var singleCallback = callsList[x];			
-						var typeList = singleCallback.getAttributeTypes().getItems();
-						for(var y in typeList){
-							var singleType = typeList[y];
-							this.addOutAttribute(singleType);
-                        }
-                    }
-                    this.addWidget(_widgetIdOrWidget);
-                }
-            }
-        },
-		
-		/**
-		 * Removes subscribed Widgets and deletes the entry 
-		 * for subscribers in the associated Widget.
-		 * 
-		 * @public
-	   	 * @alias unsubscribeFrom
-		 * @memberof Aggregator#
-		 * @param {String} _widgetId Widget that should be removed.
-	     */
-		'public unsubscribeFrom' : function(_widgetId){
-			if(typeof _widgetId == "string") {
-				var widget = this.discoverer.getComponent(_widgetId);
-				if (widget) {
-					console.log('aggregator unsubscribeFrom: ' + widget.getName());
-					widget.removeSubscriber(this.id);
-					this.removeWidget(_widgetId);
-                }
-            }
-        },
-		
-		/**
-		 * Puts context data to Widget and expects an array.
-		 * 
-		 * @override
-		 * @public
-	   	 * @alias putData
-		 * @memberof Aggregator#
-		 * @param {(AttributeList|Array)}  _data data that shall be input
-	     */
-		'override public putData' : function(_data){
-			var list = [];
-			if(_data instanceof Array){
-				list = _data;
-			} else if (Class.isA(AttributeList, _data)) {
-				list = _data.getItems();
-			}
-			for(var i in list){
-				var x = list[i];
-				if(Class.isA(Attribute, x ) && this.isOutAttribute(x)){
-					this.addOutAttribute(x);
-					if(this.db){
-						this.store(x);
+			};
+
+			/**
+			 * Returns the available Widget IDs.
+			 *
+			 * @public
+			 * @returns {Array}
+			 */
+			Aggregator.prototype.getWidgets = function() {
+				return this._widgets;
+			};
+
+			/**
+			 * Removes Widget ID from list.
+			 *
+			 * @protected
+			 * @param {String} _widgetId Id of the Widget
+			 */
+			Aggregator.prototype._removeWidget = function(_widgetId) {
+				var index = this._widgets.indexOf(_widgetId);
+				if (index > -1) {
+					this._widgets = this._widgets.splice(index, 1);
+				}
+			};
+
+			/**
+			 * Retrieves all Attributes of the specified widgets.
+			 *
+			 * @protected
+			 */
+			Aggregator.prototype._initOutAttributes = function() {
+				if(this._widgets.length > 0){
+					for(var i in this._widgets){
+						var widgetId = this._widgets[i];
+						/** @type {Widget} */
+						var theWidget = this._discoverer.getComponent(widgetId);
+						if (theWidget) {
+							this._setOutAttributes(theWidget.getOutAttributes());
+						}
 					}
-                }
-            }
-        },
-		
-		/**
-		 * Calls the given Interpreter for interpretation the data.
-		 * 
-		 * @public
-	   	 * @alias interpretData
-		 * @memberof Aggregator#
-		 * @param {String} _interpreterId ID of the searched Interpreter
-		 * @param {?function} _function for additional actions, if an asynchronous function is used
-	     */
-		'public interpretData' : function(_interpreterId, _inAttributeValues, _outAttributeValues, _function){
-			var interpreter = this.discoverer.getComponent(_interpreterId);
-			if (Class.isA(Interpreter, interpreter)) {
-				interpreter.callInterpreter(_inAttributeValues, _outAttributeValues, _function);
-			}
-		},
-		
-		/**
-		 * Initializes the database with the specified name.
-		 * 
-		 * @protected
-	   	 * @alias initStorage
-		 * @memberof Aggregator#
-		 * @param {String} _name Name of the Storage
-	     */
-		'protected initStorage' : function(_name){
-			this.db = new Storage(_name, 7200000, 5);
-		},
-		
-		/**
-		 * Stores the data.
-		 * 
-		 * @protected
-	   	 * @alias store
-		 * @memberof Aggregator#
-		 * @param {AttributeValue} _attributeValue data that should be stored
-	     */
-		'protected store' : function(_attributeValue){
-			this.db.store(_attributeValue);
-		},
-		
-		/**
-		 * Queries the database and returns the last retrieval result. 
-		 * It may be that the retrieval result is not up to date, 
-		 * because an asynchronous function is used for the retrieval.
-		 * For retrieving the current data, this function can be used as callback function
-		 * in retrieveStorage().
-		 * 
-		 * @public
-	   	 * @alias queryAttribute
-		 * @memberof Aggregator#
-		 * @param {String} _name Name of the searched AtTributes.
-		 * @param {?function} _function for alternative  actions, because an asynchronous function is used
-	     */
-		'public queryAttribute' : function(_name, _function){
-			this.db.retrieveAttributes(_name, _function);	
-		},
-		
-		/**
-		 * Queries a specific table and only actualizes the storage cache.
-		 * For an alternativ action can be used a callback.
-		 * 
-		 * @public
-	   	 * @alias retrieveStorage
-		 * @memberof Aggregator#
-		 * @returns {RetrievalResult}
-	     */
-		'public retrieveStorage' : function(){
-			return this.db.getCurrentData();
-		},
-		
-		/**
-		 * Returns an overview about the stored attributes.
-		 * It may be that the overview about the stored attributes is not up to date, 
-		 * because an asynchronous function is used for the retrieval.
-		 * For retrieving the current data, this function can be used as callback function
-		 * in queryTables().
-		 * 
-		 * @public
-	   	 * @alias getStorageOverview
-		 * @memberof Aggregator#
-		 * @returns {?Array}
-	     */
-		'public getStorageOverview' : function(){
-			return this.db.getAttributesOverview();
-		},
+				}
+			};
 
-		/**
-		 * Only updates the attribute cache in the database.
-		 * For an alternative action a callback can be used.
-		 *
-		 * @public
-	   	 * @alias queryTables
-		 * @memberof Aggregator#
-		 * @param {?function} _function for alternative actions, because an asynchronous function is used
-	     */
-		'public queryTables' : function(_function){
-			this.db.getAttributeNames(_function);
-        },
+			/**
+			 * Retrieves all ConstantAttributes of the specified widgets.
+			 *
+			 * @protected
+			 */
+			Aggregator.prototype._initConstantOutAttributes = function() {
+				if(this._widgets.length > 0){
+					for(var i in this._widgets){
+						var widgetId = this._widgets[i];
+						/** @type {Widget} */
+						var theWidget = this._discoverer.getComponent(widgetId);
+						if (theWidget) {
+							this._setConstantOutAttributes(theWidget.getConstantOutAttributes());
+						}
+					}
+				}
+			};
 
-        /**
-         * Updates the information for the widget with the provided ID and calls the callback afterwards.
-         *
-         * @public
-         * @virtual
-         * @alias queryReferencedWidget
-         * @memberof Aggregator#
-         * @param {String} _widgetId The ID of the widget to query.
-         * @param {Callback} _callback The callback to query after the widget was updated.
-         */
-        'virtual public queryReferencedWidget' :function(_widgetId, _callback){
-            this.discoverer.getWidget(_widgetId).updateWidgetInformation(_callback);
-        },
+			/**
+			 * Retrieves all actual Callbacks of the specified Widgets.
+			 *
+			 * @protected
+			 * @override
+			 */
+			Aggregator.prototype._initCallbacks = function() {
+				if(this._widgets.length > 0){
+					for(var i in this._widgets){
+						var widgetId = this._widgets[i];
+						this.initWidgetSubscription(widgetId);
+					}
+				}
+			};
 
-		/**
-		 * Returns the UUIDs of all connected widgets and interpreters.
-		 *
-		 * @private
-		 * @alias getComponentUUIDs
-		 * @memberof Aggregator#
-		 * @returns {Array.<T>} The UUIDs.
-		 */
-        'private getComponentUUIDs': function() {
-            var uuids = [];
-			uuids = uuids.concat(this.widgets);
-			for (var index in this.interpretations) {
-				var theInterpretation = this.interpretations[index];
-				uuids.push(theInterpretation.interpreterId);
+			/**
+			 * Start the setup of the aggregator after the initialisation has finished.
+			 *
+			 * @public
+			 * @override
+			 * @param {AttributeList} attributes
+			 */
+			Aggregator.prototype.didFinishInitialization = function(attributes) {
+				this._aggregatorSetup(attributes);
+			};
 
-			}
-			return uuids;
-        },
+			/**
+			 * InitMethod for Aggregators. Called by constructor. Initializes the associated Storage.
+			 *
+			 * @protected
+			 */
+			Aggregator.prototype._aggregatorSetup = function(attributes) {
+				this._setAggregatorAttributeValues(attributes);
+				this._setAggregatorConstantAttributeValues();
+				this._setAggregatorCallbacks();
 
-		/**
-		 * Return true if a component with the provided UUID was connected to the aggregator.
-		 *
-		 * @private
-		 * @alias hasComponent
-		 * @memberof Aggregator#
-		 * @param {String} uuid The UUID of the component to check.
-		 * @returns {boolean}
-		 */
-        'private hasComponent': function(uuid) {
-            return jQuery.inArray(uuid, this.getComponentUUIDs()) != -1;
-        },
+				this.didFinishSetup();
+			};
 
-		/**
-		 *
-		 * @override
-		 * @public
-		 * @alias doesSatisfyAttributeType
-		 * @param _attribute
-		 * @returns {boolean}
-		 */
-        'override public doesSatisfyAttributeType': function(_attribute) {
-            var componentUUIDs = this.getComponentUUIDs();
-            var doesSatisfy = false;
+			/**
+			 * Initializes the provided attributeValues that are only specific to the Aggregator.
+			 * Called by aggregatorSetup().
+			 *
+			 * @virtual
+			 * @protected
+			 */
+			Aggregator.prototype._setAggregatorAttributeValues = function(attributes) {
+				for (var index in attributes) {
+					var theAttribute = attributes[index];
+					this.addOutAttribute(theAttribute);
+				}
+			};
 
-            for (var index in componentUUIDs) {
-                var theComponent = this.discoverer.getComponent(componentUUIDs[index]);
-                if (theComponent.doesSatisfyAttributeType(_attribute)) {
-                    doesSatisfy = true;
-                }
-            }
+			/**
+			 * Initializes the provided ConstantAttributeValues that are only specific to the Aggregator.
+			 * Called by aggregatorSetup().
+			 *
+			 * @virtual
+			 * @protected
+			 */
+			Aggregator.prototype._setAggregatorConstantAttributeValues = function() {
 
-            return doesSatisfy;
-        },
+			};
 
-		/**
-		 * Searches for components that can satisfy the requested attributes. Through recursion it is possible to search
-		 * for components that satisfy attributes of components that have been found in the process.
-		 *
-		 * @private
-		 * @alias getComponentsForUnsatisfiedAttributeTypes
-		 * @memberof Aggregator#
-		 * @param {AttributeList} _unsatisfiedAttributes A list of attributes that components should be searched for.
-		 * @param {boolean} _all If true all attributes must be satisfied by a single component.
-		 * @param {Array} _componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
-		 */
-        'private getComponentsForUnsatisfiedAttributeTypes': function(_unsatisfiedAttributes, _all, _componentTypes) {
-			// ask the discoverer for components that satisfy the requested components
-            var relevantComponents = this.discoverer.getComponentsByAttributes(_unsatisfiedAttributes, _all, _componentTypes);
-            console.log("I found "+relevantComponents.length+" component(s) of type "+_componentTypes+" that might satisfy the requested attributes.");
+			/**
+			 * Initializes the provided Callbacks that are only specific to the Aggregator.
+			 * Called by aggregatorSetup().
+			 *
+			 * @virtual
+			 * @protected
+			 */
+			Aggregator.prototype._setAggregatorCallbacks = function() {
 
-			// iterate over all found components
-            for(var index in relevantComponents) {
-				// get the component
-                var theComponent = relevantComponents[index];
-                console.log("Let's look at component "+theComponent.getName()+".");
+			};
 
-				// if the component was added before, ignore it
-                if (!this.hasComponent(theComponent.getId())) {
-                    var outAttributes = theComponent.getOutAttributes().getItems();
+			/**
+			 * Returns the current Attributes that are saved in the cache.
+			 *
+			 * @public
+			 * @returns {AttributeList}
+			 */
+			Aggregator.prototype.getCurrentData = function() {
+				return this._outAttributes;
+			};
 
-                    // if component is a widget and it wasn't added before, subscribe to its callbacks
-                    if (Class.isA(Widget, theComponent)) {
-                        console.log("It's a widget.");
+			/**
+			 * Subscribes to the given widget for the specified Callbacks.
+			 *
+			 * @protected
+			 * @param {Widget} widget Widget that should be subscribed to.
+			 * @param {CallbackList} callbacks required Callbacks
+			 * @param subSet
+			 * @param conditions
+			 */
+			Aggregator.prototype._subscribeTo = function(widget, callbacks, subSet, conditions){
+				if(widget.constructor === Widget){
+					var subscriber = new Subscriber().withSubscriberId(this.id).
+						withSubscriberName(this.name).
+						withSubscriptionCallbacks(callbacks).
+						withAttributesSubset(subSet).
+						withConditions(conditions);
+					widget.addSubscriber(subscriber);
+				}
+			};
 
-                        this.addWidgetSubscription(theComponent);
-                        // remove satisfied attributes
-                        for (var widgetOutAttributeIndex in outAttributes) {
-                            var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
-							// add the attribute type to the aggregators list of handled attribute types
-                            if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
-                            console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
-                            _unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
-                        }
-                    } else if (Class.isA(Interpreter, theComponent)) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
-                        console.log("It's an interpreter.");
+			/**
+			 * Subscribes to the widgets that are defined in the Widget ID List
+			 * used in the initCallback method.
+			 *
+			 * @protected
+			 * @param {String} widgetId Widget that should be subscribed.
+			 * @returns {?CallbackList}
+			 */
+			Aggregator.prototype._initWidgetSubscription = function(widgetId) {
+				var callbacks = null;
+				if(typeof widgetId == "string"){
+					/** @type {Widget} */
+					var theWidget = this._discoverer.getComponent(widgetId);
+					if (theWidget) {
+						//subscribe to all callbacks
+						callbacks = theWidget.getCallbackList();
+						this.subscribeTo(theWidget, callbacks);
+					}
+				}
+				return callbacks;
+			};
 
-                        var inAttributes = theComponent.getInAttributes().getItems();
-                        var canSatisfyInAttributes = true;
-
-						// iterate over the attributes needed to satisfy the interpreter
-                        for (var inAttributeIdentifier in inAttributes) {
-							// get the attribute
-                            var theInAttribute = inAttributes[inAttributeIdentifier];
-                            console.log("The interpreter needs the attribute "+theInAttribute+".");
-
-							// if required attribute is not already satisfied by the aggregator search for components that do
-                            if (!this.doesSatisfyAttributeType(theInAttribute)) {
-                                console.log("It seems that I can't satisfy "+theInAttribute+", but I will search for components that can.");
-                                var newAttributeList = new AttributeList();
-                                newAttributeList.put(theInAttribute);
-                                this.getComponentsForUnsatisfiedAttributeTypes(newAttributeList, false, [Widget, Interpreter]);
-								// if the attribute still can't be satisfied drop the interpreter
-                                if (!this.doesSatisfyAttributeType(theInAttribute)) {
-                                    console.log("I couldn't find a component to satisfy "+theInAttribute+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
-                                    canSatisfyInAttributes = false;
-                                    break;
-                                }
-                            } else {
-                                console.log("It seems that I already satisfy the attribute "+theInAttribute+". Let's move on.");
-                            }
-                        }
-
-                        if (canSatisfyInAttributes) {
-                            // remove satisfied attribute
-                            for (var interpreterOutAttributeIndex in outAttributes) {
-                                var interpreterOutAttribute = outAttributes[interpreterOutAttributeIndex];
-								// add the attribute type to the aggregators list of handled attribute types
-								for (var unsatisfiedAttributeIndex in _unsatisfiedAttributes.getItems()) {
-									var theUnsatisfiedAttribute = _unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-									if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
-										this.addOutAttribute(theUnsatisfiedAttribute);
-										console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
-										this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
-									}
-								}
-								_unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
-                            }
-						} else {
-                            console.log("Found interpreter but can't satisfy required attributes.");
-                            for (var j in theComponent.getInAttributes().getItems()) {
-                                console.log("Missing "+theComponent.getInAttributes().getItems()[j]+".");
-                            }
-                        }
-                    }
-                } else {
-                    console.log("Aggregator already has component "+theComponent.getName()+". Nothing to do here ;)");
-                }
-            }
-        },
-
-		/**
-		 * After the aggregator finished its setup start searching for component that satisfy the attributes that where requrested.
-		 *
-		 * @public
-		 * @virtual
-		 * @alias didFinishSetup
-		 * @memberof Aggregator#
-		 */
-        'virtual public didFinishSetup': function() {
-            unsatisfiedAttributes = this.getOutAttributes().clone();
-
-            // get all widgets that satisfy attribute types
-            this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Widget]);
-            // get all interpreters that satisfy attribute types
-            this.getComponentsForUnsatisfiedAttributeTypes(unsatisfiedAttributes, false, [Interpreter]);
-
-			console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
-			console.log("Satisfied attributes: "+this.getOutAttributes().size());
-			console.log("Interpretations "+this.interpretations.length);
-        },
-
-        /**
-         * Updates all the widgets referenced by the aggregator and calls the provided callback afterwards.
-         *
-		 * @public
-		 * @virtual
-		 * @alias queryReferencedWidgets
-		 * @memberof Aggregator#
-         * @param {Function} _callback The callback to query after all the widget where updated.
-         */
-        'virtual public queryReferencedWidgets': function(_callback) {
-            var self = this;
-            var completedQueriesCounter = 0;
-
-            if (this.widgets.length > 0) {
-                for (var index in this.widgets) {
-                    var theWidgetId = this.widgets[index];
-                    this.queryReferencedWidget(theWidgetId, function () {
-                        completedQueriesCounter++;
-                        if (completedQueriesCounter == self.widgets.length) {
-                            if (_callback && typeof(_callback) == 'function') {
-                                _callback(self.getOutAttributes());
-                            }
-                        }
-                    });
-                }
-            } else {
-				if (_callback && typeof(_callback) == 'function') {
-                    _callback(self.getOutAttributes());
-                }
-            }
-        },
-
-		/**
-		 * Let's all connected interpreters interpret data.
-		 *
-		 * @public
-		 * @alias queryReferencedInterpreters
-		 * @memberof Aggregator#
-		 * @param {Function} _callback The callback to query after all the interpreters did interpret data.
-		 */
-        'public queryReferencedInterpreters': function(_callback) {
-            var self = this;
-            var completedQueriesCounter = 0;
-
-			if (this.interpretations.length > 0) {
-				for (var index in this.interpretations) {
-					var theInterpretation = this.interpretations[index];
-					var theInterpreterId = theInterpretation.interpreterId;
-					var interpretationInAttributeValues = this.getOutAttributes(theInterpretation.inAttributeTypes);
-					var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
-
-					self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(_interpretedData) {
-						for (var j in _interpretedData.getItems()) {
-							var theInterpretedData = _interpretedData.getItems()[j];
-
-							self.addOutAttribute(theInterpretedData);
-							if (self.db){
-								self.store(theInterpretedData);
+			/**
+			 * Adds the specified callbacks of a widget to the aggregator.
+			 *
+			 * @public
+			 * @param {String|Widget} widgetIdOrWidget Widget that should be subscribed.
+			 * @param {CallbackList} callbackList required Callbacks
+			 */
+			Aggregator.prototype.addWidgetSubscription = function(widgetIdOrWidget, callbackList){
+				if (widgetIdOrWidget.constructor === Widget) {
+					if (!callbackList || callbackList.constructor !== CallbackList) {
+						callbackList = widgetIdOrWidget.getCallbackList();
+					}
+					widgetIdOrWidget = widgetIdOrWidget.getId();
+				}
+				if(typeof widgetIdOrWidget == "string" && callbackList.constructor === CallbackList) {
+					/** @type {?Widget} */
+					var theWidget = this._discoverer.getComponent(widgetIdOrWidget);
+					if (theWidget) {
+						this._subscribeTo(theWidget, callbackList);
+						this._callbacks.putAll(callbackList);
+						var callsList = callbackList.getItems();
+						for(var x in callsList){
+							var singleCallback = callsList[x];
+							var typeList = singleCallback.getAttributeTypes().getItems();
+							for(var y in typeList){
+								var singleType = typeList[y];
+								this.addOutAttribute(singleType);
 							}
 						}
+						this.addWidget(widgetIdOrWidget);
+					}
+				}
+			};
 
-						completedQueriesCounter++;
-						if (completedQueriesCounter == self.interpretations.length) {
-							if (_callback && typeof(_callback) == 'function') {
-								_callback(self.getOutAttributes());
+			/**
+			 * Removes subscribed Widgets and deletes the entry
+			 * for subscribers in the associated Widget.
+			 *
+			 * @public
+			 * @param {String} widgetId Widget that should be removed.
+			 */
+			Aggregator.prototype.unsubscribeFrom = function(widgetId) {
+				if(typeof widgetId == "string") {
+					var widget = this._discoverer.getComponent(widgetId);
+					if (widget) {
+						console.log('aggregator unsubscribeFrom: ' + widget.getName());
+						widget.removeSubscriber(this.id);
+						this._removeWidget(widgetId);
+					}
+				}
+			};
+
+			/**
+			 * Puts context data to Widget and expects an array.
+			 *
+			 * @override
+			 * @public
+			 * @param {(AttributeList|Array)}  _data data that shall be input
+			 */
+			Aggregator.prototype.putData = function(attributeListOrArray){
+				var list = [];
+				if(attributeListOrArray instanceof Array){
+					list = attributeListOrArray;
+				} else if (attributeListOrArray.constructor === AttributeList) {
+					list = attributeListOrArray.getItems();
+				}
+				for(var i in list){
+					var theAttribute = list[i];
+					if(theAttribute.constructor === Attribute && this._isOutAttribute(theAttribute)){
+						this.addOutAttribute(theAttribute);
+						if(this._db){
+							this._store(theAttribute);
+						}
+					}
+				}
+			};
+
+			/**
+			 * Calls the given Interpreter for interpretation the data.
+			 *
+			 * @public
+			 * @param {String} interpreterId ID of the searched Interpreter
+			 * @param {AttributeList} inAttributes
+			 * @param {AttributeList} outAttributes
+			 * @param {?function} callback for additional actions, if an asynchronous function is used
+			 */
+			Aggregator.prototype.interpretData = function(interpreterId, inAttributes, outAttributes, callback){
+				var interpreter = this._discoverer.getComponent(interpreterId);
+				if (interpreter.constructor === Interpreter) {
+					interpreter.callInterpreter(inAttributes, outAttributes, callback);
+				}
+			};
+
+			/**
+			 * Stores the data.
+			 *
+			 * @protected
+			 * @param {Attribute} attribute data that should be stored
+			 */
+			Aggregator.prototype._store = function(attribute) {
+				this._db.store(attribute);
+			};
+
+			/**
+			 * Queries the database and returns the last retrieval result.
+			 * It may be that the retrieval result is not up to date,
+			 * because an asynchronous function is used for the retrieval.
+			 * For retrieving the current data, this function can be used as callback function
+			 * in retrieveStorage().
+			 *
+			 * @public
+			 * @param {String} name Name of the searched AtTributes.
+			 * @param {?function} callback for alternative  actions, because an asynchronous function is used
+			 */
+			Aggregator.prototype.queryAttribute = function(name, callback){
+				this._db.retrieveAttributes(name, callback);
+			};
+
+			/**
+			 * Queries a specific table and only actualizes the storage cache.
+			 * For an alternativ action can be used a callback.
+			 *
+			 * @public
+			 * @returns {RetrievalResult}
+			 */
+			Aggregator.prototype.retrieveStorage = function() {
+				return this._db.getCurrentData();
+			};
+
+			/**
+			 * Returns an overview about the stored attributes.
+			 * It may be that the overview about the stored attributes is not up to date,
+			 * because an asynchronous function is used for the retrieval.
+			 * For retrieving the current data, this function can be used as callback function
+			 * in queryTables().
+			 *
+			 * @public
+			 * @returns {?Array}
+			 */
+			Aggregator.prototype.getStorageOverview = function() {
+				return this._db.getAttributesOverview();
+			};
+
+			/**
+			 * Only updates the attribute cache in the database.
+			 * For an alternative action a callback can be used.
+			 *
+			 * @public
+			 * @param {?function} callback for alternative actions, because an asynchronous function is used
+			 */
+			Aggregator.prototype.queryTables = function(callback) {
+				this._db.getAttributeNames(callback);
+			};
+
+			/**
+			 * Updates the information for the widget with the provided ID and calls the callback afterwards.
+			 *
+			 * @public
+			 * @virtual
+			 * @param {String} widgetId The ID of the widget to query.
+			 * @param {Callback} callback The callback to query after the widget was updated.
+			 */
+			Aggregator.prototype.queryReferencedWidget = function(widgetId, callback) {
+				this._discoverer.getWidget(widgetId).updateWidgetInformation(callback);
+			};
+
+			/**
+			 * Returns the UUIDs of all connected widgets and interpreters.
+			 *
+			 * @private
+			 * @returns {Array.<T>} The UUIDs.
+			 */
+			Aggregator.prototype.getComponentUUIDs = function() {
+				var uuids = [];
+				uuids = uuids.concat(this._widgets);
+				for (var index in this._interpretations) {
+					var theInterpretation = this._interpretations[index];
+					uuids.push(theInterpretation.interpreterId);
+				}
+				return uuids;
+			};
+
+			/**
+			 * Return true if a component with the provided UUID was connected to the aggregator.
+			 *
+			 * @private
+			 * @alias hasComponent
+			 * @memberof Aggregator#
+			 * @param {String} uuid The UUID of the component to check.
+			 * @returns {boolean}
+			 */
+			Aggregator.prototype._hasComponent = function(uuid) {
+				return jQuery.inArray(uuid, this.getComponentUUIDs()) != -1;
+			};
+
+			/**
+			 *
+			 * @override
+			 * @public
+			 * @param {Attribute} attribute
+			 * @returns {boolean}
+			 */
+			Aggregator.prototype.doesSatisfyTypeOf = function(attribute) {
+				var componentUUIDs = this.getComponentUUIDs();
+				var doesSatisfy = false;
+
+				for (var index in componentUUIDs) {
+					var theComponent = this._discoverer.getComponent(componentUUIDs[index]);
+					if (theComponent.doesSatisfyTypeOf(attribute)) {
+						doesSatisfy = true;
+					}
+				}
+
+				return doesSatisfy;
+			};
+
+			/**
+			 * Searches for components that can satisfy the requested attributes. Through recursion it is possible to search
+			 * for components that satisfy attributes of components that have been found in the process.
+			 *
+			 * @private
+			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
+			 * @param {boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
+			 */
+			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
+				// ask the discoverer for components that satisfy the requested components
+				var relevantComponents = this._discoverer.getComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
+				console.log("I found "+relevantComponents.length+" component(s) of type "+componentTypes+" that might satisfy the requested attributes.");
+
+				// iterate over all found components
+				for(var index in relevantComponents) {
+					// get the component
+					var theComponent = relevantComponents[index];
+					console.log("Let's look at component "+theComponent.getName()+".");
+
+					// if the component was added before, ignore it
+					if (!this._hasComponent(theComponent.getId())) {
+						var outAttributes = theComponent.getOutAttributes().getItems();
+
+						// if component is a widget and it wasn't added before, subscribe to its callbacks
+						if (theComponent.constructor === Widget) {
+							console.log("It's a widget.");
+
+							this.addWidgetSubscription(theComponent);
+							// remove satisfied attributes
+							for (var widgetOutAttributeIndex in outAttributes) {
+								var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
+								// add the attribute type to the aggregators list of handled attribute types
+								if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
+								console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
+								unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
 							}
+						} else if (theComponent.constructor === Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
+							console.log("It's an interpreter.");
+
+							var inAttributes = theComponent.getInAttributes().getItems();
+							var canSatisfyInAttributes = true;
+
+							// iterate over the attributes needed to satisfy the interpreter
+							for (var inAttributeIdentifier in inAttributes) {
+								// get the attribute
+								var theInAttribute = inAttributes[inAttributeIdentifier];
+								console.log("The interpreter needs the attribute "+theInAttribute+".");
+
+								// if required attribute is not already satisfied by the aggregator search for components that do
+								if (!this.doesSatisfyTypeOf(theInAttribute)) {
+									console.log("It seems that I can't satisfy "+theInAttribute+", but I will search for components that can.");
+									var newAttributeList = new AttributeList();
+									newAttributeList.put(theInAttribute);
+									this._getComponentsForUnsatisfiedAttributes(newAttributeList, false, [Widget, Interpreter]);
+									// if the attribute still can't be satisfied drop the interpreter
+									if (!this.doesSatisfyTypeOf(theInAttribute)) {
+										console.log("I couldn't find a component to satisfy "+theInAttribute+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
+										canSatisfyInAttributes = false;
+										break;
+									}
+								} else {
+									console.log("It seems that I already satisfy the attribute "+theInAttribute+". Let's move on.");
+								}
+							}
+
+							if (canSatisfyInAttributes) {
+								// remove satisfied attribute
+								for (var interpreterOutAttributeIndex in outAttributes) {
+									var interpreterOutAttribute = outAttributes[interpreterOutAttributeIndex];
+									// add the attribute type to the aggregators list of handled attribute types
+									for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
+										var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+										if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
+											this.addOutAttribute(theUnsatisfiedAttribute);
+											console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
+											this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
+										}
+									}
+									unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
+								}
+							} else {
+								console.log("Found interpreter but can't satisfy required attributes.");
+								for (var j in theComponent.getInAttributes().getItems()) {
+									console.log("Missing "+theComponent.getInAttributes().getItems()[j]+".");
+								}
+							}
+						}
+					} else {
+						console.log("Aggregator already has component "+theComponent.getName()+". Nothing to do here ;)");
+					}
+				}
+			};
+
+			/**
+			 * After the aggregator finished its setup start searching for component that satisfy the attributes that where requrested.
+			 *
+			 * @public
+			 * @virtual
+			 */
+			Aggregator.prototype.didFinishSetup = function() {
+				var unsatisfiedAttributes = this.getOutAttributes().clone();
+
+				// get all widgets that satisfy attribute types
+				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Widget]);
+				// get all interpreters that satisfy attribute types
+				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Interpreter]);
+
+				console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
+				console.log("Satisfied attributes: "+this.getOutAttributes().size());
+				console.log("Interpretations "+this._interpretations.length);
+			};
+
+			/**
+			 * Updates all the widgets referenced by the aggregator and calls the provided callback afterwards.
+			 *
+			 * @public
+			 * @virtual
+			 * @param {Function} callback The callback to query after all the widget where updated.
+			 */
+			Aggregator.prototype.queryReferencedWidgets = function(callback) {
+				var self = this;
+				var completedQueriesCounter = 0;
+
+				if (this._widgets.length > 0) {
+					for (var index in this._widgets) {
+						var theWidgetId = this._widgets[index];
+						this.queryReferencedWidget(theWidgetId, function () {
+							completedQueriesCounter++;
+							if (completedQueriesCounter == self._widgets.length) {
+								if (callback && typeof(callback) == 'function') {
+									callback(self.getOutAttributes());
+								}
+							}
+						});
+					}
+				} else {
+					if (callback && typeof(callback) == 'function') {
+						callback(self.getOutAttributes());
+					}
+				}
+			};
+
+			/**
+			 * Let's all connected interpreters interpret data.
+			 *
+			 * @public
+			 * @param {function} _callback The callback to query after all the interpreters did interpret data.
+			 */
+			Aggregator.prototype.queryReferencedInterpreters = function(callback) {
+				var self = this;
+				var completedQueriesCounter = 0;
+
+				if (this.interpretations.length > 0) {
+					for (var index in this.interpretations) {
+						var theInterpretation = this.interpretations[index];
+						var theInterpreterId = theInterpretation.interpreterId;
+						var interpretationInAttributeValues = this.getOutAttributes(theInterpretation.inAttributeTypes);
+						var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
+
+						self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(_interpretedData) {
+							for (var j in _interpretedData.getItems()) {
+								var theInterpretedData = _interpretedData.getItems()[j];
+
+								self.addOutAttribute(theInterpretedData);
+								if (self.db){
+									self.store(theInterpretedData);
+								}
+							}
+
+							completedQueriesCounter++;
+							if (completedQueriesCounter == self.interpretations.length) {
+								if (callback && typeof(callback) == 'function') {
+									callback(self.getOutAttributes());
+								}
+							}
+						});
+					}
+				} else {
+					if (callback && typeof(callback) == 'function') {
+						callback(self.getOutAttributes());
+					}
+				}
+			};
+
+			/**
+			 * Query all referenced widgets and afterwards all connected interpreters.
+			 *
+			 * @public
+			 * @alias queryReferencedComponents
+			 * @memberof Aggregator#
+			 * @param {Function} callback the callback to query after all components did finish their work.
+			 */
+			Aggregator.prototype.queryReferencedComponents = function(callback) {
+				var self = this;
+
+				this.queryReferencedWidgets(function(_attributeValues) {
+					self.queryReferencedInterpreters(function(_attributeValues) {
+						if (callback && typeof(callback) == 'function') {
+							callback(_attributeValues);
 						}
 					});
-				}
-			} else {
-				if (_callback && typeof(_callback) == 'function') {
-					_callback(self.getOutAttributes());
-				}
-			}
-        },
+				});
+			};
 
-		/**
-		 * Query all referenced widgets and afterwards all connected interpreters.
-		 *
-		 * @public
-		 * @alias queryReferencedComponents
-		 * @memberof Aggregator#
-		 * @param {Function} _callback the callback to query after all components did finish their work.
-		 */
-        'public queryReferencedComponents': function(_callback) {
-            var self = this;
-
-            this.queryReferencedWidgets(function(_attributeValues) {
-                self.queryReferencedInterpreters(function(_attributeValues) {
-                    if (_callback && typeof(_callback) == 'function') {
-                        _callback(_attributeValues);
-                    }
-                });
-            });
-        }
-    });
-
-	return Aggregator;
-});
+			return Aggregator;
+		})();
+	}
+);
 /**
  * This module represents the conditionMethod Equals. 
  * 
@@ -6095,7 +5912,7 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		'private containsAllAttributes' : function(_component, _list) {
 			for ( var j in _list) {
 				var attribute = _list[j];
-				if (!_component.doesSatisfyAttributeType(attribute)) {
+				if (!_component.doesSatisfyTypeOf(attribute)) {
 					return false;
 				}
 			}
@@ -6115,7 +5932,7 @@ define('discoverer',[ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggre
 		'private containsAtLeastOneAttribute' : function(_component, _list) {
 			for (var j in _list) {
 				var attribute = _list[j];
-				if (_component.doesSatisfyAttributeType(attribute)) {
+				if (_component.doesSatisfyTypeOf(attribute)) {
 					return true;
 				}
 			}

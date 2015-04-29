@@ -247,7 +247,7 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		'private containsAllAttributes' : function(_component, _list) {
 			for ( var j in _list) {
 				var attribute = _list[j];
-				if (!_component.doesSatisfyAttributeType(attribute)) {
+				if (!_component.doesSatisfyTypeOf(attribute)) {
 					return false;
 				}
 			}
@@ -267,7 +267,7 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		'private containsAtLeastOneAttribute' : function(_component, _list) {
 			for (var j in _list) {
 				var attribute = _list[j];
-				if (_component.doesSatisfyAttributeType(attribute)) {
+				if (_component.doesSatisfyTypeOf(attribute)) {
 					return true;
 				}
 			}

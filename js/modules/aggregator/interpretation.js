@@ -1,21 +1,21 @@
 /**
  * Created by tobias on 15.04.15.
  */
-define(['easejs', 'interpreter', 'attributeList'],
-    function(easejs, Interpreter, AttributeList) {
-        var Class = easejs.Class;
-        var Interpretation = Class('Interpretation', {
-            'public interpreterId' : null,
-            'public inAttributeTypes' : new AttributeList(),
-            'public outAttributeTypes' : new AttributeList(),
+define(['interpreter', 'attributeList'],
+    function(Interpreter, AttributeList) {
 
-            'public __construct' : function(_interpreterId, _inAttributes, _outAttributes){
-                this.interpreterId = _interpreterId;
-                this.inAttributeTypes = _inAttributes;
-                this.outAttributeTypes = _outAttributes;
+        var Interpretation = (function() {
+
+            function Interpretation(interpreterId, inAttributes, outAttributes) {
+                this.interpreterId = interpreterId;
+                this.inAttributeTypes = inAttributes;
+                this.outAttributeTypes = outAttributes;
+
+                return this;
             }
 
-        });
+            return Interpretation;
+        })();
 
         return Interpretation;
     }
