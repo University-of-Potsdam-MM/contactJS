@@ -5,81 +5,115 @@
  * @module AbstractList
  * @fileOverview
  */
-define([ 'easejs' ], function(easejs) {
-	var AbstractClass = easejs.AbstractClass;
-	/**
-	 * @class AbstractList
-	 * @classdesc This class represents a list.
-	 * @requires easejs
-	 */
-	var AbstractList = AbstractClass('AbstractList', {
+define(function() {
+	return (function() {
 		/**
-		 * @alias items
-		 * @protected
-		 * @memberof AbstractList#
-		 * @desc ItemList
+		 * @class AbstractList
+		 * @classdesc This class represents a list.
+		 * @constructor
 		 */
-		'protected items' : [],
+		function AbstractList() {
+			/**
+			 *
+			 * @type {Array}
+			 * @private
+			 */
+			this._items = [];
+
+			/**
+			 *
+			 * @type {Object}
+			 * @private
+			 */
+			this._type = Object;
+
+			return this;
+		}
 
 		/**
 		 * Builder for Item list.
-		 * 
-		 * @function
-		 * @abstract
-		 * @public
-		 * @alias withItems
-		 * @memberof AbstractList#
+		 *
 		 * @param {*} list
 		 * @returns {*}
 		 */
-		'abstract public withItems' : [ 'list' ],
+		AbstractList.prototype.withItems = function(list) {
+			if (list instanceof Array) {
+				this._items = list;
+			} else if (list.constructor === this.constructor) {
+				this._items = list.getItems();
+			}
+			return this;
+		};
+
 		/**
 		 * Adds the specified item to the itemList.
-		 * 
-		 * @function
-		 * @abstract
+		 *
 		 * @public
-		 * @alias put
-		 * @memberof AbstractList#
-		 * @param {*} item item that shoud be added
+		 * @param {*} item item that should be added
 		 */
-		'abstract public put' : [ 'item' ],
+		AbstractList.prototype.put = function(item) {
+			if (item.constructor === this._type) {
+				if (!(this.contains(item))) {
+					this._items.push(item);
+				}
+			}
+		};
+
 		/**
-		 * Adds all items in the specified list to the
-		 * itemList.
-		 *  
-		 * @function
-		 * @abstract
+		 * Adds all items in the specified list to the itemList.
+		 *
 		 * @public
-		 * @alias putAll
-		 * @memberof AbstractList#
-		 * @param {*} list list of items that should be added
+		 * @param {*} listOrArray list of items that should be added
 		 */
-		'abstract public putAll' : [ 'list' ],
+		AbstractList.prototype.putAll = function(listOrArray) {
+			var list = [];
+			if (listOrArray instanceof Array) {
+				list = listOrArray;
+			} else if (listOrArray.constructor === this.constructor) {
+				list = listOrArray.getItems();
+			}
+			for (var i in list) {
+				this.put(list[i]);
+			}
+		};
+
 		/**
 		 * Verifies whether the given item is included
 		 * in this list.
-		 * 
-		 * @function
-		 * @abstract
+		 *
 		 * @public
-		 * @alias contains
-		 * @memberof AbstractList#
 		 * @param {*} item Item that should be checked.
 		 * @returns {boolean}
 		 */
-		'abstract public contains' : [ 'item' ],
+		AbstractList.prototype.contains = function(item) {
+			if (item.constructor === this._type) {
+				for (var index in this._items) {
+					var theItem = this._items[index];
+					if (theItem.equals(item)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		};
+
 		/**
 		 * Compare the specified WidgetHandleList with this instance.
-		 * 
-		 * @function
+		 *
 		 * @abstract
 		 * @public
-		 * @alias equals
-		 * @memberof AbstractList#
 		 * @param {*} list List that should be compared.
 		 */
-		'abstract public equals' : [ 'list' ],
+		AbstractList.prototype.equals = function(list) {
+			if (list.constructor === this.constructor && list.size() == this.size()) {
+				for (var index in list.getItems()) {
+					var theItem = list.getItems()[index];
+					if (!this.contains(theItem)) return false;
+				}
+				return true;
+			}
+			return false;
+		};
 
 		/**
 		 * Returns the item for the specified key.
@@ -87,87 +121,78 @@ define([ 'easejs' ], function(easejs) {
 		 * @alias getItem
 		 * @memberof AbstractList#
 		 * @param {string} _key key that should be searched for
-		 * @returns {*} 
+		 * @returns {*}
 		 */
-		'virtual public getItem' : function(_key) {
-			return this.items[_key];
-		},
+		AbstractList.prototype.getItem = function(_key) {
+			return this._items[_key];
+		};
 
 		/**
 		 * Removes the item from this list for the specified key.
+		 *
 		 * @public
-		 * @alias removeItem
-		 * @memberof AbstractList#
-		 * @param {string} _key key that should be searched for
+		 * @param {string} key key that should be searched for
 		 */
-		'public removeItem' : function(_key) {
-			if (this.containsKey(_key)) {
-				delete this.items[_key];				
-				this.counter--;
+		AbstractList.prototype.removeItem = function(key) {
+			if (this.containsKey(key)) {
+				delete this._items[key];
 			}
-		},
+		};
 
 		/**
 		 * Returns the keys of all items.
+		 *
 		 * @public
-		 * @alias getKeys
-		 * @memberof AbstractList#
 		 * @returns {Array}
 		 */
-		'public getKeys' : function() {
+		AbstractList.prototype.getKeys = function() {
 			var listKeys = [];
-			for ( var key in this.items) {
+			for (var key in this._items) {
 				listKeys.push(key);
 			}
 			return listKeys;
-		},
+		};
 
 		/**
 		 * Returns all items.
+		 *
 		 * @virtual
 		 * @public
-		 * @alias getItems
-		 * @memberof AbstractList#
 		 * @returns {Array}
 		 */
-		'virtual public getItems' : function() {
-			return this.items;
-		},
+		AbstractList.prototype.getItems = function() {
+			return this._items;
+		};
 
 		/**
 		 * Returns the number of items that are included.
-		 * 
+		 *
 		 * @public
-		 * @alias size
-		 * @memberof AbstractList#
-		 * @returns {int}
+		 * @returns {Number}
 		 */
-		'public size' : function() {
-			return this.items.length;
-		},
+		AbstractList.prototype.size = function() {
+			return this._items.length;
+		};
 
 		/**
 		 * Verifies whether the list is empty.
+		 *
 		 * @public
-		 * @alias isEmpty
-		 * @memberof AbstractList#
 		 * @returns {boolean}
 		 */
-		'public isEmpty' : function() {
+		AbstractList.prototype.isEmpty = function() {
 			return this.size() == 0;
-		},
-		
+		};
+
 		/**
 		 * Clears this list.
+		 *
 		 * @public
-		 * @alias clear
-		 * @memberof AbstractList#
 		 */
-		'public clear' : function() {
-			this.items = [];
-		}
+		AbstractList.prototype.clear = function() {
+			this._items = [];
+		};
 
-	});
-
-	return AbstractList;
+		return AbstractList;
+	})();
 });

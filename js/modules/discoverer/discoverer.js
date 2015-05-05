@@ -72,9 +72,9 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @param {Widget|Aggregator|Interpreter} _component the component that should be registered 
 		 */
 		'public registerNewComponent' : function(_component) {
-			if (_component.getType() == "Widget" && this.getWidget(_component.getId()) == null) this.widgets.push(_component);
-			if (_component.getType() == "Interpreter" && this.getInterpreter(_component.getId()) == null) this.interpreters.push(_component);
-			if (_component.getType() == "Aggregator" && this.getAggregator(_component.getId()) == null) this.aggregators.push(_component);
+			if (_component.constructor === Widget && this.getWidget(_component.getId()) == null) this.widgets.push(_component);
+			if (_component.constructor === Interpreter && this.getInterpreter(_component.getId()) == null) this.interpreters.push(_component);
+			if (_component.constructor === Aggregator && this.getAggregator(_component.getId()) == null) this.aggregators.push(_component);
 		},
 
 		/**

@@ -33,8 +33,8 @@ require(['configTest'], function() {
 				assert.ok( !list.contains(attributeValue), "Passed!: contains -> false" );
 				
 				//equals
-				assert.ok( list2.equals(list2), "Passed!: equals -> true" );
-				assert.ok( !list.equals(list2), "Passed!: equals -> false" );
+				assert.ok( list2.equalsValuesIn(list2), "Passed!: equals -> true" );
+				assert.ok( !list.equalsValuesIn(list2), "Passed!: equals -> false" );
 				
 				//getSubset
 				var sublist = new contactJS.AttributeList();

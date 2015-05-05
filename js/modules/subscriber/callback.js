@@ -5,42 +5,47 @@
  * @module Callback
  * @fileOverview
  */
-define(['easejs', 'attribute', 'attributeList'],
- 	function(easejs, Attribute, AttributeList){
- 	var Class = easejs.Class;
+define(['attribute', 'attributeList'], function(Attribute, AttributeList){
+	return (function() {
+		/**
+		 * Constructor: Initializes the AttributeTypeList.
+		 *
+		 * @class Callback
+		 * @classdesc Callbacks defines events for sending data to subscribers.
+		 * 			The data to be sent, are specified in the attributeTypeList.
+		 * @requires ParameterList
+		 * @requires Attribute
+		 * @requires AttributeList
+		 * @constructs Callback
+		 */
+		function Callback() {
+			/**
+			 * Name of the Callback (i.e. Update).
+			 * @type {string}
+			 * @private
+			 */
+			this._name = '';
+
+			/**
+			 * Associated Attributes that will be send to Subscriber.
+			 *
+			 * @type {AttributeTypeList}
+			 * @private
+			 */
+			this._attributes = new AttributeList();
+
+			return this;
+		}
+
+		return Callback;
+	})();
  	
 	var Callback = Class('Callback',
 	{
 
-		/**
-		 * @alias name
-		 * @private
-		 * @type {string}
-		 * @memberof Callback#
-		 * @desc Name of the Callback (i.e. Update).
-		 */
-		'private name' : '', 
-		/**
-		 * @alias attributeTypes
-		 * @private
-		 * @type {AttributeTypeList}
-		 * @memberof Callback#
-		 * @desc Associated Attributes that will be send to Subscriber.
-		 */
-		'private attributeTypes' : [], 
+
 		
-		/**
-		 * Constructor: Initializes the AttributeTypeList.
-		 * 
-		 * @class Callback
-		 * @classdesc Callbacks defines events for sending data to subscribers.
-		 * 			The data to be sent, are specified in the attributeTypeList.
-		 * @requires easejs
-		 * @requires ParameterList
-		 * @requires AttributeType
-		 * @requires AttributeTypeList
-		 * @constructs Callback
-		 */
+
 		'public __construct': function()
         {
 			this.attributeTypes = new AttributeList();

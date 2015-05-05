@@ -5,151 +5,125 @@
  * @module Parameter
  * @fileOverview
  */
-define(['easejs'],
-    function(easejs){
-    	var Class = easejs.Class;
-    	/**
+define(function(){
+	return (function() {
+		/**
 		 * @class Parameter
 		 * @classdesc Parameter specifies the Attributes to that these are associated.
-		 * @requires easejs
 		 */
-		var Parameter = Class('Parameter',{
-			
+		function Parameter() {
 			/**
-			 * @alias key
-			 * @protected
-			 * @type {string}
-			 * @memberof Parameter#
-			 */
-			'protected key' : '',
-			/**
-			 * @alias value
-			 * @protected
-			 * @type {string}
-			 * @memberof Parameter#
-			 */
-			'protected value' : '', 
-		
-			/**
-			 * Builder for key.
-			 * 
-			 * @public
-			 * @alias withKey
-			 * @memberof Parameter#
-			 * @param {String} _key Key
-			 * @returns {Parameter}
-			 */
-    		'public withKey' : function(_key){
-    			this.setKey(_key);
-    			return this;
-    		},
-
-    		/**
-			 * Builder for value.
-			 * 
-			 * @public
-			 * @alias withValue
-			 * @memberof Parameter#
-			 * @param {String} _value Value
-			 * @returns {Parameter}
-			 */
-    		'public withValue' : function(_value){
-    			this.setValue(_value);
-    			return this;
-    		},
-
-    		/**
-			 * Returns the key.
-			 * 
-			 * @public
-			 * @alias getKey
-			 * @memberof Parameter#
-			 * @returns {string}
-			 */
-			'public getKey' : function(){
-				return this.key;
-			},
-			
-			/**
-			 * Returns the value.
-			 * 
-			 * @public
-			 * @alias getValue
-			 * @memberof Parameter#
-			 * @returns {string}
-			 */
-			'public getValue' : function(){
-				return this.value;
-			},
-
-			/**
-			 * Sets the key.
-			 * 
-			 * @public
-			 * @alias setKey
-			 * @memberof Parameter#
-			 * @param {string} _key Key
-			 */
-			'public setKey' : function(_key){
-				if(typeof _key === 'string'){
-					this.key = _key;
-                }
-            },
-
-			/**
-			 * Sets the value.
-			 * 
-			 * @public
-			 * @alias setValue
-			 * @memberof Parameter#
-			 * @param {string} _value Value
-			 */
-			'public setValue' : function(_value){
-				if(typeof _value === 'string'){
-					this.value = _value;
-                }
-            },
-			
-			/**
-			 * Compares this instance with the given one.
-			 * 
-			 * @virtual
-			 * @public
-			 * @alias equals
-			 * @memberof Parameter#
-			 * @param {Parameter} _parameter Parameter that should be compared.
-			 * @returns {boolean}
-			 */
-			'public equals' : function(_parameter) {
-				var ignoreValue = false;
-				if(Class.isA(Parameter, _parameter)){
-					if (_parameter.getValue() == "PV_INPUT" || this.getValue() == "PV_INPUT") {
-						return this.getKey() == _parameter.getKey();
-					} else {
-						return this.getKey() == _parameter.getKey() && this.getValue() == _parameter.getValue();
-					}
-                }
-                return false;
-
-			},
-
-			/**
-			 * Returns an identifier that uniquely describes the parameter.
-			 * The identifier can be used to compare two parameters.
-			 * Format: [ParameterName:ParameterValue]
 			 *
-			 * @public
-			 * @alias toString
-			 * @memberof Parameter#
-			 * @returns {String}
-			 * @example [CP_UNIT:KILOMETERS]
+			 * @type {string}
+			 * @private
 			 */
-            'public toString': function() {
-				return "["+this.key+":"+this.value+"]";
-            }
+			this._key = '';
 
-		});
+			/**
+			 *
+			 * @type {string}
+			 * @private
+			 */
+			this._value = '';
 
-        return Parameter;
-	
+			return this;
+		}
+
+		/**
+		 * Builder for key.
+		 *
+		 * @public
+		 * @param {String} key Key
+		 * @returns {Parameter}
+		 */
+		Parameter.prototype.withKey = function(key){
+			this.setKey(key);
+			return this;
+		};
+
+		/**
+		 * Builder for value.
+		 *
+		 * @public
+		 * @param {String} value Value
+		 * @returns {Parameter}
+		 */
+		Parameter.prototype.withValue = function(value){
+			this.setValue(value);
+			return this;
+		};
+
+		/**
+		 * Returns the key.
+		 *
+		 * @public
+		 * @returns {string}
+		 */
+		Parameter.prototype.getKey = function(){
+			return this._key;
+		};
+
+		/**
+		 * Returns the value.
+		 *
+		 * @public
+		 * @returns {string}
+		 */
+		Parameter.prototype.getValue = function(){
+			return this._value;
+		};
+
+		/**
+		 * Sets the key.
+		 *
+		 * @public
+		 * @param {string} newKey Key
+		 */
+		Parameter.prototype.setKey = function(newKey){
+			if(typeof newKey === 'string'){
+				this._key = newKey;
+			}
+		};
+
+		/**
+		 * Sets the value.
+		 *
+		 * @public
+		 * @param {string} newValue Value
+		 */
+		Parameter.prototype.setValue = function(newValue){
+			if(typeof newValue === 'string'){
+				this._value = newValue;
+			}
+		};
+
+		/**
+		 * Compares this instance with the given one.
+		 *
+		 * @param {Parameter} parameter Parameter that should be compared.
+		 * @returns {boolean}
+		 */
+		Parameter.prototype.equals = function(parameter) {
+			if(parameter.constructor === Parameter){
+				if (parameter.getValue() == "PV_INPUT" || this.getValue() == "PV_INPUT") {
+					return this.getKey() == parameter.getKey();
+				} else {
+					return this.getKey() == parameter.getKey() && this.getValue() == parameter.getValue();
+				}
+			}
+			return false;
+		};
+
+		/**
+		 * Returns a description of the parameter.
+		 * Format: [ParameterName:ParameterValue]
+		 *
+		 * @example [CP_UNIT:KILOMETERS]
+		 */
+		Parameter.prototype.toString = function() {
+			return "["+this.getKey()+":"+this.getValue()+"]";
+		};
+
+		return Parameter;
+	})();
 });

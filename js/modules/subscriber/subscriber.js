@@ -336,11 +336,10 @@ define(['easejs', 'attributeList', 'callbackList', 'condition', 'conditionList']
 							&& _subscriber.getAttributesSubset().equals(this.getAttributesSubset())
 							&& _subscriber.getConditions().equals(this.getConditions())){
 					return true;
-				};
-			};
+				}
+			}
 			return false;
-
-		},
+		}
 				
 		});
 

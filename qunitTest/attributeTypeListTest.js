@@ -29,8 +29,8 @@ require(['configTest'], function() {
 				assert.ok( !list.contains(attributeType), "Passed!: contains -> false" );
 				
 				//equals
-				assert.ok( list2.equals(list2), "Passed!: equals -> true" );
-				assert.ok( !list.equals(list2), "Passed!: equals -> false" );
+				assert.ok( list2.equalsTypesIn(list2), "Passed!: equals -> true" );
+				assert.ok( !list.equalsTypesIn(list2), "Passed!: equals -> false" );
 				
 				//getItem
 				assert.ok( list2.getAttributeWithTypeOf(attributeType).equalsTypeOf(attributeType), "Passed!: getItem" );

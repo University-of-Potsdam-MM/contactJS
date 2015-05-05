@@ -60,6 +60,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			}
 
 			Aggregator.prototype = Object.create(Widget.prototype);
+			Aggregator.prototype.constructor = Aggregator;
 
 			/**
 			 * Returns the type of this class, in this case "Aggregator".
@@ -510,7 +511,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
 				var relevantComponents = this._discoverer.getComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
-				console.log("I found "+relevantComponents.length+" component(s) of type "+componentTypes+" that might satisfy the requested attributes.");
+				console.log("I found "+relevantComponents.length+" component(s) that might satisfy the requested attributes.");
 
 				// iterate over all found components
 				for(var index in relevantComponents) {
@@ -574,7 +575,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 										if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
 											this.addOutAttribute(theUnsatisfiedAttribute);
 											console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
-											this.interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
+											this._interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
 										}
 									}
 									unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
