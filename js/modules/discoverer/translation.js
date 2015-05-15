@@ -4,7 +4,7 @@
  * @module Translation
  * @fileOverview
  */
-define('translation', ['easejs', 'attributeType'], function(easejs, AttributeType) {
+define('translation', ['easejs', 'attribute'], function(easejs, Attribute) {
  	var Class = easejs.Class;
  	
 	var Translation = Class('Translation', {
@@ -20,13 +20,15 @@ define('translation', ['easejs', 'attributeType'], function(easejs, AttributeTyp
 		 * @classdesc This class represents a translation tuple.
 		 * 			  It holds two synonymous attribute types.
 		 * @requires easejs
-		 * @requires attributeType
+		 * @requires attribute
 		 * @constructs Translation
 		 */
 		'public __construct' : function(_fromAttributeType, _toAttributeType) {
-			
-			this.fromAttributeType = _fromAttributeType;
-			this.toAttributeType = _toAttributeType;				
+			if (Class.isA(Attribute, _fromAttributeType) && Class.isA(Attribute, _toAttributeType)) 
+			{
+				this.fromAttributeType = _fromAttributeType;
+				this.toAttributeType = _toAttributeType;	
+			}
 		},
 				
 		/**
@@ -35,26 +37,24 @@ define('translation', ['easejs', 'attributeType'], function(easejs, AttributeTyp
 		 * @public
 		 * @alias getSynonym
 		 * @memberof Translation#
-		 * @param {AttributeType} attributeType AttributeType whose synonym is queried
-		 * @returns {AttributeType} The synonym if one exists, otherwise the given attributeType
+		 * @returns {Attribute} The synonymous attribute
 		 */
-		'public getSynonym': function(_attributeType) {
-			
-			return this.hasSynonym(_attributeType) ? this.toAttributeType : _attributeType; 
+		'public getSynonym': function() {			
+			return this.toAttributeType; 
 		},
 	
 		/**
 		 * Look for a translation and return true if one exists.
 		 * 
 		 * @public
-		 * @alias hasSynonym
+		 * @alias translates
 		 * @memberof Translation#
-		 * @param {AttributeType} attributeType AttributeType whose synonym is queried
+		 * @param {Attribute} attribute Attribute whose synonym is queried
 		 * @returns {boolean} 
 		 */
-		'public hasSynonym': function(_attributeType) {
+		'public translates': function(_attribute) {
 			
-			return this.fromAttributeType.equals(_attributeType); 
+			return this.fromAttributeType.equalsTypeOf(_attribute); 
 		}
 		
 		});

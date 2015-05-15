@@ -42,7 +42,7 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @private
 		 * @type {Array}
 		 * @memberof Discoverer#
-		 * @desc List of available attributeType translations (or synonyms).
+		 * @desc List of available attribute translations (or synonyms).
 		 */
 		'private translations' : [],
 
@@ -250,6 +250,24 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 */
 		'public getTranslations' : function() {
 			return this.translations;
+		},
+		
+		
+		'public buildAttribute' : function(name, type, parameterList) {
+			var newAttribute = new Attribute().withName(name).withType(type);
+			while (typeof parameterList != 'undefined' && parameterList.length > 0) 
+			{
+				var param = parameterList.pop();
+				var value = param.pop();
+				var key = param.pop();
+				if (typeof key != 'undefined' && typeof value != 'undefined') 
+					newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
+			}
+			for (translation in this.translations) {
+				if (translation.translates(newAttribute))
+					newAttribute = newAttribute.withSynonym(translation.getSynonym());				
+			}
+			return newAttribute;
 		},
 
 		/***********************************************************************

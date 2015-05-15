@@ -1,8 +1,8 @@
 /**
- * This module represents an AttributeType.
- * AttributeTypes defines name, type (string, double,...) an associated parameter of an attribute.
+ * This module represents an Attribute.
+ * Attributes defines name, type (string, double,...) an associated parameter of an attribute.
  *
- * @module AttributeType
+ * @module Attribute
  * @fileOverview
  */
 define(['easejs',
@@ -23,7 +23,7 @@ define(['easejs',
              * @alias name
              * @protected
              * @type {string}
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @desc Name of the Attribute
              */
             'protected name' : '',
@@ -32,7 +32,7 @@ define(['easejs',
              * @alias type
              * @protected
              * @type {string}
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @desc Defines the type of the Attribute (i.e String, Double,...)
              */
             'protected type' : '',
@@ -41,10 +41,19 @@ define(['easejs',
              * @alias parameterList
              * @protected
              * @type {ParameterList}
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @desc Name of the Attribute
              */
             'protected parameterList' : [],
+            
+			/**
+			 * @alias synonymList
+			 * @protected
+			 * @type {Array}
+			 * @memberof Attribute#
+			 * @desc Alternative names of the Attribute; this is simply an array of strings
+			 */
+			'protected synonymList' : [],
 
             /**
              * @alias value
@@ -66,11 +75,11 @@ define(['easejs',
             /**
              * Constructor: Initializes the ParameterList.
              *
-             * @class AttributeType
-             * @classdesc AttributeTypes defines name, type (string, double,...) an associated parameter of an attribute.
+             * @class Attribute
+             * @classdesc Attributes defines name, type (string, double,...) an associated parameter of an attribute.
              * @requires easejs
              * @requires ParameterList
-             * @constructs AttributeType
+             * @constructs Attribute
              */
             'public __construct' : function(){
                 this.parameterList = new ParameterList();
@@ -81,9 +90,9 @@ define(['easejs',
              *
              * @public
              * @alias withName
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @param {String} _name Name
-             * @returns {AttributeType}
+             * @returns {Attribute}
              */
             'public withName' : function(_name){
                 this.setName(_name);
@@ -95,9 +104,9 @@ define(['easejs',
              *
              * @public
              * @alias withType
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @param {String} _type Type
-             * @returns {AttributeType}
+             * @returns {Attribute}
              */
             'public withType' : function(_type){
                 this.setType(_type);
@@ -108,10 +117,10 @@ define(['easejs',
              * Builder for one parameter.
              *
              * @public
-             * @alias withParameters
-             * @memberof AttributeType#
+             * @alias withParameter
+             * @memberof Attribute#
              * @param {Parameter} _parameter Parameter
-             * @returns {AttributeType}
+             * @returns {Attribute}
              */
             'public withParameter' : function(_parameter){
                 this.addParameter(_parameter);
@@ -123,9 +132,9 @@ define(['easejs',
              *
              * @public
              * @alias withParameters
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @param {(ParameterList|Array)} _parameterList ParameterList
-             * @returns {AttributeType}
+             * @returns {Attribute}
              */
             'public withParameters' : function(_parameterList){
                 this.setParameters(_parameterList);
@@ -160,13 +169,41 @@ define(['easejs',
                 this.setTimestamp(_timestamp);
                 return this;
             },
+            
+    		/**
+			 * Builder for synonyms from single translation, called by discoverer's buildAttribute().
+			 * 
+			 * @public
+			 * @alias withSynonym
+			 * @memberof Attribute#
+			 * @param {Translation} _translation Translations
+			 * @returns {Attribute}
+			 */
+    		'public withSynonym' : function(_translation){
+    			this.addSynonym(_translation);
+    			return this;
+    		},
+            
+    		/**
+			 * Builder for synonyms from translations, called by discoverer's buildAttribute().
+			 * 
+			 * @public
+			 * @alias withSynonyms
+			 * @memberof Attribute#
+			 * @param {Array} _translations Translations
+			 * @returns {Attribute}
+			 */
+    		'public withSynonyms' : function(_translations){
+    			this.setSynonyms(_translations);
+    			return this;
+    		},
 
             /**
              * Returns the name.
              *
              * @public
              * @alias getName
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @returns {string}
              */
             'public getName' : function(){
@@ -178,7 +215,7 @@ define(['easejs',
              *
              * @public
              * @alias getType
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @returns {string}
              */
             'public getType' : function(){
@@ -190,19 +227,31 @@ define(['easejs',
              *
              * @public
              * @alias getParameters
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @returns {ParameterList}
              */
             'public getParameters' : function(){
                 return this.parameterList;
-            },
+            },            
+			
+			/**
+			 * Returns the list of synonyms.
+			 * 
+			 * @public
+			 * @alias getSynonyms
+			 * @memberof Attribute#
+			 */
+			'public getSynonyms' : function(){
+				return this.synonymList;
+			},
+			
 
             /**
              * Sets the name.
              *
              * @public
              * @alias setName
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @param {string} _name Name
              */
             'public setName' : function(_name){
@@ -216,7 +265,7 @@ define(['easejs',
              *
              * @public
              * @alias setType
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @param {string} _type Type
              */
             'public setType' : function(_type){
@@ -230,7 +279,7 @@ define(['easejs',
              *
              * @public
              * @alias addParameter
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @param {Parameter} _parameter Parameter
              */
             'public addParameter' : function(_parameter){
@@ -242,7 +291,7 @@ define(['easejs',
              *
              * @public
              * @alias setParameters
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @param {ParameterList} _parameters ParameterList
              */
             'public setParameters' : function(_parameters){
@@ -308,6 +357,35 @@ define(['easejs',
             'public getTimestamp' : function() {
                 return this.timestamp;
             },
+            
+			/**
+			 * Adds a list of synonyms.
+			 * 
+			 * @public
+			 * @alias setSynonyms
+			 * @memberof Attribute#
+			 * @param {Array} _synonyms Array of synonyms
+			 */
+			'public setSynonyms' : function(_synonyms){
+				for (synIndex in _synonyms) {
+					this.addSynonym(_synonyms[synIndex]);
+				}
+			},
+			
+            /**
+             * Adds one synonym.
+             *
+             * @public
+             * @alias addSynonym
+             * @memberof Attribute#
+             * @param {Attribute} _synonym 
+             */
+            'public addSynonym' : function(_synonym){
+            	if (Class.isA(Attribute, _synonym))
+            		this.synonymList.push(_synonym.getName());
+            	else if (typeof _synonym == 'string')
+            		this.synonymList.push(_synonym);            		
+            },
 
             /**
              *
@@ -363,7 +441,7 @@ define(['easejs',
              *
              * @public
              * @alias toString
-             * @memberof AttributeType#
+             * @memberof Attribute#
              * @returns {String}
              * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
              */
