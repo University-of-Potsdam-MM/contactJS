@@ -4,8 +4,8 @@
  * @module Discoverer
  * @fileOverview
  */
-define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], function(easejs,
-		AttributeList, Widget, Interpreter, Aggregator) {
+define([ 'easejs', 'attribute', 'attributeList', 'parameter', 'translation', 'widget', 'interpreter', 'aggregator' ], function(easejs,
+		Attribute, AttributeList, Parameter, Translation, Widget, Interpreter, Aggregator) {
 	var Class = easejs.Class;
 	
 	var Discoverer = Class('Discoverer', {
@@ -52,10 +52,12 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 		 * @class Discoverer
 		 * @classdesc The Discoverer handles requests for components and attributes. 
 		 * @requires easejs
-		 * @requires AttributeList
+		 * @param _widgets
+		 * @param _interpreters
+		 * @param _translations
 		 * @constructs Discoverer
 		 */
-		'public __construct' : function(_translations) {
+		'public __construct' : function(_widgets, _interpreters, _translations) {
 			this.translations = _translations;
 		},
 
@@ -252,9 +254,20 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 			return this.translations;
 		},
 		
-		
+		/**
+		 * Returns a newly built attribute.
+		 * 
+		 * @public
+		 * @alias buildAttribute
+		 * @memberof Discoverer#
+		 * @param {string} name the proposed name of the will-be attribute
+		 * @param {string} type its type
+         * @param {Array} parameterList an array of arrays with two elements each: key and value
+		 * @returns {Attribute}
+		 */
 		'public buildAttribute' : function(name, type, parameterList) {
 			var newAttribute = new Attribute().withName(name).withType(type);
+			
 			while (typeof parameterList != 'undefined' && parameterList.length > 0) 
 			{
 				var param = parameterList.pop();
@@ -263,7 +276,8 @@ define([ 'easejs', 'attributeList', 'widget', 'interpreter', 'aggregator' ], fun
 				if (typeof key != 'undefined' && typeof value != 'undefined') 
 					newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
 			}
-			for (translation in this.translations) {
+			for (index in this.translations) {
+				var translation = this.translations[index];
 				if (translation.translates(newAttribute))
 					newAttribute = newAttribute.withSynonym(translation.getSynonym());				
 			}

@@ -240,6 +240,7 @@ define(['easejs',
 			 * @public
 			 * @alias getSynonyms
 			 * @memberof Attribute#
+             * @returns {Array}
 			 */
 			'public getSynonyms' : function(){
 				return this.synonymList;
@@ -409,7 +410,10 @@ define(['easejs',
              */
             'public equalsTypeOf' : function(_attribute) {
                 if (Class.isA(Attribute, _attribute)) {
-                    if (this.getName() == _attribute.getName() && this.getType() == _attribute.getType() && this.getParameters().equals(_attribute.getParameters())) {
+                	var name = _attribute.getName();
+                    if ((this.getName() == name || this.getSynonyms().indexOf(name) != -1) && 
+                    		this.getType() == _attribute.getType() && 
+                    		this.getParameters().equals(_attribute.getParameters())) {
                         return true;
                     }
                 }
