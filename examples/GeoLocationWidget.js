@@ -16,18 +16,13 @@ define(['contactJS'], function (contactJS) {
 		}
 
 		GeoLocationWidget.prototype = Object.create(contactJS.Widget.prototype);
+		GeoLocationWidget.prototype.constructor = GeoLocationWidget;
 
 		GeoLocationWidget.prototype._initOutAttributes = function() {
-			var latitude = new contactJS.Attribute()
-				.withName('latitude')
-				.withType('double');
-
-			var longitude = new contactJS.Attribute()
-				.withName('longitude')
-				.withType('double');
-
-			this.addOutAttribute(latitude);
-			this.addOutAttribute(longitude);
+			this._setOutAttributes([
+				new contactJS.Attribute().withName('latitude').withType('double'),
+				new contactJS.Attribute().withName('longitude').withType('double')
+			]);
 		};
 
 		GeoLocationWidget.prototype._initConstantOutAttributes = function() {
@@ -55,15 +50,6 @@ define(['contactJS'], function (contactJS) {
 			} else {
 				//TODO: handle error
 				self._sendResponse(response, callback);
-			}
-		};
-
-		GeoLocationWidget.prototype._sendResponse = function(response, callback) {
-			this.putData(response);
-			this.notify();
-
-			if (callback && typeof(callback) == 'function') {
-				callback();
 			}
 		};
 

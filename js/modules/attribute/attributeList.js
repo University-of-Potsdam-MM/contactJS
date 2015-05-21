@@ -28,12 +28,12 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
          * Adds the specified item to the itemList.
          *
          * @public
-         * @param {AttributeType} attribute AttributeType
+         * @param {Attribute} attribute AttributeType
          * @param {boolean} multipleInstances
          */
         AttributeList.prototype.put = function(attribute, multipleInstances) {
             multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
-            if (attribute.constructor === this._type) {
+            if (attribute instanceof this._type) {
                 if (multipleInstances || !(this.containsTypeOf(attribute))) {
                     this._items.push(attribute);
                 } else {
@@ -172,7 +172,7 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
                 var theAttribute = list[i];
                 if (theAttribute.constructor === Attribute) {
                     var responseAttribute = this.getAttributeWithTypeOf(theAttribute);
-                    if (typeof responseAttribute != "NO_VALUE") {
+                    if (typeof responseAttribute != "undefined") {
                         response.put(responseAttribute);
                     }
                 }

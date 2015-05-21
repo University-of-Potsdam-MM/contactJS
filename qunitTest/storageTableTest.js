@@ -3,7 +3,6 @@ require(['configTest'], function() {
 	         	function(contactJS){
 		
 			QUnit.asyncTest( "Storage Tables", function( assert ) {
-
 				var discoverer = new contactJS.Discoverer();
 				//initializes the test environment
 				var testAggregator = new contactJS.Aggregator(discoverer, [
@@ -20,15 +19,15 @@ require(['configTest'], function() {
 				
 				var data = testAggregator.getCurrentData();
 				assert.equal( data.size(), 2, "Passed!: two available attributes" );
-			    
-				var assertion = function(){
+
+				testAggregator.queryTables(function() {
 					var tables = testAggregator.getStorageOverview();
 
 					assert.notEqual(jQuery.inArray('latitude', tables), "-1", "Passed!: table latitude exists" );
 					assert.notEqual(jQuery.inArray('longitude', tables), "-1", "Passed!: table longitude exists" );
-				};
 
-				testAggregator.queryTables(function () {assertion(); QUnit.start();});				
+					QUnit.start();
+				});
 			});
 	});
 });

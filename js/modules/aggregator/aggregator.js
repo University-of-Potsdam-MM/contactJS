@@ -29,7 +29,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				 * List of subscribed widgets referenced by ID.
 				 *
 				 * @protected
-				 * @type {Array.<Widget>}
+				 * @type {Array.<String>}
 				 */
 				this._widgets = [];
 
@@ -79,8 +79,10 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @protected
 			 * @param {Array.<String>} widgetIds List of Widget IDs
 			 */
-			Aggregator.prototype._setWidgets = function(widgetIds){
-				this._widgets = widgetIds;
+			Aggregator.prototype._setWidgets = function(widgetIds) {
+				if (typeof widgetIds == "array") {
+					this._widgets = widgetIds;
+				}
 			};
 
 			/**
@@ -90,7 +92,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {String|Widget} widgetIdOrWidget Widget ID
 			 */
 			Aggregator.prototype.addWidget = function(widgetIdOrWidget){
-				if (widgetIdOrWidget.constructor === Widget) {
+				if (widgetIdOrWidget instanceof Widget) {
 					this._widgets.push(widgetIdOrWidget.getId());
 				} else if(typeof widgetIdOrWidget == "string") {
 					this._widgets.push(widgetIdOrWidget);
@@ -251,7 +253,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param conditions
 			 */
 			Aggregator.prototype._subscribeTo = function(widget, callbacks, subSet, conditions){
-				if(widget.constructor === Widget){
+				if(widget instanceof Widget){
 					var subscriber = new Subscriber().withSubscriberId(this.id).
 						withSubscriberName(this.name).
 						withSubscriptionCallbacks(callbacks).
@@ -291,13 +293,13 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {CallbackList} callbackList required Callbacks
 			 */
 			Aggregator.prototype.addWidgetSubscription = function(widgetIdOrWidget, callbackList){
-				if (widgetIdOrWidget.constructor === Widget) {
-					if (!callbackList || callbackList.constructor !== CallbackList) {
+				if (typeof widgetIdOrWidget != "string" && widgetIdOrWidget instanceof Widget && !(widgetIdOrWidget instanceof Aggregator)) {
+					if (!callbackList || callbackList instanceof CallbackList) {
 						callbackList = widgetIdOrWidget.getCallbackList();
 					}
 					widgetIdOrWidget = widgetIdOrWidget.getId();
 				}
-				if(typeof widgetIdOrWidget == "string" && callbackList.constructor === CallbackList) {
+				if(typeof widgetIdOrWidget == "string" && callbackList instanceof CallbackList) {
 					/** @type {?Widget} */
 					var theWidget = this._discoverer.getComponent(widgetIdOrWidget);
 					if (theWidget) {
@@ -340,18 +342,18 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 *
 			 * @override
 			 * @public
-			 * @param {(AttributeList|Array)}  _data data that shall be input
+			 * @param {(AttributeList|Array)} attributeListOrArray data that shall be input
 			 */
 			Aggregator.prototype.putData = function(attributeListOrArray){
 				var list = [];
 				if(attributeListOrArray instanceof Array){
 					list = attributeListOrArray;
-				} else if (attributeListOrArray.constructor === AttributeList) {
+				} else if (attributeListOrArray instanceof AttributeList) {
 					list = attributeListOrArray.getItems();
 				}
 				for(var i in list){
 					var theAttribute = list[i];
-					if(theAttribute.constructor === Attribute && this._isOutAttribute(theAttribute)){
+					if(theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)){
 						this.addOutAttribute(theAttribute);
 						if(this._db){
 							this._store(theAttribute);
@@ -371,7 +373,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 */
 			Aggregator.prototype.interpretData = function(interpreterId, inAttributes, outAttributes, callback){
 				var interpreter = this._discoverer.getComponent(interpreterId);
-				if (interpreter.constructor === Interpreter) {
+				if (interpreter instanceof Interpreter) {
 					interpreter.callInterpreter(inAttributes, outAttributes, callback);
 				}
 			};
@@ -524,7 +526,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 						var outAttributes = theComponent.getOutAttributes().getItems();
 
 						// if component is a widget and it wasn't added before, subscribe to its callbacks
-						if (theComponent.constructor === Widget) {
+						if (theComponent instanceof Widget) {
 							console.log("It's a widget.");
 
 							this.addWidgetSubscription(theComponent);
@@ -536,7 +538,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 								console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
 								unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
 							}
-						} else if (theComponent.constructor === Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
+						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
 							console.log("It's an interpreter.");
 
 							var inAttributes = theComponent.getInAttributes().getItems();
@@ -646,31 +648,35 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * Let's all connected interpreters interpret data.
 			 *
 			 * @public
-			 * @param {function} _callback The callback to query after all the interpreters did interpret data.
+			 * @param {function} callback The callback to query after all the interpreters did interpret data.
 			 */
 			Aggregator.prototype.queryReferencedInterpreters = function(callback) {
+				/**
+				 *
+				 * @type {Aggregator}
+				 */
 				var self = this;
 				var completedQueriesCounter = 0;
 
-				if (this.interpretations.length > 0) {
-					for (var index in this.interpretations) {
-						var theInterpretation = this.interpretations[index];
+				if (this._interpretations.length > 0) {
+					for (var index in this._interpretations) {
+						var theInterpretation = this._interpretations[index];
 						var theInterpreterId = theInterpretation.interpreterId;
 						var interpretationInAttributeValues = this.getOutAttributes(theInterpretation.inAttributeTypes);
 						var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
 
-						self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(_interpretedData) {
-							for (var j in _interpretedData.getItems()) {
-								var theInterpretedData = _interpretedData.getItems()[j];
+						self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(interpretedData) {
+							for (var j in interpretedData.getItems()) {
+								var theInterpretedData = interpretedData.getItems()[j];
 
 								self.addOutAttribute(theInterpretedData);
-								if (self.db){
-									self.store(theInterpretedData);
+								if (self._db){
+									self._store(theInterpretedData);
 								}
 							}
 
 							completedQueriesCounter++;
-							if (completedQueriesCounter == self.interpretations.length) {
+							if (completedQueriesCounter == self._interpretations.length) {
 								if (callback && typeof(callback) == 'function') {
 									callback(self.getOutAttributes());
 								}

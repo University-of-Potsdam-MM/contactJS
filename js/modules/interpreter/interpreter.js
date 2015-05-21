@@ -39,7 +39,7 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 				/**
 				 * Types of all attributes that can be handled.
 				 *
-				 * @protected
+				 * @private
 				 * @type {AttributeList}
 				 */
 				this._inAttributes = new AttributeList();
@@ -47,7 +47,7 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 				/**
 				 * Types of all attributes that will be returned.
 				 *
-				 * @protected
+				 * @private
 				 * @type {AttributeList}
 				 */
 				this._outAttributes = new AttributeList();
@@ -352,7 +352,7 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 
 			/**
 			 *
-			 * @returns {boolean}
+			 * @returns {AttributeList}
 			 */
 			Interpreter.prototype.getOutAttributesWithInputParameters = function() {
 				return this._outAttributes.getAttributesWithInputParameters();

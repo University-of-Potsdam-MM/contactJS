@@ -4,182 +4,145 @@
  * @module InterpreterResult
  * @fileOverview
  */
-define(['easejs', 'attributeList'],
-    function(easejs, AttributeList){
-    	var Class = easejs.Class;
-    	
-		var InterpreterResult = Class('InterpreterResult',{
-					
+define(['attributeList'], function(AttributeList){
+	return (function() {
+		/**
+		 * Constructor: Initializes the in- and outAttributes.
+		 *
+		 * @class InterpreterResult
+		 * @classdesc Contains the interpreted data, inclusive the input for the interpretation.
+		 * @requires AttributeList
+		 */
+		function InterpreterResult() {
 			/**
-			 * @alias timestamp
-			 * @private
-			 * @type {date}
-			 * @memberof InterpreterResult#
-			 * @desc Time of the interpretation.
-			 */
-			'private timestamp' : '',
-			/**
-			 * @alias outAttributes
-			 * @private
-			 * @type {AttributeValueList}
-			 * @memberof InterpreterResult#
-			 * @desc Interpreted data.
-			 */
-			'private outAttributes' : [],
-				
-			/**
-			 * @alias inAttributes
-			 * @private
-			 * @type {AttributeValueList}
-			 * @memberof InterpreterResult#
-			 * @desc Data, which were used for the interpretation.
-			 */
-			'private inAttributes' : [],
-			
-			/**
-			 * Constructor: Initializes the in- and outAttributes.
+			 * Time of the interpretation.
 			 *
-			 * @class InterpreterResult
-			 * @classdesc Contains the interpreted data, inclusive the input for the interpretation.
-			 * @requires easejs
-			 * @requires AttributeValueList
+			 * @type {date}
+			 * @private
 			 */
-			'public __construct' : function() {
-				this.inAttributes = new AttributeValueList();
-				this.outAttributes = new AttributeValueList();
-			},
-			
-    		/**
-			 * Builder for timestamp.
-			 * 
-			 * @public
-			 * @alias withTimestamp
-			 * @memberof InterpreterResult#
-			 * @param {String} _timestamp timestamp
-			 * @returns {InterpreterResult}
-			 */
-    		'public withTimestamp' : function(_timestamp){
-    			this.setTimestamp(_timestamp);
-    			return this;
-    		},
-
-    		/**
-			 * Builder for outAttributes.
-			 * 
-			 * @public
-			 * @alias withOutAttributes
-			 * @memberof InterpreterResult#
-			 * @param {(AttributeValueList|Array)} _outAttributes values
-			 * @returns {InterpreterResult}
-			 */
-    		'public withOutAttributes' : function(_outAttributes){
-    			this.setOutAttributes(_outAttributes);
-    			return this;
-    		},
-    		
-    		/**
-			 * Builder for inAttributes.
-			 * 
-			 * @public
-			 * @alias withInAttributes
-			 * @memberof InterpreterResult#
-			 * @param {(AttributeValueList|Array)} _inAttributes values
-			 * @returns {InterpreterResult}
-			 */
-    		'public withInAttributes' : function(_inAttributes){
-    			this.setInAttributes(_inAttributes);
-    			return this;
-    		},
-    		
-			
-			/**
-			 * Returns the interpretation time.
-			 * 
-			 * @public
-			 * @alias getTimestamp
-			 * @memberof InterpreterResult#
-			 * @returns {date}
-			 */
-			'public getTimestamp' : function(){
-				return this.timestamp;
-			},
-			
-			/**
-			 * Returns the interpreted attributes.
-			 * 
-			 * @public
-			 * @alias getOutAttributes
-			 * @memberof InterpreterResult#
-			 * @returns {AttributeValueList}
-			 */
-			'public getOutAttributes' : function(){
-				return this.outAttributes;
-			},
-			
-			/**
-			 * Returns the inAttributes.
-			 * 
-			 * @public
-			 * @alias getInAttributes
-			 * @memberof InterpreterResult#
-			 * @returns {AttributeValueList}
-			 */
-			'public getInAttributes' : function(){
-				return this.inAttributes;
-			},
+			this._timestamp = '';
 
 			/**
-    		 * Sets the interpretation time.
-    		 * 
-    		 * @public
-    		 * @alias setTimestamp
-    		 * @memberof InterpreterResult#
-    		 * @param {date} _timestamp interpretation time
-    		 */
-			'public setTimestamp' : function(_timestamp){
-				if(_timestamp instanceof Date){
-					this.type = _timestamp;
-				}
-			},
-			
+			 * Interpreted data.
+			 *
+			 * @type {AttributeList}
+			 * @private
+			 */
+			this._outAttributes = new AttributeList();
+
 			/**
-    		 * Sets the interpreted values.
-    		 * 
-    		 * @public
-    		 * @alias setOutAttributes
-    		 * @memberof InterpreterResult#
-    		 * @param {(AttributeValueList|Array)} _outAttributes retrieved attributes
-    		 */
-			'public setOutAttributes' : function(_outAttributes){
-				if (_outAttributes instanceof Array) {
-					for(var i in _outAttributes){
-						this.outAttributes.put(_outAttributes[i]);
-					}
-				} else if (Class.isA(AttributeValueList, _outAttributes)) {
-					this.outAttributes = _outAttributes;
-				}
-			},
-			
-			/**
-    		 * Sets the inAttributes.
-    		 * 
-    		 * @public
-    		 * @alias setInAttributes
-    		 * @memberof InterpreterResult#
-    		 * @param {(AttributeValueList|Array)} _inAttributes inAttributes
-    		 */
-			'public setInAttributes' : function(_inAttributes){
-				if (_inAttributes instanceof Array) {
-					for(var i in _outAttributes){
-						this.inAttributes.put(_inAttributes[i]);
-					}
-				} else if (Class.isA(AttributeValueList, _inAttributes)) {
-					this.inAttributes = _inAttributes;
-				}
+			 * Data, which were used for the interpretation.
+			 *
+			 * @type {AttributeList}
+			 * @private
+			 */
+			this._inAttributes = new AttributeList();
+
+
+			return this;
+		}
+
+		/**
+		 * Builder for timestamp.
+		 *
+		 * @param {String} timestamp timestamp
+		 * @returns {InterpreterResult}
+		 */
+		InterpreterResult.prototype.withTimestamp = function(timestamp) {
+			this.setTimestamp(timestamp);
+			return this;
+		};
+
+		/**
+		 * Builder for outAttributes.
+		 *
+		 * @param {(AttributeList|Array)} attributeListOrArray values
+		 * @returns {InterpreterResult}
+		 */
+		InterpreterResult.prototype.withOutAttributes = function(attributeListOrArray){
+			this.setOutAttributes(attributeListOrArray);
+			return this;
+		};
+
+		/**
+		 * Builder for inAttributes.
+		 *
+		 * @param {(AttributeList|Array)} attributeListOrArray values
+		 * @returns {InterpreterResult}
+		 */
+		InterpreterResult.prototype.withInAttributes = function(attributeListOrArray) {
+			this.setInAttributes(attributeListOrArray);
+			return this;
+		};
+
+		/**
+		 * Returns the interpretation time.
+		 *
+		 * @returns {date}
+		 */
+		InterpreterResult.prototype.getTimestamp = function() {
+			return this._timestamp;
+		};
+
+		/**
+		 * Returns the interpreted attributes.
+		 *
+		 * @returns {AttributeList}
+		 */
+		InterpreterResult.prototype.getOutAttributes = function(){
+			return this._outAttributes;
+		};
+
+		/**
+		 * Returns the inAttributes.
+		 *
+		 * @returns {AttributeList}
+		 */
+		InterpreterResult.prototype.getInAttributes = function(){
+			return this._inAttributes;
+		};
+
+		/**
+		 * Sets the interpretation time.
+		 *
+		 * @param {date} timestamp interpretation time
+		 */
+		InterpreterResult.prototype.setTimestamp = function(timestamp){
+			if(timestamp instanceof Date){
+				this._timestamp = timestamp;
 			}
+		};
 
-		});
+		/**
+		 * Sets the interpreted values.
+		 *
+		 * @param {(AttributeList|Array)} attributeListOrArray retrieved attributes
+		 */
+		InterpreterResult.prototype.setOutAttributes = function(attributeListOrArray){
+			if (attributeListOrArray instanceof Array) {
+				for(var i in attributeListOrArray){
+					this.outAttributes.put(attributeListOrArray[i]);
+				}
+			} else if (attributeListOrArray.constructor === AttributeValueList) {
+				this.outAttributes = attributeListOrArray.getItems();
+			}
+		};
+
+		/**
+		 * Sets the inAttributes.
+		 *
+		 * @param {(AttributeList|Array)} attributeListOrArray inAttributes
+		 */
+		InterpreterResult.prototype.setInAttributes = function(attributeListOrArray){
+			if (attributeListOrArray instanceof Array) {
+				for(var i in attributeListOrArray){
+					this.inAttributes.put(attributeListOrArray[i]);
+				}
+			} else if (attributeListOrArray.constructor === AttributeValueList) {
+				this.inAttributes = attributeListOrArray.getItems();
+			}
+		};
 
 		return InterpreterResult;
-	
+	});
 });
