@@ -2,22 +2,14 @@
  * This module represents a Subscriber.
  * 
  * @module Subscriber
- * @fileOverview
  */
 define(['attributeList', 'callbackList', 'condition', 'conditionList'],
  	function(AttributeList, CallbackList, Condition, ConditionList)  {
 		return (function() {
 			/**
-			 * Constructor: Initializes the subscriptionCallbacks, subscriptionCallbacks
-			 * 				and conditions.
+			 * Constructor: Initializes the subscriptionCallbacks, subscriptionCallbacks and conditions.
 			 *
-			 * @class Subscriber
-			 * @classdesc Subscriber defines the name and the ID of the Subscriber and the Callbacks
-			 * 			 (with possible restrictions) what the subscriber is interested in.
-			 * @requires AttributeList
-			 * @requires CallbackList
-			 * @requires Condition
-			 * @requires ConditionList
+			 * @classdesc Subscriber defines the name and the ID of the Subscriber and the Callbacks (with possible restrictions) what the subscriber is interested in.
 			 * @constructs Subscriber
 			 */
 			function Subscriber() {

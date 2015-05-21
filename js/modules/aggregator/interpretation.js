@@ -1,6 +1,3 @@
-/**
- * Created by tobias on 15.04.15.
- */
 define(['interpreter', 'attributeList'], function(Interpreter, AttributeList) {
     return (function () {
         /**
@@ -9,7 +6,7 @@ define(['interpreter', 'attributeList'], function(Interpreter, AttributeList) {
          * @param {AttributeList} inAttributes
          * @param {AttributeList} outAttributes
          * @returns {Interpretation}
-         * @constructor
+         * @constructs Interpretation
          */
         function Interpretation(interpreterId, inAttributes, outAttributes) {
             /**

@@ -1,19 +1,11 @@
-/**
- * This module representing a Context Discoverer.
- * 
- * @module Discoverer
- * @fileOverview
- */
 define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
 	function(AttributeList, Widget, Interpreter, Aggregator) {
 		return (function() {
 			/**
 			 * Constructor: All known components given in the associated functions will be registered as startup.
 			 *
-			 * @class Discoverer
 			 * @classdesc The Discoverer handles requests for components and attributes.
-			 * @requires AttributeList
-			 * @constructor
+			 * @constructs Discoverer
 			 */
 			function Discoverer() {
 				/**

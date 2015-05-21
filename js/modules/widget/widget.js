@@ -2,7 +2,6 @@
  * This module representing a Context Widget.
  * 
  * @module Widget
- * @fileOverview
  */
 define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
 	function(MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
@@ -13,17 +12,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * that are specified in the provided functions.
 			 *
 			 * @abstract
-			 * @class Widget
 			 * @classdesc The Widget handles the access to sensors.
-			 * @requires MathUuid
-			 * @requires Callback
-			 * @requires CallbackList
-			 * @requires Attribute
-			 * @requires AttributeList
-			 * @requires ConditionList
-			 * @requires Subscriber
-			 * @requires SubscriberList
-			 * @requires Discoverer
 			 * @constructs Widget
 			 */
 			function Widget(discoverer, attributes) {
@@ -32,6 +21,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 				/**
 				 * Name of the Widget.
 				 *
+				 * @public
 				 * @type {string}
 				 */
 				this.name = 'Widget';

@@ -1,15 +1,14 @@
 /**
- * This module represents the conditionMethod Equals. 
+ * This module represents the conditionMethod UnEquals.
  * 
- * @module UnEquals
- * @fileOverview
+ * @module Condition
  */
 define(['conditionMethod'], function(ConditionMethod){
 	return (function() {
 		/**
-		 * @class UnEquals
 		 * @implements {ConditionMethod}
 		 * @classdesc This class is the conditionMethod equals. It compares the values of two attributes.
+		 * @constructs UnEquals
 		 */
 		function UnEquals() {
 			ConditionMethod.call(this);

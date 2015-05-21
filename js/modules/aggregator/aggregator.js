@@ -1,28 +1,12 @@
-/**
- * This module representing a Context Aggregator. 
- * It aggregates data from multiple widgets.
- * 
- * @module Aggregator
- * @fileOverview
- */
 define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
  	function(MathUuid, Widget, Attribute, AttributeList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
 		return (function() {
 			/**
-			 * Constructor: Generates the id and initializes the Aggregator.
+			 * Generates the id and initializes the Aggregator.
 			 *
-			 * @class Aggregator
-			 * @extends Widget
 			 * @classdesc The Widget handles the access to sensors.
-			 * @requires MathUuid
-			 * @requires CallbackList
-			 * @requires Attribute
-			 * @requires AttributeList
-			 * @requires Subscriber
-			 * @requires SubscriberList
-			 * @requires Storage
-			 * @requires Widget
 			 * @constructs Aggregator
+			 * @extends Widget
 			 */
 			function Aggregator(discoverer, attributes) {
 				/**
@@ -53,10 +37,11 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				/**
 				 * Name of the Aggregator.
 				 *
-				 * @public
 				 * @type {string}
 				 */
 				this.name = 'Aggregator';
+
+				return this;
 			}
 
 			Aggregator.prototype = Object.create(Widget.prototype);
@@ -144,6 +129,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * Retrieves all ConstantAttributes of the specified widgets.
 			 *
 			 * @protected
+			 * @override
 			 */
 			Aggregator.prototype._initConstantOutAttributes = function() {
 				if(this._widgets.length > 0){

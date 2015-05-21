@@ -2,20 +2,15 @@
  * This module represents a Callback.
  * Callbacks defines events for sending data to subscribers
  * 
- * @module Callback
- * @fileOverview
+ * @module Subscriber
  */
 define(['attribute', 'attributeList'], function(Attribute, AttributeList){
 	return (function() {
 		/**
 		 * Constructor: Initializes the AttributeTypeList.
 		 *
-		 * @class Callback
-		 * @classdesc Callbacks defines events for sending data to subscribers.
-		 * 			The data to be sent, are specified in the attributeTypeList.
-		 * @requires ParameterList
-		 * @requires Attribute
-		 * @requires AttributeList
+		 * @classdesc Callbacks defines events for sending data to subscribers. The data to be sent, are specified in the attributeTypeList.
+		 * @returns {Callback}
 		 * @constructs Callback
 		 */
 		function Callback() {

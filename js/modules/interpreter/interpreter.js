@@ -1,22 +1,11 @@
-/**
- * This module represents an Context Interpreter.
- * 
- * @module Interpreter
- * @fileOverview
- */
 define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 	function(MathUuid, Attribute, AttributeList, InterpreterResult) {
 		return (function() {
 			/**
-			 * Constructor: Generates the id and initializes the (in and out) types and values.
+			 * Generates the id and initializes the (in and out) types and values.
 			 *
 			 * @abstract
-			 * @class Interpreter
 			 * @classdesc The Widget handles the access to sensors.
-			 * @requires easejs
-			 * @requires MathUuid
-			 * @requires Attribute
-			 * @requires AttributeList
 			 * @constructs Interpreter
 			 */
 			function Interpreter(discoverer) {

@@ -1,18 +1,8 @@
-/**
- * This module represents a RetrievalResult.
- * It contains the data that were retrieved from the database
- * 
- * @module RetrievalResult
- * @fileOverview
- */
 define(["attributeList"], function(AttributeList){
 	return (function() {
 		/**
-		 * @class RetrievalResult
 		 * @classdesc Contains the data that were retrieved from the database.
-		 * @requires easejs
-		 * @returns {RetrievalResult}
-		 * @constructor
+		 * @constructs RetrievalResult
 		 */
 		function RetrievalResult() {
 			/**

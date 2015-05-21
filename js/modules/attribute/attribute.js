@@ -1,25 +1,19 @@
 /**
- * This module represents an AttributeType.
- * AttributeTypes defines name, type (string, double,...) an associated parameter of an attribute.
- *
- * @module AttributeType
- * @fileOverview
+ * @module Attribute
  */
-define(['parameterList'], function(ParameterList){
+define(['parameterList'], function(ParameterList) {
     return (function() {
         /**
-         * Constructor: Initializes the ParameterList.
+         * Initializes the Attribute.
          *
-         * @class Attribute
          * @classdesc Attribute defines name, type (string, double,...) an associated parameter of an attribute.
-         * @requires ParameterList
          * @constructs Attribute
          */
         function Attribute() {
             /**
              * Name of the Attribute.
              *
-             * @type {string}
+             * @type {String}
              * @private
              */
             this._name = '';
@@ -60,7 +54,7 @@ define(['parameterList'], function(ParameterList){
         /**
          * Builder for name.
          *
-         * @param {String} name Name
+         * @param {String} name The attribute name to build with.
          * @returns {Attribute}
          */
         Attribute.prototype.withName = function(name){
@@ -71,7 +65,7 @@ define(['parameterList'], function(ParameterList){
         /**
          * Builder for type.
          *
-         * @param {String} type Type
+         * @param {String} type The attribute type to build with.
          * @returns {Attribute}
          */
         Attribute.prototype.withType = function(type){
@@ -82,7 +76,7 @@ define(['parameterList'], function(ParameterList){
         /**
          * Builder for one parameter.
          *
-         * @param {Parameter} parameter Parameter
+         * @param {Parameter} parameter The parameter to build with.
          * @returns {Attribute}
          */
         Attribute.prototype.withParameter = function(parameter){

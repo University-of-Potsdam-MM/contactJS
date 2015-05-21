@@ -1,15 +1,8 @@
-/**
- * This module represents a Parameter.
- * Parameter specifies the Attributes to which they are associated.
- * 
- * @module Parameter
- * @fileOverview
- */
 define(function(){
 	return (function() {
 		/**
-		 * @class Parameter
 		 * @classdesc Parameter specifies the Attributes to that these are associated.
+		 * @constructs Parameter
 		 */
 		function Parameter() {
 			/**

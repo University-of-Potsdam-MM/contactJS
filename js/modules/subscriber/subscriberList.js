@@ -2,20 +2,21 @@
  * This module represents a SubscriberList. It is a subclass of AbstractList.
  * 
  * @module SubscriberList
- * @fileOverview
  */
 define(['abstractList', 'subscriber'], function(AbstractList, Subscriber){
 	return (function() {
 		/**
-		 * @class SubscriberList
 		 * @classdesc This class represents a list for Subscriber.
 		 * @extends AbstractList
-		 * @requires AbstractList
-		 * @requires Subscriber
+		 * @constructs SubscriberList
 		 */
 		function SubscriberList() {
 			AbstractList.call(this);
 
+			/**
+			 * @type {Subscriber}
+			 * @private
+			 */
 			this._type = Subscriber;
 
 			return this;
@@ -25,7 +26,6 @@ define(['abstractList', 'subscriber'], function(AbstractList, Subscriber){
 		SubscriberList.prototype.constructor = SubscriberList;
 
 		/**
-		 *
 		 * @param {String} subscriberId
 		 */
 		SubscriberList.prototype.removeSubscriberWithId = function(subscriberId) {

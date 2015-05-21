@@ -2,6 +2,7 @@
 	"tags": {
 		"allowUnknownTags" : true
 	},
+	"plugins": ["plugins/markdown"],
 	"templates": {
 		"cleverLinks": true,
 		"monospaceLinks": true,
@@ -24,5 +25,10 @@
 			"keyword": ""
 		},
 		"linenums": false
+	},
+	"markdown": {
+		"parser": "gfm",
+		"hardwrap": true,
+		"tags": ["examples"]
 	}
 }

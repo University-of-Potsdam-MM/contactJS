@@ -1,21 +1,18 @@
-/**
- * This module represents a ParameterList. It is a subclass of AbstractList.
- * 
- * @module ParameterList
- * @fileOverview
- */
 define(['abstractList', 'parameter'], function(AbstractList, Parameter) {
 	return (function() {
 		/**
-		 * @class ParameterList
+		 *
 		 * @classdesc This class represents a list for Parameter.
 		 * @extends AbstractList
-		 * @requires AbstractList
-		 * @requires Parameter
+		 * @constructs ParameterList
 		 */
 		function ParameterList() {
 			AbstractList.call(this);
 
+			/**
+			 * @type {Object}
+			 * @private
+			 */
 			this._type = Parameter;
 
 			return this;

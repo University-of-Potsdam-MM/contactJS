@@ -1,17 +1,10 @@
-/**
- * This module represents a InterpreterResult.
- * 
- * @module InterpreterResult
- * @fileOverview
- */
 define(['attributeList'], function(AttributeList){
 	return (function() {
 		/**
-		 * Constructor: Initializes the in- and outAttributes.
+		 * Initializes the in- and outAttributes.
 		 *
-		 * @class InterpreterResult
 		 * @classdesc Contains the interpreted data, inclusive the input for the interpretation.
-		 * @requires AttributeList
+		 * @constructs InterpreterResult
 		 */
 		function InterpreterResult() {
 			/**
@@ -78,7 +71,7 @@ define(['attributeList'], function(AttributeList){
 		/**
 		 * Returns the interpretation time.
 		 *
-		 * @returns {date}
+		 * @returns {Date}
 		 */
 		InterpreterResult.prototype.getTimestamp = function() {
 			return this._timestamp;

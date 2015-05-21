@@ -343,14 +343,12 @@ define("../libs/almond/almond", function(){});
  * It is an abstract Class.
  * 
  * @module AbstractList
- * @fileOverview
  */
 define('abstractList',[],function() {
 	return (function() {
 		/**
-		 * @class AbstractList
 		 * @classdesc This class represents a list.
-		 * @constructor
+		 * @constructs AbstractList
 		 */
 		function AbstractList() {
 			/**
@@ -457,14 +455,12 @@ define('abstractList',[],function() {
 
 		/**
 		 * Returns the item for the specified key.
-		 * @public
-		 * @alias getItem
-		 * @memberof AbstractList#
-		 * @param {string} _key key that should be searched for
+		 *
+		 * @param {string} key key that should be searched for
 		 * @returns {*}
 		 */
-		AbstractList.prototype.getItem = function(_key) {
-			return this._items[_key];
+		AbstractList.prototype.getItem = function(key) {
+			return this._items[key];
 		};
 
 		/**
@@ -536,18 +532,11 @@ define('abstractList',[],function() {
 		return AbstractList;
 	})();
 });
-/**
- * This module represents a Parameter.
- * Parameter specifies the Attributes to which they are associated.
- * 
- * @module Parameter
- * @fileOverview
- */
 define('parameter',[],function(){
 	return (function() {
 		/**
-		 * @class Parameter
 		 * @classdesc Parameter specifies the Attributes to that these are associated.
+		 * @constructs Parameter
 		 */
 		function Parameter() {
 			/**
@@ -665,24 +654,21 @@ define('parameter',[],function(){
 		return Parameter;
 	})();
 });
-/**
- * This module represents a ParameterList. It is a subclass of AbstractList.
- * 
- * @module ParameterList
- * @fileOverview
- */
 define('parameterList',['abstractList', 'parameter'], function(AbstractList, Parameter) {
 	return (function() {
 		/**
-		 * @class ParameterList
+		 *
 		 * @classdesc This class represents a list for Parameter.
 		 * @extends AbstractList
-		 * @requires AbstractList
-		 * @requires Parameter
+		 * @constructs ParameterList
 		 */
 		function ParameterList() {
 			AbstractList.call(this);
 
+			/**
+			 * @type {Object}
+			 * @private
+			 */
 			this._type = Parameter;
 
 			return this;
@@ -724,27 +710,21 @@ define('parameterList',['abstractList', 'parameter'], function(AbstractList, Par
 	})();
 });
 /**
- * This module represents an AttributeType.
- * AttributeTypes defines name, type (string, double,...) an associated parameter of an attribute.
- *
- * @module AttributeType
- * @fileOverview
+ * @module Attribute
  */
-define('attribute',['parameterList'], function(ParameterList){
+define('attribute',['parameterList'], function(ParameterList) {
     return (function() {
         /**
-         * Constructor: Initializes the ParameterList.
+         * Initializes the Attribute.
          *
-         * @class Attribute
          * @classdesc Attribute defines name, type (string, double,...) an associated parameter of an attribute.
-         * @requires ParameterList
          * @constructs Attribute
          */
         function Attribute() {
             /**
              * Name of the Attribute.
              *
-             * @type {string}
+             * @type {String}
              * @private
              */
             this._name = '';
@@ -785,7 +765,7 @@ define('attribute',['parameterList'], function(ParameterList){
         /**
          * Builder for name.
          *
-         * @param {String} name Name
+         * @param {String} name The attribute name to build with.
          * @returns {Attribute}
          */
         Attribute.prototype.withName = function(name){
@@ -796,7 +776,7 @@ define('attribute',['parameterList'], function(ParameterList){
         /**
          * Builder for type.
          *
-         * @param {String} type Type
+         * @param {String} type The attribute type to build with.
          * @returns {Attribute}
          */
         Attribute.prototype.withType = function(type){
@@ -807,7 +787,7 @@ define('attribute',['parameterList'], function(ParameterList){
         /**
          * Builder for one parameter.
          *
-         * @param {Parameter} parameter Parameter
+         * @param {Parameter} parameter The parameter to build with.
          * @returns {Attribute}
          */
         Attribute.prototype.withParameter = function(parameter){
@@ -1025,19 +1005,16 @@ define('attribute',['parameterList'], function(ParameterList){
     })();
 });
 /**
- * This module represents an AttributeList. It is a subclass of AbstractList.
- *
- * @module AttributeList
- * @fileOverview
+ * @module Attribute
  */
 define('attributeList',['abstractList', 'attribute'], function(AbstractList, Attribute) {
     return (function() {
         /**
-         * @class AttributeList
+         * @class
          * @classdesc This class represents a list for Attribute.
+         * @requires Attribute~Attribute
          * @extends AbstractList
-         * @requires AbstractList
-         * @requires Attribute
+         * @constructs AttributeList
          */
         function AttributeList() {
             AbstractList.call(this);
@@ -1089,20 +1066,21 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
 
         /**
          *
-         * @param {Attribute} _attribute
-         * @param {?boolean} _typeOnly
-         * @returns {*}
+         * @deprecated Use containsTypeOf or containsValueOf instead.
+         * @param {Attribute} attribute
+         * @param {?Boolean} typeOnly
+         * @returns {Boolean}
          */
-        AttributeList.prototype.contains = function(_attribute, _typeOnly) {
-            _typeOnly = typeof _typeOnly == "undefined" ? false : _typeOnly;
-            return _typeOnly ? this.containsTypeOf(_attribute) : this.containsValueOf(_attribute);
+        AttributeList.prototype.contains = function(attribute, typeOnly) {
+            typeOnly = typeof typeOnly == "undefined" ? false : typeOnly;
+            return typeOnly ? this.containsTypeOf(attribute) : this.containsValueOf(attribute);
         };
 
         /**
          * Verifies whether an attribute with the type of the given item is included in this list.
          *
          * @param {Attribute} attribute AttributeType that should be verified.
-         * @returns {boolean}
+         * @returns {Boolean}
          */
         AttributeList.prototype.containsTypeOf = function(attribute) {
             if (attribute.constructor === Attribute) {
@@ -1120,7 +1098,7 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
          * Verifies whether the given item is included in the list.
          *
          * @param {Attribute} attribute AttributeValue that should be verified.
-         * @returns {boolean}
+         * @returns {Boolean}
          */
         AttributeList.prototype.containsValueOf = function(attribute) {
             if (attribute.constructor === Attribute) {
@@ -1136,10 +1114,10 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
 
         /**
          *
-         * @deprecated
+         * @deprecated Use equalsTypesIn or equalsValuesIn instead.
          * @param {AttributeList} attributeList
          * @param {Boolean} typeOnly
-         * @returns {*}
+         * @returns {Boolean}
          */
         AttributeList.prototype.equals = function(attributeList, typeOnly) {
             typeOnly = typeof typeOnly == "undefined" ? false : typeOnly;
@@ -1323,21 +1301,11 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         return AttributeList;
     })();
 });
-/**
- * This module represents a RetrievalResult.
- * It contains the data that were retrieved from the database
- * 
- * @module RetrievalResult
- * @fileOverview
- */
 define('retrievalResult',["attributeList"], function(AttributeList){
 	return (function() {
 		/**
-		 * @class RetrievalResult
 		 * @classdesc Contains the data that were retrieved from the database.
-		 * @requires easejs
-		 * @returns {RetrievalResult}
-		 * @constructor
+		 * @constructs RetrievalResult
 		 */
 		function RetrievalResult() {
 			/**
@@ -1463,31 +1431,18 @@ define('retrievalResult',["attributeList"], function(AttributeList){
 		return RetrievalResult;
 	})();
 });
-/**
- * This module representing a Storage.
- * The Storage handles the access to the database.
- * 
- * @module Widget
- * @fileOverview
- */
 define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameterList'],
  	function(Attribute, AttributeList, RetrievalResult, Parameter, ParameterList){
 		return (function() {
 			/**
-			 * Constructor: Initializes the database and all return values.
+			 * Initializes the database and all return values.
 			 *
-			 * @class Storage
 			 * @classdesc Storage handles the access to the database.
-			 * @requires Attribute
-			 * @requires AttributeList
-			 * @requires Parameter
-			 * @requires ParameterList
-			 * @requires RetrievalResult
 			 * @param {String} name
 			 * @param {Number} time
 			 * @param {Number} counter
 			 * @returns {Storage}
-			 * @constructor
+			 * @constructs Storage
 			 */
 			function Storage(name, time, counter) {
 				/**
@@ -1991,20 +1946,15 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
  * This module represents a Callback.
  * Callbacks defines events for sending data to subscribers
  * 
- * @module Callback
- * @fileOverview
+ * @module Subscriber
  */
 define('callback',['attribute', 'attributeList'], function(Attribute, AttributeList){
 	return (function() {
 		/**
 		 * Constructor: Initializes the AttributeTypeList.
 		 *
-		 * @class Callback
-		 * @classdesc Callbacks defines events for sending data to subscribers.
-		 * 			The data to be sent, are specified in the attributeTypeList.
-		 * @requires ParameterList
-		 * @requires Attribute
-		 * @requires AttributeList
+		 * @classdesc Callbacks defines events for sending data to subscribers. The data to be sent, are specified in the attributeTypeList.
+		 * @returns {Callback}
 		 * @constructs Callback
 		 */
 		function Callback() {
@@ -2139,16 +2089,13 @@ define('callback',['attribute', 'attributeList'], function(Attribute, AttributeL
  * This module represents an CallbackList. It is a subclass of AbstractList.
  * 
  * @module CallbackList
- * @fileOverview
  */
 define('callbackList',['abstractList', 'callback'], function(AbstractList, Callback){
  	return (function() {
 		/**
-		 * @class CallbackList
 		 * @classdesc This class represents a list for Callback.
 		 * @extends AbstractList
-		 * @requires AbstractList
-		 * @requires Callback
+		 * @constructs CallbackList
 		 */
 		function CallbackList() {
 			AbstractList.call(this);
@@ -2250,18 +2197,12 @@ define('callbackList',['abstractList', 'callback'], function(AbstractList, Callb
 		return CallbackList;
 	})();
 });
-/**
- * This module represents an interface for ConditionMethod. 
- * 
- * @module ConditionMethod
- * @fileOverview
- */
 define('conditionMethod',[],function() {
 	return (function() {
 		/**
 		 * @interface
-		 * @class ConditionMethod
 		 * @classdesc This interface defines the interface for conditionMethod.
+		 * @constructs ConditionMethod
 		 */
 		function ConditionMethod() {
 
@@ -2271,6 +2212,7 @@ define('conditionMethod',[],function() {
 		/**
 		 * Processes the method.
 		 *
+		 * @abstract
 		 * @param {*} reference Comparison value, if one is required.
 		 * @param {*} firstValue Value (from an attribute) that should be compared.
 		 * @param {*} secondValue Value (from an attribute) for comparison, if one is required.
@@ -2280,24 +2222,14 @@ define('conditionMethod',[],function() {
 		};
 
 		return ConditionMethod;
-	});
+	})();
 });
-/**
- * This module represents a Condition. 
- * Condition specifies subscriptions. 
- * The associated attributes are only sent, if the condition applies. 
- * 
- * @module Condition
- * @fileOverview
- */
 define('condition',['attribute', 'conditionMethod'],
  	function(Attribute, ConditionMethod){
 		return (function() {
 			/**
-			 * @class Condition
 			 * @classdesc Condition for subscribed Attributes.
-			 * @requires Attribute
-			 * @rewuires ConditionMethod
+			 * @constructs Condition
 			 */
 			function Condition() {
 				/**
@@ -2498,24 +2430,20 @@ define('condition',['attribute', 'conditionMethod'],
 		})();
 	}
 );
-/**
- * This module represents a ConditionList. It is a subclass of AbstractList.
- * 
- * @module ConditionList
- * @fileOverview
- */
 define('conditionList',['abstractList', 'condition'], function(AbstractList, Condition){
 	return (function() {
 		/**
-		 * @class ConditionList
 		 * @classdesc This class represents a list for Conditions.
+		 * @constructs ConditionList
 		 * @extends AbstractList
-		 * @requires AbstractList
-		 * @requires Condition
 		 */
 		function ConditionList() {
 			AbstractList.call(this);
 
+			/**
+			 * @type {Condition}
+			 * @private
+			 */
 			this._type = Condition;
 
 			return this;
@@ -2531,22 +2459,14 @@ define('conditionList',['abstractList', 'condition'], function(AbstractList, Con
  * This module represents a Subscriber.
  * 
  * @module Subscriber
- * @fileOverview
  */
 define('subscriber',['attributeList', 'callbackList', 'condition', 'conditionList'],
  	function(AttributeList, CallbackList, Condition, ConditionList)  {
 		return (function() {
 			/**
-			 * Constructor: Initializes the subscriptionCallbacks, subscriptionCallbacks
-			 * 				and conditions.
+			 * Constructor: Initializes the subscriptionCallbacks, subscriptionCallbacks and conditions.
 			 *
-			 * @class Subscriber
-			 * @classdesc Subscriber defines the name and the ID of the Subscriber and the Callbacks
-			 * 			 (with possible restrictions) what the subscriber is interested in.
-			 * @requires AttributeList
-			 * @requires CallbackList
-			 * @requires Condition
-			 * @requires ConditionList
+			 * @classdesc Subscriber defines the name and the ID of the Subscriber and the Callbacks (with possible restrictions) what the subscriber is interested in.
 			 * @constructs Subscriber
 			 */
 			function Subscriber() {
@@ -2807,20 +2727,21 @@ define('subscriber',['attributeList', 'callbackList', 'condition', 'conditionLis
  * This module represents a SubscriberList. It is a subclass of AbstractList.
  * 
  * @module SubscriberList
- * @fileOverview
  */
 define('subscriberList',['abstractList', 'subscriber'], function(AbstractList, Subscriber){
 	return (function() {
 		/**
-		 * @class SubscriberList
 		 * @classdesc This class represents a list for Subscriber.
 		 * @extends AbstractList
-		 * @requires AbstractList
-		 * @requires Subscriber
+		 * @constructs SubscriberList
 		 */
 		function SubscriberList() {
 			AbstractList.call(this);
 
+			/**
+			 * @type {Subscriber}
+			 * @private
+			 */
 			this._type = Subscriber;
 
 			return this;
@@ -2830,7 +2751,6 @@ define('subscriberList',['abstractList', 'subscriber'], function(AbstractList, S
 		SubscriberList.prototype.constructor = SubscriberList;
 
 		/**
-		 *
 		 * @param {String} subscriberId
 		 */
 		SubscriberList.prototype.removeSubscriberWithId = function(subscriberId) {
@@ -2847,7 +2767,6 @@ define('subscriberList',['abstractList', 'subscriber'], function(AbstractList, S
  * This module representing a Context Widget.
  * 
  * @module Widget
- * @fileOverview
  */
 define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
 	function(MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
@@ -2858,17 +2777,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * that are specified in the provided functions.
 			 *
 			 * @abstract
-			 * @class Widget
 			 * @classdesc The Widget handles the access to sensors.
-			 * @requires MathUuid
-			 * @requires Callback
-			 * @requires CallbackList
-			 * @requires Attribute
-			 * @requires AttributeList
-			 * @requires ConditionList
-			 * @requires Subscriber
-			 * @requires SubscriberList
-			 * @requires Discoverer
 			 * @constructs Widget
 			 */
 			function Widget(discoverer, attributes) {
@@ -2877,6 +2786,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 				/**
 				 * Name of the Widget.
 				 *
+				 * @public
 				 * @type {string}
 				 */
 				this.name = 'Widget';
@@ -3589,20 +3499,13 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 		})();
 	}
 );
-/**
- * This module represents a InterpreterResult.
- * 
- * @module InterpreterResult
- * @fileOverview
- */
 define('interpreterResult',['attributeList'], function(AttributeList){
 	return (function() {
 		/**
-		 * Constructor: Initializes the in- and outAttributes.
+		 * Initializes the in- and outAttributes.
 		 *
-		 * @class InterpreterResult
 		 * @classdesc Contains the interpreted data, inclusive the input for the interpretation.
-		 * @requires AttributeList
+		 * @constructs InterpreterResult
 		 */
 		function InterpreterResult() {
 			/**
@@ -3669,7 +3572,7 @@ define('interpreterResult',['attributeList'], function(AttributeList){
 		/**
 		 * Returns the interpretation time.
 		 *
-		 * @returns {date}
+		 * @returns {Date}
 		 */
 		InterpreterResult.prototype.getTimestamp = function() {
 			return this._timestamp;
@@ -3737,25 +3640,14 @@ define('interpreterResult',['attributeList'], function(AttributeList){
 		return InterpreterResult;
 	});
 });
-/**
- * This module represents an Context Interpreter.
- * 
- * @module Interpreter
- * @fileOverview
- */
 define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 	function(MathUuid, Attribute, AttributeList, InterpreterResult) {
 		return (function() {
 			/**
-			 * Constructor: Generates the id and initializes the (in and out) types and values.
+			 * Generates the id and initializes the (in and out) types and values.
 			 *
 			 * @abstract
-			 * @class Interpreter
 			 * @classdesc The Widget handles the access to sensors.
-			 * @requires easejs
-			 * @requires MathUuid
-			 * @requires Attribute
-			 * @requires AttributeList
 			 * @constructs Interpreter
 			 */
 			function Interpreter(discoverer) {
@@ -4110,9 +4002,6 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 		})();
 	}
 );
-/**
- * Created by tobias on 15.04.15.
- */
 define('interpretation',['interpreter', 'attributeList'], function(Interpreter, AttributeList) {
     return (function () {
         /**
@@ -4121,7 +4010,7 @@ define('interpretation',['interpreter', 'attributeList'], function(Interpreter, 
          * @param {AttributeList} inAttributes
          * @param {AttributeList} outAttributes
          * @returns {Interpretation}
-         * @constructor
+         * @constructs Interpretation
          */
         function Interpretation(interpreterId, inAttributes, outAttributes) {
             /**
@@ -4148,31 +4037,15 @@ define('interpretation',['interpreter', 'attributeList'], function(Interpreter, 
         return Interpretation;
     })();
 });
-/**
- * This module representing a Context Aggregator. 
- * It aggregates data from multiple widgets.
- * 
- * @module Aggregator
- * @fileOverview
- */
 define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
  	function(MathUuid, Widget, Attribute, AttributeList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
 		return (function() {
 			/**
-			 * Constructor: Generates the id and initializes the Aggregator.
+			 * Generates the id and initializes the Aggregator.
 			 *
-			 * @class Aggregator
-			 * @extends Widget
 			 * @classdesc The Widget handles the access to sensors.
-			 * @requires MathUuid
-			 * @requires CallbackList
-			 * @requires Attribute
-			 * @requires AttributeList
-			 * @requires Subscriber
-			 * @requires SubscriberList
-			 * @requires Storage
-			 * @requires Widget
 			 * @constructs Aggregator
+			 * @extends Widget
 			 */
 			function Aggregator(discoverer, attributes) {
 				/**
@@ -4203,10 +4076,11 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 				/**
 				 * Name of the Aggregator.
 				 *
-				 * @public
 				 * @type {string}
 				 */
 				this.name = 'Aggregator';
+
+				return this;
 			}
 
 			Aggregator.prototype = Object.create(Widget.prototype);
@@ -4229,8 +4103,10 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @protected
 			 * @param {Array.<String>} widgetIds List of Widget IDs
 			 */
-			Aggregator.prototype._setWidgets = function(widgetIds){
-				this._widgets = widgetIds;
+			Aggregator.prototype._setWidgets = function(widgetIds) {
+				if (typeof widgetIds == "array") {
+					this._widgets = widgetIds;
+				}
 			};
 
 			/**
@@ -4292,6 +4168,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * Retrieves all ConstantAttributes of the specified widgets.
 			 *
 			 * @protected
+			 * @override
 			 */
 			Aggregator.prototype._initConstantOutAttributes = function() {
 				if(this._widgets.length > 0){
@@ -4862,18 +4739,12 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 		})();
 	}
 );
-/**
- * This module represents the conditionMethod Equals. 
- * 
- * @module Equals
- * @fileOverview
- */
 define('equals',['conditionMethod'], function(ConditionMethod){
 	return (function() {
 		/**
-		 * @class Equals
 		 * @implements {ConditionMethod}
 		 * @classdesc This class is the conditionMethod equals. It compares the values of two attributes.
+		 * @constructs Equals
 		 */
 		function Equals() {
 			ConditionMethod.call(this);
@@ -4889,7 +4760,7 @@ define('equals',['conditionMethod'], function(ConditionMethod){
 		 * @param {*} reference Is not used.
 		 * @param {*} firstValue Value (from an attribute) that should be compared.
 		 * @param {*} secondValue Value (from an attribute) for comparison.
-		 * @returns {boolean}
+		 * @returns {Boolean}
 		 */
 		Equals.prototype.process = function(reference, firstValue, secondValue){
 			return firstValue === secondValue;
@@ -4899,17 +4770,16 @@ define('equals',['conditionMethod'], function(ConditionMethod){
 	})();
 });
 /**
- * This module represents the conditionMethod Equals. 
+ * This module represents the conditionMethod UnEquals.
  * 
- * @module UnEquals
- * @fileOverview
+ * @module Condition
  */
 define('unequals',['conditionMethod'], function(ConditionMethod){
 	return (function() {
 		/**
-		 * @class UnEquals
 		 * @implements {ConditionMethod}
 		 * @classdesc This class is the conditionMethod equals. It compares the values of two attributes.
+		 * @constructs UnEquals
 		 */
 		function UnEquals() {
 			ConditionMethod.call(this);
@@ -4934,22 +4804,14 @@ define('unequals',['conditionMethod'], function(ConditionMethod){
 		return UnEquals;
 	})();
 });
-/**
- * This module representing a Context Discoverer.
- * 
- * @module Discoverer
- * @fileOverview
- */
 define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 	function(AttributeList, Widget, Interpreter, Aggregator) {
 		return (function() {
 			/**
 			 * Constructor: All known components given in the associated functions will be registered as startup.
 			 *
-			 * @class Discoverer
 			 * @classdesc The Discoverer handles requests for components and attributes.
-			 * @requires AttributeList
-			 * @constructor
+			 * @constructs Discoverer
 			 */
 			function Discoverer() {
 				/**

@@ -3,14 +3,12 @@
  * It is an abstract Class.
  * 
  * @module AbstractList
- * @fileOverview
  */
 define(function() {
 	return (function() {
 		/**
-		 * @class AbstractList
 		 * @classdesc This class represents a list.
-		 * @constructor
+		 * @constructs AbstractList
 		 */
 		function AbstractList() {
 			/**
@@ -117,14 +115,12 @@ define(function() {
 
 		/**
 		 * Returns the item for the specified key.
-		 * @public
-		 * @alias getItem
-		 * @memberof AbstractList#
-		 * @param {string} _key key that should be searched for
+		 *
+		 * @param {string} key key that should be searched for
 		 * @returns {*}
 		 */
-		AbstractList.prototype.getItem = function(_key) {
-			return this._items[_key];
+		AbstractList.prototype.getItem = function(key) {
+			return this._items[key];
 		};
 
 		/**

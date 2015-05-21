@@ -1,28 +1,15 @@
-/**
- * This module representing a Storage.
- * The Storage handles the access to the database.
- * 
- * @module Widget
- * @fileOverview
- */
 define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameterList'],
  	function(Attribute, AttributeList, RetrievalResult, Parameter, ParameterList){
 		return (function() {
 			/**
-			 * Constructor: Initializes the database and all return values.
+			 * Initializes the database and all return values.
 			 *
-			 * @class Storage
 			 * @classdesc Storage handles the access to the database.
-			 * @requires Attribute
-			 * @requires AttributeList
-			 * @requires Parameter
-			 * @requires ParameterList
-			 * @requires RetrievalResult
 			 * @param {String} name
 			 * @param {Number} time
 			 * @param {Number} counter
 			 * @returns {Storage}
-			 * @constructor
+			 * @constructs Storage
 			 */
 			function Storage(name, time, counter) {
 				/**

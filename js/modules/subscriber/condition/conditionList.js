@@ -1,21 +1,17 @@
-/**
- * This module represents a ConditionList. It is a subclass of AbstractList.
- * 
- * @module ConditionList
- * @fileOverview
- */
 define(['abstractList', 'condition'], function(AbstractList, Condition){
 	return (function() {
 		/**
-		 * @class ConditionList
 		 * @classdesc This class represents a list for Conditions.
+		 * @constructs ConditionList
 		 * @extends AbstractList
-		 * @requires AbstractList
-		 * @requires Condition
 		 */
 		function ConditionList() {
 			AbstractList.call(this);
 
+			/**
+			 * @type {Condition}
+			 * @private
+			 */
 			this._type = Condition;
 
 			return this;

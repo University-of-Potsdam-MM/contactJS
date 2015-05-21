@@ -1,19 +1,9 @@
-/**
- * This module represents a Condition. 
- * Condition specifies subscriptions. 
- * The associated attributes are only sent, if the condition applies. 
- * 
- * @module Condition
- * @fileOverview
- */
 define(['attribute', 'conditionMethod'],
  	function(Attribute, ConditionMethod){
 		return (function() {
 			/**
-			 * @class Condition
 			 * @classdesc Condition for subscribed Attributes.
-			 * @requires Attribute
-			 * @rewuires ConditionMethod
+			 * @constructs Condition
 			 */
 			function Condition() {
 				/**

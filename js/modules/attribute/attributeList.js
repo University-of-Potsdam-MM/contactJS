@@ -1,17 +1,14 @@
 /**
- * This module represents an AttributeList. It is a subclass of AbstractList.
- *
- * @module AttributeList
- * @fileOverview
+ * @module Attribute
  */
 define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
     return (function() {
         /**
-         * @class AttributeList
+         * @class
          * @classdesc This class represents a list for Attribute.
+         * @requires Attribute~Attribute
          * @extends AbstractList
-         * @requires AbstractList
-         * @requires Attribute
+         * @constructs AttributeList
          */
         function AttributeList() {
             AbstractList.call(this);
@@ -63,20 +60,21 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
 
         /**
          *
-         * @param {Attribute} _attribute
-         * @param {?boolean} _typeOnly
-         * @returns {*}
+         * @deprecated Use containsTypeOf or containsValueOf instead.
+         * @param {Attribute} attribute
+         * @param {?Boolean} typeOnly
+         * @returns {Boolean}
          */
-        AttributeList.prototype.contains = function(_attribute, _typeOnly) {
-            _typeOnly = typeof _typeOnly == "undefined" ? false : _typeOnly;
-            return _typeOnly ? this.containsTypeOf(_attribute) : this.containsValueOf(_attribute);
+        AttributeList.prototype.contains = function(attribute, typeOnly) {
+            typeOnly = typeof typeOnly == "undefined" ? false : typeOnly;
+            return typeOnly ? this.containsTypeOf(attribute) : this.containsValueOf(attribute);
         };
 
         /**
          * Verifies whether an attribute with the type of the given item is included in this list.
          *
          * @param {Attribute} attribute AttributeType that should be verified.
-         * @returns {boolean}
+         * @returns {Boolean}
          */
         AttributeList.prototype.containsTypeOf = function(attribute) {
             if (attribute.constructor === Attribute) {
@@ -94,7 +92,7 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
          * Verifies whether the given item is included in the list.
          *
          * @param {Attribute} attribute AttributeValue that should be verified.
-         * @returns {boolean}
+         * @returns {Boolean}
          */
         AttributeList.prototype.containsValueOf = function(attribute) {
             if (attribute.constructor === Attribute) {
@@ -110,10 +108,10 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
 
         /**
          *
-         * @deprecated
+         * @deprecated Use equalsTypesIn or equalsValuesIn instead.
          * @param {AttributeList} attributeList
          * @param {Boolean} typeOnly
-         * @returns {*}
+         * @returns {Boolean}
          */
         AttributeList.prototype.equals = function(attributeList, typeOnly) {
             typeOnly = typeof typeOnly == "undefined" ? false : typeOnly;

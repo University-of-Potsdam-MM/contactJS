@@ -2,16 +2,13 @@
  * This module represents an CallbackList. It is a subclass of AbstractList.
  * 
  * @module CallbackList
- * @fileOverview
  */
 define(['abstractList', 'callback'], function(AbstractList, Callback){
  	return (function() {
 		/**
-		 * @class CallbackList
 		 * @classdesc This class represents a list for Callback.
 		 * @extends AbstractList
-		 * @requires AbstractList
-		 * @requires Callback
+		 * @constructs CallbackList
 		 */
 		function CallbackList() {
 			AbstractList.call(this);
