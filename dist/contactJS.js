@@ -1944,7 +1944,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 );
 /**
  * This module represents a Callback.
- * Callbacks defines events for sending data to subscribers
+ * Callbacks define events for sending data to subscribers
  * 
  * @module Subscriber
  */
@@ -2883,19 +2883,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			};
 
 			/**
-			 * Returns the type of this class, in this case
-			 * "Widget".
-			 *
-			 * @virtual
-			 * @public
-			 * @returns {string}
-			 */
-			//TODO: remove and replace with constructor comparison
-			Widget.prototype.getType = function() {
-				return 'Widget';
-			};
-
-			/**
 			 * Returns the available AttributeTypes.
 			 *
 			 * @public
@@ -3727,16 +3714,6 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 			};
 
 			/**
-			 * Returns the type of this class, in this case "Interpreter".
-			 *
-			 * @public
-			 * @returns {string}
-			 */
-			Interpreter.prototype.getType = function() {
-				return 'Interpreter';
-			};
-
-			/**
 			 * Initializes interpreter and sets the expected inAttributes and provided outAttributes.
 			 *
 			 * @private
@@ -4085,17 +4062,6 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 
 			Aggregator.prototype = Object.create(Widget.prototype);
 			Aggregator.prototype.constructor = Aggregator;
-
-			/**
-			 * Returns the type of this class, in this case "Aggregator".
-			 *
-			 * @override
-			 * @public
-			 * @returns {string}
-			 */
-			Aggregator.prototype.getType = function() {
-				return 'Aggregator';
-			};
 
 			/**
 			 * Sets Widget IDs.
@@ -4842,15 +4808,6 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 			}
 
 			/**
-			 * Returns the type of this class, in this case "Discoverer".
-			 *
-			 * @returns {string}
-			 */
-			Discoverer.prototype.getType = function() {
-				return 'Discoverer';
-			};
-
-			/**
 			 * Registers the specified component.
 			 *
 			 * @param {Widget|Aggregator|Interpreter} component the component that should be registered
@@ -5036,6 +4993,65 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 		})();
 	}
 );
+/**
+ * This module represents the helper class Translation. 
+ * 
+ * @module Translation
+ */
+define('translation', ['attribute'], function(Attribute) {
+	return (function() {
+		/**
+		 * Constructs a translation tuple.
+		 *
+		 * @classdesc This class represents a translation tuple. It holds two synonymous attribute types.
+		 * @requires attribute
+		 * @constructs Translation
+		 */
+		function Translation(fromAttribute, toAttribute) {
+			/**
+			 *
+			 * @type {?Attribute}
+			 * @private
+			 */
+			this._fromAttribute = null;
+
+			/**
+			 *
+			 * @type {?Attribute}
+			 * @private
+			 */
+			this._toAttribute = null;
+
+			if (fromAttribute instanceof Attribute && toAttribute instanceof Attribute) {
+				this._fromAttribute = fromAttribute;
+				this._toAttribute = toAttribute;
+			}
+
+			return this;
+		}
+
+		/**
+		 * Look for a translation and return the found synonym.
+		 *
+		 * @returns {Attribute} The synonymous attribute
+		 */
+		Translation.prototype.getSynonym = function() {
+			return this._toAttribute;
+		};
+
+		/**
+		 * Look for a translation and return true if one exists.
+		 *
+		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @returns {boolean}
+		 */
+		Translation.prototype.translates = function(attribute) {
+			return this._fromAttribute.equalsTypeOf(attribute);
+		};
+
+		return Translation;
+	})();
+});
 	define('contactJS',['retrievalResult',
 			'storage',
 			'aggregator',
@@ -5049,6 +5065,7 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 		    'equals',
             'unequals',
 		    'discoverer',
+		    'translation',
 		    'interpreter',
 		    'interpreterResult',
 		    'callback',   
@@ -5070,6 +5087,7 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 			    Equals,
                 UnEquals,
 			    Discoverer,
+			    Translation,
 			    Interpreter, 
 			    InterpreterResult,
 			    Callback,   
@@ -5083,7 +5101,7 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '2.0.0';
+	contactJS.VERSION = '2.0.1';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
@@ -5098,6 +5116,7 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 	contactJS.Equals = Equals;
     contactJS.UnEquals = UnEquals;
 	contactJS.Discoverer = Discoverer;
+	contactJS.Translation = Translation;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;

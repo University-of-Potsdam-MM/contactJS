@@ -1,6 +1,6 @@
 require(['configTest'], function() {
 	require(['../examples/GeoLocationWidget', 'contactJS'], function(GeoLocationWidget, contactJS){
-		QUnit.asyncTest( "widgetTest.js", function( assert ) {
+		QUnit.asyncTest("widgetTest.js", function( assert ) {
 			var discoverer = new contactJS.Discoverer();
 			var testWidget = new GeoLocationWidget(discoverer);
 
@@ -9,7 +9,7 @@ require(['configTest'], function() {
 
 			var id = testWidget.getId();
 			assert.ok( id && id !== "null" && id !== "undefined", "Passed!: id is not null" );
-			assert.equal( testWidget.getType(), 'Widget', "Passed!: type -> Widget" );
+			assert.ok( testWidget instanceof contactJS.Widget, "Passed!: type -> Widget" );
 			assert.equal( testWidget.getName(), 'GeoLocationWidget', "Passed!: name -> GeoLocationWidget" );
 
 			//attributeTypes

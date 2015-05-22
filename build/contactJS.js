@@ -47,7 +47,7 @@
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '2.0.0';
+	contactJS.VERSION = '2.0.1';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;

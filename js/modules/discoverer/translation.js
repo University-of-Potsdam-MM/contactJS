@@ -2,62 +2,58 @@
  * This module represents the helper class Translation. 
  * 
  * @module Translation
- * @fileOverview
  */
 define('translation', ['attribute'], function(Attribute) {
-
-	return function()
-	var Translation = Class('Translation', {
-		
-		'private fromAttributeType' : {},
-		
-		'private toAttributeType' : {},		
-
+	return (function() {
 		/**
-		 * Constructor: Constructs a translation tuple.
-		 * 
-		 * @class Translation
-		 * @classdesc This class represents a translation tuple.
-		 * 			  It holds two synonymous attribute types.
-		 * @requires easejs
+		 * Constructs a translation tuple.
+		 *
+		 * @classdesc This class represents a translation tuple. It holds two synonymous attribute types.
 		 * @requires attribute
 		 * @constructs Translation
 		 */
-		'public __construct' : function(_fromAttributeType, _toAttributeType) {
-			if (Class.isA(Attribute, _fromAttributeType) && Class.isA(Attribute, _toAttributeType)) 
-			{
-				this.fromAttributeType = _fromAttributeType;
-				this.toAttributeType = _toAttributeType;	
+		function Translation(fromAttribute, toAttribute) {
+			/**
+			 *
+			 * @type {?Attribute}
+			 * @private
+			 */
+			this._fromAttribute = null;
+
+			/**
+			 *
+			 * @type {?Attribute}
+			 * @private
+			 */
+			this._toAttribute = null;
+
+			if (fromAttribute instanceof Attribute && toAttribute instanceof Attribute) {
+				this._fromAttribute = fromAttribute;
+				this._toAttribute = toAttribute;
 			}
-		},
-				
+
+			return this;
+		}
+
 		/**
 		 * Look for a translation and return the found synonym.
-		 * 
-		 * @public
-		 * @alias getSynonym
-		 * @memberof Translation#
+		 *
 		 * @returns {Attribute} The synonymous attribute
 		 */
-		'public getSynonym': function() {			
-			return this.toAttributeType; 
-		},
-	
+		Translation.prototype.getSynonym = function() {
+			return this._toAttribute;
+		};
+
 		/**
 		 * Look for a translation and return true if one exists.
-		 * 
-		 * @public
-		 * @alias translates
-		 * @memberof Translation#
+		 *
 		 * @param {Attribute} attribute Attribute whose synonym is queried
-		 * @returns {boolean} 
+		 * @returns {boolean}
 		 */
-		'public translates': function(_attribute) {
-			
-			return this.fromAttributeType.equalsTypeOf(_attribute); 
-		}
-		
-		});
+		Translation.prototype.translates = function(attribute) {
+			return this._fromAttribute.equalsTypeOf(attribute);
+		};
 
-	return Translation;
+		return Translation;
+	})();
 });
