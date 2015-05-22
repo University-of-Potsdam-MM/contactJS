@@ -6,21 +6,17 @@ requirejs.config({
     paths:
     {
         jquery: '../libs/jquery/jquery',
-        easejs: '../libs/ease.js/ease-full',
         MathUuid: '../libs/uuid/Math.uuid',
         qunit: "../libs/qunit/qunit",
         contactJS: '../dist/contactJS'
     },
     
     shim:{
-      'easejs' : {
-        exports : 'easejs'
-      },
-      'jquery' : {
-          exports : '$'
-      },
-      'MathUuid' : {
-          exports : 'MathUuid'
-      }
+        'jquery' : {
+            exports : '$'
+        },
+        'MathUuid' : {
+            exports : 'MathUuid'
+        }
     }
 });

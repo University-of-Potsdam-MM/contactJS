@@ -2,347 +2,267 @@
  * This module represents a Subscriber.
  * 
  * @module Subscriber
- * @fileOverview
  */
-define(['easejs', 'attributeList', 'callbackList', 'condition', 'conditionList'],
- 	function(easejs, AttributeList, CallbackList, Condition, ConditionList){
+define(['attributeList', 'callbackList', 'condition', 'conditionList'],
+ 	function(AttributeList, CallbackList, Condition, ConditionList)  {
+		return (function() {
+			/**
+			 * Constructor: Initializes the subscriptionCallbacks, subscriptionCallbacks and conditions.
+			 *
+			 * @classdesc Subscriber defines the name and the ID of the Subscriber and the Callbacks (with possible restrictions) what the subscriber is interested in.
+			 * @constructs Subscriber
+			 */
+			function Subscriber() {
+				/**
+				 * Name of the subscriber.
+				 *
+				 * @type {string}
+				 * @private
+				 */
+				this._subscriberName = '';
 
- 	/*
- 	* Callback: name and associated Attributes
- 	*/
- 	var Class = easejs.Class;
-	var Subscriber = Class('Subscriber',
-	{
+				/**
+				 * ID of the Subscriber.
+				 *
+				 * @private
+				 * @type {string}
+				 */
+				this._subscriberId = '';
 
-		/**
-		 * @alias subscriberName
-		 * @private
-		 * @type {string}
-		 * @memb Name of the subscriber.
-		 */
-		'private subscriberName' : '',
-		/**
-		 * @alias subscriberId
-		 * @private
-		 * @type {string}
-		 * @memberof Subscriber#
-		 * @desc ID of the Subscriber.
-		 */
-		'private subscriberId' : '',
-		/**
-		 * @alias subscriptionCallbacks
-		 * @private
-		 * @type {CallbackList}
-		 * @memberof Subscriber#
-		 * @desc Callbacks that should be subscribed.
-		 */
-		'private subscriptionCallbacks' : [],
-		/**
-		 * @alias attributesSubset
-		 * @private
-		 * @type {AttributeTypeList}
-		 * @memberof Subscriber#
-		 * @desc Restricts the associated Attributes of the callback to a subset
-		 * 		(i.e: the subscriber wants a subset from the available the context data).  
-		 * 		If no attributes are specified, all available attributes will returned.
-		 */
-		'private attributesSubset' : [],
-		/**
-		 * @alias conditions
-		 * @private
-		 * @type {ConditionList}
-		 * @memberof Subscriber#
-		 * @desc Defines special conditions for notification.
-		 */
-		'private conditions' : [],
+				/**
+				 * Callbacks that should be subscribed.
+				 *
+				 * @private
+				 * @type {CallbackList}
+				 */
+				this._subscriptionCallbacks = new CallbackList();
 
-		/**
-		 * Constructor: Initializes the subscriptionCallbacks, subscriptionCallbacks
-		 * 				and conditions.
-		 * 
-		 * @class Subscriber
-		 * @classdesc Subscriber defines the name and the ID of the Subscriber and the Callbacks 
-		 * 			 (with possible restrictions) what the subscriber is interested in.
-		 * @requires easejs
-		 * @requires AttributeTypeList 
-		 * @requires CallbackList 
-		 * @requires Condition
-		 * @requires ConditionList
-		 * @constructs Subscriber
-		 */
-		'virtual public __construct': function()
-        {
-			this.subscriptionCallbacks = new CallbackList();
-			this.subscriptionCallbacks = new AttributeList();
-			this.attributesSubset = new AttributeList();
-			this.conditions = new ConditionList();
-        },
-			
-		/**
-		 * Builder for subscriberName.
-		 * 
-		 * @public
-		 * @alias withSubscriberName
-		 * @memberof Subscriber#
-		 * @param {String} _subscriberName subscriberName
-		 * @returns {Subscriber}
-		 */
-		'public withSubscriberName' : function(_subscriberName){
-			this.setSubscriberName(_subscriberName);
-			return this;
-		},
-		
-		/**
-		 * Builder for subscriberId.
-		 * 
-		 * @public
-		 * @alias withSubscriberId
-		 * @memberof Subscriber#
-		 * @param {String} _subscriberId subscriberId
-		 * @returns {Subscriber}
-		 */
-		'public withSubscriberId' : function(_subscriberId){
-			this.setSubscriberId(_subscriberId);
-			return this;
-		},
-		
-		/**
-		 * Builder for subscriptionCallbacks.
-		 * 
-		 * @public
-		 * @alias withSubscriptionCallbacks
-		 * @memberof Subscriber#
-		 * @param {CallbackList} _subscriptionCallbacks subscriptionCallbacks
-		 * @returns {Subscriber}
-		 */
-		'public withSubscriptionCallbacks' : function(_subscriptionCallbacks){
-			this.setSubscriptionCallbacks(_subscriptionCallbacks);
-			return this;
-		},
-		
-		/**
-		 * Builder for attributesSubset.
-		 * 
-		 * @public
-		 * @alias withAttributesSubset
-		 * @memberof Subscriber#
-		 * @param {AttributeTypeList} _attributesSubset attributesSubset
-		 * @returns {Subscriber}
-		 */
-		'public withAttributesSubset' : function(_attributesSubset){
-			this.setAttributesSubset(_attributesSubset);
-			return this;
-		},
-		
-		/**
-		 * Builder for conditions.
-		 * 
-		 * @public
-		 * @alias withConditions
-		 * @memberof Subscriber#
-		 * @param {(ConditionList|Array)} _conditions conditions
-		 * @returns {Subscriber}
-		 */
-		'public withConditions' : function(_conditions){
-			this.setConditions(_conditions);
-			return this;
-		},
+				/**
+				 * Restricts the associated Attributes of the callback to a subset
+				 * 		(i.e: the subscriber wants a subset from the available the context data).
+				 * 		If no attributes are specified, all available attributes will returned.
+				 *
+				 * @private
+				 * @type {AttributeList}
+				 */
+				this._attributesSubset = new AttributeList();
 
-		
-		/**
-		 * Returns the name.
-		 * 
-		 * @public
-		 * @alias getSubscriberName
-		 * @memberof Subscriber#
-		 * @returns {string}
-		 */
-		'public getSubscriberName' : function(){
-			return this.subscriberName;
-		},
+				/**
+				 * Defines special conditions for notification.
+				 *
+				 * @private
+				 * @type {ConditionList}
+				 */
+				this._conditions = new ConditionList();
 
-		/**
-		 * Sets the setSubscriberName.
-		 * 
-		 * @public
-		 * @alias setSubscriberName
-		 * @memberof Subscriber#
-		 * @param {string} _subscriberName subscriberName
-		 */
-		'public setSubscriberName' : function(_subscriberName){
-			if(typeof _subscriberName === 'string'){
-				this.subscriberName = _subscriberName;
+				return this;
 			}
-			
-		},
-		
-		/**
-		 * Returns the subscriberId.
-		 * 
-		 * @public
-		 * @alias getSubscriberId
-		 * @memberof Subscriber#
-		 * @returns {string}
-		 */
-		'public getSubscriberId' : function(){
-			return this.subscriberId;
-		},
 
-		/**
-		 * Sets the subscriberId.
-		 * 
-		 * @public
-		 * @alias setSubscriberId
-		 * @memberof Subscriber#
-		 * @param {string} _subscriberId subscriberId
-		 */
-		'public setSubscriberId' : function(_subscriberId){
-			if(typeof _subscriberId === 'string'){
-				this.subscriberId = _subscriberId;
+			/**
+			 * Builder for subscriberName.
+			 *
+			 * @param {String} subscriberName subscriberName
+			 * @returns {Subscriber}
+			 */
+			Subscriber.prototype.withSubscriberName = function(subscriberName) {
+				this.setSubscriberName(subscriberName);
+				return this;
 			};
-		},
-		
-		/**
-		 * Returns the subscriptionCallbacks.
-		 * 
-		 * @public
-		 * @alias getSubscriptionCallbacks
-		 * @memberof Subscriber#
-		 * @returns {CallbackList}
-		 */
-		'public getSubscriptionCallbacks' : function(){
-			return this.subscriptionCallbacks;
-		},
 
-		/**
-		 * Sets the subscriptionCallbacks.
-		 * 
-		 * @public
-		 * @alias setSubscriptionCallbacks
-		 * @memberof Subscriber#
-		 * @param {CallbackList} _subscriptionCallbacks subscriptionCallbacks
-		 */
-		'public setSubscriptionCallbacks' : function(_subscriptionCallbacks){
-			if(Class.isA(CallbackList, _subscriptionCallbacks)){
-				this.subscriptionCallbacks = _subscriptionCallbacks;
-			}
-		},
-		
-		/**
-		 * Returns the attributesSubset.
-		 * 
-		 * @public
-		 * @alias getAttributesSubset
-		 * @memberof Subscriber#
-		 * @returns {string}
-		 */
-		'public getAttributesSubset' : function(){
-			return this.attributesSubset;
-		},
-
-		/**
-		 * Sets the attributesSubset.
-		 * 
-		 * @public
-		 * @alias setAttributesSubset
-		 * @memberof Subscriber#
-		 * @param {AttributeList} _attributesSubset attributesSubset
-		 */
-		'public setAttributesSubset' : function(_attributesSubset){
-			if(Class.isA(AttributeList, _attributesSubset)){
-				this.attributesSubset = _attributesSubset;
-			}
-		},
-		
-		/**
-		 * Returns the conditions.
-		 * 
-		 * @public
-		 * @alias getConditions
-		 * @memberof Subscriber#
-		 * @returns {string}
-		 */
-		'public getConditions' : function(){
-			return this.conditions;
-		},
-
-		/**
-		 * Sets the conditions.
-		 * 
-		 * @public
-		 * @alias setConditions
-		 * @memberof Subscriber#
-		 * @param {(Callback|Array)} _conditions conditions
-		 */
-		'public setConditions' : function(_conditions){
-			var list = new Array();
-			if(_conditions instanceof Array){
-				list = _conditions;
-			} else if (Class.isA( ConditionList, _conditions)) {
-				list = _conditions.getItems();
-			}
-			for(var i in list){
-				var condition = list[i];
-				if(Class.isA( Condition, condition )){
-					this.attributeTypes.put(condition);
-				};
+			/**
+			 * Builder for subscriberId.
+			 *
+			 * @param {String} subscriberId subscriberId
+			 * @returns {Subscriber}
+			 */
+			Subscriber.prototype.withSubscriberId = function(subscriberId) {
+				this.setSubscriberId(subscriberId);
+				return this;
 			};
-		},
-		
-		/**
-		 * Adds a condition.
-		 * 
-		 * @public
-		 * @alias addCondition
-		 * @memberof Subscriber#
-		 * @param {Condition} _condition Condition
-		 */
-		'public addCondition' : function(_condition){
-			if(Class.isA( Condition, _condition )){
-				if(!this.condition.contains(_condition)){
-					this.conditiond.put(_condition);	
+
+			/**
+			 * Builder for subscriptionCallbacks.
+			 *
+			 * @param {CallbackList} subscriptionCallbacks subscriptionCallbacks
+			 * @returns {Subscriber}
+			 */
+			Subscriber.prototype.withSubscriptionCallbacks = function(subscriptionCallbacks) {
+				this.setSubscriptionCallbacks(subscriptionCallbacks);
+				return this;
+			};
+
+			/**
+			 * Builder for attributesSubset.
+			 *
+			 * @param {AttributeList} attributesSubset attributesSubset
+			 * @returns {Subscriber}
+			 */
+			Subscriber.prototype.withAttributesSubset = function(attributesSubset) {
+				this.setAttributesSubset(attributesSubset);
+				return this;
+			};
+
+			/**
+			 * Builder for conditions.
+			 *
+			 * @param {(ConditionList|Array)} conditionListOrArray conditions
+			 * @returns {Subscriber}
+			 */
+			Subscriber.prototype.withConditions = function(conditionListOrArray) {
+				this.setConditions(conditionListOrArray);
+				return this;
+			};
+
+			/**
+			 * Returns the name.
+			 *
+			 * @returns {string}
+			 */
+			Subscriber.prototype.getSubscriberName = function() {
+				return this._subscriberName;
+			};
+
+			/**
+			 * Sets the setSubscriberName.
+			 *
+			 * @param {string} subscriberName subscriberName
+			 */
+			Subscriber.prototype.setSubscriberName = function(subscriberName) {
+				if(typeof subscriberName === 'string'){
+					this._subscriberName = subscriberName;
 				}
 			};
-		},
 
-		/**
-		 * Removes a condition.
-		 * 
-		 * @public
-		 * @alias removeCondition
-		 * @memberof Subscriber#
-		 * @param {Condition} _condition Condition
-		 */
-		'public removeCondition' : function(_condition){
-			if(Class.isA( Condition, _condition )){
-				this.conditions.removeItem(_condition.getName());
+			/**
+			 * Returns the subscriberId.
+			 *
+			 * @returns {string}
+			 */
+			Subscriber.prototype.getSubscriberId = function() {
+				return this._subscriberId;
 			};
-		},
-		
-		/**
-		 * Compares this instance with the given one.
-		 * 
-		 * @public
-		 * @alias equals
-		 * @memberof Subscriber#
-		 * @param {Subscriber} _subscriber Subscriber that should be compared.
-		 * @returns {boolean}
-		 */
-		'public equals' : function(_subscriber) {				
-			if(Class.isA(Subscriber, _subscriber)){
-				if(_subscriber.getSubscriberName() == this.subscriberName
-							&& _subscriber.getSubscriberId() == this.subscriberId
-							&& _subscriber.getSubscriptionCallbacks().equals(this.getSubscriptionCallbacks())
-							&& _subscriber.getAttributesSubset().equals(this.getAttributesSubset())
-							&& _subscriber.getConditions().equals(this.getConditions())){
-					return true;
-				};
+
+			/**
+			 * Sets the subscriberId.
+			 *
+			 * @param {string} subscriberId subscriberId
+			 */
+			Subscriber.prototype.setSubscriberId = function(subscriberId){
+				if(typeof subscriberId === 'string'){
+					this._subscriberId = subscriberId;
+				}
 			};
-			return false;
 
-		},
-				
-		});
+			/**
+			 * Returns the subscriptionCallbacks.
+			 *
+			 * @returns {CallbackList}
+			 */
+			Subscriber.prototype.getSubscriptionCallbacks = function() {
+				return this._subscriptionCallbacks;
+			};
 
-	return Subscriber;
-});
+			/**
+			 * Sets the subscriptionCallbacks.
+			 *
+			 * @param {CallbackList} subscriptionCallbacks subscriptionCallbacks
+			 */
+			Subscriber.prototype.setSubscriptionCallbacks = function(subscriptionCallbacks) {
+				if(subscriptionCallbacks.constructor === CallbackList) {
+					this._subscriptionCallbacks = subscriptionCallbacks;
+				}
+			};
+
+			/**
+			 * Returns the attributesSubset.
+			 *
+			 * @returns {string}
+			 */
+			Subscriber.prototype.getAttributesSubset = function() {
+				return this._attributesSubset;
+			};
+
+			/**
+			 * Sets the attributesSubset.
+			 *
+			 * @param {AttributeList} attributesSubset attributesSubset
+			 */
+			Subscriber.prototype.setAttributesSubset = function(attributesSubset){
+				if(attributesSubset && attributesSubset.constructor === AttributeList) {
+					this._attributesSubset = attributesSubset;
+				}
+			};
+
+			/**
+			 * Returns the conditions.
+			 *
+			 * @returns {string}
+			 */
+			Subscriber.prototype.getConditions = function() {
+				return this._conditions;
+			};
+
+			/**
+			 * Sets the conditions.
+			 *
+			 * @param {(ConditionList|Array)} conditionListOrArray conditions
+			 */
+			Subscriber.prototype.setConditions = function(conditionListOrArray) {
+				var list = [];
+				if(conditionListOrArray instanceof Array){
+					list = conditionListOrArray;
+				} else if (conditionListOrArray && conditionListOrArray.constructor === ConditionList) {
+					list = conditionListOrArray.getItems();
+				}
+				for(var i in list) {
+					this.addCondition(list[i]);
+				}
+			};
+
+			/**
+			 * Adds a condition.
+			 *
+			 * @param {Condition} condition Condition
+			 */
+			Subscriber.prototype.addCondition = function(condition) {
+				if (condition.constructor === Condition) {
+					if (!this._conditions.contains(condition)) {
+						this._conditions.put(condition);
+					}
+				}
+			};
+
+			/**
+			 * Removes a condition.
+			 *
+			 * @param {Condition} condition Condition
+			 */
+			Subscriber.prototype.removeCondition = function(condition) {
+				if (condition.constructor === Condition) {
+					this._conditions.removeItem(condition);
+				}
+			};
+
+			/**
+			 * Compares this instance with the given one.
+			 *
+			 * @param {Subscriber} subscriber Subscriber that should be compared.
+			 * @returns {boolean}
+			 */
+			Subscriber.prototype.equals = function(subscriber) {
+				if(subscriber.constructor === Subscriber){
+					if(subscriber.getSubscriberName() == this.getSubscriberName()
+						&& subscriber.getSubscriberId() == this.getSubscriberId()
+						&& subscriber.getSubscriptionCallbacks().equals(this.getSubscriptionCallbacks())
+						&& subscriber.getAttributesSubset().equals(this.getAttributesSubset())
+						&& subscriber.getConditions().equals(this.getConditions())){
+						return true;
+					}
+				}
+				return false;
+			};
+
+			return Subscriber;
+		})();
+	}
+);

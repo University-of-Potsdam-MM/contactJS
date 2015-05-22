@@ -35,7 +35,7 @@ require(['configTest'], function() {
 				var attributeList = new contactJS.AttributeList().withItems([latitudeValue, longitudeValue]);
 					    		    		
 		    	var assertData2 = function(result){
-		    		assert.ok(testInterpreter.getLastInterpretionTime(),"Callback passed!: getLastInterpretionTime exists" );
+		    		assert.ok(testInterpreter.getLastInterpretionTime,"Callback passed!: getLastInterpretionTime exists" );
 		    		assert.equal(result.size(), 1, "Callback passed!: one outAttribute");
 		    		var list = result.getItems();
 		    		for(var i in list){

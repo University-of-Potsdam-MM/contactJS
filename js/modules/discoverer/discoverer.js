@@ -1,332 +1,232 @@
-/**
- * This module representing a Context Discoverer.
- * 
- * @module Discoverer
- * @fileOverview
- */
-define([ 'easejs', 'attribute', 'attributeList', 'parameter', 'translation', 'widget', 'interpreter', 'aggregator' ], function(easejs,
-		Attribute, AttributeList, Parameter, Translation, Widget, Interpreter, Aggregator) {
-	var Class = easejs.Class;
-	
-	var Discoverer = Class('Discoverer', {
+define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
+	function(AttributeList, Widget, Interpreter, Aggregator) {
+		return (function() {
+			/**
+			 * Constructor: All known components given in the associated functions will be registered as startup.
+			 *
+			 * @classdesc The Discoverer handles requests for components and attributes.
+			 * @constructs Discoverer
+			 */
+			function Discoverer() {
+				/**
+				 * List of available Widgets.
+				 *
+				 * @type {Array}
+				 * @private
+				 */
+				this._widgets = [];
 
-		/**
-		 * @alias widgets
-		 * @private
-		 * @type {Object}
-		 * @memberof Discoverer#
-		 * @desc List of available Widgets.
-		 */
-		'private widgets' : [],
-		
-		/**
-		 * @alias aggregators
-		 * @private
-		 * @type {Object}
-		 * @memberof Discoverer#
-		 * @desc List of available Aggregators.
-		 */
-		'private aggregators' : [],
-		
-		/**
-		 * @alias interpreters
-		 * @private
-		 * @type {Object}
-		 * @memberof Discoverer#
-		 * @desc List of available Interpreter.
-		 */
-		'private interpreters' : [],
+				/**
+				 * List of available Aggregators.
+				 *
+				 * @type {Array}
+				 * @private
+				 */
+				this._aggregators = [];
 
-		/**
-		 * @alias translations
-		 * @private
-		 * @type {Array}
-		 * @memberof Discoverer#
-		 * @desc List of available attribute translations (or synonyms).
-		 */
-		'private translations' : [],
+				/**
+				 * List of available Interpreter.
+				 *
+				 * @type {Object}
+				 * @private
+				 */
+				this._interpreters = [];
 
-		/**
-		 * Constructor: All known components given in the associated functions will be registered as startup.
-		 * 
-		 * @class Discoverer
-		 * @classdesc The Discoverer handles requests for components and attributes. 
-		 * @requires easejs
-		 * @param _widgets
-		 * @param _interpreters
-		 * @param _translations
-		 * @constructs Discoverer
-		 */
-		'public __construct' : function(_widgets, _interpreters, _translations) {
-			this.translations = _translations;
-		},
-
-		/**
-		 * Returns the type of this class, in this case
-		 * "Discoverer".
-		 * 
-		 * @public
-		 * @alias getType
-		 * @memberof Discoverer#
-		 * @returns {string}
-		 */
-		'public getType' : function() {
-			return 'Discoverer';
-		},
-
-		/**
-		 * Registers the specified component.
-		 * 
-		 * @public
-		 * @alias registerNewComponent
-		 * @memberof Discoverer#
-		 * @param {Widget|Aggregator|Interpreter} _component the component that should be registered 
-		 */
-		'public registerNewComponent' : function(_component) {
-			if (_component.getType() == "Widget" && this.getWidget(_component.getId()) == null) this.widgets.push(_component);
-			if (_component.getType() == "Interpreter" && this.getInterpreter(_component.getId()) == null) this.interpreters.push(_component);
-			if (_component.getType() == "Aggregator" && this.getAggregator(_component.getId()) == null) this.aggregators.push(_component);
-		},
-
-		/**
-		 * Deletes a component from the Discoverer.
-		 * 
-		 * @public
-		 * @alias unregisterComponent
-		 * @memberof Discoverer#
-		 * @param {string} _id id of the component that should be registered 
-		 */
-		'public unregisterComponent' : function(_id) {
-			for (var wi in this.widgets) {
-				var theWidget = this.widgets[wi];
-				if (_id == theWidget.getId()) this.widgets.splice(wi, 1);
+				return this;
 			}
-			for (var ii in this.interpreters) {
-				var theInterpreter = this.interpreters[ii];
-				if (_id == theInterpreter.getId()) this.interpreters.splice(ii, 1);
-			}
-			for (var ai in this.aggregators) {
-				var theAggregator= this.aggregators[ai];
-				if (_id == theAggregator.getId()) this.aggregators.splice(ai, 1);
-			}
-		},
 
-		/**
-		 * Returns the widget for the specified id.
-		 * 
-		 * @public
-		 * @alias getWidget
-		 * @memberof Discoverer#
-		 * @param {string} _id id of the component that should be returned
-		 * @returns {?Widget}
-		 */
-		'public getWidget' : function(_id) {
-			for (var index in this.widgets) {
-				var theWidget = this.widgets[index];
-				if (theWidget.getId() == _id) return theWidget;
-			}
-			return null;
-		},
+			/**
+			 * Returns the type of this class, in this case "Discoverer".
+			 *
+			 * @returns {string}
+			 */
+			Discoverer.prototype.getType = function() {
+				return 'Discoverer';
+			};
 
-		/**
-		 * Returns the aggregator for the specified id.
-		 * 
-		 * @public
-		 * @alias getAggregator
-		 * @memberof Discoverer#
-		 * @param {string} _id id of the component that should be returned
-		 * @returns {Aggregator}
-		 */
-		'public getAggregator' : function(_id) {
-			for (var index in this.aggregators) {
-				var theAggregator = this.aggregators[index];
-				if (theAggregator.getId() == _id) return theAggregator;
-			}
-			return null;
-		},
+			/**
+			 * Registers the specified component.
+			 *
+			 * @param {Widget|Aggregator|Interpreter} component the component that should be registered
+			 */
+			Discoverer.prototype.registerNewComponent = function(component) {
+				if (component instanceof Aggregator && this.getAggregator(component.getId()) == null) this._aggregators.push(component);
+				if (component instanceof Widget && !(component instanceof Aggregator) && this.getWidget(component.getId()) == null) this._widgets.push(component);
+				if (component instanceof Interpreter && this.getInterpreter(component.getId()) == null) this._interpreters.push(component);
+			};
 
-		/**
-		 * Returns the interpreter for the specified id.
-		 * 
-		 * @public
-		 * @alias getInterpreter
-		 * @memberof Discoverer#
-		 * @param {string} _id id of the component that should be returned
-		 * @returns {Interpreter}
-		 */
-		'public getInterpreter' : function(_id) {
-			for (var index in this.interpreters) {
-				var theInterpreter = this.interpreters[index];
-				if (theInterpreter.getId() == _id) return theInterpreter;
-			}
-			return null;
-		},
+			/**
+			 * Deletes a component from the Discoverer.
+			 *
+			 * @param {string} componentId id of the component that should be registered
+			 */
+			Discoverer.prototype.unregisterComponent = function(componentId) {
+				for (var wi in this._widgets) {
+					var theWidget = this._widgets[wi];
+					if (componentId == theWidget.getId()) this._widgets.splice(wi, 1);
+				}
+				for (var ii in this._interpreters) {
+					var theInterpreter = this._interpreters[ii];
+					if (componentId == theInterpreter.getId()) this._interpreters.splice(ii, 1);
+				}
+				for (var ai in this._aggregators) {
+					var theAggregator= this._aggregators[ai];
+					if (componentId == theAggregator.getId()) this._aggregators.splice(ai, 1);
+				}
+			};
 
-		/**
-		 * Returns all registered components (widget, aggregator and interpreter).
-		 *
-		 * @public
-		 * @alias getComponents
-		 * @memberof Discoverer#
-		 * @param {Array} _componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
-		 * @returns {Array}
-		 */
-		'public getComponents' : function(_componentTypes) {
-			if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
-			var response = [];
-			if (jQuery.inArray(Widget, _componentTypes) != -1) response = response.concat(this.widgets);
-			if (jQuery.inArray(Aggregator, _componentTypes) != -1) response = response.concat(this.aggregators);
-			if (jQuery.inArray(Interpreter, _componentTypes) != -1) response = response.concat(this.interpreters);
-			return response;
-		},
+			/**
+			 * Returns the widget for the specified id.
+			 *
+			 * @param {string} widgetId id of the component that should be returned
+			 * @returns {?Widget}
+			 */
+			Discoverer.prototype.getWidget = function(widgetId) {
+				for (var index in this._widgets) {
+					var theWidget = this._widgets[index];
+					if (theWidget.getId() == widgetId) return theWidget;
+				}
+				return null;
+			};
 
+			/**
+			 * Returns the aggregator for the specified id.
+			 *
+			 * @param {string} aggregatorId id of the component that should be returned
+			 * @returns {?Aggregator}
+			 */
+			Discoverer.prototype.getAggregator = function(aggregatorId) {
+				for (var index in this._aggregators) {
+					var theAggregator = this._aggregators[index];
+					if (theAggregator.getId() == aggregatorId) return theAggregator;
+				}
+				return null;
+			};
 
-		/**
-		 * Returns the instance (widget, aggregator or interpreter) for the specified id.
-		 * 
-		 * @public
-		 * @alias getComponent
-		 * @memberof Discoverer#
-		 * @param {string} _id id of the component that should be returned
-		 * @returns {?(Widget|Aggregator|Interpreter)}
-		 */
-		'public getComponent' : function(_id) {
-			var component = this.getWidget(_id);
-			if (component) {
-				return component;
-			}
-			var component = this.getAggregator(_id);
-			if (component) {
-				return component;
-			}
-			var component = this.getInterpreter(_id);
-			if (component) {
-				return component;
-			}
-			return null;
-		},
+			/**
+			 * Returns the interpreter for the specified id.
+			 *
+			 * @param {string} interpreterId id of the component that should be returned
+			 * @returns {Interpreter}
+			 */
+			Discoverer.prototype.getInterpreter = function(interpreterId) {
+				for (var index in this._interpreters) {
+					var theInterpreter = this._interpreters[index];
+					if (theInterpreter.getId() == interpreterId) return theInterpreter;
+				}
+				return null;
+			};
 
-		/**
-		 * Returns all components that have the specified attribute as
-		 * outAttribute. It can be chosen between the verification of 
-		 * all attributes or at least one attribute.
-		 * 
-		 * @public
-		 * @alias getComponentsByAttributes
-		 * @memberof Discoverer#
-		 * @param {AttributeList} _attributeList list of searched attributes
-		 * @param {boolean} _all choise of the verification mode
-         * @param {Array} _componentTypes Components types to search for
-		 * @returns {Array}
-		 */
-		'public getComponentsByAttributes' : function(_attributeList, _all, _componentTypes) {
-			var componentList = [];
-			var list = {};
-            if (typeof _componentTypes == "undefined") _componentTypes = [Widget, Interpreter, Aggregator];
-			if (_attributeList instanceof Array) {
-				list = _attributeList;
-			} else if (Class.isA(AttributeList, _attributeList)) {
-				list = _attributeList.getItems();
-			}
-			if (typeof list != "undefined") {
-				var components = this.getComponents(_componentTypes);
-				for (var i in components) {
-					var theComponent = components[i];
-						if(_all && this.containsAllAttributes(theComponent, list)) {
+			/**
+			 * Returns all registered components (widget, aggregator and interpreter).
+			 *
+			 * @param {Array} componentTypes Component types to get descriptions for. Defaults to Widget, Interpreter and Aggregator.
+			 * @returns {Array}
+			 */
+			Discoverer.prototype.getComponents = function(componentTypes) {
+				if (typeof componentTypes == "undefined") componentTypes = [Widget, Interpreter, Aggregator];
+				var response = [];
+				if (jQuery.inArray(Widget, componentTypes) != -1) response = response.concat(this._widgets);
+				if (jQuery.inArray(Aggregator, componentTypes) != -1) response = response.concat(this._aggregators);
+				if (jQuery.inArray(Interpreter, componentTypes) != -1) response = response.concat(this._interpreters);
+				return response;
+			};
+
+			/**
+			 * Returns the instance (widget, aggregator or interpreter) for the specified id.
+			 *
+			 * @param {string} componentId id of the component that should be returned
+			 * @returns {?(Widget|Aggregator|Interpreter)}
+			 */
+			Discoverer.prototype.getComponent = function(componentId) {
+				var theWidget = this.getWidget(componentId);
+				if (theWidget) {
+					return theWidget;
+				}
+				var theAggregator = this.getAggregator(componentId);
+				if (theAggregator) {
+					return theAggregator;
+				}
+				var theInterpreter = this.getInterpreter(componentId);
+				if (theInterpreter) {
+					return theInterpreter;
+				}
+				return null;
+			};
+
+			/**
+			 * Returns all components that have the specified attribute as
+			 * outAttribute. It can be chosen between the verification of
+			 * all attributes or at least one attribute.
+			 *
+			 * @param {AttributeList|Array} attributeListOrArray list of searched attributes
+			 * @param {Boolean} all choise of the verification mode
+			 * @param {Array} componentTypes Components types to search for
+			 * @returns {Array}
+			 */
+			Discoverer.prototype.getComponentsByAttributes = function(attributeListOrArray, all, componentTypes) {
+				var componentList = [];
+				var list = [];
+				if (typeof componentTypes == "undefined") componentTypes = [Widget, Interpreter, Aggregator];
+				if (attributeListOrArray instanceof Array) {
+					list = attributeListOrArray;
+				} else if (attributeListOrArray.constructor === AttributeList) {
+					list = attributeListOrArray.getItems();
+				}
+				if (typeof list != "undefined") {
+					var components = this.getComponents(componentTypes);
+					for (var i in components) {
+						var theComponent = components[i];
+						if(all && this._containsAllAttributes(theComponent, list)) {
 							componentList.push(theComponent);
-						} else if(!_all && this.containsAtLeastOneAttribute(theComponent, list)) {
+						} else if(!all && this._containsAtLeastOneAttribute(theComponent, list)) {
 							componentList.push(theComponent);
+						}
 					}
 				}
-			}
-			return componentList;
-		},
-		
-		/**
-		 * Returns the (associative array of) this discoverer's translations.
-		 * 
-		 * @public
-		 * @alias getTranslations
-		 * @memberof Discoverer#
-		 * @returns {Object}
-		 */
-		'public getTranslations' : function() {
-			return this.translations;
-		},
-		
-		/**
-		 * Returns a newly built attribute.
-		 * 
-		 * @public
-		 * @alias buildAttribute
-		 * @memberof Discoverer#
-		 * @param {string} name the proposed name of the will-be attribute
-		 * @param {string} type its type
-         * @param {Array} parameterList an array of arrays with two elements each: key and value
-		 * @returns {Attribute}
-		 */
-		'public buildAttribute' : function(name, type, parameterList) {
-			var newAttribute = new Attribute().withName(name).withType(type);
-			
-			while (typeof parameterList != 'undefined' && parameterList.length > 0) 
-			{
-				var param = parameterList.pop();
-				var value = param.pop();
-				var key = param.pop();
-				if (typeof key != 'undefined' && typeof value != 'undefined') 
-					newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
-			}
-			for (index in this.translations) {
-				var translation = this.translations[index];
-				if (translation.translates(newAttribute))
-					newAttribute = newAttribute.withSynonym(translation.getSynonym());				
-			}
-			return newAttribute;
-		},
+				return componentList;
+			};
 
-		/***********************************************************************
-		 * Helper *
-		 **********************************************************************/
-		/**
-		 * Helper: Verifies whether a component description contains all searched attributes.
-		 * 
-		 * @private
-		 * @alias containsAllAttributes
-		 * @memberof Discoverer#
-		 * @param {(WidgetDescription|InterpreterDescription)} _component description of a component
-		 * @param {Array} _list searched attributes
-		 * @returns {boolean}
-		 */
-		'private containsAllAttributes' : function(_component, _list) {
-			for ( var j in _list) {
-				var attribute = _list[j];
-				if (!_component.doesSatisfyAttributeType(attribute)) {
-					return false;
+			/***********************************************************************
+			 * Helper *
+			 **********************************************************************/
+			/**
+			 * Helper: Verifies whether a component description contains all searched attributes.
+			 *
+			 * @private
+			 * @param {Widget|Interpreter|Aggregator} component description of a component
+			 * @param {Array} list searched attributes
+			 * @returns {boolean}
+			 */
+			Discoverer.prototype._containsAllAttributes = function(component, list) {
+				for (var j in list) {
+					var attribute = list[j];
+					if (!component.doesSatisfyTypeOf(attribute)) {
+						return false;
+					}
 				}
-			}
-			return true;
-		},
+				return true;
+			};
 
-		/**
-		 * Helper: Verifies whether a component description contains at least on searched attributes.
-		 * 
-		 * @private
-		 * @alias containsAtLeastOneAttribute
-		 * @memberof Discoverer#
-		 * @param {(WidgetDescription|InterpreterDescription)} _component description of a component
-		 * @param {Array} _list searched attributes
-		 * @returns {boolean}
-		 */
-		'private containsAtLeastOneAttribute' : function(_component, _list) {
-			for (var j in _list) {
-				var attribute = _list[j];
-				if (_component.doesSatisfyAttributeType(attribute)) {
-					return true;
+			/**
+			 * Helper: Verifies whether a component description contains at least on searched attributes.
+			 *
+			 * @private
+			 * @param {Widget|Interpreter|Aggregator} component description of a component
+			 * @param {Array} list searched attributes
+			 * @returns {boolean}
+			 */
+			Discoverer.prototype._containsAtLeastOneAttribute = function(component, list) {
+				for (var j in list) {
+					var attribute = list[j];
+					if (component.doesSatisfyTypeOf(attribute)) {
+						return true;
+					}
 				}
-			}
-			return false;
-		}
-	});
+				return false;
+			};
 
-	return Discoverer;
-});
+			return Discoverer;
+		})();
+	}
+);

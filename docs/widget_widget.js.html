@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Source: widget/widget.js</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"contactJS","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""},"linenums":false};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html">contactJS</a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="AbstractList">
+            <span class="title">
+                <a href="AbstractList.html">AbstractList</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AbstractList#clear"><a href="AbstractList.html#clear">clear</a></li>
+            
+                <li data-name="AbstractList#contains"><a href="AbstractList.html#contains">contains</a></li>
+            
+                <li data-name="AbstractList#equals"><a href="AbstractList.html#equals">equals</a></li>
+            
+                <li data-name="AbstractList#getItem"><a href="AbstractList.html#getItem">getItem</a></li>
+            
+                <li data-name="AbstractList#getItems"><a href="AbstractList.html#getItems">getItems</a></li>
+            
+                <li data-name="AbstractList#getKeys"><a href="AbstractList.html#getKeys">getKeys</a></li>
+            
+                <li data-name="AbstractList#isEmpty"><a href="AbstractList.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="AbstractList#put"><a href="AbstractList.html#put">put</a></li>
+            
+                <li data-name="AbstractList#putAll"><a href="AbstractList.html#putAll">putAll</a></li>
+            
+                <li data-name="AbstractList#removeItem"><a href="AbstractList.html#removeItem">removeItem</a></li>
+            
+                <li data-name="AbstractList#size"><a href="AbstractList.html#size">size</a></li>
+            
+                <li data-name="AbstractList#withItems"><a href="AbstractList.html#withItems">withItems</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Aggregator">
+            <span class="title">
+                <a href="Aggregator.html">Aggregator</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Aggregator#_db"><a href="Aggregator.html#_db">_db</a></li>
+            
+                <li data-name="Aggregator#_interpretations"><a href="Aggregator.html#_interpretations">_interpretations</a></li>
+            
+                <li data-name="Aggregator#_widgets"><a href="Aggregator.html#_widgets">_widgets</a></li>
+            
+                <li data-name="Aggregator#callbacks"><a href="Aggregator.html#callbacks">callbacks</a></li>
+            
+                <li data-name="Aggregator#constantAttributes"><a href="Aggregator.html#constantAttributes">constantAttributes</a></li>
+            
+                <li data-name="Aggregator#id"><a href="Aggregator.html#id">id</a></li>
+            
+                <li data-name="Aggregator#name"><a href="Aggregator.html#name">name</a></li>
+            
+                <li data-name="Aggregator#oldAttributes"><a href="Aggregator.html#oldAttributes">oldAttributes</a></li>
+            
+                <li data-name="Aggregator#subscribers"><a href="Aggregator.html#subscribers">subscribers</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Aggregator#_addConstantOutAttribute"><a href="Aggregator.html#_addConstantOutAttribute">_addConstantOutAttribute</a></li>
+            
+                <li data-name="Aggregator#_aggregatorSetup"><a href="Aggregator.html#_aggregatorSetup">_aggregatorSetup</a></li>
+            
+                <li data-name="Aggregator#_init"><a href="Aggregator.html#_init">_init</a></li>
+            
+                <li data-name="Aggregator#_initCallbacks"><a href="Aggregator.html#_initCallbacks">_initCallbacks</a></li>
+            
+                <li data-name="Aggregator#_initConstantOutAttributes"><a href="Aggregator.html#_initConstantOutAttributes">_initConstantOutAttributes</a></li>
+            
+                <li data-name="Aggregator#_initOutAttributes"><a href="Aggregator.html#_initOutAttributes">_initOutAttributes</a></li>
+            
+                <li data-name="Aggregator#_initWidgetSubscription"><a href="Aggregator.html#_initWidgetSubscription">_initWidgetSubscription</a></li>
+            
+                <li data-name="Aggregator#_intervalRunning"><a href="Aggregator.html#_intervalRunning">_intervalRunning</a></li>
+            
+                <li data-name="Aggregator#_register"><a href="Aggregator.html#_register">_register</a></li>
+            
+                <li data-name="Aggregator#_removeWidget"><a href="Aggregator.html#_removeWidget">_removeWidget</a></li>
+            
+                <li data-name="Aggregator#_sendResponse"><a href="Aggregator.html#_sendResponse">_sendResponse</a></li>
+            
+                <li data-name="Aggregator#_sendToSubscriber"><a href="Aggregator.html#_sendToSubscriber">_sendToSubscriber</a></li>
+            
+                <li data-name="Aggregator#_setAggregatorAttributeValues"><a href="Aggregator.html#_setAggregatorAttributeValues">_setAggregatorAttributeValues</a></li>
+            
+                <li data-name="Aggregator#_setAggregatorCallbacks"><a href="Aggregator.html#_setAggregatorCallbacks">_setAggregatorCallbacks</a></li>
+            
+                <li data-name="Aggregator#_setAggregatorConstantAttributeValues"><a href="Aggregator.html#_setAggregatorConstantAttributeValues">_setAggregatorConstantAttributeValues</a></li>
+            
+                <li data-name="Aggregator#_setOutAttributes"><a href="Aggregator.html#_setOutAttributes">_setOutAttributes</a></li>
+            
+                <li data-name="Aggregator#_setWidgets"><a href="Aggregator.html#_setWidgets">_setWidgets</a></li>
+            
+                <li data-name="Aggregator#_store"><a href="Aggregator.html#_store">_store</a></li>
+            
+                <li data-name="Aggregator#_subscribeTo"><a href="Aggregator.html#_subscribeTo">_subscribeTo</a></li>
+            
+                <li data-name="Aggregator#addCallback"><a href="Aggregator.html#addCallback">addCallback</a></li>
+            
+                <li data-name="Aggregator#addOutAttribute"><a href="Aggregator.html#addOutAttribute">addOutAttribute</a></li>
+            
+                <li data-name="Aggregator#addSubscriber"><a href="Aggregator.html#addSubscriber">addSubscriber</a></li>
+            
+                <li data-name="Aggregator#addWidget"><a href="Aggregator.html#addWidget">addWidget</a></li>
+            
+                <li data-name="Aggregator#addWidgetSubscription"><a href="Aggregator.html#addWidgetSubscription">addWidgetSubscription</a></li>
+            
+                <li data-name="Aggregator#didFinishInitialization"><a href="Aggregator.html#didFinishInitialization">didFinishInitialization</a></li>
+            
+                <li data-name="Aggregator#didFinishSetup"><a href="Aggregator.html#didFinishSetup">didFinishSetup</a></li>
+            
+                <li data-name="Aggregator#doesSatisfyTypeOf"><a href="Aggregator.html#doesSatisfyTypeOf">doesSatisfyTypeOf</a></li>
+            
+                <li data-name="Aggregator#getCallbacks"><a href="Aggregator.html#getCallbacks">getCallbacks</a></li>
+            
+                <li data-name="Aggregator#getConstantOutAttributes"><a href="Aggregator.html#getConstantOutAttributes">getConstantOutAttributes</a></li>
+            
+                <li data-name="Aggregator#getCurrentData"><a href="Aggregator.html#getCurrentData">getCurrentData</a></li>
+            
+                <li data-name="Aggregator#getId"><a href="Aggregator.html#getId">getId</a></li>
+            
+                <li data-name="Aggregator#getName"><a href="Aggregator.html#getName">getName</a></li>
+            
+                <li data-name="Aggregator#getOutAttributes"><a href="Aggregator.html#getOutAttributes">getOutAttributes</a></li>
+            
+                <li data-name="Aggregator#getStorageOverview"><a href="Aggregator.html#getStorageOverview">getStorageOverview</a></li>
+            
+                <li data-name="Aggregator#getSubscriber"><a href="Aggregator.html#getSubscriber">getSubscriber</a></li>
+            
+                <li data-name="Aggregator#getType"><a href="Aggregator.html#getType">getType</a></li>
+            
+                <li data-name="Aggregator#getValueForAttributeWithTypeOf"><a href="Aggregator.html#getValueForAttributeWithTypeOf">getValueForAttributeWithTypeOf</a></li>
+            
+                <li data-name="Aggregator#getWidgets"><a href="Aggregator.html#getWidgets">getWidgets</a></li>
+            
+                <li data-name="Aggregator#interpretData"><a href="Aggregator.html#interpretData">interpretData</a></li>
+            
+                <li data-name="Aggregator#isOutAttribute"><a href="Aggregator.html#isOutAttribute">isOutAttribute</a></li>
+            
+                <li data-name="Aggregator#notify"><a href="Aggregator.html#notify">notify</a></li>
+            
+                <li data-name="Aggregator#putData"><a href="Aggregator.html#putData">putData</a></li>
+            
+                <li data-name="Aggregator#queryAttribute"><a href="Aggregator.html#queryAttribute">queryAttribute</a></li>
+            
+                <li data-name="Aggregator#queryGenerator"><a href="Aggregator.html#queryGenerator">queryGenerator</a></li>
+            
+                <li data-name="Aggregator#queryReferencedComponents"><a href="Aggregator.html#queryReferencedComponents">queryReferencedComponents</a></li>
+            
+                <li data-name="Aggregator#queryReferencedInterpreters"><a href="Aggregator.html#queryReferencedInterpreters">queryReferencedInterpreters</a></li>
+            
+                <li data-name="Aggregator#queryReferencedWidget"><a href="Aggregator.html#queryReferencedWidget">queryReferencedWidget</a></li>
+            
+                <li data-name="Aggregator#queryReferencedWidgets"><a href="Aggregator.html#queryReferencedWidgets">queryReferencedWidgets</a></li>
+            
+                <li data-name="Aggregator#queryTables"><a href="Aggregator.html#queryTables">queryTables</a></li>
+            
+                <li data-name="Aggregator#queryWidget"><a href="Aggregator.html#queryWidget">queryWidget</a></li>
+            
+                <li data-name="Aggregator#removeSubscriber"><a href="Aggregator.html#removeSubscriber">removeSubscriber</a></li>
+            
+                <li data-name="Aggregator#retrieveStorage"><a href="Aggregator.html#retrieveStorage">retrieveStorage</a></li>
+            
+                <li data-name="Aggregator#sendToSubscriber"><a href="Aggregator.html#sendToSubscriber">sendToSubscriber</a></li>
+            
+                <li data-name="Aggregator#setCallbacks"><a href="Aggregator.html#setCallbacks">setCallbacks</a></li>
+            
+                <li data-name="Aggregator#setConstantOutAttributes"><a href="Aggregator.html#setConstantOutAttributes">setConstantOutAttributes</a></li>
+            
+                <li data-name="Aggregator#setDiscoverer"><a href="Aggregator.html#setDiscoverer">setDiscoverer</a></li>
+            
+                <li data-name="Aggregator#setId"><a href="Aggregator.html#setId">setId</a></li>
+            
+                <li data-name="Aggregator#setName"><a href="Aggregator.html#setName">setName</a></li>
+            
+                <li data-name="Aggregator#setSubscriber"><a href="Aggregator.html#setSubscriber">setSubscriber</a></li>
+            
+                <li data-name="Aggregator#unsubscribeFrom"><a href="Aggregator.html#unsubscribeFrom">unsubscribeFrom</a></li>
+            
+                <li data-name="Aggregator#updateAndQueryWidget"><a href="Aggregator.html#updateAndQueryWidget">updateAndQueryWidget</a></li>
+            
+                <li data-name="Aggregator#updateWidgetInformation"><a href="Aggregator.html#updateWidgetInformation">updateWidgetInformation</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Attribute">
+            <span class="title">
+                <a href="Attribute.html">Attribute</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Attribute#addParameter"><a href="Attribute.html#addParameter">addParameter</a></li>
+            
+                <li data-name="Attribute#equalsTypeOf"><a href="Attribute.html#equalsTypeOf">equalsTypeOf</a></li>
+            
+                <li data-name="Attribute#equalsValueOf"><a href="Attribute.html#equalsValueOf">equalsValueOf</a></li>
+            
+                <li data-name="Attribute#getName"><a href="Attribute.html#getName">getName</a></li>
+            
+                <li data-name="Attribute#getParameters"><a href="Attribute.html#getParameters">getParameters</a></li>
+            
+                <li data-name="Attribute#getTimestamp"><a href="Attribute.html#getTimestamp">getTimestamp</a></li>
+            
+                <li data-name="Attribute#getType"><a href="Attribute.html#getType">getType</a></li>
+            
+                <li data-name="Attribute#getValue"><a href="Attribute.html#getValue">getValue</a></li>
+            
+                <li data-name="Attribute#hasInputParameter"><a href="Attribute.html#hasInputParameter">hasInputParameter</a></li>
+            
+                <li data-name="Attribute#hasParameters"><a href="Attribute.html#hasParameters">hasParameters</a></li>
+            
+                <li data-name="Attribute#setName"><a href="Attribute.html#setName">setName</a></li>
+            
+                <li data-name="Attribute#setParameters"><a href="Attribute.html#setParameters">setParameters</a></li>
+            
+                <li data-name="Attribute#setTimestamp"><a href="Attribute.html#setTimestamp">setTimestamp</a></li>
+            
+                <li data-name="Attribute#setType"><a href="Attribute.html#setType">setType</a></li>
+            
+                <li data-name="Attribute#setValue"><a href="Attribute.html#setValue">setValue</a></li>
+            
+                <li data-name="Attribute#toString"><a href="Attribute.html#toString">toString</a></li>
+            
+                <li data-name="Attribute#withName"><a href="Attribute.html#withName">withName</a></li>
+            
+                <li data-name="Attribute#withParameter"><a href="Attribute.html#withParameter">withParameter</a></li>
+            
+                <li data-name="Attribute#withParameters"><a href="Attribute.html#withParameters">withParameters</a></li>
+            
+                <li data-name="Attribute#withTimestamp"><a href="Attribute.html#withTimestamp">withTimestamp</a></li>
+            
+                <li data-name="Attribute#withType"><a href="Attribute.html#withType">withType</a></li>
+            
+                <li data-name="Attribute#withValue"><a href="Attribute.html#withValue">withValue</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="AttributeList">
+            <span class="title">
+                <a href="AttributeList.html">AttributeList</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AttributeList#clear"><a href="AttributeList.html#clear">clear</a></li>
+            
+                <li data-name="AttributeList#clone"><a href="AttributeList.html#clone">clone</a></li>
+            
+                <li data-name="AttributeList#contains"><a href="AttributeList.html#contains">contains</a></li>
+            
+                <li data-name="AttributeList#containsTypeOf"><a href="AttributeList.html#containsTypeOf">containsTypeOf</a></li>
+            
+                <li data-name="AttributeList#containsValueOf"><a href="AttributeList.html#containsValueOf">containsValueOf</a></li>
+            
+                <li data-name="AttributeList#equals"><a href="AttributeList.html#equals">equals</a></li>
+            
+                <li data-name="AttributeList#equalsTypesIn"><a href="AttributeList.html#equalsTypesIn">equalsTypesIn</a></li>
+            
+                <li data-name="AttributeList#equalsValuesIn"><a href="AttributeList.html#equalsValuesIn">equalsValuesIn</a></li>
+            
+                <li data-name="AttributeList#getAttributesWithInputParameters"><a href="AttributeList.html#getAttributesWithInputParameters">getAttributesWithInputParameters</a></li>
+            
+                <li data-name="AttributeList#getAttributeWithTypeOf"><a href="AttributeList.html#getAttributeWithTypeOf">getAttributeWithTypeOf</a></li>
+            
+                <li data-name="AttributeList#getItem"><a href="AttributeList.html#getItem">getItem</a></li>
+            
+                <li data-name="AttributeList#getItems"><a href="AttributeList.html#getItems">getItems</a></li>
+            
+                <li data-name="AttributeList#getKeys"><a href="AttributeList.html#getKeys">getKeys</a></li>
+            
+                <li data-name="AttributeList#getSubset"><a href="AttributeList.html#getSubset">getSubset</a></li>
+            
+                <li data-name="AttributeList#getSubsetWithoutItems"><a href="AttributeList.html#getSubsetWithoutItems">getSubsetWithoutItems</a></li>
+            
+                <li data-name="AttributeList#getValueForAttributeWithTypeOf"><a href="AttributeList.html#getValueForAttributeWithTypeOf">getValueForAttributeWithTypeOf</a></li>
+            
+                <li data-name="AttributeList#hasAttributesWithInputParameters"><a href="AttributeList.html#hasAttributesWithInputParameters">hasAttributesWithInputParameters</a></li>
+            
+                <li data-name="AttributeList#isEmpty"><a href="AttributeList.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="AttributeList#put"><a href="AttributeList.html#put">put</a></li>
+            
+                <li data-name="AttributeList#putAll"><a href="AttributeList.html#putAll">putAll</a></li>
+            
+                <li data-name="AttributeList#removeAttributeWithTypeOf"><a href="AttributeList.html#removeAttributeWithTypeOf">removeAttributeWithTypeOf</a></li>
+            
+                <li data-name="AttributeList#removeItem"><a href="AttributeList.html#removeItem">removeItem</a></li>
+            
+                <li data-name="AttributeList#size"><a href="AttributeList.html#size">size</a></li>
+            
+                <li data-name="AttributeList#updateValue"><a href="AttributeList.html#updateValue">updateValue</a></li>
+            
+                <li data-name="AttributeList#withItems"><a href="AttributeList.html#withItems">withItems</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Callback">
+            <span class="title">
+                <a href="Callback.html">Callback</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Callback#addAttributeType"><a href="Callback.html#addAttributeType">addAttributeType</a></li>
+            
+                <li data-name="Callback#equals"><a href="Callback.html#equals">equals</a></li>
+            
+                <li data-name="Callback#getAttributeTypes"><a href="Callback.html#getAttributeTypes">getAttributeTypes</a></li>
+            
+                <li data-name="Callback#getName"><a href="Callback.html#getName">getName</a></li>
+            
+                <li data-name="Callback#removeAttributeType"><a href="Callback.html#removeAttributeType">removeAttributeType</a></li>
+            
+                <li data-name="Callback#setAttributeTypes"><a href="Callback.html#setAttributeTypes">setAttributeTypes</a></li>
+            
+                <li data-name="Callback#setName"><a href="Callback.html#setName">setName</a></li>
+            
+                <li data-name="Callback#withAttributeTypes"><a href="Callback.html#withAttributeTypes">withAttributeTypes</a></li>
+            
+                <li data-name="Callback#withName"><a href="Callback.html#withName">withName</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="CallbackList">
+            <span class="title">
+                <a href="CallbackList.html">CallbackList</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="CallbackList#clear"><a href="CallbackList.html#clear">clear</a></li>
+            
+                <li data-name="CallbackList#contains"><a href="CallbackList.html#contains">contains</a></li>
+            
+                <li data-name="CallbackList#equals"><a href="CallbackList.html#equals">equals</a></li>
+            
+                <li data-name="CallbackList#getItem"><a href="CallbackList.html#getItem">getItem</a></li>
+            
+                <li data-name="CallbackList#getItems"><a href="CallbackList.html#getItems">getItems</a></li>
+            
+                <li data-name="CallbackList#getKeys"><a href="CallbackList.html#getKeys">getKeys</a></li>
+            
+                <li data-name="CallbackList#isEmpty"><a href="CallbackList.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="CallbackList#put"><a href="CallbackList.html#put">put</a></li>
+            
+                <li data-name="CallbackList#putAll"><a href="CallbackList.html#putAll">putAll</a></li>
+            
+                <li data-name="CallbackList#removeItem"><a href="CallbackList.html#removeItem">removeItem</a></li>
+            
+                <li data-name="CallbackList#size"><a href="CallbackList.html#size">size</a></li>
+            
+                <li data-name="CallbackList#withItems"><a href="CallbackList.html#withItems">withItems</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Condition">
+            <span class="title">
+                <a href="Condition.html">Condition</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Condition#compare"><a href="Condition.html#compare">compare</a></li>
+            
+                <li data-name="Condition#equals"><a href="Condition.html#equals">equals</a></li>
+            
+                <li data-name="Condition#getAttributeType"><a href="Condition.html#getAttributeType">getAttributeType</a></li>
+            
+                <li data-name="Condition#getComparisonMethod"><a href="Condition.html#getComparisonMethod">getComparisonMethod</a></li>
+            
+                <li data-name="Condition#getName"><a href="Condition.html#getName">getName</a></li>
+            
+                <li data-name="Condition#getReferenceValue"><a href="Condition.html#getReferenceValue">getReferenceValue</a></li>
+            
+                <li data-name="Condition#setAttributeType"><a href="Condition.html#setAttributeType">setAttributeType</a></li>
+            
+                <li data-name="Condition#setComparisonMethod"><a href="Condition.html#setComparisonMethod">setComparisonMethod</a></li>
+            
+                <li data-name="Condition#setName"><a href="Condition.html#setName">setName</a></li>
+            
+                <li data-name="Condition#setReferenceValue"><a href="Condition.html#setReferenceValue">setReferenceValue</a></li>
+            
+                <li data-name="Condition#withAttributeType"><a href="Condition.html#withAttributeType">withAttributeType</a></li>
+            
+                <li data-name="Condition#withComparisonMethod"><a href="Condition.html#withComparisonMethod">withComparisonMethod</a></li>
+            
+                <li data-name="Condition#withName"><a href="Condition.html#withName">withName</a></li>
+            
+                <li data-name="Condition#withReferenceValue"><a href="Condition.html#withReferenceValue">withReferenceValue</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ConditionList">
+            <span class="title">
+                <a href="ConditionList.html">ConditionList</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ConditionList#clear"><a href="ConditionList.html#clear">clear</a></li>
+            
+                <li data-name="ConditionList#contains"><a href="ConditionList.html#contains">contains</a></li>
+            
+                <li data-name="ConditionList#equals"><a href="ConditionList.html#equals">equals</a></li>
+            
+                <li data-name="ConditionList#getItem"><a href="ConditionList.html#getItem">getItem</a></li>
+            
+                <li data-name="ConditionList#getItems"><a href="ConditionList.html#getItems">getItems</a></li>
+            
+                <li data-name="ConditionList#getKeys"><a href="ConditionList.html#getKeys">getKeys</a></li>
+            
+                <li data-name="ConditionList#isEmpty"><a href="ConditionList.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="ConditionList#put"><a href="ConditionList.html#put">put</a></li>
+            
+                <li data-name="ConditionList#putAll"><a href="ConditionList.html#putAll">putAll</a></li>
+            
+                <li data-name="ConditionList#removeItem"><a href="ConditionList.html#removeItem">removeItem</a></li>
+            
+                <li data-name="ConditionList#size"><a href="ConditionList.html#size">size</a></li>
+            
+                <li data-name="ConditionList#withItems"><a href="ConditionList.html#withItems">withItems</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ConditionMethod">
+            <span class="title">
+                <a href="ConditionMethod.html">ConditionMethod</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ConditionMethod#process"><a href="ConditionMethod.html#process">process</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Discoverer">
+            <span class="title">
+                <a href="Discoverer.html">Discoverer</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Discoverer#getAggregator"><a href="Discoverer.html#getAggregator">getAggregator</a></li>
+            
+                <li data-name="Discoverer#getComponent"><a href="Discoverer.html#getComponent">getComponent</a></li>
+            
+                <li data-name="Discoverer#getComponents"><a href="Discoverer.html#getComponents">getComponents</a></li>
+            
+                <li data-name="Discoverer#getComponentsByAttributes"><a href="Discoverer.html#getComponentsByAttributes">getComponentsByAttributes</a></li>
+            
+                <li data-name="Discoverer#getInterpreter"><a href="Discoverer.html#getInterpreter">getInterpreter</a></li>
+            
+                <li data-name="Discoverer#getType"><a href="Discoverer.html#getType">getType</a></li>
+            
+                <li data-name="Discoverer#getWidget"><a href="Discoverer.html#getWidget">getWidget</a></li>
+            
+                <li data-name="Discoverer#registerNewComponent"><a href="Discoverer.html#registerNewComponent">registerNewComponent</a></li>
+            
+                <li data-name="Discoverer#unregisterComponent"><a href="Discoverer.html#unregisterComponent">unregisterComponent</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Equals">
+            <span class="title">
+                <a href="Equals.html">Equals</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Equals#process"><a href="Equals.html#process">process</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Interpretation">
+            <span class="title">
+                <a href="Interpretation.html">Interpretation</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Interpretation#inAttributeTypes"><a href="Interpretation.html#inAttributeTypes">inAttributeTypes</a></li>
+            
+                <li data-name="Interpretation#interpreterId"><a href="Interpretation.html#interpreterId">interpreterId</a></li>
+            
+                <li data-name="Interpretation#outAttributeTypes"><a href="Interpretation.html#outAttributeTypes">outAttributeTypes</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Interpreter">
+            <span class="title">
+                <a href="Interpreter.html">Interpreter</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Interpreter#_lastInterpretation"><a href="Interpreter.html#_lastInterpretation">_lastInterpretation</a></li>
+            
+                <li data-name="Interpreter#discoverer"><a href="Interpreter.html#discoverer">discoverer</a></li>
+            
+                <li data-name="Interpreter#id"><a href="Interpreter.html#id">id</a></li>
+            
+                <li data-name="Interpreter#name"><a href="Interpreter.html#name">name</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Interpreter#_canHandleInAttributes"><a href="Interpreter.html#_canHandleInAttributes">_canHandleInAttributes</a></li>
+            
+                <li data-name="Interpreter#_canHandleOutAttributes"><a href="Interpreter.html#_canHandleOutAttributes">_canHandleOutAttributes</a></li>
+            
+                <li data-name="Interpreter#_initInAttributes"><a href="Interpreter.html#_initInAttributes">_initInAttributes</a></li>
+            
+                <li data-name="Interpreter#_initOutAttributes"><a href="Interpreter.html#_initOutAttributes">_initOutAttributes</a></li>
+            
+                <li data-name="Interpreter#_interpretData"><a href="Interpreter.html#_interpretData">_interpretData</a></li>
+            
+                <li data-name="Interpreter#_isInAttribute"><a href="Interpreter.html#_isInAttribute">_isInAttribute</a></li>
+            
+                <li data-name="Interpreter#_isOutAttribute"><a href="Interpreter.html#_isOutAttribute">_isOutAttribute</a></li>
+            
+                <li data-name="Interpreter#_register"><a href="Interpreter.html#_register">_register</a></li>
+            
+                <li data-name="Interpreter#_setInAttribute"><a href="Interpreter.html#_setInAttribute">_setInAttribute</a></li>
+            
+                <li data-name="Interpreter#_setInAttributes"><a href="Interpreter.html#_setInAttributes">_setInAttributes</a></li>
+            
+                <li data-name="Interpreter#_setOutAttribute"><a href="Interpreter.html#_setOutAttribute">_setOutAttribute</a></li>
+            
+                <li data-name="Interpreter#_setOutAttributes"><a href="Interpreter.html#_setOutAttributes">_setOutAttributes</a></li>
+            
+                <li data-name="Interpreter#callInterpreter"><a href="Interpreter.html#callInterpreter">callInterpreter</a></li>
+            
+                <li data-name="Interpreter#doesSatisfyTypeOf"><a href="Interpreter.html#doesSatisfyTypeOf">doesSatisfyTypeOf</a></li>
+            
+                <li data-name="Interpreter#getId"><a href="Interpreter.html#getId">getId</a></li>
+            
+                <li data-name="Interpreter#getInAttributes"><a href="Interpreter.html#getInAttributes">getInAttributes</a></li>
+            
+                <li data-name="Interpreter#getLastInterpretionTime"><a href="Interpreter.html#getLastInterpretionTime">getLastInterpretionTime</a></li>
+            
+                <li data-name="Interpreter#getName"><a href="Interpreter.html#getName">getName</a></li>
+            
+                <li data-name="Interpreter#getOutAttributes"><a href="Interpreter.html#getOutAttributes">getOutAttributes</a></li>
+            
+                <li data-name="Interpreter#getOutAttributesWithInputParameters"><a href="Interpreter.html#getOutAttributesWithInputParameters">getOutAttributesWithInputParameters</a></li>
+            
+                <li data-name="Interpreter#getType"><a href="Interpreter.html#getType">getType</a></li>
+            
+                <li data-name="Interpreter#hasOutAttributesWithInputParameters"><a href="Interpreter.html#hasOutAttributesWithInputParameters">hasOutAttributesWithInputParameters</a></li>
+            
+                <li data-name="Interpreter#setDiscoverer"><a href="Interpreter.html#setDiscoverer">setDiscoverer</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="InterpreterResult">
+            <span class="title">
+                <a href="InterpreterResult.html">InterpreterResult</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="InterpreterResult#getInAttributes"><a href="InterpreterResult.html#getInAttributes">getInAttributes</a></li>
+            
+                <li data-name="InterpreterResult#getOutAttributes"><a href="InterpreterResult.html#getOutAttributes">getOutAttributes</a></li>
+            
+                <li data-name="InterpreterResult#getTimestamp"><a href="InterpreterResult.html#getTimestamp">getTimestamp</a></li>
+            
+                <li data-name="InterpreterResult#setInAttributes"><a href="InterpreterResult.html#setInAttributes">setInAttributes</a></li>
+            
+                <li data-name="InterpreterResult#setOutAttributes"><a href="InterpreterResult.html#setOutAttributes">setOutAttributes</a></li>
+            
+                <li data-name="InterpreterResult#setTimestamp"><a href="InterpreterResult.html#setTimestamp">setTimestamp</a></li>
+            
+                <li data-name="InterpreterResult#withInAttributes"><a href="InterpreterResult.html#withInAttributes">withInAttributes</a></li>
+            
+                <li data-name="InterpreterResult#withOutAttributes"><a href="InterpreterResult.html#withOutAttributes">withOutAttributes</a></li>
+            
+                <li data-name="InterpreterResult#withTimestamp"><a href="InterpreterResult.html#withTimestamp">withTimestamp</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Parameter">
+            <span class="title">
+                <a href="Parameter.html">Parameter</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Parameter#equals"><a href="Parameter.html#equals">equals</a></li>
+            
+                <li data-name="Parameter#getKey"><a href="Parameter.html#getKey">getKey</a></li>
+            
+                <li data-name="Parameter#getValue"><a href="Parameter.html#getValue">getValue</a></li>
+            
+                <li data-name="Parameter#setKey"><a href="Parameter.html#setKey">setKey</a></li>
+            
+                <li data-name="Parameter#setValue"><a href="Parameter.html#setValue">setValue</a></li>
+            
+                <li data-name="Parameter#toString"><a href="Parameter.html#toString">toString</a></li>
+            
+                <li data-name="Parameter#withKey"><a href="Parameter.html#withKey">withKey</a></li>
+            
+                <li data-name="Parameter#withValue"><a href="Parameter.html#withValue">withValue</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ParameterList">
+            <span class="title">
+                <a href="ParameterList.html">ParameterList</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ParameterList#clear"><a href="ParameterList.html#clear">clear</a></li>
+            
+                <li data-name="ParameterList#contains"><a href="ParameterList.html#contains">contains</a></li>
+            
+                <li data-name="ParameterList#equals"><a href="ParameterList.html#equals">equals</a></li>
+            
+                <li data-name="ParameterList#getItem"><a href="ParameterList.html#getItem">getItem</a></li>
+            
+                <li data-name="ParameterList#getItems"><a href="ParameterList.html#getItems">getItems</a></li>
+            
+                <li data-name="ParameterList#getItemsAsJson"><a href="ParameterList.html#getItemsAsJson">getItemsAsJson</a></li>
+            
+                <li data-name="ParameterList#getKeys"><a href="ParameterList.html#getKeys">getKeys</a></li>
+            
+                <li data-name="ParameterList#hasInputParameter"><a href="ParameterList.html#hasInputParameter">hasInputParameter</a></li>
+            
+                <li data-name="ParameterList#isEmpty"><a href="ParameterList.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="ParameterList#put"><a href="ParameterList.html#put">put</a></li>
+            
+                <li data-name="ParameterList#putAll"><a href="ParameterList.html#putAll">putAll</a></li>
+            
+                <li data-name="ParameterList#removeItem"><a href="ParameterList.html#removeItem">removeItem</a></li>
+            
+                <li data-name="ParameterList#size"><a href="ParameterList.html#size">size</a></li>
+            
+                <li data-name="ParameterList#withItems"><a href="ParameterList.html#withItems">withItems</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RetrievalResult">
+            <span class="title">
+                <a href="RetrievalResult.html">RetrievalResult</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RetrievalResult#getName"><a href="RetrievalResult.html#getName">getName</a></li>
+            
+                <li data-name="RetrievalResult#getTimestamp"><a href="RetrievalResult.html#getTimestamp">getTimestamp</a></li>
+            
+                <li data-name="RetrievalResult#getValues"><a href="RetrievalResult.html#getValues">getValues</a></li>
+            
+                <li data-name="RetrievalResult#setName"><a href="RetrievalResult.html#setName">setName</a></li>
+            
+                <li data-name="RetrievalResult#setTimestamp"><a href="RetrievalResult.html#setTimestamp">setTimestamp</a></li>
+            
+                <li data-name="RetrievalResult#setValues"><a href="RetrievalResult.html#setValues">setValues</a></li>
+            
+                <li data-name="RetrievalResult#withName"><a href="RetrievalResult.html#withName">withName</a></li>
+            
+                <li data-name="RetrievalResult#withTimestamp"><a href="RetrievalResult.html#withTimestamp">withTimestamp</a></li>
+            
+                <li data-name="RetrievalResult#withValues"><a href="RetrievalResult.html#withValues">withValues</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Storage">
+            <span class="title">
+                <a href="Storage.html">Storage</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Storage#getAttributeNames"><a href="Storage.html#getAttributeNames">getAttributeNames</a></li>
+            
+                <li data-name="Storage#getAttributesOverview"><a href="Storage.html#getAttributesOverview">getAttributesOverview</a></li>
+            
+                <li data-name="Storage#getCountCondition"><a href="Storage.html#getCountCondition">getCountCondition</a></li>
+            
+                <li data-name="Storage#getCurrentData"><a href="Storage.html#getCurrentData">getCurrentData</a></li>
+            
+                <li data-name="Storage#getTimeCondition"><a href="Storage.html#getTimeCondition">getTimeCondition</a></li>
+            
+                <li data-name="Storage#retrieveAttributes"><a href="Storage.html#retrieveAttributes">retrieveAttributes</a></li>
+            
+                <li data-name="Storage#setCountCondition"><a href="Storage.html#setCountCondition">setCountCondition</a></li>
+            
+                <li data-name="Storage#setTimeCondition"><a href="Storage.html#setTimeCondition">setTimeCondition</a></li>
+            
+                <li data-name="Storage#store"><a href="Storage.html#store">store</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Subscriber">
+            <span class="title">
+                <a href="Subscriber.html">Subscriber</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Subscriber#addCondition"><a href="Subscriber.html#addCondition">addCondition</a></li>
+            
+                <li data-name="Subscriber#equals"><a href="Subscriber.html#equals">equals</a></li>
+            
+                <li data-name="Subscriber#getAttributesSubset"><a href="Subscriber.html#getAttributesSubset">getAttributesSubset</a></li>
+            
+                <li data-name="Subscriber#getConditions"><a href="Subscriber.html#getConditions">getConditions</a></li>
+            
+                <li data-name="Subscriber#getSubscriberId"><a href="Subscriber.html#getSubscriberId">getSubscriberId</a></li>
+            
+                <li data-name="Subscriber#getSubscriberName"><a href="Subscriber.html#getSubscriberName">getSubscriberName</a></li>
+            
+                <li data-name="Subscriber#getSubscriptionCallbacks"><a href="Subscriber.html#getSubscriptionCallbacks">getSubscriptionCallbacks</a></li>
+            
+                <li data-name="Subscriber#removeCondition"><a href="Subscriber.html#removeCondition">removeCondition</a></li>
+            
+                <li data-name="Subscriber#setAttributesSubset"><a href="Subscriber.html#setAttributesSubset">setAttributesSubset</a></li>
+            
+                <li data-name="Subscriber#setConditions"><a href="Subscriber.html#setConditions">setConditions</a></li>
+            
+                <li data-name="Subscriber#setSubscriberId"><a href="Subscriber.html#setSubscriberId">setSubscriberId</a></li>
+            
+                <li data-name="Subscriber#setSubscriberName"><a href="Subscriber.html#setSubscriberName">setSubscriberName</a></li>
+            
+                <li data-name="Subscriber#setSubscriptionCallbacks"><a href="Subscriber.html#setSubscriptionCallbacks">setSubscriptionCallbacks</a></li>
+            
+                <li data-name="Subscriber#withAttributesSubset"><a href="Subscriber.html#withAttributesSubset">withAttributesSubset</a></li>
+            
+                <li data-name="Subscriber#withConditions"><a href="Subscriber.html#withConditions">withConditions</a></li>
+            
+                <li data-name="Subscriber#withSubscriberId"><a href="Subscriber.html#withSubscriberId">withSubscriberId</a></li>
+            
+                <li data-name="Subscriber#withSubscriberName"><a href="Subscriber.html#withSubscriberName">withSubscriberName</a></li>
+            
+                <li data-name="Subscriber#withSubscriptionCallbacks"><a href="Subscriber.html#withSubscriptionCallbacks">withSubscriptionCallbacks</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="SubscriberList">
+            <span class="title">
+                <a href="SubscriberList.html">SubscriberList</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="SubscriberList#clear"><a href="SubscriberList.html#clear">clear</a></li>
+            
+                <li data-name="SubscriberList#contains"><a href="SubscriberList.html#contains">contains</a></li>
+            
+                <li data-name="SubscriberList#equals"><a href="SubscriberList.html#equals">equals</a></li>
+            
+                <li data-name="SubscriberList#getItem"><a href="SubscriberList.html#getItem">getItem</a></li>
+            
+                <li data-name="SubscriberList#getItems"><a href="SubscriberList.html#getItems">getItems</a></li>
+            
+                <li data-name="SubscriberList#getKeys"><a href="SubscriberList.html#getKeys">getKeys</a></li>
+            
+                <li data-name="SubscriberList#isEmpty"><a href="SubscriberList.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="SubscriberList#put"><a href="SubscriberList.html#put">put</a></li>
+            
+                <li data-name="SubscriberList#putAll"><a href="SubscriberList.html#putAll">putAll</a></li>
+            
+                <li data-name="SubscriberList#removeItem"><a href="SubscriberList.html#removeItem">removeItem</a></li>
+            
+                <li data-name="SubscriberList#removeSubscriberWithId"><a href="SubscriberList.html#removeSubscriberWithId">removeSubscriberWithId</a></li>
+            
+                <li data-name="SubscriberList#size"><a href="SubscriberList.html#size">size</a></li>
+            
+                <li data-name="SubscriberList#withItems"><a href="SubscriberList.html#withItems">withItems</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="UnEquals">
+            <span class="title">
+                <a href="UnEquals.html">UnEquals</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="UnEquals#process"><a href="UnEquals.html#process">process</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Widget">
+            <span class="title">
+                <a href="Widget.html">Widget</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Widget#callbacks"><a href="Widget.html#callbacks">callbacks</a></li>
+            
+                <li data-name="Widget#constantAttributes"><a href="Widget.html#constantAttributes">constantAttributes</a></li>
+            
+                <li data-name="Widget#id"><a href="Widget.html#id">id</a></li>
+            
+                <li data-name="Widget#name"><a href="Widget.html#name">name</a></li>
+            
+                <li data-name="Widget#oldAttributes"><a href="Widget.html#oldAttributes">oldAttributes</a></li>
+            
+                <li data-name="Widget#subscribers"><a href="Widget.html#subscribers">subscribers</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Widget#_addConstantOutAttribute"><a href="Widget.html#_addConstantOutAttribute">_addConstantOutAttribute</a></li>
+            
+                <li data-name="Widget#_init"><a href="Widget.html#_init">_init</a></li>
+            
+                <li data-name="Widget#_initCallbacks"><a href="Widget.html#_initCallbacks">_initCallbacks</a></li>
+            
+                <li data-name="Widget#_initConstantOutAttributes"><a href="Widget.html#_initConstantOutAttributes">_initConstantOutAttributes</a></li>
+            
+                <li data-name="Widget#_initOutAttributes"><a href="Widget.html#_initOutAttributes">_initOutAttributes</a></li>
+            
+                <li data-name="Widget#_intervalRunning"><a href="Widget.html#_intervalRunning">_intervalRunning</a></li>
+            
+                <li data-name="Widget#_register"><a href="Widget.html#_register">_register</a></li>
+            
+                <li data-name="Widget#_sendResponse"><a href="Widget.html#_sendResponse">_sendResponse</a></li>
+            
+                <li data-name="Widget#_sendToSubscriber"><a href="Widget.html#_sendToSubscriber">_sendToSubscriber</a></li>
+            
+                <li data-name="Widget#_setOutAttributes"><a href="Widget.html#_setOutAttributes">_setOutAttributes</a></li>
+            
+                <li data-name="Widget#addCallback"><a href="Widget.html#addCallback">addCallback</a></li>
+            
+                <li data-name="Widget#addOutAttribute"><a href="Widget.html#addOutAttribute">addOutAttribute</a></li>
+            
+                <li data-name="Widget#addSubscriber"><a href="Widget.html#addSubscriber">addSubscriber</a></li>
+            
+                <li data-name="Widget#didFinishInitialization"><a href="Widget.html#didFinishInitialization">didFinishInitialization</a></li>
+            
+                <li data-name="Widget#doesSatisfyTypeOf"><a href="Widget.html#doesSatisfyTypeOf">doesSatisfyTypeOf</a></li>
+            
+                <li data-name="Widget#getCallbacks"><a href="Widget.html#getCallbacks">getCallbacks</a></li>
+            
+                <li data-name="Widget#getCallbacks"><a href="Widget.html#getCallbacks">getCallbacks</a></li>
+            
+                <li data-name="Widget#getConstantOutAttributes"><a href="Widget.html#getConstantOutAttributes">getConstantOutAttributes</a></li>
+            
+                <li data-name="Widget#getId"><a href="Widget.html#getId">getId</a></li>
+            
+                <li data-name="Widget#getName"><a href="Widget.html#getName">getName</a></li>
+            
+                <li data-name="Widget#getOutAttributes"><a href="Widget.html#getOutAttributes">getOutAttributes</a></li>
+            
+                <li data-name="Widget#getSubscriber"><a href="Widget.html#getSubscriber">getSubscriber</a></li>
+            
+                <li data-name="Widget#getType"><a href="Widget.html#getType">getType</a></li>
+            
+                <li data-name="Widget#getValueForAttributeWithTypeOf"><a href="Widget.html#getValueForAttributeWithTypeOf">getValueForAttributeWithTypeOf</a></li>
+            
+                <li data-name="Widget#isOutAttribute"><a href="Widget.html#isOutAttribute">isOutAttribute</a></li>
+            
+                <li data-name="Widget#notify"><a href="Widget.html#notify">notify</a></li>
+            
+                <li data-name="Widget#putData"><a href="Widget.html#putData">putData</a></li>
+            
+                <li data-name="Widget#queryGenerator"><a href="Widget.html#queryGenerator">queryGenerator</a></li>
+            
+                <li data-name="Widget#queryWidget"><a href="Widget.html#queryWidget">queryWidget</a></li>
+            
+                <li data-name="Widget#removeSubscriber"><a href="Widget.html#removeSubscriber">removeSubscriber</a></li>
+            
+                <li data-name="Widget#sendToSubscriber"><a href="Widget.html#sendToSubscriber">sendToSubscriber</a></li>
+            
+                <li data-name="Widget#setCallbacks"><a href="Widget.html#setCallbacks">setCallbacks</a></li>
+            
+                <li data-name="Widget#setConstantOutAttributes"><a href="Widget.html#setConstantOutAttributes">setConstantOutAttributes</a></li>
+            
+                <li data-name="Widget#setDiscoverer"><a href="Widget.html#setDiscoverer">setDiscoverer</a></li>
+            
+                <li data-name="Widget#setId"><a href="Widget.html#setId">setId</a></li>
+            
+                <li data-name="Widget#setName"><a href="Widget.html#setName">setName</a></li>
+            
+                <li data-name="Widget#setSubscriber"><a href="Widget.html#setSubscriber">setSubscriber</a></li>
+            
+                <li data-name="Widget#updateAndQueryWidget"><a href="Widget.html#updateAndQueryWidget">updateAndQueryWidget</a></li>
+            
+                <li data-name="Widget#updateWidgetInformation"><a href="Widget.html#updateWidgetInformation">updateWidgetInformation</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="widget_widget.js.html">Source: widget/widget.js</h1>
+        
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source "><code>/**
+ * This module representing a Context Widget.
+ * 
+ * @module Widget
+ */
+define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
+		return (function() {
+			/**
+			 * Constructor: Generates the ID and initializes the
+			 * Widget with attributes, callbacks and subscriber
+			 * that are specified in the provided functions.
+			 *
+			 * @abstract
+			 * @classdesc The Widget handles the access to sensors.
+			 * @constructs Widget
+			 */
+			function Widget(discoverer, attributes) {
+				var self = this;
+
+				/**
+				 * Name of the Widget.
+				 *
+				 * @public
+				 * @type {string}
+				 */
+				this.name = 'Widget';
+
+				/**
+				 * ID of the Widget. Will be generated.
+				 *
+				 * @type {string}
+				 */
+				this.id = Math.uuid();
+
+				/**
+				 *
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc All available Attributes and their values.
+				 */
+				this._outAttributes = new AttributeList();
+
+				/**
+				 * @alias oldAttributes
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc This temporary variable is used for storing the old attribute values.
+				 * 			So these can be used to check conditions.
+				 */
+				this._oldOutAttributes = new AttributeList();
+
+				/**
+				 * @alias constantAttributes
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc All available constant Attributes and their values.
+				 */
+				this._constantOutAttributes = new AttributeList();
+
+				/**
+				 * @alias callbacks
+				 * @protected
+				 * @type {CallbackList}
+				 * @memberof Widget#
+				 * @desc List of Callbacks.
+				 */
+				this._callbacks = new CallbackList();
+
+				/**
+				 * @alias subscribers
+				 * @protected
+				 * @type {SubscriberList}
+				 * @memberof Widget#
+				 * @desc List of Subscriber.
+				 */
+				this._subscribers = new SubscriberList();
+
+				/**
+				 * Associated discoverer.
+				 *
+				 * @type {Discoverer}
+				 * @private
+				 */
+				this._discoverer = discoverer;
+
+				this._register();
+				this._init(attributes);
+
+				return this;
+			}
+
+			/**
+			 * Returns the name of the widget.
+			 *
+			 * @public
+			 * @alias getName
+			 * @memberof Widget#
+			 * @returns {string}
+			 */
+			Widget.prototype.getName = function() {
+				return this.name;
+			};
+
+			/**
+			 * Returns the id of the widget.
+			 *
+			 * @public
+			 * @alias getId
+			 * @memberof Widget#
+			 * @returns {string}
+			 */
+			Widget.prototype.getId = function() {
+				return this.id;
+			};
+
+			/**
+			 * Returns the type of this class, in this case
+			 * "Widget".
+			 *
+			 * @virtual
+			 * @public
+			 * @returns {string}
+			 */
+			//TODO: remove and replace with constructor comparison
+			Widget.prototype.getType = function() {
+				return 'Widget';
+			};
+
+			/**
+			 * Returns the available AttributeTypes.
+			 *
+			 * @public
+			 * @param {?AttributeList} [attributes]
+			 * @returns {AttributeList}
+			 */
+			Widget.prototype.getOutAttributes = function(attributes) {
+				// test if attributeList is a list
+				if (attributes &amp;&amp; attributes instanceof AttributeList) {
+					return this._outAttributes.getSubset(attributes);
+				} else {
+					return this._outAttributes;
+				}
+			};
+
+			/**
+			 * Returns the available ConstantAttributeTypes
+			 * (attributes that do not change).
+			 *
+			 * @public
+			 * @param {?AttributeList} attributes
+			 * @returns {AttributeList}
+			 */
+			Widget.prototype.getConstantOutAttributes = function(attributes) {
+				if (attributes &amp;&amp; attributes instanceof AttributeList) {
+					return this._constantOutAttributes.getSubset(attributes);
+				} else {
+					return this._constantOutAttributes;
+				}
+			};
+
+			/**
+			 * Returns the last acquired attribute value with the given attribute type.
+			 *
+			 * @param {AttributeType} attributeType The attribute type to return the last value for.
+			 * @returns {*}
+			 */
+			Widget.prototype.getValueForAttributeWithTypeOf = function(attributeType) {
+				return this.getOutAttributes().getAttributeWithTypeOf(attributeType).getValue();
+			};
+
+			/**
+			 * Returns the old Attributes.
+			 *
+			 * @private
+			 * @alias getOldAttributes
+			 * @memberof Widget#
+			 * @returns {AttributeList}
+			 */
+			Widget.prototype.getOldAttributes = function() {
+				return this._oldOutAttributes;
+			};
+
+			/**
+			 * Returns a list of callbacks that can be
+			 * subscribed to.
+			 *
+			 * @public
+			 * @alias getCallbacks
+			 * @memberof Widget#
+			 * @returns {CallbackList}
+			 */
+			Widget.prototype.getCallbackList = function() {
+				return this._callbacks;
+			};
+
+			/**
+			 * Returns the specified callbacks that can be
+			 * subscribed to.
+			 *
+			 * @public
+			 * @alias getCallbacks
+			 * @memberof Widget#
+			 * @returns {Array}
+			 */
+			Widget.prototype.getCallbacks = function() {
+				return this._callbacks.getItems();
+			};
+
+			Widget.prototype.queryServices = function() {
+				return this.services;
+			};
+
+			/**
+			 * Returns the Subscriber.
+			 *
+			 * @public
+			 * @alias getSubscriber
+			 * @memberof Widget#
+			 * @returns {SubscriberList}
+			 */
+			Widget.prototype.getSubscriber = function() {
+				return this._subscribers;
+			};
+
+			/**
+			 * Sets the name of the Widget.
+			 *
+			 * @protected
+			 * @alias setName
+			 * @memberof Widget#
+			 * @param {string} name Name of the Widget.
+			 */
+			Widget.prototype.setName = function(name) {
+				if (typeof name === 'string') {
+					this.name = name;
+				}
+			};
+
+			/**
+			 * Sets the id of the Widget.
+			 *
+			 * @protected
+			 * @alias setId
+			 * @memberof Widget#
+			 * @param {string} id Id of the Widget.
+			 */
+			Widget._setId = function(id) {
+				if (typeof id === 'string') {
+					this.id = id;
+				}
+			};
+
+			/**
+			 * Sets the AttributeValueList and also the associated
+			 * AttributeTypes.
+			 *
+			 * @protected
+			 * @param {(AttributeList|Array)} attributesOrArray List or Array of AttributeValues
+			 */
+			Widget.prototype._setOutAttributes = function(attributesOrArray) {
+				this._outAttributes = new AttributeList().withItems(attributesOrArray);
+			};
+
+			/**
+			 * Adds a new AttributeValue. If the given value is
+			 * not included in the list, the associated type will
+			 * be also added. Otherwise, only the value will be
+			 * updated.
+			 *
+			 * @public
+			 * @param {Attribute} attribute
+			 * @param {Boolean} multipleInstances
+			 */
+			Widget.prototype.addOutAttribute = function(attribute, multipleInstances) {
+				multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+				if (attribute instanceof Attribute) {
+					if (!this._outAttributes.containsTypeOf(attribute)) {
+						this._oldOutAttributes = this._outAttributes;
+						attribute.setTimestamp(this.getCurrentTime());
+						this._outAttributes.put(attribute, multipleInstances);
+					}
+				}
+			};
+
+			/**
+			 * Sets the ConstantAttributeValueList and also the
+			 * associated AttributeTypes.
+			 *
+			 * @protected
+			 * @alias setConstantOutAttributes
+			 * @memberof Widget#
+			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
+			 */
+			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
+				var list = [];
+				if (constantAttributes instanceof Array) {
+					list = constantAttributes;
+				} else if (Class.isA(AttributeValueList, constantAttributes)) {
+					list = constantAttributes.getItems();
+				}
+				for ( var i in list) {
+					var constantAttribute = list[i];
+					if (Class.isA(AttributeValue, constantAttribute)) {
+						constantAttribute.setTimestamp(this.getCurrentTime());
+						this.constantAttributes.put(constantAttribute);
+						var type = new AttributeType().withName(constantAttribute.getName())
+							.withType(constantAttribute.getType())
+							.withParameters(constantAttribute.getParameters());
+						this.constantAttributeTypes.put(type);
+					}
+				}
+			};
+
+			/**
+			 * Adds a new constantAttributeValue. If the given value is
+			 * not included in the list, the associated type will
+			 * be also added. Otherwise, only the value will be
+			 * updated.
+			 *
+			 * @protected
+			 * @param {Attribute} constantAttribute AttributeValue
+			 */
+			Widget.prototype._addConstantOutAttribute = function(constantAttribute) {
+				if (Class.isA(AttributeValue, constantAttribute)) {
+					if (!this.constantAttributes
+							.contains(constantAttribute)) {
+
+						var type = new AttributeType().withName(constantAttribute.getName())
+							.withType(constantAttribute.getType())
+							.withParameters(constantAttribute.getParameters());
+						this.constantAttributeTypes.put(type);
+					}
+					_attribute.setTimestamp(this.getCurrentTime());
+					this.constantAttributes.put(constantAttribute);
+				}
+			};
+
+			/**
+			 * Sets Callbacks.
+			 *
+			 * @protected
+			 * @alias setCallbacks
+			 * @memberof Widget#
+			 * @param {(CallbackList|Array)} callbacks List or Array of Callbacks.
+			 */
+			Widget.prototype._setCallbacks = function(callbacks) {
+				var list = [];
+				if (callbacks instanceof Array) {
+					list = callbacks;
+				} else if (callbacks instanceof CallbackList) {
+					list = callbacks.getItems();
+				}
+				for ( var i in list) {
+					var callback = list[i];
+					if (callback instanceof Callback) {
+						this.callbacks.put(callback);
+					}
+				}
+			};
+
+			/**
+			 * Adds a new Callback.
+			 *
+			 * @protected
+			 * @alias addCallback
+			 * @memberof Widget#
+			 * @param {Callback} callback List or Array of AttributeValues.
+			 */
+			Widget.prototype._addCallback = function(callback) {
+				if (callback instanceof Callback) {
+					this._callbacks.put(callback);
+				}
+			};
+
+			Widget.prototype._setServices = function(services) {
+				this.services = services;
+			};
+
+			/**
+			 * Sets SubscriberList.
+			 *
+			 * @protected
+			 * @alias setSubscriber
+			 * @memberof Widget#
+			 * @param {(SubscriberList|Array)}  subscribers List or Array of Subscriber.
+			 */
+			Widget.prototype._setSubscriber = function(subscribers) {
+				var list = [];
+				if (subscribers instanceof Array) {
+					list = subscribers;
+				} else if (subscribers instanceof SubscriberList) {
+					list = subscribers.getItems();
+				}
+				for ( var i in list) {
+					var singleSubscriber = list[i];
+					if (singleSubscriber instanceof Subscriber) {
+						this._subscribers.put(singleSubscriber);
+					}
+				}
+			};
+
+			/**
+			 * Adds a new Subscriber.
+			 *
+			 * @public
+			 * @param {?Subscriber} subscriber Subscriber
+			 */
+			Widget.prototype.addSubscriber = function(subscriber) {
+				if (subscriber &amp;&amp; subscriber instanceof Subscriber) {
+					this._subscribers.put(subscriber);
+				}
+			};
+
+			/**
+			 * Removes the specified Subscriber.
+			 *
+			 * @public
+			 * @param {Subscriber} subscriberId Subscriber
+			 */
+			Widget.prototype.removeSubscriber = function(subscriberId) {
+				this._subscribers.removeSubscriberWithId(subscriberId);
+			};
+
+			/**
+			 * Returns the current time.
+			 *
+			 * @private
+			 * @returns {Date}
+			 */
+			Widget.prototype.getCurrentTime = function() {
+				return new Date();
+			};
+
+			/**
+			 * Verifies whether the specified attributes is a
+			 * provided Attribute.
+			 *
+			 * @protected
+			 * @alias isOutAttribute
+			 * @memberof Widget#
+			 * @param {Attribute} attribute
+			 * @returns {boolean}
+			 */
+			Widget.prototype._isOutAttribute = function(attribute) {
+				return !!this._outAttributes.containsTypeOf(attribute);
+			};
+
+			/**
+			 * Initializes the provided Attributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initOutAttributes = function() {
+				throw new Error("Call to abstract function '_initOutAttributes'!");
+			};
+
+			/**
+			 * Initializes the provided ConstantAttributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initConstantOutAttributes = function() {
+				throw new Error("Abstract function!");
+			};
+
+			/**
+			 * Initializes the provided Callbacks.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initCallbacks = function() {
+				throw new Error("Abstract function!");
+			};
+
+			/**
+			 * Function for initializing. Calls all initFunctions
+			 * and will be called by the constructor.
+			 *
+			 * @protected
+			 */
+			Widget.prototype._init = function(attributes) {
+				this._initOutAttributes();
+				this._initConstantOutAttributes();
+				this._initCallbacks();
+
+				this.didFinishInitialization(attributes);
+			};
+
+			/**
+			 * Method will be invoked after the initialization of the widget finished.
+			 * Can be overridden by inheriting classes to take action after initialization.
+			 *
+			 * @public
+			 * @virtual
+			 * @param attributes
+			 */
+			Widget.prototype.didFinishInitialization = function(attributes) {
+
+			};
+
+			/**
+			 * Notifies other components and sends the attributes.
+			 *
+			 * @virtual
+			 * @public
+			 */
+			Widget.prototype.notify = function() {
+				var callbacks = this.getCallbacks();
+				for (var i in callbacks) {
+					this.sendToSubscriber(callbacks[i]);
+				}
+			};
+
+			/**
+			 * Queries the associated sensor and updates the attributes with new values.
+			 * Must be overridden by the subclasses. Overriding subclasses can call
+			 * this.__super(_function) to invoke the provided callback function.
+			 *
+			 * @virtual
+			 * @public
+			 * @param {?function} callback For alternative actions, because an asynchronous function can be used.
+			 */
+			Widget.prototype.sendToSubscriber = function(callback) {
+				if (callback &amp;&amp; typeof(callback) == 'function') {
+					callback();
+				}
+			};
+
+			/**
+			 *
+			 * @abstract
+			 * @param callback
+			 */
+			Widget.prototype.queryGenerator = function (callback) {
+				throw "Call to abstract method 'queryGenerator'.";
+			};
+
+			/**
+			 *
+			 * @param response
+			 * @param callback
+			 * @protected
+			 */
+			Widget.prototype._sendResponse = function(response, callback) {
+				this.putData(response);
+				this.notify();
+
+				if (callback &amp;&amp; typeof(callback) == 'function') {
+					callback();
+				}
+			};
+
+			/**
+			 * Updates the attributes by calling queryGenerator.
+			 *
+			 * @public
+			 * @alias updateWidgetInformation
+			 * @memberof Widget#
+			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
+			 *
+			 */
+			Widget.prototype.updateWidgetInformation = function(callback) {
+				this.queryGenerator(callback);
+			};
+
+			/**
+			 * Updates the Attributes by external components.
+			 *
+			 * @param {(AttributeList|Array)} attributes Data that should be entered.
+			 */
+			Widget.prototype.putData = function(attributes) {
+				var list = [];
+				if (attributes instanceof Array) {
+					list = attributes;
+				} else if (attributes instanceof AttributeList) {
+					list = attributes.getItems();
+				}
+				for ( var i in list) {
+					var theAttribute = list[i];
+					if (theAttribute.type === Attribute &amp;&amp; this.isOutAttribute(theAttribute)) {
+						this.addOutAttribute(theAttribute);
+					}
+				}
+			};
+
+			/**
+			 * Returns all available AttributeValues, Attributes and ConstantAttributes.
+			 *
+			 * @public
+			 * @returns {AttributeList}
+			 */
+			Widget.prototype.queryWidget = function() {
+				var response = new AttributeList();
+				response.putAll(this.getOutAttributes());
+				response.putAll(this.getConstantOutAttributes());
+				return response;
+			};
+
+			/**
+			 * Updates and returns all available AttributeValues,
+			 * Attributes and ConstantAtrributes.
+			 *
+			 * @public
+			 * @alias updateAndQueryWidget
+			 * @memberof Widget#
+			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
+			 * @returns {?AttributeList}
+			 */
+			Widget.prototype.updateAndQueryWidget = function(callback) {
+				if(callback &amp;&amp; typeof(callback) === 'function'){
+					this.queryGenerator(callback);
+				} else {
+					this.queryGenerator();
+					return this.queryWidget();
+				}
+			};
+
+			/**
+			 * Sends all Attributes, specified in the given callback,
+			 * to components which are subscribed to this Callback.
+			 *
+			 * @protected
+			 * @param {string} callback Name of the searched Callback.
+			 */
+			Widget.prototype._sendToSubscriber = function(callback) {
+				if (callback &amp;&amp; callback instanceof Callback) {
+					var subscriberList = this._subscribers.getItems();
+					for (var i in subscriberList) {
+						var subscriber = subscriberList[i];
+						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
+							if(this.dataValid(subscriber.getConditions())){
+								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
+								var callSubset =  callback.getAttributeTypes();
+								var subscriberSubset = subscriber.getAttributesSubset();
+								var data = this.outAttributes.getSubset(callSubset);
+								if (subscriberSubset &amp;&amp; subscriberSubset.size() > 0) {
+									data = data.getSubset(subscriberSubset);
+								}
+							}
+							if (data) {
+								subscriberInstance.putData(data);
+							}
+						}
+					}
+				}
+			};
+
+			/**
+			 * Verifies if the attributes match to the specified conditions in case any exists.
+			 *
+			 * @private
+			 * @alias dataValid
+			 * @memberof Widget#
+			 * @param {string} conditions List of Conditions that will be verified.
+			 * @returns {boolean}
+			 */
+			Widget.prototype._dataValid = function(conditions) {
+				if (conditions instanceof ConditionList) {
+					return true;
+				}
+				if (!conditions.isEmpty()) {
+					var items = _condition.getItems();
+					for (var i in items) {
+						var condition = items[i];
+						var conditionAttributeType = condition.getAttributeType();
+						var conditionAttributeTypeList = new AttributeTypeList()
+							.withItems(new Array(conditionAttributeType));
+						var newValue = this.getAttributes().getSubset(conditionAttributeTypeList);
+						var oldValue = this.getOldAttributes.getSubset(conditionAttributeTypeList);
+						return condition.compare(newValue, oldValue);
+					}
+				}
+				return false;
+			};
+
+			/**
+			 * Runs the context acquisition constantly in an interval.
+			 * Can be called by init.
+			 *
+			 * @virtual
+			 * @protected
+			 * @param {Number} interval Interval in ms
+			 */
+			Widget.prototype._intervalRunning = function(interval) {
+				var self = this;
+				if (interval === parseInt(interval)) {
+					setInterval(function() {self.queryGenerator();}, interval);
+				}
+			};
+
+			/**
+			 * Sets the associated Discoverer and registers to that.
+			 *
+			 * @public
+			 * @param {Discoverer} _discoverer Discoverer
+			 */
+			Widget.prototype.setDiscoverer = function(_discoverer) {
+				if (!this._discoverer) {
+					this._discoverer = _discoverer;
+					this.register();
+				}
+			};
+
+			/**
+			 * Registers the component to the associated Discoverer.
+			 *
+			 * @protected
+			 */
+			Widget.prototype._register = function() {
+				if (this._discoverer) {
+					this._discoverer.registerNewComponent(this);
+				}
+			};
+
+			/**
+			 * Returns true if the widget can satisfy the requested attribute type.
+			 *
+			 * @public
+			 * @param {AttributeType} attribute
+			 * @returns {boolean}
+			 */
+			Widget.prototype.doesSatisfyTypeOf = function(attribute) {
+				return this._outAttributes.containsTypeOf(attribute);
+			};
+
+			return Widget;
+		})();
+	}
+);</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+
+        
+
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0</a> on Thu May 21 2015 17:11:22 GMT+0200 (CEST)
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>

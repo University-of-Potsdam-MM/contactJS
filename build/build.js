@@ -7,7 +7,7 @@
     	contactJS: '../build/contactJS'
     },
     include: ['contactJS'],
-    exclude: ["easejs", "jquery", "MathUuid"],
+    exclude: ["jquery", "MathUuid"],
     out: "../dist/contactJS.js",
     wrap: {
         startFile: "wrap.start",

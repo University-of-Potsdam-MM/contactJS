@@ -10,7 +10,6 @@
 		    'conditionMethod',
 		    'equals',
             'unequals',
-
 		    'discoverer',
 		    'translation',
 		    'interpreter',
@@ -48,7 +47,7 @@
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '1.2.0';
+	contactJS.VERSION = '2.0.0';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;

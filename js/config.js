@@ -6,7 +6,6 @@ requirejs.config({
     paths:
     {
         jquery: '../libs/jquery/jquery',
-        easejs: '../libs/ease.js/ease-full',
         MathUuid: '../libs/uuid/Math.uuid',
         retrievalResult: 'modules/aggregator/storage/retrievalResult',
 		storage: 'modules/aggregator/storage/storage',
@@ -34,17 +33,11 @@ requirejs.config({
     },
     
     shim:{
-    	
-      'easejs' : {
-        exports : 'easejs'
-      },
       'jquery' : {
           exports : '$'
         },
-        
       'MathUuid' : {
           exports : 'MathUuid'
         }
-         
     }
 });

@@ -1,22 +1,35 @@
-/**
- * Created by tobias on 15.04.15.
- */
-define(['easejs', 'interpreter', 'attributeList'],
-    function(easejs, Interpreter, AttributeList) {
-        var Class = easejs.Class;
-        var Interpretation = Class('Interpretation', {
-            'public interpreterId' : null,
-            'public inAttributeTypes' : new AttributeList(),
-            'public outAttributeTypes' : new AttributeList(),
+define(['interpreter', 'attributeList'], function(Interpreter, AttributeList) {
+    return (function () {
+        /**
+         *
+         * @param {String} interpreterId
+         * @param {AttributeList} inAttributes
+         * @param {AttributeList} outAttributes
+         * @returns {Interpretation}
+         * @constructs Interpretation
+         */
+        function Interpretation(interpreterId, inAttributes, outAttributes) {
+            /**
+             *
+             * @type {String}
+             */
+            this.interpreterId = interpreterId;
 
-            'public __construct' : function(_interpreterId, _inAttributes, _outAttributes){
-                this.interpreterId = _interpreterId;
-                this.inAttributeTypes = _inAttributes;
-                this.outAttributeTypes = _outAttributes;
-            }
+            /**
+             *
+             * @type {AttributeList}
+             */
+            this.inAttributeTypes = inAttributes;
 
-        });
+            /**
+             *
+             * @type {AttributeList}
+             */
+            this.outAttributeTypes = outAttributes;
+
+            return this;
+        }
 
         return Interpretation;
-    }
-);
+    })();
+});
