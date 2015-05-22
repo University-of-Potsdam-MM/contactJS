@@ -7,7 +7,7 @@ define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
 			 * @classdesc The Discoverer handles requests for components and attributes.
 			 * @constructs Discoverer
 			 */
-			function Discoverer(translations) {
+			function Discoverer(widgets, interpreters, translations) {
 				/**
 				 * List of available Widgets.
 				 *
@@ -38,7 +38,7 @@ define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
 				 * @type {Array}
 				 * @private
 				 */
-				this._translations = translations ? translations : [];
+				this._translations = (translations instanceof Array) ? translations : [];
 
 				return this;
 			}

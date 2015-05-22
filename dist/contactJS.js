@@ -746,6 +746,13 @@ define('attribute',['parameterList'], function(ParameterList) {
 
             /**
              *
+             * @type {Array}
+             * @private
+             */
+            this._synonymList = [];
+
+            /**
+             *
              * @type {string}
              * @private
              */
@@ -830,6 +837,28 @@ define('attribute',['parameterList'], function(ParameterList) {
         };
 
         /**
+         * Builder for synonyms from single translation, called by discoverer's buildAttribute().
+         *
+         * @param translation
+         * @returns {Attribute}
+         */
+        Attribute.prototype.withSynonym = function(translation){
+            this.addSynonym(translation);
+            return this;
+        };
+
+        /**
+         * Builder for synonyms from translations, called by discoverer's buildAttribute().
+         *
+         * @param translations
+         * @returns {Attribute}
+         */
+        Attribute.prototype.withSynonyms = function(translations){
+            this.setSynonyms(translations);
+            return this;
+        };
+
+        /**
          * Returns the name.
          *
          * @returns {string}
@@ -854,6 +883,15 @@ define('attribute',['parameterList'], function(ParameterList) {
          */
         Attribute.prototype.getParameters = function(){
             return this._parameterList;
+        };
+
+        /**
+         * Returns the list of synonyms
+         *
+         * @returns {Array}
+         */
+        Attribute.prototype.getSynonyms = function(){
+            return this._synonymList;
         };
 
         /**
@@ -888,12 +926,35 @@ define('attribute',['parameterList'], function(ParameterList) {
         };
 
         /**
+         * Adds one synonym.
+         *
+         * @param synonym
+         */
+        Attribute.prototype.addSynonym = function(synonym){
+            if (synonym instanceof Attribute)
+                this.synonymList.push(synonym.getName());
+            else if (typeof _synonym == 'string')
+                this.synonymList.push(synonym);
+        };
+
+        /**
          * Adds a list of Parameter.
          *
          * @param {ParameterList} parameters ParameterList
          */
         Attribute.prototype.setParameters = function(parameters){
             this._parameterList.putAll(parameters);
+        };
+
+        /**
+         * Adds a list of synonyms.
+         *
+         * @param synonyms
+         */
+        Attribute.prototype.setSynonyms = function(synonyms){
+            for (var synIndex in synonyms) {
+                this.addSynonym(synonyms[synIndex]);
+            }
         };
 
         /**
@@ -958,8 +1019,11 @@ define('attribute',['parameterList'], function(ParameterList) {
          * @returns {boolean}
          */
         Attribute.prototype.equalsTypeOf = function(attribute) {
-            if (attribute.constructor === Attribute) {
-                if (this.getName() == attribute.getName() && this.getType() == attribute.getType() && this.getParameters().equals(attribute.getParameters())) {
+            var name = attribute.getName();
+            if (attribute instanceof Attribute) {
+                if ((this.getName() == name || this.getSynonyms().indexOf(name) != -1)
+                    && this.getType() == attribute.getType()
+                    && this.getParameters().equals(attribute.getParameters())) {
                     return true;
                 }
             }
@@ -972,7 +1036,7 @@ define('attribute',['parameterList'], function(ParameterList) {
          * @returns {Boolean}
          */
         Attribute.prototype.equalsValueOf = function(attribute) {
-            if (attribute.constructor === Attribute) {
+            if (attribute instanceof Attribute) {
                 if (this.equalsTypeOf(attribute) && this.getValue() == attribute.getValue()) {
                     return true;
                 }
@@ -1034,6 +1098,7 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
          * @param {Attribute} attribute AttributeType
          * @param {boolean} multipleInstances
          */
+
         AttributeList.prototype.put = function(attribute, multipleInstances) {
             multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
             if (attribute instanceof this._type) {
@@ -3456,7 +3521,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			Widget.prototype.setDiscoverer = function(_discoverer) {
 				if (!this._discoverer) {
 					this._discoverer = _discoverer;
-					this.register();
+					this._register();
 				}
 			};
 
@@ -4779,7 +4844,7 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 			 * @classdesc The Discoverer handles requests for components and attributes.
 			 * @constructs Discoverer
 			 */
-			function Discoverer() {
+			function Discoverer(widgets, interpreters, translations) {
 				/**
 				 * List of available Widgets.
 				 *
@@ -4803,6 +4868,14 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 				 * @private
 				 */
 				this._interpreters = [];
+
+				/**
+				 * List of translations or synonymous attributes, respectively.
+				 *
+				 * @type {Array}
+				 * @private
+				 */
+				this._translations = (translations instanceof Array) ? translations : [];
 
 				return this;
 			}
@@ -4949,6 +5022,44 @@ define('discoverer',['attributeList', 'widget', 'interpreter', 'aggregator' ],
 				}
 				return componentList;
 			};
+
+			/**
+			 * Returns an array of all translations known to the discoverer.
+			 *
+			 * @returns {Array}
+			 */
+			Discoverer.prototype.getTranslations = function() {
+				return this._translations;
+			};
+
+			/**
+			 * Builds a new attribute from given name, type and parameters,
+			 * adding known translations to its synonyms.
+			 *
+			 * @param name
+			 * @param type
+			 * @param parameterList
+			 * @returns {Attribute}
+			 */
+			Discoverer.prototype.buildAttribute = function(name, type, parameterList) {
+				var newAttribute = new Attribute().withName(name).withType(type);
+
+				while (typeof parameterList != 'undefined' && parameterList.length > 0)
+				{
+					var param = parameterList.pop();
+					var value = param.pop();
+					var key = param.pop();
+					if (typeof key != 'undefined' && typeof value != 'undefined')
+						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
+				}
+				for (var index in this._translations) {
+					var translation = this._translations[index];
+					if (translation.translates(newAttribute))
+						newAttribute = newAttribute.withSynonym(translation.getSynonym());
+				}
+				return newAttribute;
+			};
+
 
 			/***********************************************************************
 			 * Helper *

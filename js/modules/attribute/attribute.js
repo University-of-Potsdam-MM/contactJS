@@ -180,7 +180,7 @@ define(['parameterList'], function(ParameterList) {
          * @returns {Array}
          */
         Attribute.prototype.getSynonyms = function(){
-            return this.synonymList;
+            return this._synonymList;
         };
 
         /**
