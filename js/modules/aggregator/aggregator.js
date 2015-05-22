@@ -48,17 +48,6 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			Aggregator.prototype.constructor = Aggregator;
 
 			/**
-			 * Returns the type of this class, in this case "Aggregator".
-			 *
-			 * @override
-			 * @public
-			 * @returns {string}
-			 */
-			Aggregator.prototype.getType = function() {
-				return 'Aggregator';
-			};
-
-			/**
 			 * Sets Widget IDs.
 			 *
 			 * @protected

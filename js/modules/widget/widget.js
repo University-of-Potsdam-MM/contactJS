@@ -118,19 +118,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			};
 
 			/**
-			 * Returns the type of this class, in this case
-			 * "Widget".
-			 *
-			 * @virtual
-			 * @public
-			 * @returns {string}
-			 */
-			//TODO: remove and replace with constructor comparison
-			Widget.prototype.getType = function() {
-				return 'Widget';
-			};
-
-			/**
 			 * Returns the available AttributeTypes.
 			 *
 			 * @public

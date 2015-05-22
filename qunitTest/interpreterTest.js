@@ -2,13 +2,13 @@ require(['configTest'], function() {
 	require(['../examples/AddressInterpreter', 'contactJS'],
 	         	function(AddressInterpreter, contactJS){
 		
-			QUnit.asyncTest( "AddressInterpreter", function( assert ) {
+			QUnit.asyncTest( "interpreterTest.js", function( assert ) {
 				var discoverer = new contactJS.Discoverer();
 				var testInterpreter = new AddressInterpreter(discoverer);
 		    				        
 		        var id = testInterpreter.getId();
 				assert.ok( id && id !== "null" && id !== "undefined","Passed!: id is not null" );
-				assert.equal( testInterpreter.getType(), 'Interpreter',"Passed!: type -> Interpreter" );
+				assert.ok( testInterpreter instanceof contactJS.Interpreter, "Passed!: type -> Interpreter" );
 				
 				//getInAttributeTypes
 				var latitudeType = new contactJS.Attribute().withName('latitude').withType('double');

@@ -2,10 +2,10 @@ require(['configTest'], function() {
 	require(['contactJS', '../examples/AddressInterpreter', '../examples/GeoLocationWidget'],
 	         	function(contactJS, AddressInterpreter, GeoLocationWidget){
 		
-			QUnit.test("Discoverer", function(assert) {
+			QUnit.test("discovererTest.js", function(assert) {
 				var discoverer = new contactJS.Discoverer();
 				//type
-				assert.equal(discoverer.getType(), 'Discoverer', "Passed!: type -> Discoverer" );
+				assert.ok(discoverer instanceof contactJS.Discoverer, "Passed!: type -> Discoverer" );
 				
 				//register Widget
 				new GeoLocationWidget(discoverer);
@@ -22,12 +22,12 @@ require(['configTest'], function() {
 				//getWidgets
 				var widget = widgets[0];
 				assert.ok( widget,"getWidget passed!: an instance was returned" );	
-				assert.equal( widget.getType(), "Widget","getWidget passed!: type ot the instance is Widget" );
+				assert.ok( widget instanceof contactJS.Widget, "getWidget passed!: type ot the instance is Widget" );
 				assert.equal( widget.getName(), 'GeoLocationWidget',"getWidget passed!: name of the instance is te expected one" );
 				//same procedure with getComponent
 				var widget2 = components[0];
 				assert.ok( widget2,"getComponent passed!: an instance was returned" );	
-				assert.equal( widget2.getType(), "Widget","getComponent passed!: type ot the instance is Widget" );
+				assert.ok( widget2 instanceof contactJS.Widget, "getComponent passed!: type ot the instance is Widget" );
 				assert.equal( widget2.getName(), 'GeoLocationWidget',"getComponent passed!: name of the instance is te expected one" );
 						
 				//register Interpreter
@@ -43,12 +43,12 @@ require(['configTest'], function() {
 				//getWidgets
 				var interpreter = interpreters[0];
 				assert.ok( interpreter,"getInterpreter passed!: an instance was returned" );	
-				assert.equal( interpreter.getType(), "Interpreter","getInterpreter passed!: type of the instance is Interpreter" );
+				assert.ok( interpreter instanceof contactJS.Interpreter, "getInterpreter passed!: type of the instance is Interpreter" );
 				assert.equal( interpreter.getName(), 'AddressInterpreter',"getInterpreter passed!: name of the instance is te expected one" );
 				//same procedure with getComponent
 				var interpreter2 = components[1];
 				assert.ok( interpreter2,"getComponent passed!: an instance was returned" );	
-				assert.equal( interpreter2.getType(), "Interpreter","getComponent passed!: type ot the instance is Interpreter" );
+				assert.ok( interpreter2 instanceof contactJS.Interpreter, "getComponent passed!: type ot the instance is Interpreter" );
 				assert.equal( interpreter2.getName(), 'AddressInterpreter',"getComponent passed!: name of the instance is te expected one" );
 				
 				//register Aggregator
@@ -66,12 +66,12 @@ require(['configTest'], function() {
 				//getWidgets
 				var aggregator = aggregators[0];
 				assert.ok( aggregator,"getAggregator passed!: an instance was returned" );	
-				assert.equal( aggregator.getType(), "Aggregator","getAggregator passed!: type of the instance is Aggregator" );
+				assert.ok( aggregator instanceof contactJS.Aggregator, "getAggregator passed!: type of the instance is Aggregator" );
 				assert.equal( aggregator.getName(), 'Aggregator',"getAggregator passed!: name of the instance is the expected one" );
 				//same procedure with getComponent
 				var aggregator2 = components[1];
 				assert.ok( aggregator2,"getComponent passed!: an instance was returned" );	
-				assert.equal( aggregator2.getType(), "Aggregator","getComponent passed!: type ot the instance is Aggregator" );
+				assert.ok( aggregator2 instanceof contactJS.Aggregator, "getComponent passed!: type ot the instance is Aggregator" );
 				assert.equal( aggregator2.getName(), 'Aggregator',"getComponent passed!: name of the instance is the expected one" );
 
 				//getComponentByAttribute

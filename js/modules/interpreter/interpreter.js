@@ -85,16 +85,6 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			};
 
 			/**
-			 * Returns the type of this class, in this case "Interpreter".
-			 *
-			 * @public
-			 * @returns {string}
-			 */
-			Interpreter.prototype.getType = function() {
-				return 'Interpreter';
-			};
-
-			/**
 			 * Initializes interpreter and sets the expected inAttributes and provided outAttributes.
 			 *
 			 * @private

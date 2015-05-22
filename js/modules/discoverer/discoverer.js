@@ -36,15 +36,6 @@ define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
 			}
 
 			/**
-			 * Returns the type of this class, in this case "Discoverer".
-			 *
-			 * @returns {string}
-			 */
-			Discoverer.prototype.getType = function() {
-				return 'Discoverer';
-			};
-
-			/**
 			 * Registers the specified component.
 			 *
 			 * @param {Widget|Aggregator|Interpreter} component the component that should be registered
