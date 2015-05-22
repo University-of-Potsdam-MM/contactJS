@@ -7,7 +7,7 @@ define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
 			 * @classdesc The Discoverer handles requests for components and attributes.
 			 * @constructs Discoverer
 			 */
-			function Discoverer() {
+			function Discoverer(translations) {
 				/**
 				 * List of available Widgets.
 				 *
@@ -31,6 +31,14 @@ define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
 				 * @private
 				 */
 				this._interpreters = [];
+
+				/**
+				 * List of translations or synonymous attributes, respectively.
+				 *
+				 * @type {Array}
+				 * @private
+				 */
+				this._translations = translations ? translations : [];
 
 				return this;
 			}
@@ -186,6 +194,44 @@ define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
 				}
 				return componentList;
 			};
+
+			/**
+			 * Returns an array of all translations known to the discoverer.
+			 *
+			 * @returns {Array}
+			 */
+			Discoverer.prototype.getTranslations = function() {
+				return this._translations;
+			};
+
+			/**
+			 * Builds a new attribute from given name, type and parameters,
+			 * adding known translations to its synonyms.
+			 *
+			 * @param name
+			 * @param type
+			 * @param parameterList
+			 * @returns {Attribute}
+			 */
+			Discoverer.prototype.buildAttribute = function(name, type, parameterList) {
+				var newAttribute = new Attribute().withName(name).withType(type);
+
+				while (typeof parameterList != 'undefined' && parameterList.length > 0)
+				{
+					var param = parameterList.pop();
+					var value = param.pop();
+					var key = param.pop();
+					if (typeof key != 'undefined' && typeof value != 'undefined')
+						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
+				}
+				for (var index in this._translations) {
+					var translation = this._translations[index];
+					if (translation.translates(newAttribute))
+						newAttribute = newAttribute.withSynonym(translation.getSynonym());
+				}
+				return newAttribute;
+			};
+
 
 			/***********************************************************************
 			 * Helper *

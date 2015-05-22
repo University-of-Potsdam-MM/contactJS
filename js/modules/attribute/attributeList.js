@@ -28,6 +28,7 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
          * @param {Attribute} attribute AttributeType
          * @param {boolean} multipleInstances
          */
+
         AttributeList.prototype.put = function(attribute, multipleInstances) {
             multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
             if (attribute instanceof this._type) {

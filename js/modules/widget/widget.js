@@ -704,7 +704,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			Widget.prototype.setDiscoverer = function(_discoverer) {
 				if (!this._discoverer) {
 					this._discoverer = _discoverer;
-					this.register();
+					this._register();
 				}
 			};
 

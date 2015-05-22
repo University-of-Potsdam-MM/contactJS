@@ -35,6 +35,13 @@ define(['parameterList'], function(ParameterList) {
 
             /**
              *
+             * @type {Array}
+             * @private
+             */
+            this._synonymList = [];
+
+            /**
+             *
              * @type {string}
              * @private
              */
@@ -119,6 +126,28 @@ define(['parameterList'], function(ParameterList) {
         };
 
         /**
+         * Builder for synonyms from single translation, called by discoverer's buildAttribute().
+         *
+         * @param translation
+         * @returns {Attribute}
+         */
+        Attribute.prototype.withSynonym = function(translation){
+            this.addSynonym(translation);
+            return this;
+        };
+
+        /**
+         * Builder for synonyms from translations, called by discoverer's buildAttribute().
+         *
+         * @param translations
+         * @returns {Attribute}
+         */
+        Attribute.prototype.withSynonyms = function(translations){
+            this.setSynonyms(translations);
+            return this;
+        };
+
+        /**
          * Returns the name.
          *
          * @returns {string}
@@ -143,6 +172,15 @@ define(['parameterList'], function(ParameterList) {
          */
         Attribute.prototype.getParameters = function(){
             return this._parameterList;
+        };
+
+        /**
+         * Returns the list of synonyms
+         *
+         * @returns {Array}
+         */
+        Attribute.prototype.getSynonyms = function(){
+            return this.synonymList;
         };
 
         /**
@@ -177,12 +215,35 @@ define(['parameterList'], function(ParameterList) {
         };
 
         /**
+         * Adds one synonym.
+         *
+         * @param synonym
+         */
+        Attribute.prototype.addSynonym = function(synonym){
+            if (synonym instanceof Attribute)
+                this.synonymList.push(synonym.getName());
+            else if (typeof _synonym == 'string')
+                this.synonymList.push(synonym);
+        };
+
+        /**
          * Adds a list of Parameter.
          *
          * @param {ParameterList} parameters ParameterList
          */
         Attribute.prototype.setParameters = function(parameters){
             this._parameterList.putAll(parameters);
+        };
+
+        /**
+         * Adds a list of synonyms.
+         *
+         * @param synonyms
+         */
+        Attribute.prototype.setSynonyms = function(synonyms){
+            for (var synIndex in synonyms) {
+                this.addSynonym(synonyms[synIndex]);
+            }
         };
 
         /**
@@ -247,8 +308,11 @@ define(['parameterList'], function(ParameterList) {
          * @returns {boolean}
          */
         Attribute.prototype.equalsTypeOf = function(attribute) {
-            if (attribute.constructor === Attribute) {
-                if (this.getName() == attribute.getName() && this.getType() == attribute.getType() && this.getParameters().equals(attribute.getParameters())) {
+            var name = attribute.getName();
+            if (attribute instanceof Attribute) {
+                if ((this.getName() == name || this.getSynonyms().indexOf(name) != -1)
+                    && this.getType() == attribute.getType()
+                    && this.getParameters().equals(attribute.getParameters())) {
                     return true;
                 }
             }
@@ -261,7 +325,7 @@ define(['parameterList'], function(ParameterList) {
          * @returns {Boolean}
          */
         Attribute.prototype.equalsValueOf = function(attribute) {
-            if (attribute.constructor === Attribute) {
+            if (attribute instanceof Attribute) {
                 if (this.equalsTypeOf(attribute) && this.getValue() == attribute.getValue()) {
                     return true;
                 }

@@ -4,9 +4,9 @@
  * @module Translation
  * @fileOverview
  */
-define('translation', ['easejs', 'attribute'], function(easejs, Attribute) {
- 	var Class = easejs.Class;
- 	
+define('translation', ['attribute'], function(Attribute) {
+
+	return function()
 	var Translation = Class('Translation', {
 		
 		'private fromAttributeType' : {},
