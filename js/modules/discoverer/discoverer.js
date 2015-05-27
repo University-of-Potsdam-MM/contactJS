@@ -1,5 +1,5 @@
-define(['attributeList', 'widget', 'interpreter', 'aggregator' ],
-	function(AttributeList, Widget, Interpreter, Aggregator) {
+define(['attributeList', 'attribute', 'parameter', 'widget', 'interpreter', 'aggregator' ],
+	function(AttributeList, Attribute, Parameter, Widget, Interpreter, Aggregator) {
 		return (function() {
 			/**
 			 * Constructor: All known components given in the associated functions will be registered as startup.

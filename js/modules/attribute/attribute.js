@@ -221,9 +221,9 @@ define(['parameterList'], function(ParameterList) {
          */
         Attribute.prototype.addSynonym = function(synonym){
             if (synonym instanceof Attribute)
-                this.synonymList.push(synonym.getName());
-            else if (typeof _synonym == 'string')
-                this.synonymList.push(synonym);
+                this._synonymList.push(synonym.getName());
+            else if (typeof synonym == 'string')
+                this._synonymList.push(synonym);
         };
 
         /**
@@ -308,9 +308,12 @@ define(['parameterList'], function(ParameterList) {
          * @returns {boolean}
          */
         Attribute.prototype.equalsTypeOf = function(attribute) {
-            var name = attribute.getName();
             if (attribute instanceof Attribute) {
-                if ((this.getName() == name || this.getSynonyms().indexOf(name) != -1)
+                var thisName = this.getName();
+                var thatName = attribute.getName();
+                if ((thisName == thatName
+                    || this.getSynonyms().indexOf(thatName) != -1
+                    || attribute.getSynonyms().indexOf(thisName) != -1)
                     && this.getType() == attribute.getType()
                     && this.getParameters().equals(attribute.getParameters())) {
                     return true;

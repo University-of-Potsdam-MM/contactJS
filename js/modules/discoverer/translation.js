@@ -36,12 +36,21 @@ define('translation', ['attribute'], function(Attribute) {
 		}
 
 		/**
-		 * Look for a translation and return the found synonym.
+		 * Return the target synonym.
 		 *
 		 * @returns {Attribute} The synonymous attribute
 		 */
 		Translation.prototype.getSynonym = function() {
 			return this._toAttribute;
+		};
+
+		/**
+		 * Return the original attribute for which a translation exists.
+		 *
+		 * @returns {Attribute} The original attribute
+		 */
+		Translation.prototype.getOrigin = function() {
+			return this._fromAttribute;
 		};
 
 		/**
@@ -52,6 +61,16 @@ define('translation', ['attribute'], function(Attribute) {
 		 */
 		Translation.prototype.translates = function(attribute) {
 			return this._fromAttribute.equalsTypeOf(attribute);
+		};
+
+		/**
+		 * Look for a translation result and return true if one exists.
+		 *
+		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @returns {boolean}
+		 */
+		Translation.prototype.isTranslation = function(attribute) {
+			return this._toAttribute.equalsTypeOf(attribute);
 		};
 
 		return Translation;

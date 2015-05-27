@@ -212,7 +212,11 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
             var newList = new AttributeList();
             for (var index in this._items) {
                 var oldAttribute = this._items[index];
-                var newAttribute = new Attribute().withName(oldAttribute.getName()).withType(oldAttribute.getType()).withParameters(oldAttribute.getParameters());
+                var newAttribute = new Attribute()
+                    .withName(oldAttribute.getName())
+                    .withType(oldAttribute.getType())
+                    .withParameters(oldAttribute.getParameters())
+                    .withSynonyms(oldAttribute.getSynonyms());
                 if (!typeOnly) newAttribute.setValue(oldAttribute.getValue());
                 newList.put(newAttribute);
             }

@@ -525,6 +525,16 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 								var theInAttribute = inAttributes[inAttributeIdentifier];
 								console.log("The interpreter needs the attribute "+theInAttribute+".");
 
+                                var allTranslations = this._discoverer.getTranslations();
+                                for (var translationIndex in allTranslations) {
+                                    var translation = allTranslations[translationIndex];
+                                    if (translation.isTranslation(theInAttribute)) {
+                                        theInAttribute = translation.getOrigin();
+                                        console.log("This attribute seems to be a translation. One possible synonym is "+theInAttribute+".")
+                                        break;
+                                    }
+                                }
+
 								// if required attribute is not already satisfied by the aggregator search for components that do
 								if (!this.doesSatisfyTypeOf(theInAttribute)) {
 									console.log("It seems that I can't satisfy "+theInAttribute+", but I will search for components that can.");
