@@ -217,8 +217,7 @@ define(['attributeList', 'attribute', 'parameter', 'widget', 'interpreter', 'agg
 				}
 				for (var index in this._translations) {
 					var translation = this._translations[index];
-					if (translation.translates(newAttribute))
-						newAttribute = newAttribute.withSynonym(translation.getSynonym());
+					newAttribute = translation.translate(newAttribute);
 				}
 				return newAttribute;
 			};

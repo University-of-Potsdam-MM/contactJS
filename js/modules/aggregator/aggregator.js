@@ -529,7 +529,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
                                 for (var translationIndex in allTranslations) {
                                     var translation = allTranslations[translationIndex];
                                     if (translation.isTranslation(theInAttribute)) {
-                                        theInAttribute = translation.getOrigin();
+                                        theInAttribute = translation.translate(theInAttribute);
                                         console.log("This attribute seems to be a translation. One possible synonym is "+theInAttribute+".")
                                         break;
                                     }
