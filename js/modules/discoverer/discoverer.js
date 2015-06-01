@@ -38,7 +38,33 @@ define(['attributeList', 'attribute', 'parameter', 'widget', 'interpreter', 'agg
 				 * @type {Array}
 				 * @private
 				 */
-				this._translations = (translations instanceof Array) ? translations : [];
+				this._translations = [];
+
+                for (var i in translations) {
+                    var translationArray = translations[i];
+                    if (translationArray.length != 2)
+                        throw new Error("Translations must consist of exactly 2 attributes!");
+
+                    for (var j in translationArray) {
+                        if (translationArray[j].length != 3)
+                            throw new Error("Attributes must be built from 3 parameters!");
+                    }
+
+                    var firstAttribute = this.buildAttribute(
+                        translationArray[0][0],
+                        translationArray[0][1],
+                        translationArray[0][2],
+                        false
+                    );
+                    var secondAttribute = this.buildAttribute(
+                        translationArray[1][0],
+                        translationArray[1][1],
+                        translationArray[1][2],
+                        false
+                    );
+
+                    this._translations.push(new Translation(firstAttribute,secondAttribute));
+                }
 
 				return this;
 			}
@@ -202,10 +228,15 @@ define(['attributeList', 'attribute', 'parameter', 'widget', 'interpreter', 'agg
 			 * @param name
 			 * @param type
 			 * @param parameterList
+             * @param withSynonym
 			 * @returns {Attribute}
 			 */
-			Discoverer.prototype.buildAttribute = function(name, type, parameterList) {
-				var newAttribute = new Attribute().withName(name).withType(type);
+			Discoverer.prototype.buildAttribute = function(name, type, parameterList, withSynonyms) {
+
+                if (typeof name != 'string' || typeof type != 'string')
+                    throw new Error("Parameters name and type must be of type String!");
+
+                var newAttribute = new Attribute(true).withName(name).withType(type);
 
 				while (typeof parameterList != 'undefined' && parameterList.length > 0)
 				{
@@ -215,10 +246,14 @@ define(['attributeList', 'attribute', 'parameter', 'widget', 'interpreter', 'agg
 					if (typeof key != 'undefined' && typeof value != 'undefined')
 						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
 				}
-				for (var index in this._translations) {
-					var translation = this._translations[index];
-					newAttribute = translation.translate(newAttribute);
-				}
+
+                if (typeof withSynonyms == 'undefined' || withSynonyms) {
+                    for (var index in this._translations) {
+                        var translation = this._translations[index];
+                        newAttribute = translation.translate(newAttribute);
+                    }
+                }
+
 				return newAttribute;
 			};
 

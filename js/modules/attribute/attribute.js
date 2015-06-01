@@ -9,7 +9,12 @@ define(['parameterList'], function(ParameterList) {
          * @classdesc Attribute defines name, type (string, double,...) an associated parameter of an attribute.
          * @constructs Attribute
          */
-        function Attribute() {
+        function Attribute(overrideBuilderDependency) {
+
+            // avoid inexpert meddling with attribute construction
+            if (typeof overrideBuilderDependency == 'undefined' || !overrideBuilderDependency)
+                throw new Error("Attributes must be created by discoverer's buildAttribute() method!");
+
             /**
              * Name of the Attribute.
              *
