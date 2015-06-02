@@ -258,6 +258,16 @@ define(['parameterList'], function(ParameterList) {
             return this._parameterList.size() > 0;
         };
 
+        Attribute.prototype.hasSynonyms = function() {
+            return this._synonymList.length > 0;
+        };
+
+        Attribute.prototype.hasSynonym = function(attribute) {
+            for (var i in this._synonymList)
+                if (this._synonymList[i].equalsTypeOf(attribute)) return true;
+            return false;
+        };
+
         /**
          * Sets the value.
          *

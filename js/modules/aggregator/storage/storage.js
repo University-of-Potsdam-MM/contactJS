@@ -330,7 +330,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 				var attributeName = this._resolveAttributeName(tableName);
 				var parameterList = this._resolveParameters(tableName);
 				for(var i=0; i<len; i++){
-					var attribute = new Attribute().
+					var attribute = new Attribute(true).
 						withName(attributeName).withValue(results.rows.item(i).value_).
 						withType(results.rows.item(i).type_).
 						withTimestamp(results.rows.item(i).created_).

@@ -1,5 +1,5 @@
-define(['attributeList', 'attribute', 'parameter', 'widget', 'interpreter', 'aggregator' ],
-	function(AttributeList, Attribute, Parameter, Widget, Interpreter, Aggregator) {
+define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'interpreter', 'aggregator' ],
+	function(AttributeList, Attribute, Translation, Parameter, Widget, Interpreter, Aggregator) {
 		return (function() {
 			/**
 			 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -250,7 +250,7 @@ define(['attributeList', 'attribute', 'parameter', 'widget', 'interpreter', 'agg
                 if (typeof withSynonyms == 'undefined' || withSynonyms) {
                     for (var index in this._translations) {
                         var translation = this._translations[index];
-                        newAttribute = translation.translate(newAttribute);
+						newAttribute = translation.translate(newAttribute);
                     }
                 }
 
