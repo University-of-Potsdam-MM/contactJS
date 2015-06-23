@@ -510,7 +510,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 								var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
 								// add the attribute type to the aggregators list of handled attribute types
 								if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
-								console.log("I can now satisfy attribute "+widgetOutAttribute+" with the help of "+theComponent.getName()+"! That was easy :)");
+								console.log("I can now satisfy attribute "+widgetOutAttribute.toString(true)+" with the help of "+theComponent.getName()+"! That was easy :)");
 								unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
 							}
 						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
@@ -523,32 +523,27 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 							for (var inAttributeIdentifier in inAttributes) {
 								// get the attribute
 								var theInAttribute = inAttributes[inAttributeIdentifier];
-								console.log("The interpreter needs the attribute "+theInAttribute+".");
+								console.log("The interpreter needs the attribute "+theInAttribute.toString(true)+".");
 
                                 var allTranslations = this._discoverer.getTranslations();
                                 for (var translationIndex in allTranslations) {
-                                    var translation = allTranslations[translationIndex];
-                                    if (translation.isTranslation(theInAttribute)) {
-                                        theInAttribute = translation.translate(theInAttribute);
-                                        console.log("This attribute seems to be a translation. One possible synonym is "+theInAttribute+".")
-                                        break;
-                                    }
+                                    theInAttribute = allTranslations[translationIndex].translate(theInAttribute);
                                 }
 
 								// if required attribute is not already satisfied by the aggregator search for components that do
 								if (!this.doesSatisfyTypeOf(theInAttribute)) {
-									console.log("It seems that I can't satisfy "+theInAttribute+", but I will search for components that can.");
+									console.log("It seems that I can't satisfy "+theInAttribute.toString(true)+", but I will search for components that can.");
 									var newAttributeList = new AttributeList();
 									newAttributeList.put(theInAttribute);
 									this._getComponentsForUnsatisfiedAttributes(newAttributeList, false, [Widget, Interpreter]);
 									// if the attribute still can't be satisfied drop the interpreter
 									if (!this.doesSatisfyTypeOf(theInAttribute)) {
-										console.log("I couldn't find a component to satisfy "+theInAttribute+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
+										console.log("I couldn't find a component to satisfy "+theInAttribute.toString(true)+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
 										canSatisfyInAttributes = false;
 										break;
 									}
 								} else {
-									console.log("It seems that I already satisfy the attribute "+theInAttribute+". Let's move on.");
+									console.log("It seems that I already satisfy the attribute "+theInAttribute.toString(true)+". Let's move on.");
 								}
 							}
 
@@ -561,7 +556,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 										var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 										if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
 											this.addOutAttribute(theUnsatisfiedAttribute);
-											console.log("I can now satisfy attribute "+theUnsatisfiedAttribute+" with the help of "+theComponent.getName()+"! Great!");
+											console.log("I can now satisfy attribute "+theUnsatisfiedAttribute.toString(true)+" with the help of "+theComponent.getName()+"! Great!");
 											this._interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
 										}
 									}

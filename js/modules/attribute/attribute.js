@@ -131,7 +131,7 @@ define(['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Builder for synonyms from single translation, called by discoverer's buildAttribute().
+         * Builder for synonyms from single translation.
          *
          * @param translation
          * @returns {Attribute}
@@ -142,7 +142,7 @@ define(['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Builder for synonyms from translations, called by discoverer's buildAttribute().
+         * Builder for synonyms from (several) translations.
          *
          * @param translations
          * @returns {Attribute}
@@ -180,7 +180,7 @@ define(['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Returns the list of synonyms
+         * Returns the list of synonyms.
          *
          * @returns {Array}
          */
@@ -220,7 +220,7 @@ define(['parameterList'], function(ParameterList) {
         };
 
         /**
-         * Adds one synonym.
+         * Adds a synonym to synonymList.
          *
          * @param synonym
          */
@@ -258,10 +258,21 @@ define(['parameterList'], function(ParameterList) {
             return this._parameterList.size() > 0;
         };
 
+        /**
+         * Returns true if the attribute has synonyms.
+         *
+         * @returns {boolean}
+         */
         Attribute.prototype.hasSynonyms = function() {
             return this._synonymList.length > 0;
         };
 
+        /**
+         * Returns true if the attribute has the given attribute in its synonymList.
+         *
+         * @param attribute
+         * @returns {boolean}
+         */
         Attribute.prototype.hasSynonym = function(attribute) {
             for (var i in this._synonymList)
                 if (this._synonymList[i].equalsTypeOf(attribute)) return true;
@@ -321,9 +332,11 @@ define(['parameterList'], function(ParameterList) {
          * @returns {boolean}
          */
         Attribute.prototype.equalsTypeOf = function(attribute) {
+            // name, type and parameters equivalent
             if(this._equalsTypeOf(attribute))
                 return true;
 
+            // check synonyms for equality
             var theseSynonyms = this.getSynonyms();
             var thoseSynonyms = attribute.getSynonyms();
             for (var i in theseSynonyms) {
@@ -339,6 +352,13 @@ define(['parameterList'], function(ParameterList) {
             return false;
         };
 
+        /**
+         * Auxiliary function comparing only name, type and parameters (without synonyms)
+         *
+         * @param attribute
+         * @returns {boolean}
+         * @private
+         */
         Attribute.prototype._equalsTypeOf = function(attribute) {
             if (attribute instanceof Attribute) {
                 if ((this.getName() == attribute.getName()

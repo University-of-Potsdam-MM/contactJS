@@ -40,16 +40,19 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'int
 				 */
 				this._translations = [];
 
+				// build translations from input array
                 for (var i in translations) {
+					// get translation (an array) from array of translations
                     var translationArray = translations[i];
+					// check for correct cardinality
                     if (translationArray.length != 2)
                         throw new Error("Translations must consist of exactly 2 attributes!");
-
-                    for (var j in translationArray) {
-                        if (translationArray[j].length != 3)
-                            throw new Error("Attributes must be built from 3 parameters!");
+					// check for correct number of attribute building blocks
+					for (var j in translationArray) {
+                        if (translationArray[j].length > 3 || translationArray[j].length < 2)
+                            throw new Error("Please provide a name, type and (optional) list of parameters!");
                     }
-
+					// build attributes from arrays containing name, type (and parameters)
                     var firstAttribute = this.buildAttribute(
                         translationArray[0][0],
                         translationArray[0][1],
@@ -62,7 +65,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'int
                         translationArray[1][2],
                         false
                     );
-
+					// add built attributes to translations
                     this._translations.push(new Translation(firstAttribute,secondAttribute));
                 }
 
