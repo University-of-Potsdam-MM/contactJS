@@ -6,25 +6,22 @@ requirejs.config({
     paths:
     {
         jquery: '../libs/jquery/jquery',
-        easejs: '../libs/ease.js/ease-full',
         MathUuid: '../libs/uuid/Math.uuid',
         retrievalResult: 'modules/aggregator/storage/retrievalResult',
 		storage: 'modules/aggregator/storage/storage',
 		aggregator: 'modules/aggregator/aggregator',
-	    attributeType: 'modules/attribute/attributeType',
-	    attributeValue: 'modules/attribute/attributeValue',
-	    attributeTypeList: 'modules/attribute/attributeTypeList',
-	    attributeValueList: 'modules/attribute/attributeValueList',
+		interpretation: 'modules/aggregator/interpretation',
+	    attribute: 'modules/attribute/attribute',
+	    attributeList: 'modules/attribute/attributeList',
 	    parameter: 'modules/attribute/parameter',
 	    parameterList: 'modules/attribute/parameterList',		
 	    condition: 'modules/subscriber/condition/condition',
 	    conditionList: 'modules/subscriber/condition/conditionList',
 	    conditionMethod: 'modules/subscriber/condition/conditionMethod',
 	    equals: 'modules/subscriber/condition/equals',	
-	    unequals: 'modules/subscriber/condition/unequals',	
-	    interpreterDescription: 'modules/descriptions/interpreterDescription',
-	    widgetDescription: 'modules/descriptions/widgetDescription',	    
+	    unequals: 'modules/subscriber/condition/unequals',
 	    discoverer: 'modules/discoverer/discoverer',
+	    translation: 'modules/discoverer/translation',
 	    interpreter: 'modules/interpreter/interpreter', 
 	    interpreterResult: 'modules/interpreter/interpreterResult',
 	    callback: 'modules/subscriber/callback',   
@@ -36,17 +33,11 @@ requirejs.config({
     },
     
     shim:{
-    	
-      'easejs' : {
-        exports : 'easejs'
-      },
       'jquery' : {
           exports : '$'
         },
-        
       'MathUuid' : {
           exports : 'MathUuid'
         }
-         
     }
 });

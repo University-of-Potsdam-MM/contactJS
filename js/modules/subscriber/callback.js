@@ -1,193 +1,143 @@
 /**
  * This module represents a Callback.
- * Callbacks defines events for sending data to subscribers
+ * Callbacks define events for sending data to subscribers
  * 
- * @module Callback
- * @fileOverview
+ * @module Subscriber
  */
-define(['easejs', 'attributeType', 'attributeTypeList'],
- 	function(easejs, AttributeType, AttributeTypeList){
- 	var Class = easejs.Class;
- 	
-	var Callback = Class('Callback',
-	{
-
-		/**
-		 * @alias name
-		 * @private
-		 * @type {string}
-		 * @memberof Callback#
-		 * @desc Name of the Callback (i.e. Update).
-		 */
-		'private name' : '', 
-		/**
-		 * @alias attributeTypes
-		 * @private
-		 * @type {AttributeTypeList}
-		 * @memberof Callback#
-		 * @desc Associated Attributes that will be send to Subscriber.
-		 */
-		'private attributeTypes' : [], 
-		
+define(['attribute', 'attributeList'], function(Attribute, AttributeList){
+	return (function() {
 		/**
 		 * Constructor: Initializes the AttributeTypeList.
-		 * 
-		 * @class Callback
-		 * @classdesc Callbacks defines events for sending data to subscribers.
-		 * 			The data to be sent, are specified in the attributeTypeList.
-		 * @requires easejs
-		 * @requires ParameterList
-		 * @requires AttributeType
-		 * @requires AttributeTypeList
+		 *
+		 * @classdesc Callbacks defines events for sending data to subscribers. The data to be sent, are specified in the attributeTypeList.
+		 * @returns {Callback}
 		 * @constructs Callback
 		 */
-		'public __construct': function()
-        {
-			this.attributeTypes = new AttributeTypeList();
-        },
+		function Callback() {
+			/**
+			 * Name of the Callback (i.e. Update).
+			 * @type {string}
+			 * @private
+			 */
+			this._name = '';
 
-        /**
+			/**
+			 * Associated Attributes that will be send to Subscriber.
+			 *
+			 * @type {AttributeList}
+			 * @private
+			 */
+			this._attributes = new AttributeList();
+
+			return this;
+		}
+
+		/**
 		 * Builder for name.
-		 * 
-		 * @public
-		 * @alias withName
-		 * @memberof Callback#
+		 *
 		 * @param {String} _name Name
 		 * @returns {Callback}
 		 */
-		'public withName' : function(_name){
+		Callback.prototype.withName = function(_name) {
 			this.setName(_name);
 			return this;
-		},
-		
+		};
+
 		/**
 		 * Builder for AttributeTypes.
-		 * 
-		 * @public
-		 * @alias withAttributeTypes
-		 * @memberof Callback#
-		 * @param {(AttributeTypeList|Array)} _attributeTypes attributeTypes
+		 *
+		 * @param {(AttributeList|Array)} attributeListOrArray attributeTypes
 		 * @returns {Callback}
 		 */
-		'public withAttributeTypes' : function(_attributeTypes){
-			this.setAttributeTypes(_attributeTypes);
+		Callback.prototype.withAttributeTypes = function(attributeListOrArray) {
+			this.setAttributeTypes(attributeListOrArray);
 			return this;
-		},
+		};
 
 		/**
 		 * Returns the name.
-		 * 
-		 * @public
-		 * @alias getName
-		 * @memberof Callback#
+		 *
 		 * @returns {string}
 		 */
-		'public getName' : function(){
-			return this.name;
-		},
+		Callback.prototype.getName = function() {
+			return this._name;
+		};
 
 		/**
 		 * Sets the name.
-		 * 
-		 * @public
-		 * @alias setName
-		 * @memberof Callback#
-		 * @param {string} _name Name
+		 *
+		 * @param {string} name Name
 		 */
-		'public setName' : function(_name){
-			if(typeof _name === 'string'){
-				this.name = _name;
-			};
-		},
+		Callback.prototype.setName = function(name) {
+			if (typeof name === 'string') {
+				this._name = name;
+			}
+		};
 
 		/**
 		 * Returns the associated attributes (only the types).
-		 * 
-		 * @public
-		 * @alias getAttributeTypes
-		 * @memberof Callback#
-		 * @returns {AttributeTypeList}
+		 *
+		 * @returns {AttributeList}
 		 */
-		'public getAttributeTypes' : function(){
-			return this.attributeTypes;
-		},
+		Callback.prototype.getAttributeTypes = function() {
+			return this._attributes;
+		};
 
 		/**
 		 * Adds a list of AttributeTypes.
-		 * 
-		 * @public
-		 * @alias setAttributeTypes
-		 * @memberof Callback#
-		 * @param {AttributeTypeList} _attributeTypes AttributeTypeList
+		 *
+		 * @param {AttributeList|Array} _attributes AttributeTypeList
 		 */
-		'public setAttributeTypes' : function(_attributeTypes){
+		Callback.prototype.setAttributeTypes = function(_attributes){
 			var list = [];
-			if(_attributeTypes instanceof Array){
-				list = _attributeTypes;
-			} else if (Class.isA( AttributeTypeList, _attributeTypes)) {
-				list = _attributeTypes.getItems();
+			if(_attributes instanceof Array){
+				list = _attributes;
+			} else if (_attributes.constructor === AttributeList) {
+				list = _attributes.getItems();
 			}
 			for(var i in list){
-				var attributeType = list[i];
-				if(Class.isA( AttributeType, attributeType )){
-					this.attributeTypes.put(attributeType);
-				}
+				this.addAttributeType(list[i]);
 			}
-		},
+		};
 
 		/**
 		 * Adds an attribute to AttributeTypeList.
-		 * 
-		 * @public
-		 * @alias addAttributeType
-		 * @memberof Callback#
-		 * @param {AttributeType} _attributeType AttributeType
+		 *
+		 * @param {Attribute} attribute Attribute
 		 */
-		'public addAttributeType' : function(_attributeType){
-			if(Class.isA( AttributeType, _attributeType )){
-				if(!this.attributeTypes.contains(_attributeType)){
-					this.attributeTypes.put(_attributeType);	
-				}
-			};
-		},
+		Callback.prototype.addAttributeType = function(attribute){
+			if(attribute.constructor === Attribute && !this._attributes.containsTypeOf(attribute)){
+				this._attributes.put(attribute);
+			}
+		};
 
 		/**
 		 * Removes an attribute from AttributeTypeList.
-		 * 
-		 * @public
-		 * @alias removeAttributeType
-		 * @memberof Callback#
-		 * @param {AttributeType} _attributeType AttributeType
+		 *
+		 * @param {Attribute} attribute AttributeType
 		 */
-		'public removeAttributeType' : function(_attributeType){
-			if(Class.isA( AttributeType, _attributeType )){
-				this.attributeTypes.removeItem(_attributeType.getName());
-			};
-		},
-		
+		Callback.prototype.removeAttributeType = function(attribute){
+			if(attribute.constructor === Attribute){
+				this._attributes.removeItem(attribute);
+			}
+		};
+
 		/**
 		 * Compares this instance with the given one.
-		 * 
-		 * @virtual
-		 * @public
-		 * @alias equals
-		 * @memberof Callback#
+		 *
 		 * @param {Callback} _callback Callback that should be compared
 		 * @returns {boolean}
 		 */
-		'public equals' : function(_callback) {				
-			if(Class.isA(Callback, _callback)){
+		Callback.prototype.equals = function(_callback) {
+			if (_callback.constructor === Callback){
 				if(_callback.getName() == this.getName()
-					&& _callback.getAttributeTypes().equals(this.getAttributeTypes())){
+					&& _callback.getAttributeTypes().equals(this.getAttributeTypes())) {
 					return true;
-				};
-			};
+				}
+			}
 			return false;
+		};
 
-		},
-
-
-		});
-
-	return Callback;
+		return Callback;
+	})();
 });

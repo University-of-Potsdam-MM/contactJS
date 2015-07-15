@@ -1,261 +1,206 @@
-/**
- * This module represents a Condition. 
- * Condition specifies subscriptions. 
- * The associated attributes are only sent, if the condition applies. 
- * 
- * @module Condition
- * @fileOverview
- */
-define(['easejs','attributeType','attributeValue', 'conditionMethod'],
- 	function(easejs, AttributeType, AttributeValue, ConditionMethod){
- 	var Class = easejs.Class;
- 	/**
-	 * @class Condition
-	 * @classdesc Condition for subscribed Attributes.
-	 * @requires easejs
-	 * @requires AttributeType
-	 * @requires AttributeValue
-	 * @rewuires ConditionMethod
-	 */
-	var Condition = Class('Condition',
-	{
+define(['attribute', 'conditionMethod'],
+ 	function(Attribute, ConditionMethod){
+		return (function() {
+			/**
+			 * @classdesc Condition for subscribed Attributes.
+			 * @constructs Condition
+			 */
+			function Condition() {
+				/**
+				 * Name of the Condition.
+				 *
+				 * @type {string}
+				 * @private
+				 */
+				this._name = '';
+				/**
+				 * AttributeType that should be checked.
+				 *
+				 * @type {Attribute}
+				 * @private
+				 */
+				this._attributeType = '';
 
-		/**
-		 * @alias name
-		 * @private
-		 * @type {string}
-		 * @memberof Condition#
-		 * @desc Name of the Condition.
-		 */
-		'private name' :'',
-		/**
-		 * @alias attributeType
-		 * @private
-		 * @type {AttributeType}
-		 * @memberof Condition#
-		 * @desc AttributeType that should be checked.
-		 */
-		'private attributeType' : '', 
-		/**
-		 * @alias comparisonMethod
-		 * @private
-		 * @type {ConditionMethod}
-		 * @memberof Condition#
-		 * @desc Method for comparison.
-		 */
-		'private comparisonMethod' : '',
-		/**
-		 * @alias referenceValue
-		 * @private
-		 * @type {*}
-		 * @memberof Condition#
-		 * @desc Comparison value.
-		 */
-		'private referenceValue' : '',
+				/**
+				 * Method for comparison.
+				 *
+				 * @type {ConditionMethod}
+				 * @private
+				 */
+				this._comparisonMethod =  '';
 
-		/**
-		 * Builder for name.
-		 * 
-		 * @public
-		 * @alias withName
-		 * @memberof Condition#
-		 * @param {String} _name Name
-		 * @returns {Condition}
-		 */
-		'public withName' : function(_name){
-			this.setName(_name);
-			return this;
-		},
-		/**
-		 * Builder for AttributeType.
-		 * 
-		 * @public
-		 * @alias withAttributeType
-		 * @memberof Condition#
-		 * @param {AttributeType} _attributeType Attributes that would be verified.
-		 * @returns {Condition}
-		 */
-		'public withAttributeType' : function(_attributeType){
-			this.setAttributeType(_attributeType);
-			return this;
-		},
-		/**
-		 * Builder for comparison method.
-		 * 
-		 * @public
-		 * @alias withComparisonMethod
-		 * @memberof Condition#
-		 * @param {ConditionMethod} _comparisonMethod method for comparison
-		 * @returns {Condition}
-		 */
-		'public withComparisonMethod' : function(_comparisonMethod){
-			this.setComparisonMethod(_comparisonMethod);
-			return this;
-		},
-		/**
-		 * Builder for comparison value.
-		 * 
-		 * @public
-		 * @alias withReferenceValue
-		 * @memberof Condition#
-		 * @param {String} _referenceValue comparisonValue
-		 * @returns {Condition}
-		 */
-		'public withReferenceValue' : function(_referenceValue){
-			this.setReferenceValue(_referenceValue);
-			return this;
-		},
+				/**
+				 * Comparison value.
+				 *
+				 * @type {*}
+				 * @private
+				 */
+				this._referenceValue = '';
 
-		/**
-		 * Sets the name.
-		 * 
-		 * @public
-		 * @alias setName
-		 * @memberof Condition#
-		 * @param {string} _name Name
-		 */
-		'public setName' : function(_name){
-			if(typeof _name === 'string'){
-				this.name = _name;
+				return this;
 			}
-		},
-		
-		/**
-		 * Sets the attributeType.
-		 * 
-		 * @public
-		 * @alias setAttributeType
-		 * @memberof Condition#
-		 * @param {AttributeType} _attributeType AttributeType
-		 */
-		'public setAttributeType' : function(_attributeType){
-			if(Class.isA(AttributeType,_attributeType)){
-				this.attributeType = _attributeType;
-			}
-		},
 
-		/**
-		 * Sets the ComparisonMethod.
-		 * 
-		 * @public
-		 * @alias setComparisonMethod
-		 * @memberof Condition#
-		 * @param {ConditionMethod} _comparisonMethod comparison Method
-		 */
-		'public setComparisonMethod' : function(_comparisonMethod){
-			if(Class.isA(ConditionMethod,_comparisonMethod)){
-				this.comparisonMethod = _comparisonMethod;
-			}
-		},
+			/**
+			 * Builder for name.
+			 *
+			 * @param {String} name Name
+			 * @returns {Condition}
+			 */
+			Condition.prototype.withName = function(name){
+				this.setName(name);
+				return this;
+			};
 
-		/**
-		 * Sets the referenceValue.
-		 * 
-		 * @public
-		 * @alias setReferenceValue
-		 * @memberof Condition#
-		 * @param {*} _referenceValue comparison value
-		 */
-		'public setReferenceValue' : function(_referenceValue){
-			this.referenceValue = _referenceValue;
-		},
-		
-		/**
-		 * Returns the name.
-		 * 
-		 * @public
-		 * @alias getName
-		 * @memberof Condition#
-		 * @returns {string}
-		 */
-		'public getName' : function(){
-			return this.name;
-		},
-		
-		/**
-		 * Returns the AttributeType.
-		 * 
-		 * @public
-		 * @alias getAttributeType
-		 * @memberof Condition#
-		 * @returns {AttributeType}
-		 */
-		'public getAttributeType' : function(){
-			return this.attributeType;
-		},
-		
-		/**
-		 * Returns the comparison method.
-		 * 
-		 * @public
-		 * @alias getComparisonMethod
-		 * @memberof Condition#
-		 * @returns {ConditionMethod}
-		 */
-		'public getComparisonMethod' : function(){
-			return this.comparisonMethod;
-		},
-		
-		/**
-		 * Returns the comparison value.
-		 * 
-		 * @public
-		 * @alias getReferenceValue
-		 * @memberof Condition#
-		 * @returns {*}
-		 */
-		'public getReferenceValue' : function(){
-			return this.referenceValue;
-		},
-		
-		/**
-		 * Processes the comparison.
-		 * 
-		 * @public
-		 * @alias compare
-		 * @memberof Condition#
-		 * @param {AttributeValue} _newAttributeValue new Attribute that should be compared
-		 * @param {AttributeValue} _oldAttributeValue old Attribute 
-		 * @returns {boolean}
-		 */
-		'public compare' : function(_newAttributeValue, _oldAttributeValue){
-			if(!this.attributeType.equals(_newAttributeValue.getAttributeType())
-					&& !this.attributeType.equals(_oldAttributeValue.getAttributeType())){
+			/**
+			 * Builder for AttributeType.
+			 *
+			 * @param {Attribute} attribute Attributes that would be verified.
+			 * @returns {Condition}
+			 */
+			Condition.prototype.withAttributeType = function(attribute){
+				this.setAttributeType(attribute);
+				return this;
+			};
+
+			/**
+			 * Builder for comparison method.
+			 *
+			 * @param {ConditionMethod} comparisonMethod method for comparison
+			 * @returns {Condition}
+			 */
+			Condition.prototype.withComparisonMethod = function(comparisonMethod){
+				this.setComparisonMethod(comparisonMethod);
+				return this;
+			};
+
+			/**
+			 * Builder for comparison value.
+			 *
+			 * @param {String} referenceValue comparisonValue
+			 * @returns {Condition}
+			 */
+			Condition.prototype.withReferenceValue = function(referenceValue){
+				this.setReferenceValue(referenceValue);
+				return this;
+			};
+
+			/**
+			 * Sets the name.
+			 *
+			 * @param {string} name Name
+			 */
+			Condition.prototype.setName = function(name) {
+				if(typeof name === 'string'){
+					this._name = name;
+				}
+			};
+
+			/**
+			 * Sets the attributeType.
+			 *
+			 * @param {Attribute} attribute AttributeType
+			 */
+			Condition.prototype.setAttributeType = function(attribute){
+				if(attribute.constructor === Attribute){
+					this._attributeType = attribute;
+				}
+			};
+
+			/**
+			 * Sets the ComparisonMethod.
+			 *
+			 * @param {ConditionMethod} comparisonMethod comparison Method
+			 */
+			Condition.prototype.setComparisonMethod = function(comparisonMethod){
+				if(comparisonMethod.constructor === ConditionMethod){
+					this._comparisonMethod = comparisonMethod;
+				}
+			};
+
+			/**
+			 * Sets the referenceValue.
+			 *
+			 * @param {*} referenceValue comparison value
+			 */
+			Condition.prototype.setReferenceValue = function(referenceValue){
+				this._referenceValue = referenceValue;
+			};
+
+			/**
+			 * Returns the name.
+			 *
+			 * @returns {string}
+			 */
+			Condition.prototype.getName = function(){
+				return this._name;
+			};
+
+			/**
+			 * Returns the AttributeType.
+			 *
+			 * @returns {Attribute}
+			 */
+			Condition.prototype.getAttributeType = function(){
+				return this._attributeType;
+			};
+
+			/**
+			 * Returns the comparison method.
+			 *
+			 * @returns {ConditionMethod}
+			 */
+			Condition.prototype.getComparisonMethod = function(){
+				return this._comparisonMethod;
+			};
+
+			/**
+			 * Returns the comparison value.
+			 *
+			 * @returns {*}
+			 */
+			Condition.prototype.getReferenceValue = function(){
+				return this._referenceValue;
+			};
+
+			/**
+			 * Processes the comparison.
+			 *
+			 * @param {Attribute} newAttribute new Attribute that should be compared
+			 * @param {Attribute} oldAttribute old Attribute
+			 * @returns {boolean}
+			 */
+			Condition.prototype.compare = function(newAttribute, oldAttribute){
+				if(!this.getAttributeType().equalsTypeOf(newAttribute) && !this.getAttributeType().equalsTypeOf(oldAttribute)){
+					return false;
+				}
+				if(!this.getComparisonMethod()){
+					return false;
+				}
+				if(newAttribute.constructor === Attribute && oldAttribute.constructor === Attribute){
+					return this.getComparisonMethod().process(this.getReferenceValue(), newAttribute.getValue(), oldAttribute.getValue());
+				}
 				return false;
 			};
-			if(!this.comparisonMethod){
+
+			/**
+			 * Compares this instance with the given one.
+			 *
+			 * @param {Condition} condition Condition that should be compared
+			 * @returns {boolean}
+			 */
+			Condition.prototype.equals = function(condition) {
+				if(condition.constructor === Condition){
+					if(condition.getName() == this.getName()
+						&& condition.getReferenceValue() == this.getReferenceValue()
+						&& condition.getAttributeType().equalsTypeOf(this.getAttributeType())
+						&& condition.getComparisonMethod() === this.getComparisonMethod()){
+						return true;
+					}
+				}
 				return false;
 			};
-			if(Class.isA(AttributeValue,_newAttributeValue) && Class.isA(AttributeValue,_oldAttributeValue)){
-				return this.comparisonMethod.process(this.referenceValue, _newAttributeValue.getValue(), _oldAttributeValue.getValue());
-			};
-			return false;
-		},
-		
-		/**
-		 * Compares this instance with the given one.
-		 * 
-		 * @public
-		 * @alias equals
-		 * @memberof Condition#
-		 * @param {Condition} _condition Condition that should be compared
-		 * @returns {boolean}
-		 */
-		'public equals' : function(_condition) {				
-			if(Class.isA(Condition, _condition)){
-				if(_condition.getName() == this.getName()
-						&& _condition.getReferenceValue() == this.getReferenceValue()
-						&& _condition.getAttributeType().equals(this.attributeType)
-						&& _condition.getComparisonMethod() === this.comparisonMethod){
-					return true;
-				};
-			};
-			return false;
 
-		},
-		
-
-		});
-
-	return Condition;
-});
+			return Condition;
+		})();
+	}
+);

@@ -1,167 +1,130 @@
-/**
- * This module represents a RetrievalResult.
- * It contains the data that were retrieved from the database
- * 
- * @module RetrievalResult
- * @fileOverview
- */
-define(['easejs'],
-    function(easejs){
-    	var Class = easejs.Class;
-    	/**
-    	 * @class RetrievalResult
-    	 * @classdesc Contains the data that were retrieved from the database.
-    	 * @requires easejs
-    	 */
-		var RetrievalResult = Class('RetrievalResult',{
-			
+define(["attributeList"], function(AttributeList){
+	return (function() {
+		/**
+		 * @classdesc Contains the data that were retrieved from the database.
+		 * @constructs RetrievalResult
+		 */
+		function RetrievalResult() {
 			/**
-			 * @alias name
+			 * Name of the retrieved Attribute.
+			 *
 			 * @private
 			 * @type {string}
-			 * @memberof RetrievalResult#
-			 * @desc Name of the retrieved Attribute.
 			 */
-			'private name' : '', 
+			this._name = '';
+
 			/**
-			 * @alias timestamp
-			 * @private
+			 * Time of the retrieval.
+			 *
 			 * @type {date}
-			 * @memberof RetrievalResult#
-			 * @desc Time of the retrieval.
-			 */
-			'private timestamp' : '',
-			/**
-			 * @alias values
 			 * @private
-			 * @type {AttributeValueList}
-			 * @memberof RetrievalResult#
-			 * @desc Retrieved Attributes.
 			 */
-			'private values' : [],
-				
-			/**
-			 * Builder for name.
-			 * 
-			 * @public
-			 * @alias withName
-			 * @memberof RetrievalResult#
-			 * @param {String} _name name
-			 * @returns {RetrievalResult}
-			 */
-    		'public withName' : function(_name){
-    			this.setName(_name);
-    			return this;
-    		},
-
-    		/**
-			 * Builder for timestamp.
-			 * 
-			 * @public
-			 * @alias withTimestamp
-			 * @memberof RetrievalResult#
-			 * @param {String} _timestamp timestamp
-			 * @returns {RetrievalResult}
-			 */
-    		'public withTimestamp' : function(_timestamp){
-    			this.setTimestamp(_timestamp);
-    			return this;
-    		},
-
-    		/**
-			 * Builder for values.
-			 * 
-			 * @public
-			 * @alias withValues
-			 * @memberof RetrievalResult#
-			 * @param {Array} _values values
-			 * @returns {RetrievalResult}
-			 */
-    		'public withValues' : function(_values){
-    			this.setValues(_values);
-    			return this;
-    		},
-    		
-    		/**
-    		 * Returns the Attribute name.
-    		 * 
-    		 * @public
-    		 * @alias getName
-    		 * @memberof RetrievalResult#
-    		 * @returns {string}
-    		 */
-			'public getName' : function(){
-				return this.name;
-			},
-			
-			/**
-			 * Returns the retrieval time.
-			 * 
-			 * @public
-			 * @alias getTimestamp
-			 * @memberof RetrievalResult#
-			 * @returns {date}
-			 */
-			'public getTimestamp' : function(){
-				return this.timestamp;
-			},
-			
-			/**
-			 * Returns the retrieved Attributes.
-			 * 
-			 * @public
-			 * @alias getValues
-			 * @memberof RetrievalResult#
-			 * @returns {Array}
-			 */
-			'public getValues' : function(){
-				return this.values;
-			},
+			this._timestamp = '';
 
 			/**
-    		 * Sets the Attribute name.
-    		 * 
-    		 * @public
-    		 * @alias setName
-    		 * @memberof RetrievalResult#
-    		 * @param {string} _name Name of the retrieved Attribute.
-    		 */
-			'public setName' : function(_name){
-				if(typeof _name === 'string'){
-					this.name = _name;
-				}
-			},
+			 * Retrieved Attributes.
+			 *
+			 * @type {AttributeList}
+			 * @private
+			 */
+			this._values = new AttributeList();
 
-			/**
-    		 * Sets the retrieval time.
-    		 * 
-    		 * @public
-    		 * @alias setTimestamp
-    		 * @memberof RetrievalResult#
-    		 * @param {date} _timstamp Retrieval time.
-    		 */
-			'public setTimestamp' : function(_timesstamp){
-				if(_timesstamp instanceof Date){
-					this.type = _timesstamp;
-				}
-			},
-			
-			/**
-    		 * Sets the retrieved values.
-    		 * 
-    		 * @public
-    		 * @alias setValues
-    		 * @memberof RetrievalResult#
-    		 * @param {Array} _values Retrieved Attributes.
-    		 */
-			'public setValues' : function(_values){
-				if(_values instanceof Array){
-					this.values = _values;
-				}
+			return this;
+		}
+
+		/**
+		 * Builder for name.
+		 *
+		 * @param {String} name name
+		 * @returns {RetrievalResult}
+		 */
+		RetrievalResult.prototype.withName = function(name){
+			this.setName(name);
+			return this;
+		};
+
+		/**
+		 * Builder for timestamp.
+		 *
+		 * @param {String} timestamp timestamp
+		 * @returns {RetrievalResult}
+		 */
+		RetrievalResult.prototype.withTimestamp = function(timestamp){
+			this.setTimestamp(timestamp);
+			return this;
+		};
+
+		/**
+		 * Builder for values.
+		 *
+		 * @param {Array} values values
+		 * @returns {RetrievalResult}
+		 */
+		RetrievalResult.prototype.withValues = function(values){
+			this.setValues(values);
+			return this;
+		};
+
+		/**
+		 * Returns the Attribute name.
+		 *
+		 * @returns {string}
+		 */
+		RetrievalResult.prototype.getName = function(){
+			return this._name;
+		};
+
+		/**
+		 * Returns the retrieval time.
+		 *
+		 * @returns {date}
+		 */
+		RetrievalResult.prototype.getTimestamp = function(){
+			return this._timestamp;
+		};
+
+		/**
+		 * Returns the retrieved Attributes.
+		 *
+		 * @returns {AttributeList}
+		 */
+		RetrievalResult.prototype.getValues = function(){
+			return this._values;
+		};
+
+		/**
+		 * Sets the Attribute name.
+		 *
+		 * @param {string} name Name of the retrieved Attribute.
+		 */
+		RetrievalResult.prototype.setName = function(name){
+			if(typeof name === 'string'){
+				this._name = name;
 			}
+		};
 
-			});
+		/**
+		 * Sets the retrieval time.
+		 *
+		 * @param {date} timestamp Retrieval time.
+		 */
+		RetrievalResult.prototype.setTimestamp = function(timestamp){
+			if(timestamp instanceof Date){
+				this._type = timestamp;
+			}
+		};
+
+		/**
+		 * Sets the retrieved values.
+		 *
+		 * @param {Array} values Retrieved Attributes.
+		 */
+		RetrievalResult.prototype.setValues = function(values){
+			if(values instanceof Array){
+				this._values = values;
+			}
+		};
 
 		return RetrievalResult;
-	
+	})();
 });

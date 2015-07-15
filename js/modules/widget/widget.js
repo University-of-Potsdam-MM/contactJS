@@ -2,613 +2,197 @@
  * This module representing a Context Widget.
  * 
  * @module Widget
- * @fileOverview
  */
-define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
-		 'attributeValue', 'attributeTypeList', 'attributeValueList', 'conditionList',
-		 'subscriber', 'subscriberList', 'widgetDescription'],
-	function(easejs, MathUuid, Callback, CallbackList, AttributeType,
-			AttributeValue, AttributeTypeList, AttributeValueList, ConditionList,
-			Subscriber, SubscriberList, WidgetDescription) {
-		
-		var AbstractClass = easejs.AbstractClass;
-		var Class = easejs.Class;
-		var Widget = AbstractClass('Widget',{
+define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
+		return (function() {
+
 			/**
-			 * @alias name
+			 * Defines all outAttributes and constOutAttributes as an object.
+			 * @type {object}
 			 * @public
-			 * @type {string}
-			 * @memberof Widget#
-			 * @desc Name of the Widget.
-			*/
-			'public name' : 'Widget',
-			/**
-			* @alias id
-			* @public
-			* @type {string}
-			* @memberof Widget#
-			* @desc ID of the Widget. Will be generated.
-			*/
-			'public id' : '',
-			/**
-			* @alias attributeTypes
-			* @protected
-			* @type {AttributeTypeList}
-			* @memberof Widget#
-			* @desc Types of all available attributes.
-			*/
-			'protected attributeTypes' : [],
-			/**
-			* @alias constantAttributeTypes
-			* @protected
-			* @type {AttributeTypeList}
-			* @memberof Widget#
-			* @desc Types of all available ConstantAttributes.
-			*/
-			'protected constantAttributeTypes' : [],
-
-			/**
-			 * @alias attributes
-			 * @protected
-			 * @type {AttributeValueList}
-			 * @memberof Widget#
-			 * @desc All available Attributes and their values.
 			 */
-			'protected attributes' : [],
-			/**
-			 * @alias oldAttributes
-			 * @protected
-			 * @type {AttributeValueList}
-			 * @memberof Widget#
-			 * @desc This temporary variable is used for storing the old attribute values. 
-			 * 			So these can be used to check conditions.
-			 */
-			'protected oldAttributes' : [],
-			/**
-			 * @alias constantAttributes
-			 * @protected
-			 * @type {AttributeValueList}
-			 * @memberof Widget#
-			 * @desc All available constant Attributes and their values.
-			 */
-			'protected constantAttributes' : [],
-			/**
-			 * @alias callbacks
-			 * @protected
-			 * @type {CallbackList}
-			 * @memberof Widget#
-			 * @desc List of Callbacks.
-			 */
-			'protected callbacks' : [],
-			/**
-			 * @alias subscribers
-			 * @protected
-			 * @type {SubscriberList}
-			 * @memberof Widget#
-			 * @desc List of Subscriber.
-			 */
-			'protected subscribers' : [],
-
-			/**
-			 * @alias discoverer
-			 * @protected
-			 * @type {Discoverer}
-			 * @memberof Widget#
-			 * @desc Associated discoverer.
-			 */
-			'protected discoverer' : '',
+			Widget.inOut = {
+				out: [
+					{
+						"name":"",
+						"type":"",
+						'parameterList': [],
+						"synonymList": [],
+						"value":"",
+						"timestamp":""
+					}
+				],
+				const: [
+					{
+						"name":"",
+						"type":"",
+						'parameterList': [],
+						"synonymList": [],
+						"value":"",
+						"timestamp":""
+					}
+				]
+			};
 
 			/**
 			 * Constructor: Generates the ID and initializes the
 			 * Widget with attributes, callbacks and subscriber
 			 * that are specified in the provided functions.
-			 * 
+			 *
 			 * @abstract
-			 * @class Widget
 			 * @classdesc The Widget handles the access to sensors.
-			 * @requires easejs
-			 * @requires MathUuid
-			 * @requires Callback
-			 * @requires CallbackList
-			 * @requires AttributeType
-			 * @requires AttributeValue
-			 * @requires AttributeTypeList
-			 * @requires AttributeValueList
-			 * @requires ConditionList
-			 * @requires Subscriber
-			 * @requires SubscriberList
-			 * @requires WidgetDescription
-			 * @requires Discoverer
 			 * @constructs Widget
 			 */
-			'virtual public __construct' : function(_discoverer, _attributeTypes) {
+			function Widget(discoverer, attributes) {
+				var self = this;
+
+				/**
+				 * Name of the Widget.
+				 *
+				 * @public
+				 * @type {string}
+				 */
+				this.name = 'Widget';
+
+				/**
+				 * ID of the Widget. Will be generated.
+				 *
+				 * @type {string}
+				 */
 				this.id = Math.uuid();
-                this.discoverer = _discoverer;
-                this.register();
-				this.attributeTypes = new AttributeTypeList();
-				this.constantAttributeTypes = new AttributeTypeList();
-				this.attributes = new AttributeValueList();
-				this.constantAttributes = new AttributeValueList();
-				this.subscribers = new SubscriberList();
-				this.callbacks = new CallbackList();
-				this.init(_attributeTypes);
-			},
 
-			/**
-			 * Returns the name of the widget.
-			 * 
-			 * @public
-			 * @alias getName
-			 * @memberof Widget#
-			 * @returns {string} 
-			 */
-			'public getName' : function() {
-				return this.name;
-			},
+				/**
+				 *
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc All available Attributes and their values.
+				 */
+				this._outAttributes = new AttributeList();
 
-			/**
-			 * Returns the id of the widget.
-			 * 
-			 * @public
-			 * @alias getId
-			 * @memberof Widget#
-			 * @returns {string}
-			 */
-			'public getId' : function() {
-				return this.id;
-			},
+				/**
+				 * @alias oldAttributes
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc This temporary variable is used for storing the old attribute values.
+				 * 			So these can be used to check conditions.
+				 */
+				this._oldOutAttributes = new AttributeList();
 
-			/**
-			 * Returns the type of this class, in this case
-			 * "Widget".
-			 * 
-			 * @virtual
-			 * @public
-			 * @alias getType
-			 * @memberof Widget#
-			 * @returns {string}
-			 */
-			'virtual public getType' : function() {
-				return 'Widget';
-			},
+				/**
+				 * @alias constantAttributes
+				 * @protected
+				 * @type {AttributeList}
+				 * @memberof Widget#
+				 * @desc All available constant Attributes and their values.
+				 */
+				this._constantOutAttributes = new AttributeList();
 
-			/**
-			 * Returns the available AttributeTypes.
-			 * 
-			 * @public
-			 * @alias getAttributeTypes
-			 * @memberof Widget#
-			 * @returns {AttributeTypeList}
-			 */
-			'public getAttributeTypes' : function() {
-				return this.attributeTypes;
-			},
+				/**
+				 * @alias callbacks
+				 * @protected
+				 * @type {CallbackList}
+				 * @memberof Widget#
+				 * @desc List of Callbacks.
+				 */
+				this._callbacks = new CallbackList();
 
-			/**
-			 * Returns the available ConstantAttributeTypes
-			 * (attributes that do not change).
-			 * 
-			 * @public
-			 * @alias getWidgetConstantAttributeTypes
-			 * @memberof Widget#
-			 * @returns {AttributeTypeList}
-			 */
-			'public getWidgetConstantAttributeTypes' : function() {
-				return this.constantAttributeTypes;
-			},
+				/**
+				 * @alias subscribers
+				 * @protected
+				 * @type {SubscriberList}
+				 * @memberof Widget#
+				 * @desc List of Subscriber.
+				 */
+				this._subscribers = new SubscriberList();
 
-			/**
-			 * Returns the last acquired attribute values.
-			 * 
-			 * @public
-			 * @alias getAttributes
-			 * @memberof Widget#
-             * @param {AttributeTypeList} _attributeTypeList
-			 * @returns {AttributeValueList}
-			 */
-			'public getAttributeValues' : function(_attributeTypeList) {
-                if (Class.isA(AttributeTypeList, _attributeTypeList)) {
-                    return this.attributes.getSubset(_attributeTypeList);
-                } else {
-                    return this.attributes;
-                }
-			},
+				/**
+				 * Associated discoverer.
+				 *
+				 * @type {Discoverer}
+				 * @private
+				 */
+				this._discoverer = discoverer;
 
-            /**
-             * Returns the last acquired attribute value with the given attribute type.
-             *
-             * @param {AttributeType} _attributeType The attribute type to return the last value for.
-             * @returns {*}
-             */
-            'public getAttributeValue': function(_attributeType) {
-                return this.getAttributeValues().getItem(_attributeType.getIdentifier()).getValue();
-            },
-			
-			/**
-			 * Returns the old Attributes.
-			 * 
-			 * @private
-			 * @alias getOldAttributes
-			 * @memberof Widget#
-			 * @returns {AttributeValueList}
-			 */
-			'public getOldAttributes' : function() {
-				return this.oldAttributes;
-			},
+				this._register();
+				this._init(attributes);
 
-			/**
-			 * Returns the ConstantAttributes.
-			 * 
-			 * @public
-			 * @alias getConstantAttributes
-			 * @memberof Widget#
-			 * @returns {AttributeValueList}
-			 */
-			'public getConstantAttributes' : function() {
-				return this.constantAttributes;
-			},
-
-			/**
-			 * Returns a list of callbacks that can be
-			 * subscribed to.
-			 * 
-			 * @public
-			 * @alias getCallbacks
-			 * @memberof Widget#
-			 * @returns {CallbackList}
-			 */
-			'public getCallbackList' : function() {
-				return this.callbacks;
-			},
-
-            /**
-             * Returns the specified callbacks that can be
-             * subscribed to.
-             *
-             * @public
-             * @alias getCallbacks
-             * @memberof Widget#
-             * @returns {Array}
-             */
-            'public getCallbacks' : function() {
-                return this.callbacks.getItems();
-            },
-
-			'public queryServices' : function() {
-				return this.services;
-			},
-
-			/**
-			 * Returns the Subscriber.
-			 * 
-			 * @public
-			 * @alias getSubscriber
-			 * @memberof Widget#
-			 * @returns {SubscriberList}
-			 */
-			'public getSubscriber' : function() {
-				return this.subscribers;
-			},
-
-			/**
-			 * Sets the name of the Widget.
-			 * 
-			 * @protected
-			 * @alias setName
-			 * @memberof Widget#
-			 * @param {string}
-			 *            _name Name of the Widget.
-			 */
-			'protected setName' : function(_name) {
-				if (typeof _name === 'string') {
-					this.name = _name;
-				}
-			},
-
-			/**
-			 * Sets the id of the Widget.
-			 * 
-			 * @protected
-			 * @alias setId
-			 * @memberof Widget#
-			 * @param {string}
-			 *            _id Id of the Widget.
-			 */
-			'protected setId' : function(_id) {
-				if (typeof _id === 'string') {
-					this.id = _id;
-				}
-			},
-
-			/**
-			 * Sets the AttributeValueList and also the associated
-			 * AttributeTypes.
-			 * 
-			 * @protected
-			 * @alias setAttributes
-			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)}
-			 *            _attributes List or Array of
-			 *            AttributeValues
-			 */
-			'protected setAttributes' : function(_attributes) {
-				var list = new Array();
-				if (_attributes instanceof Array) {
-					list = _attributes.reduce(function(o, v, i) {
-                        o[i] = v;
-                        return o;
-                    }, {});
-				} else if (Class.isA(AttributeValueList,_attributes)) {
-					list = _attributes.getItems();
-				}
-				this.oldAttributes = this.attributes;
-				for ( var i in list) {
-					var attribute = list[i];
-					if (Class.isA(AttributeValue, attribute)) {
-						attribute.setTimestamp(this.getCurrentTime());
-						this.attributes.put(attribute);
-
-						var type = new AttributeType().withName(attribute.getName())
-													.withType(attribute.getType())
-													.withParameters(attribute.getParameters());
-						this.attributeTypes.put(type);
-					}
-				}
-			},
-
-			/**
-			 * Adds a new AttributeValue. If the given value is
-			 * not included in the list, the associated type will
-			 * be also added. Otherwise, only the value will be
-			 * updated.
-			 * 
-			 * @public
-			 * @alias addAttribute
-			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _attribute AttributeValue
-			 */
-			'public addAttribute' : function(_attribute) {
-				if (Class.isA(AttributeValue, _attribute)) {
-					if (!this.attributes.contains(_attribute)) {
-
-						var type = new AttributeType().withName(_attribute.getName())
-													.withType(_attribute.getType())
-													.withParameters(_attribute.getParameters());
-						this.attributeTypes.put(type);
-
-					}
-					this.oldAttributes = this.attributes;
-
-					_attribute.setTimestamp(this.getCurrentTime());
-					this.attributes.put(_attribute);
-				}
-			},
-
-			/**
-			 * Sets the ConstantAttributeValueList and also the
-			 * associated AttributeTypes.
-			 * 
-			 * @protected
-			 * @alias setConstantAttributes
-			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)}
-			 *            _constantAttributes List or Array of
-			 *            AttributeValues
-			 */
-			'protected setConstantAttributes' : function(_constantAttributes) {
-				var list = new Array();
-				if (_constantAttributes instanceof Array) {
-					list = _constantAttributes;
-				} else if (Class.isA(AttributeValueList,_constantAttributes)) {
-					list = _constantAttributes.getItems();
-				}
-				for ( var i in list) {
-					var constantAttribute = list[i];
-					if (Class.isA(AttributeValue, constantAttribute)) {
-						constantAttribute.setTimestamp(this.getCurrentTime());
-						this.constantAttributes.put(constantAttribute);
-						var type = new AttributeType().withName(constantAttribute.getName())	
-													  .withType(constantAttribute.getType())
-													  .withParameters(constantAttribute.getParameters());
-						this.constantAttributeTypes.put(type);
-					}
-				}
-			},
-
-			/**
-			 * Adds a new constantAttributeValue. If the given value is
-			 * not included in the list, the associated type will
-			 * be also added. Otherwise, only the value will be
-			 * updated.
-			 * 
-			 * @protected
-			 * @alias addConstantAttribute
-			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _constantAttribute AttributeValue
-			 */
-			'protected addConstantAttribute' : function(_constantAttribute) {
-				if (Class.isA(AttributeValue, _constantAttribute)) {
-					if (!this.constantAttributes
-							.contains(_constantAttribute)) {
-
-						var type = new AttributeType().withName(_constantAttribute.getName())
-													  .withType(_constantAttribute.getType())
-													  .withParameters(_constantAttribute.getParameters());
-						this.constantAttributeTypes.put(type);
-					}
-					_attribute.setTimestamp(this.getCurrentTime());
-					this.constantAttributes.put(_constantAttribute);
-				}
-
-			},
-
-			/**
-			 * Sets Callbacks.
-			 * 
-			 * @protected
-			 * @alias setCallbacks
-			 * @memberof Widget#
-			 * @param {(CallbackList|Array)} _callbacks List or Array of Callbacks.
-			 */
-			'protected setCallbacks' : function(_callbacks) {
-				var list = new Array();
-				if (_callbacks instanceof Array) {
-					list = _subscriber;
-				} else if (Class.isA(CallbackList, _callbacks)) {
-					list = _callbacks.getItems();
-				}
-				for ( var i in list) {
-					var callback = list[i];
-					if (Class.isA(Callback, callback)) {
-						this.callbacks.put(callback);
-					}
-				}
-			},
-
-			/**
-			 * Adds a new Callback.
-			 * 
-			 * @protected
-			 * @alias addCallback
-			 * @memberof Widget#
-			 * @param {Callback} _callback List or Array of AttributeValues.
-			 */
-			'protected addCallback' : function(_callback) {
-				if (Class.isA(Callback, _callback)) {
-					this.callbacks.put(_callback);
-				}
-			},
-
-			'protected setServices' : function(_services) {
-				this.services = _services;
-			},
-
-			/**
-			 * Sets SubscriberList.
-			 * 
-			 * @protected
-			 * @alias setSubscriber
-			 * @memberof Widget#
-			 * @param {(SubscriberList|Array)}  _subscriber List or Array of Subscriber.
-			 */
-			'protected setSubscriber' : function(_subscriber) {
-				var list = new Array();
-				if (_subscriber instanceof Array) {
-					list = _subscriber;
-				} else if (Class.isA(SubscriberList, _subscriber)) {
-					list = _subscriber.getItems();
-				}
-				for ( var i in list) {				
-					var singleSubscriber = list[i];
-					if (Class.isA(Subscriber, singleSubscriber)) {
-						this.subscribers.put(singleSubscriber);
-					}
-				}
-			},
-
-			/**
-			 * Adds a new Subscriber.
-			 * 
-			 * @public
-			 * @alias addSubscriber
-			 * @memberof Widget#
-			 * @param {Subscriber}  _subscriber Subscriber
-			 */
-			'public addSubscriber' : function(_subscriber) {
-				if (Class.isA(Subscriber, _subscriber)) {
-					this.subscribers.put(_subscriber);
-				}
-			},
-
-			/**
-			 * Removes the specified Subscriber.
-			 * 
-			 * @public
-			 * @alias removeSubscriber
-			 * @memberof Widget#
-			 * @param {Subscriber} _subscriber Subscriber
-			 */
-			'public removeSubscriber' : function(_subscriberId) {
-					this.subscribers.removeItem(_subscriberId);
-			},
-
-			/**
-			 * Returns the current time.
-			 * 
-			 * @private
-			 * @alias getCurrentTime
-			 * @memberof Widget#
-			 * @returns {Date}
-			 */
-			'private getCurrentTime' : function() {
-				return new Date();
-			},
-
-			/**
-			 * Verifies whether the specified attributes is a
-			 * provided Attribute.
-			 * 
-			 * @protected
-			 * @alias isAttribute
-			 * @memberof Widget#
-			 * @param {AttributeValue}
-			 *            _attribute
-			 * @returns {boolean}
-			 */
-			'protected isAttribute' : function(_attribute) {
-				return !!this.attributeTypes.contains(_attribute.getAttributeType());
-			},
+				return this;
+			}
 
 			/**
 			 * Initializes the provided Attributes.
-			 * 
-			 * @function
+			 *
 			 * @abstract
 			 * @protected
-			 * @alias initAttributes
-			 * @memberof Widget#
 			 */
-			'abstract protected initAttributes' : [],
-			
+			Widget.prototype._initOutAttributes = function(attributes) {
+				var outAttributes = [];
+				for(var outAttributeIndex in Widget.inOut.out) {
+					var name = Widget.inOut.out[outAttributeIndex].name;
+					var type = Widget.inOut.out[outAttributeIndex].type;
+					var parameterList = [];
+					for (var i = 0; i < Widget.inOut.out[outAttributeIndex].parameterList.length; i += 2) {
+						var innerParameter = [];
+						innerParameter.push(Widget.inOut.out[outAttributeIndex].parameterList[i]);
+						innerParameter.push(Widget.inOut.out[outAttributeIndex].parameterList[i + 1]);
+						parameterList.push(innerParameter);
+					}
+					var synonyms = Widget.inOut.out[outAttributeIndex].synonymList;
+					outAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
+				}
+				this._outAttributes = attributes;
+			};
+
 			/**
 			 * Initializes the provided ConstantAttributes.
-			 * 
-			 * @function
+			 *
 			 * @abstract
 			 * @protected
-			 * @alias initConstantAttributes
-			 * @memberof Widget#
 			 */
-			'abstract protected initConstantAttributes' : [],
+			Widget.prototype._initConstantOutAttributes = function() {
+				var constOutAttributes = [];
+				for(var constOutAttributeIndex in Widget.inOut.out) {
+					var name = Widget.inOut.out[constOutAttributeIndex].name;
+					var type = Widget.inOut.out[constOutAttributeIndex].type;
+					var parameterList = [];
+					for (var i = 0; i < Widget.inOut.out[constOutAttributeIndex].parameterList.length; i += 2) {
+						var innerParameter = [];
+						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i]);
+						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i + 1]);
+						parameterList.push(innerParameter);
+					}
+					var synonyms = Widget.inOut.out[constOutAttributeIndex].synonymList;
+					constOutAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
+				}
+				this._constantOutAttributes = constOutAttributes;
+			};
 
 			/**
 			 * Initializes the provided Callbacks.
-			 * 
-			 * @function
+			 *
 			 * @abstract
 			 * @protected
-			 * @alias initCallbacks
-			 * @memberof Widget#
 			 */
-			'abstract protected initCallbacks' : [],
+			Widget.prototype._initCallbacks = function() {
+				throw new Error("Abstract function!");
+			};
 
 			/**
 			 * Function for initializing. Calls all initFunctions
 			 * and will be called by the constructor.
-			 * 
+			 *
 			 * @protected
-			 * @alias init
-			 * @memberof Widget#
 			 */
-			'protected init' : function(_attributeTypes) {
-				this.initAttributes();
-				this.initConstantAttributes();
-				this.initCallbacks();
+			Widget.prototype._init = function(attributes) {
+				this._initOutAttributes(attributes);
+				this._initConstantOutAttributes();
+				this._initCallbacks();
 
-                this.didFinishInitialization(_attributeTypes);
-			},
+				this.didFinishInitialization(attributes);
+			};
 
 			/**
 			 * Method will be invoked after the initialization of the widget finished.
@@ -616,142 +200,493 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 			 *
 			 * @public
 			 * @virtual
-			 * @alias didFinishInitialization
-			 * @memberof Widget#
-			 * @param _attributeTypes
+			 * @param attributes
 			 */
-            'public virtual didFinishInitialization' : function(_attributeTypes) {
+			Widget.prototype.didFinishInitialization = function(attributes) {
 
-            },
+			};
+
+			/**
+			 * Returns the name of the widget.
+			 *
+			 * @public
+			 * @alias getName
+			 * @memberof Widget#
+			 * @returns {string}
+			 */
+			Widget.prototype.getName = function() {
+				return this.name;
+			};
+
+			/**
+			 * Returns the id of the widget.
+			 *
+			 * @public
+			 * @alias getId
+			 * @memberof Widget#
+			 * @returns {string}
+			 */
+			Widget.prototype.getId = function() {
+				return this.id;
+			};
+
+			/**
+			 * Returns the available AttributeTypes.
+			 *
+			 * @public
+			 * @param {?AttributeList} [attributes]
+			 * @returns {AttributeList}
+			 */
+			Widget.prototype.getOutAttributes = function(attributes) {
+				// test if attributeList is a list
+				if (attributes && attributes instanceof AttributeList) {
+					return this._outAttributes.getSubset(attributes);
+				} else {
+					return this._outAttributes;
+				}
+			};
+
+			/**
+			 * Returns the available ConstantAttributeTypes
+			 * (attributes that do not change).
+			 *
+			 * @public
+			 * @param {?AttributeList} attributes
+			 * @returns {AttributeList}
+			 */
+			Widget.prototype.getConstantOutAttributes = function(attributes) {
+				if (attributes && attributes instanceof AttributeList) {
+					return this._constantOutAttributes.getSubset(attributes);
+				} else {
+					return this._constantOutAttributes;
+				}
+			};
+
+			/**
+			 * Returns the last acquired attribute value with the given attribute type.
+			 *
+			 * @param {AttributeType} attributeType The attribute type to return the last value for.
+			 * @returns {*}
+			 */
+			Widget.prototype.getValueForAttributeWithTypeOf = function(attributeType) {
+				return this.getOutAttributes().getAttributeWithTypeOf(attributeType).getValue();
+			};
+
+			/**
+			 * Returns the old Attributes.
+			 *
+			 * @private
+			 * @alias getOldAttributes
+			 * @memberof Widget#
+			 * @returns {AttributeList}
+			 */
+			Widget.prototype.getOldAttributes = function() {
+				return this._oldOutAttributes;
+			};
+
+			/**
+			 * Returns a list of callbacks that can be
+			 * subscribed to.
+			 *
+			 * @public
+			 * @alias getCallbacks
+			 * @memberof Widget#
+			 * @returns {CallbackList}
+			 */
+			Widget.prototype.getCallbackList = function() {
+				return this._callbacks;
+			};
+
+			/**
+			 * Returns the specified callbacks that can be
+			 * subscribed to.
+			 *
+			 * @public
+			 * @alias getCallbacks
+			 * @memberof Widget#
+			 * @returns {Array}
+			 */
+			Widget.prototype.getCallbacks = function() {
+				return this._callbacks.getItems();
+			};
+
+			Widget.prototype.queryServices = function() {
+				return this.services;
+			};
+
+			/**
+			 * Returns the Subscriber.
+			 *
+			 * @public
+			 * @alias getSubscriber
+			 * @memberof Widget#
+			 * @returns {SubscriberList}
+			 */
+			Widget.prototype.getSubscriber = function() {
+				return this._subscribers;
+			};
+
+			/**
+			 * Sets the name of the Widget.
+			 *
+			 * @protected
+			 * @alias setName
+			 * @memberof Widget#
+			 * @param {string} name Name of the Widget.
+			 */
+			Widget.prototype.setName = function(name) {
+				if (typeof name === 'string') {
+					this.name = name;
+				}
+			};
+
+			/**
+			 * Sets the id of the Widget.
+			 *
+			 * @protected
+			 * @alias setId
+			 * @memberof Widget#
+			 * @param {string} id Id of the Widget.
+			 */
+			Widget._setId = function(id) {
+				if (typeof id === 'string') {
+					this.id = id;
+				}
+			};
+
+			/**
+			 * Sets the AttributeValueList and also the associated
+			 * AttributeTypes.
+			 *
+			 * @protected
+			 * @param {(AttributeList|Array)} attributesOrArray List or Array of AttributeValues
+			 */
+			Widget.prototype._setOutAttributes = function(attribute) {
+				this._outAttributes.push(attribute);
+			};
+
+			/**
+			 * Adds a new AttributeValue. If the given value is
+			 * not included in the list, the associated type will
+			 * be also added. Otherwise, only the value will be
+			 * updated.
+			 *
+			 * @public
+			 * @param {Attribute} attribute
+			 * @param {Boolean} multipleInstances
+			 */
+			Widget.prototype.addOutAttribute = function(attribute, multipleInstances) {
+				multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+				if (attribute instanceof Attribute) {
+					if (!this._outAttributes.containsTypeOf(attribute)) {
+						this._oldOutAttributes = this._outAttributes;
+						attribute.setTimestamp(this.getCurrentTime());
+						this._outAttributes.put(attribute, multipleInstances);
+					}
+				}
+			};
+
+			/**
+			 * Sets the ConstantAttributeValueList and also the
+			 * associated AttributeTypes.
+			 *
+			 * @protected
+			 * @alias setConstantOutAttributes
+			 * @memberof Widget#
+			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
+			 */
+			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
+				this._constantOutAttributes = new AttributeList().withItems(constantAttributes);
+				/*var list = [];
+				if (constantAttributes instanceof Array) {
+					list = constantAttributes;
+				} else if (Class.isA(AttributeValueList, constantAttributes)) {
+					list = constantAttributes.getItems();
+				}
+				for ( var i in list) {
+					var constantAttribute = list[i];
+					if (Class.isA(AttributeValue, constantAttribute)) {
+						constantAttribute.setTimestamp(this.getCurrentTime());
+						this.constantAttributes.put(constantAttribute);
+						var type = new AttributeType().withName(constantAttribute.getName())
+							.withType(constantAttribute.getType())
+							.withParameters(constantAttribute.getParameters());
+						this.constantAttributeTypes.put(type);
+					}
+				}*/
+			};
+
+			/**
+			 * Adds a new constantAttributeValue. If the given value is
+			 * not included in the list, the associated type will
+			 * be also added. Otherwise, only the value will be
+			 * updated.
+			 *
+			 * @protected
+			 * @param {Attribute} constantAttribute AttributeValue
+			 */
+			Widget.prototype._addConstantOutAttribute = function(constantAttribute) {
+				if (Class.isA(AttributeValue, constantAttribute)) {
+					if (!this.constantAttributes
+							.contains(constantAttribute)) {
+
+						var type = new AttributeType().withName(constantAttribute.getName())
+							.withType(constantAttribute.getType())
+							.withParameters(constantAttribute.getParameters());
+						this.constantAttributeTypes.put(type);
+					}
+					_attribute.setTimestamp(this.getCurrentTime());
+					this.constantAttributes.put(constantAttribute);
+				}
+			};
+
+			/**
+			 * Sets Callbacks.
+			 *
+			 * @protected
+			 * @alias setCallbacks
+			 * @memberof Widget#
+			 * @param {(CallbackList|Array)} callbacks List or Array of Callbacks.
+			 */
+			Widget.prototype._setCallbacks = function(callbacks) {
+				var list = [];
+				if (callbacks instanceof Array) {
+					list = callbacks;
+				} else if (callbacks instanceof CallbackList) {
+					list = callbacks.getItems();
+				}
+				for ( var i in list) {
+					var callback = list[i];
+					if (callback instanceof Callback) {
+						this.callbacks.put(callback);
+					}
+				}
+			};
+
+			/**
+			 * Adds a new Callback.
+			 *
+			 * @protected
+			 * @alias addCallback
+			 * @memberof Widget#
+			 * @param {Callback} callback List or Array of AttributeValues.
+			 */
+			Widget.prototype._addCallback = function(callback) {
+				if (callback instanceof Callback) {
+					this._callbacks.put(callback);
+				}
+			};
+
+			Widget.prototype._setServices = function(services) {
+				this.services = services;
+			};
+
+			/**
+			 * Sets SubscriberList.
+			 *
+			 * @protected
+			 * @alias setSubscriber
+			 * @memberof Widget#
+			 * @param {(SubscriberList|Array)}  subscribers List or Array of Subscriber.
+			 */
+			Widget.prototype._setSubscriber = function(subscribers) {
+				var list = [];
+				if (subscribers instanceof Array) {
+					list = subscribers;
+				} else if (subscribers instanceof SubscriberList) {
+					list = subscribers.getItems();
+				}
+				for ( var i in list) {
+					var singleSubscriber = list[i];
+					if (singleSubscriber instanceof Subscriber) {
+						this._subscribers.put(singleSubscriber);
+					}
+				}
+			};
+
+			/**
+			 * Adds a new Subscriber.
+			 *
+			 * @public
+			 * @param {?Subscriber} subscriber Subscriber
+			 */
+			Widget.prototype.addSubscriber = function(subscriber) {
+				if (subscriber && subscriber instanceof Subscriber) {
+					this._subscribers.put(subscriber);
+				}
+			};
+
+			/**
+			 * Removes the specified Subscriber.
+			 *
+			 * @public
+			 * @param {Subscriber} subscriberId Subscriber
+			 */
+			Widget.prototype.removeSubscriber = function(subscriberId) {
+				this._subscribers.removeSubscriberWithId(subscriberId);
+			};
+
+			/**
+			 * Returns the current time.
+			 *
+			 * @private
+			 * @returns {Date}
+			 */
+			Widget.prototype.getCurrentTime = function() {
+				return new Date();
+			};
+
+			/**
+			 * Verifies whether the specified attributes is a
+			 * provided Attribute.
+			 *
+			 * @protected
+			 * @alias isOutAttribute
+			 * @memberof Widget#
+			 * @param {Attribute} attribute
+			 * @returns {boolean}
+			 */
+			Widget.prototype._isOutAttribute = function(attribute) {
+				return !!this._outAttributes.containsTypeOf(attribute);
+			};
+
+
 
 			/**
 			 * Notifies other components and sends the attributes.
-			 * 
+			 *
 			 * @virtual
 			 * @public
-			 * @alias initCallbacks
-			 * @memberof Widget#
 			 */
-			'virtual public notify' : function() {
-                var callbacks = this.getCallbacks();
-                for (var i in callbacks) {
-                    this.sendToSubscriber(callbacks[i]);
-                }
-			},
+			Widget.prototype.notify = function() {
+				var callbacks = this.getCallbacks();
+				for (var i in callbacks) {
+					this.sendToSubscriber(callbacks[i]);
+				}
+			};
 
 			/**
-			 * Queries the associated sensor and updates the attributes with new values. 
+			 * Queries the associated sensor and updates the attributes with new values.
 			 * Must be overridden by the subclasses. Overriding subclasses can call
-             * this.__super(_function) to invoke the provided callback function.
-			 * 
+			 * this.__super(_function) to invoke the provided callback function.
+			 *
 			 * @virtual
 			 * @public
-			 * @alias queryGenerator
-			 * @memberof Widget#
-			 * @param {?function} _function For alternative actions, because an asynchronous function can be used.
+			 * @param {?function} callback For alternative actions, because an asynchronous function can be used.
 			 */
-			'virtual protected queryGenerator' : function(_function) {
-                if (_function && typeof(_function) == 'function') {
-                    _function();
-                }
-			},
+			Widget.prototype.sendToSubscriber = function(callback) {
+				if (callback && typeof(callback) == 'function') {
+					callback();
+				}
+			};
+
+			/**
+			 *
+			 * @abstract
+			 * @param callback
+			 */
+			Widget.prototype.queryGenerator = function (callback) {
+				throw "Call to abstract method 'queryGenerator'.";
+			};
+
+			/**
+			 *
+			 * @param response
+			 * @param callback
+			 * @protected
+			 */
+			Widget.prototype._sendResponse = function(response, callback) {
+				this.putData(response);
+				this.notify();
+
+				if (callback && typeof(callback) == 'function') {
+					callback();
+				}
+			};
 
 			/**
 			 * Updates the attributes by calling queryGenerator.
-			 * 
+			 *
 			 * @public
 			 * @alias updateWidgetInformation
 			 * @memberof Widget#
-			 * @param {?function} _function For alternative  actions, because an asynchronous function can be used.
+			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 *
 			 */
-			'public updateWidgetInformation' : function(_function) {
-				this.queryGenerator(_function);
-			},
+			Widget.prototype.updateWidgetInformation = function(callback) {
+				this.queryGenerator(callback);
+			};
 
 			/**
 			 * Updates the Attributes by external components.
-			 * 
-			 * @virtual
-			 * @public
-			 * @alias putData
-			 * @memberof Widget#
-			 * @param {(AttributeValueList|Array)} _data Data that should be entered.
-			 * 
+			 *
+			 * @param {(AttributeList|Array)} attributes Data that should be entered.
 			 */
-			'virtual public putData' : function(_data) {
-				var list = new Array();
-				if (_data instanceof Array) {
-					list = _data;
-				} else if (Class.isA(AttributeValueList, _data)) {
-					list = _data.getItems();
+			Widget.prototype.putData = function(attributes) {
+				var list = [];
+				if (attributes instanceof Array) {
+					list = attributes;
+				} else if (attributes instanceof AttributeList) {
+					list = attributes.getItems();
 				}
 				for ( var i in list) {
-					var x = list[i];
-					if (Class.isA(AttributeValue, x) && this.isAttribute(x)) {
-						this.addAttribute(x);
+					var theAttribute = list[i];
+					if (theAttribute.type === Attribute && this.isOutAttribute(theAttribute)) {
+						this.addOutAttribute(theAttribute);
 					}
 				}
-
-			},
+			};
 
 			/**
-			 * Returns all available AttributeValues, Attributes and
-			 * ConstantAtrributes.
-			 * 
+			 * Returns all available AttributeValues, Attributes and ConstantAttributes.
+			 *
 			 * @public
-			 * @alias queryWidget
-			 * @memberof Widget#
-			 * @returns {AttributeValueList}
+			 * @returns {AttributeList}
 			 */
-			'public queryWidget' : function() {
-				var response = new AttributeValueList();
-				response.putAll(this.getAttributeValues());
-				response.putAll(this.getConstantAttributes());
+			Widget.prototype.queryWidget = function() {
+				var response = new AttributeList();
+				response.putAll(this.getOutAttributes());
+				response.putAll(this.getConstantOutAttributes());
 				return response;
-			},
+			};
 
 			/**
 			 * Updates and returns all available AttributeValues,
 			 * Attributes and ConstantAtrributes.
-			 * 
+			 *
 			 * @public
 			 * @alias updateAndQueryWidget
 			 * @memberof Widget#
-			 * @param {?function} _function For alternative  actions, because an asynchronous function can be used.
-			 * @returns {?AttributeValueList}
+			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
+			 * @returns {?AttributeList}
 			 */
-			'virtual public updateAndQueryWidget' : function(_function) {
-				if(_function && typeof(_function) === 'function'){
-					this.queryGenerator(_function);
+			Widget.prototype.updateAndQueryWidget = function(callback) {
+				if(callback && typeof(callback) === 'function'){
+					this.queryGenerator(callback);
 				} else {
 					this.queryGenerator();
-					var response = new AttributeValueList();
-					response.putAll(this.getAttributeValues());
-					response.putAll(this.getConstantAttributes());
-					return response;
+					return this.queryWidget();
 				}
-			},
+			};
 
 			/**
-			 * Sends all Attributes, specified in the given callback, 
+			 * Sends all Attributes, specified in the given callback,
 			 * to components which are subscribed to this Callback.
+			 *
 			 * @protected
-			 * @alias sendToSubscriber
-			 * @memberof Widget#
-			 * @param {string} _callbackName Name of the searched Callback.
+			 * @param {string} callback Name of the searched Callback.
 			 */
-			'protected sendToSubscriber' : function(_callback) {
-				if (_callback && Class.isA(Callback, _callback)) {
-					var subscriberList = this.subscribers.getItems();
-					for ( var i in subscriberList) {
+			Widget.prototype._sendToSubscriber = function(callback) {
+				if (callback && callback instanceof Callback) {
+					var subscriberList = this._subscribers.getItems();
+					for (var i in subscriberList) {
 						var subscriber = subscriberList[i];
-						if (subscriber.getSubscriptionCallbacks().containsKey( _callback.getName())) {
+						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
 							if(this.dataValid(subscriber.getConditions())){
-								var subscriberInstance = this.discoverer.getComponent(subscriber.getSubscriberId());
-								var callSubset =  _callback.getAttributeTypes();
+								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
+								var callSubset =  callback.getAttributeTypes();
 								var subscriberSubset = subscriber.getAttributesSubset();
-								var data = this.attributes.getSubset(callSubset);
+								var data = this.outAttributes.getSubset(callSubset);
 								if (subscriberSubset && subscriberSubset.size() > 0) {
 									data = data.getSubset(subscriberSubset);
 								}
@@ -762,115 +697,92 @@ define([ 'easejs', 'MathUuid', 'callback', 'callbackList', 'attributeType',
 						}
 					}
 				}
-			},
+			};
 
 			/**
 			 * Verifies if the attributes match to the specified conditions in case any exists.
-			 * 
+			 *
 			 * @private
 			 * @alias dataValid
 			 * @memberof Widget#
-			 * @param {string} _conditions List of Conditions that will be verified.
+			 * @param {string} conditions List of Conditions that will be verified.
 			 * @returns {boolean}
 			 */
-			'private dataValid' : function(_conditions) {
-				if (Class.isA(ConditionList, _conditions)) {
+			Widget.prototype._dataValid = function(conditions) {
+				if (conditions instanceof ConditionList) {
 					return true;
 				}
-				if (!_conditions.isEmpty()) {
+				if (!conditions.isEmpty()) {
 					var items = _condition.getItems();
-					for ( var i in items) {
+					for (var i in items) {
 						var condition = items[i];
 						var conditionAttributeType = condition.getAttributeType();
 						var conditionAttributeTypeList = new AttributeTypeList()
-								.withItems(new Array(conditionAttributeType));
+							.withItems(new Array(conditionAttributeType));
 						var newValue = this.getAttributes().getSubset(conditionAttributeTypeList);
 						var oldValue = this.getOldAttributes.getSubset(conditionAttributeTypeList);
 						return condition.compare(newValue, oldValue);
 					}
 				}
 				return false;
-			},
-
-			/**
-			 * Returns the description of this component.
-			 * @virtual
-			 * @public
-			 * @alias getDescription
-			 * @memberof Widget#
-			 * @returns {WidgetDescription} 
-			 */
-			'virtual public getDescription' : function() {
-				var description = new WidgetDescription().withId(this.id).withName(this.name);
-				description.addOutAttributeTypes(this.attributeTypes);
-				description.addOutAttributeTypes(this.constantAttributeTypes);
-                var widgetCallbacks = this.callbacks.getItems();
-                for(var i in widgetCallbacks) {
-                    description.addCallbackName(widgetCallbacks[i].getName());
-                }
-				return description;
-			},
+			};
 
 			/**
 			 * Runs the context acquisition constantly in an interval.
 			 * Can be called by init.
-			 * 
+			 *
 			 * @virtual
 			 * @protected
-			 * @alias intervalRunning
-			 * @memberof Widget#
-			 * @param {integer} _interval Interval in ms
+			 * @param {Number} interval Interval in ms
 			 */
-			'virtual protected intervalRunning' : function(_interval) {
+			Widget.prototype._intervalRunning = function(interval) {
 				var self = this;
-				if (_interval === parseInt(_interval)) {
-					setInterval(function() {self.queryGenerator();}, _interval);
+				if (interval === parseInt(interval)) {
+					setInterval(function() {self.queryGenerator();}, interval);
 				}
-			},
+			};
 
 			/**
 			 * Sets the associated Discoverer and registers to that.
+			 *
 			 * @public
-			 * @alias setDiscoverer
-			 * @memberof Widget#
 			 * @param {Discoverer} _discoverer Discoverer
 			 */
-			'public setDiscoverer' : function(_discoverer) {
-				if (!this.discoverer) {
-					this.discoverer = _discoverer;
-					this.register();
+			Widget.prototype.setDiscoverer = function(_discoverer) {
+				if (!this._discoverer) {
+					this._discoverer = _discoverer;
+					this._register();
 				}
-			},
+			};
 
 			/**
 			 * Registers the component to the associated Discoverer.
-			 * 
-			 * @public
-			 * @alias register
-			 * @memberof Widget#
+			 *
+			 * @protected
 			 */
-			'protected register' : function() {
-				if (this.discoverer) {
-					this.discoverer.registerNewComponent(this);
+			Widget.prototype._register = function() {
+				if (this._discoverer) {
+					this._discoverer.registerNewComponent(this);
 				}
-			}
-			
-//			/**
-//			 * Unregisters the component to the associated discoverer
-//			 * and deletes the reference.
-//			 * 
-//			 * @public
-//			 * @alias register
-//			 * @memberof Widget#
-//			 */
-//			'protected unregister' : function() {
-//				if (this.discoverer) {
-//					this.discoverer.unregisterComponent(this.getId());
-//					this.discoverer = null;
-//				}
-//			},
+			};
 
-		});
+			/**
+			 * Returns true if the widget can satisfy the requested attribute type.
+			 *
+			 * @public
+			 * @param {AttributeType} attribute
+			 * @returns {boolean}
+			 */
+			Widget.prototype.doesSatisfyTypeOf = function(attribute) {
+				var outAttributes = this._outAttributes.getItems();
+				var doesSatisfy = false;
+				for (var i in outAttributes){
+					if (this._outAttributes.getItems()[i].equalsTypeOf(attribute)) doesSatisfy = true;
+				}
+				return doesSatisfy;
+			};
 
-		return Widget;
-});
+			return Widget;
+		})();
+	}
+);

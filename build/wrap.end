@@ -1,6 +1,3 @@
- 	define('easejs', function() {
-    return easejs;
-  });
   define('jquery', function() {
     return $;
   });

@@ -7,20 +7,20 @@ require(['configTest'], function() {
 				
 				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
 								
-		    	var latitudeValue = new contactJS.AttributeValue().withName('latitude')
+		    	var latitudeValue = new contactJS.Attribute().withName('latitude')
 											.withType('double').withValue('there').withParameter(parameter);
-				var longitudeValue = new contactJS.AttributeValue().withName('longitude')
+				var longitudeValue = new contactJS.Attribute().withName('longitude')
 											.withType('double').withValue('here');
-				var attributeValue = new contactJS.AttributeValue().withName('testName')
+				var attributeValue = new contactJS.Attribute().withName('testName')
 											.withType('integer');
 				
-				var array = new Array();
+				var array = [];
 				array.push(latitudeValue);
 				array.push(longitudeValue);
-				var list = new contactJS.AttributeValueList().withItems(array);
+				var list = new contactJS.AttributeList().withItems(array);
 				assert.ok( list.size() == 2, "Passed!: Builder (withItems)" );
 				
-				var list2 = new contactJS.AttributeValueList();
+				var list2 = new contactJS.AttributeList();
 				list2.put(attributeValue);
 				
 				assert.equal( list2.size(), 1, "Passed!: Put type to list (put)" );
@@ -33,12 +33,12 @@ require(['configTest'], function() {
 				assert.ok( !list.contains(attributeValue), "Passed!: contains -> false" );
 				
 				//equals
-				assert.ok( list2.equals(list2), "Passed!: equals -> true" );
-				assert.ok( !list.equals(list2), "Passed!: equals -> false" );
+				assert.ok( list2.equalsValuesIn(list2), "Passed!: equals -> true" );
+				assert.ok( !list.equalsValuesIn(list2), "Passed!: equals -> false" );
 				
 				//getSubset
-				var sublist = new contactJS.AttributeTypeList();
-				sublist.put(latitudeValue.getAttributeType()); 
+				var sublist = new contactJS.AttributeList();
+				sublist.put(latitudeValue);
 				var subset = list.getSubset(sublist);
 				assert.equal( subset.size(), 1, "Passed!: Subset contains only one value" );
 				assert.ok( subset.contains(latitudeValue), "Passed!: subset contains latitude" );

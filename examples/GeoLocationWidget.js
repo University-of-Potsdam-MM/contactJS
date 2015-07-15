@@ -1,173 +1,58 @@
 /**
- * This module represents a GeoLocationWidget. It is a subclass of Widget.
- * 
- * @module GeoLocationWidget
- * @fileOverview
+ * Created by tobias on 25.04.15.
  */
-define([ 'easejs', 'contactJS' ],
-	function(easejs, contactJS) {
-
-		var Class = easejs.Class;
+define(['contactJS'], function (contactJS) {
+	return (function() {
 		/**
-		 * @class GeoLocationWidget
-		 * @classdesc This Widget provides the current position of the
-		 *            device.
+		 *
+		 * @requires contactJS
 		 * @extends Widget
-		 * @requires easejs
-		 * @requires Widget
-		 * @requires AttributeType
-		 * @requires AttributeValue
-		 * @requires AttributeTypeList
-		 * @requires AttributeValueList
-		 * @requires Callback
-		 * @requires Parameter
+		 * @param discoverer
+		 * @constructor
 		 */
-	
-		var GeoLocationWidget = Class('GeoLocationWidget').extend(contactJS.Widget,{
+		function GeoLocationWidget(discoverer) {
+			contactJS.Widget.call(this, discoverer);
+			this.name = 'GeoLocationWidget';
+		}
 
-			/**
-			 * @alias name
-			 * @public
-			 * @type {string}
-			 * @memberof GeoLocationWidget#
-			 * @desc Name of the Widget. In this case: GeoLocationWidget
-			 */
-			'public name' : 'GeoLocationWidget',
+		GeoLocationWidget.prototype = Object.create(contactJS.Widget.prototype);
+		GeoLocationWidget.prototype.constructor = GeoLocationWidget;
 
-			/**
-			 * Initializes attributes. For this class: Latitude and
-			 * Longitude
-			 * 
-			 * @protected
-			 * @alias initAttributes
-			 * @memberof GeoLocationWidget#
-			 */
-			'protected initAttributes' : function() {
-				var latitude = new contactJS.AttributeValue().withName('latitude')
-											.withType('double')
-											.withValue('undefined');
-				this.addAttribute(latitude);
-				var longitude = new contactJS.AttributeValue().withName('longitude')
-											.withType('double')
-											.withValue('undefined');
-				this.addAttribute(longitude);
-			},
+		GeoLocationWidget.prototype._initOutAttributes = function() {
+			this._setOutAttributes([
+				new contactJS.Attribute().withName('latitude').withType('double'),
+				new contactJS.Attribute().withName('longitude').withType('double')
+			]);
+		};
 
-			/**
-			 * Initializes constantAttributes. For this class: no
-			 * constantAttributes available
-			 *
-			 * @protected
-			 * @alias initConstantAttributes
-			 * @memberof GeoLocationWidget#
-			 */
-			'protected initConstantAttributes' : function() {
-			},
+		GeoLocationWidget.prototype._initConstantOutAttributes = function() {
 
-			/**
-			 * Initializes Callbacks. For this class:
-			 * UPDATE (latitude and longitude)
-			 *
-			 * @protected
-			 * @alias initCallbacks
-			 * @memberof GeoLocationWidget#
-			 */
-			'protected initCallbacks' : function() {
-				var list = new contactJS.AttributeTypeList();
-				list.put(this.getAttributeTypes().getItem("(latitude:double)"));
-				list.put(this.getAttributeTypes().getItem("(longitude:double)"));
-				var call = new contactJS.Callback().withName('UPDATE').withAttributeTypes(list);
-				this.addCallback(call);
-			},
+		};
 
-			'override public notify' : function() {
-				var callbacks = this.getCallbackList().getItems();
-				for(var i in callbacks){
-					this.sendToSubscriber(callbacks[i]);
-				}
-			},
+		GeoLocationWidget.prototype._initCallbacks = function() {
+			this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));
+		};
 
-			/**
-			 * Implements queryGenerator(). Query latitude and
-			 * longitude by calling
-			 * navigator.geolocation.getCurrentPosition().
-			 *
-			 * @override
-			 * @protected
-			 * @alias queryGenerator
-			 * @memberof GeoLocationWidget#
-			 */
-			'override protected queryGenerator' : function(_function) {
-				var self = this;
-				if(navigator.geolocation){
-					navigator.geolocation.getCurrentPosition(function(_position) {
-                            self.onSuccess(_position, self, _function);
-                        }, function(error) {
-                            self.onError(error, self, _function);
-                        });
-				} else {
-					alert("Keine Ortung moeglich");
-				}
+		GeoLocationWidget.prototype.queryGenerator = function (callback) {
+			var self = this;
+			var response = new contactJS.AttributeList();
 
-			},
+			if(navigator.geolocation){
+				navigator.geolocation.getCurrentPosition(function(position) {
+					response.put(self.getOutAttributes().getItems()[0].setValue(position.coords.latitude));
+					response.put(self.getOutAttributes().getItems()[1].setValue(position.coords.longitude));
 
-			/**
-			 * Success function for navigator.geolocation.getCurrentPosition() used in
-			 * queryGenerator(). Stores the values in the associated attributes.
-			 *
-			 * @callback
-			 * @private
-			 * @alias onSuccess
-			 * @memberof GeoLocationWidget#
-			 * @param _position
-			 * @param {this} self
-			 */
-			'private onSuccess' : function(_position, self, _function) {
-				var latitude = new contactJS.AttributeValue().withName('latitude')
-												.withType('double')
-												.withValue(_position.coords.latitude);
-				var longitude = new contactJS.AttributeValue().withName('longitude')
-												.withType('double')
-												.withValue(_position.coords.longitude);
-
-				var response = new contactJS.AttributeValueList();
-				response.put(latitude);
-				response.put(longitude);
-				self.putData(response);
-				self.notify();
-				if (_function && typeof(_function) == 'function'){
-					_function();
-				}
-			},
-
-			/**
-			 * Error function for navigator.geolocation.getCurrentPosition() used in
-			 * queryGenerator().
-			 *
-			 * @callback
-			 * @private
-			 * @alias onError
-			 * @memberof GeoLocationWidget#
-			 * @param error
-             * @param {this} self
-			 */
-			'private onError' : function(error, self, _function) {
-                var latitude = new contactJS.AttributeValue().withName('latitude')
-                    .withType('double')
-                    .withValue("request_error");
-                var longitude = new contactJS.AttributeValue().withName('longitude')
-                    .withType('double')
-                    .withValue("request_error");
-
-                var response = new contactJS.AttributeValueList();
-                response.put(latitude);
-                response.put(longitude);
-                self.putData(response);
-                self.notify();
-                if (_function && typeof(_function) == 'function'){
-                    _function();
-                }
+					self._sendResponse(response, callback);
+				}, function(error) {
+					//TODO: handle error
+					self._sendResponse(response, callback);
+				});
+			} else {
+				//TODO: handle error
+				self._sendResponse(response, callback);
 			}
-		});
+		};
+
 		return GeoLocationWidget;
-	});
+	})();
+});

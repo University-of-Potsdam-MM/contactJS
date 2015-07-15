@@ -1,10 +1,8 @@
 	define(['retrievalResult',
 			'storage',
 			'aggregator',
-		    'attributeType',
-		    'attributeValue',
-		    'attributeTypeList',
-		    'attributeValueList',
+		    'attribute',
+		    'attributeList',
 		    'parameter',
 		    'parameterList',		
 		    'condition',
@@ -12,9 +10,8 @@
 		    'conditionMethod',
 		    'equals',
             'unequals',
-		    'interpreterDescription',
-		    'widgetDescription',	    
 		    'discoverer',
+		    'translation',
 		    'interpreter',
 		    'interpreterResult',
 		    'callback',   
@@ -26,10 +23,8 @@
 		function(RetrievalResult,
 				Storage,
 				Aggregator,
-			    AttributeType,
-			    AttributeValue,
-			    AttributeTypeList,
-			    AttributeValueList,
+			    Attribute,
+			    AttributeList,
 			    Parameter,
 			    ParameterList,		
 			    Condition,
@@ -37,9 +32,8 @@
 			    ConditionMethod,
 			    Equals,
                 UnEquals,
-			    InterpreterDescription,
-			    WidgetDescription,	    
 			    Discoverer,
+			    Translation,
 			    Interpreter, 
 			    InterpreterResult,
 			    Callback,   
@@ -53,15 +47,13 @@
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '1.1.0';
+	contactJS.VERSION = '2.0.1';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
-	contactJS.AttributeType = AttributeType;
-	contactJS.AttributeValue = AttributeValue;
-	contactJS.AttributeTypeList = AttributeTypeList;
-	contactJS.AttributeValueList = AttributeValueList;
+	contactJS.Attribute = Attribute;
+	contactJS.AttributeList = AttributeList;
 	contactJS.Parameter = Parameter;
 	contactJS.ParameterList = ParameterList;
 	contactJS.Condition = Condition;
@@ -69,14 +61,13 @@
 	contactJS.ConditionMethod = ConditionMethod;
 	contactJS.Equals = Equals;
     contactJS.UnEquals = UnEquals;
-	contactJS.InterpreterDescription = InterpreterDescription;
-	contactJS.WidgetDescription = WidgetDescription;
 	contactJS.Discoverer = Discoverer;
+	contactJS.Translation = Translation;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;
 	contactJS.CallbackList = CallbackList;
-	contactJS.Subscriber =Subscriber;
+	contactJS.Subscriber = Subscriber;
 	contactJS.SubscriberList = SubscriberList;
 	contactJS.Widget = Widget;
 	contactJS.AbstractList = AbstractList;

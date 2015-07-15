@@ -6,10 +6,11 @@ require(['configTest'], function() {
 				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
 				var parameter2 = new contactJS.Parameter().withKey('testKey2').withValue('testValue2');
 				var parameter3 = new contactJS.Parameter().withKey('testKey3').withValue('testValue3');
-				
+
 				var array = new Array();
 				array.push(parameter2);
 				array.push(parameter3);
+
 				var list = new contactJS.ParameterList().withItems(array);
 				assert.ok( list.size() == 2, "Passed!: Builder (withItems)" );
 				
