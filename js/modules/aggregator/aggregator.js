@@ -488,93 +488,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
 				console.log("Aggregator "+this.id+": I need to satisfy attributes, let's ask the discoverer.");
-				this._discoverer._getComponentsForUnsatisfiedAttributes(this.id, unsatisfiedAttributes, all, componentTypes);
-				/*var relevantComponents = this._discoverer.getComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
-				console.log("I found "+relevantComponents.length+" component(s) that might satisfy the requested attributes.");
-
-				// iterate over all found components
-				for(var index in relevantComponents) {
-					// get the component
-					var theComponent = relevantComponents[index];
-					console.log("Let's look at component "+theComponent.getName()+".");
-
-					// if the component was added before, ignore it
-					if (!this._hasComponent(theComponent.getId())) {
-						var outAttributes = theComponent.getOutAttributes().getItems();
-
-						// if component is a widget and it wasn't added before, subscribe to its callbacks
-						if (theComponent instanceof Widget) {
-							console.log("It's a widget.");
-
-							this.addWidgetSubscription(theComponent);
-							// remove satisfied attributes
-							for (var widgetOutAttributeIndex in outAttributes) {
-								var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
-								// add the attribute type to the aggregators list of handled attribute types
-								if (!this.getOutAttributes().containsTypeOf(widgetOutAttribute)) this.addOutAttribute(widgetOutAttribute);
-								console.log("I can now satisfy attribute "+widgetOutAttribute.toString(true)+" with the help of "+theComponent.getName()+"! That was easy :)");
-								unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
-							}
-						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
-							console.log("It's an interpreter.");
-
-							var inAttributes = theComponent.getInAttributes().getItems();
-							var canSatisfyInAttributes = true;
-
-							// iterate over the attributes needed to satisfy the interpreter
-							for (var inAttributeIdentifier in inAttributes) {
-								// get the attribute
-								var theInAttribute = inAttributes[inAttributeIdentifier];
-								console.log("The interpreter needs the attribute "+theInAttribute.toString(true)+".");
-
-                                var allTranslations = this._discoverer.getTranslations();
-                                for (var translationIndex in allTranslations) {
-                                    theInAttribute = allTranslations[translationIndex].translate(theInAttribute);
-                                }
-
-								// if required attribute is not already satisfied by the aggregator search for components that do
-								if (!this.doesSatisfyTypeOf(theInAttribute)) {
-									console.log("It seems that I can't satisfy "+theInAttribute.toString(true)+", but I will search for components that can.");
-									var newAttributeList = new AttributeList();
-									newAttributeList.put(theInAttribute);
-									this._getComponentsForUnsatisfiedAttributes(newAttributeList, false, [Widget, Interpreter]);
-									// if the attribute still can't be satisfied drop the interpreter
-									if (!this.doesSatisfyTypeOf(theInAttribute)) {
-										console.log("I couldn't find a component to satisfy "+theInAttribute.toString(true)+". Dropping interpreter "+theComponent.getName()+". Bye bye.");
-										canSatisfyInAttributes = false;
-										break;
-									}
-								} else {
-									console.log("It seems that I already satisfy the attribute "+theInAttribute.toString(true)+". Let's move on.");
-								}
-							}
-
-							if (canSatisfyInAttributes) {
-								// remove satisfied attribute
-								for (var interpreterOutAttributeIndex in outAttributes) {
-									var interpreterOutAttribute = outAttributes[interpreterOutAttributeIndex];
-									// add the attribute type to the aggregators list of handled attribute types
-									for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
-										var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-										if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
-											this.addOutAttribute(theUnsatisfiedAttribute);
-											console.log("I can now satisfy attribute "+theUnsatisfiedAttribute.toString(true)+" with the help of "+theComponent.getName()+"! Great!");
-											this._interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
-										}
-									}
-									unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
-								}
-							} else {
-								console.log("Found interpreter but can't satisfy required attributes.");
-								for (var j in theComponent.getInAttributes().getItems()) {
-									console.log("Missing "+theComponent.getInAttributes().getItems()[j]+".");
-								}
-							}
-						}
-					} else {
-						console.log("Aggregator already has component "+theComponent.getName()+". Nothing to do here ;)");
-					}
-				}*/
+				this._discoverer.getComponentsForUnsatisfiedAttributes(this.id, unsatisfiedAttributes, all, componentTypes);
 			};
 
 			/**
@@ -586,10 +500,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			Aggregator.prototype.didFinishSetup = function() {
 				var unsatisfiedAttributes = this.getOutAttributes().clone();
 
-				// get all widgets that satisfy attribute types
+				// get all components that satisfy attribute types
 				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Widget, Interpreter]);
-				// get all interpreters that satisfy attribute types
-				//this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Interpreter]);
 				console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
 				console.log("Satisfied attributes: "+this.getOutAttributes().size());
 				console.log("Interpretations "+this._interpretations.length);

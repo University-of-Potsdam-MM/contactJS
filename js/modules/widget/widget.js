@@ -397,23 +397,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 */
 			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
 				this._constantOutAttributes = new AttributeList().withItems(constantAttributes);
-				/*var list = [];
-				if (constantAttributes instanceof Array) {
-					list = constantAttributes;
-				} else if (Class.isA(AttributeValueList, constantAttributes)) {
-					list = constantAttributes.getItems();
-				}
-				for ( var i in list) {
-					var constantAttribute = list[i];
-					if (Class.isA(AttributeValue, constantAttribute)) {
-						constantAttribute.setTimestamp(this.getCurrentTime());
-						this.constantAttributes.put(constantAttribute);
-						var type = new AttributeType().withName(constantAttribute.getName())
-							.withType(constantAttribute.getType())
-							.withParameters(constantAttribute.getParameters());
-						this.constantAttributeTypes.put(type);
-					}
-				}*/
 			};
 
 			/**

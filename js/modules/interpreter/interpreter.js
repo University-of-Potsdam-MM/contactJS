@@ -130,20 +130,6 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 * @protected
 			 */
 			Interpreter.prototype._initInAttributes = function(inAttributes) {
-				/*var inAttributes = [];
-				for(var inAttributeIndex in Interpreter.inOut.out) {
-					var name = Interpreter.inOut.out[inAttributeIndex].name;
-					var type = Interpreter.inOut.out[inAttributeIndex].type;
-					var parameterList = [];
-					for (var i = 0; i < Interpreter.inOut.out[inAttributeIndex].parameterList.length; i += 2) {
-						var innerParameter = [];
-						innerParameter.push(Interpreter.inOut.out[inAttributeIndex].parameterList[i]);
-						innerParameter.push(Interpreter.inOut.out[inAttributeIndex].parameterList[i + 1]);
-						parameterList.push(innerParameter);
-					}
-					var synonyms = Interpreter.inOut.out[inAttributeIndex].synonymList;
-					inAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
-				}*/
 				this._inAttributes = inAttributes;
 
 			};
@@ -155,20 +141,6 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 * @protected
 			 */
 			Interpreter.prototype._initOutAttributes = function(outAttributes) {
-				/*var outAttributes = [];
-				for(var outAttributeIndex in this.inOut.out) {
-					var name = this.inOut.out[outAttributeIndex].name;
-					var type = this.inOut.out[outAttributeIndex].type;
-					var parameterList = [];
-					for (var i = 0; i < this.inOut.out[outAttributeIndex].parameterList.length; i += 2) {
-						var innerParameter = [];
-						innerParameter.push(this.inOut.out[outAttributeIndex].parameterList[i]);
-						innerParameter.push(this.inOut.out[outAttributeIndex].parameterList[i + 1]);
-						parameterList.push(innerParameter);
-					}
-					var synonyms = this.inOut.out[outAttributeIndex].synonymList;
-					outAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
-				}*/
 				this._outAttributes = outAttributes;
 
 			};

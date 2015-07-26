@@ -23,13 +23,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				 * @private
 				 */
 				this._unregisteredWidgets = widgets;
-				/*for(i in this._unregisteredWidgets){
-					console.log("Discoverer: unregistered Widget: "+ this._unregisteredWidgets[i].name);
-					for (j in this._unregisteredWidgets[i].inOut.out){
-						console.log("Discoverer: unregistered Widgets outAttribute: "+ this._unregisteredWidgets[i].inOut.out[j].name);
-					}
 
-				}*/
 
 				/**
 				 * List of available Aggregators.
@@ -55,16 +49,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				 * @private
 				 */
 				this._unregisteredInterpreters = interpreters;
-				/*for(i in this._unregisteredInterpreters){
-					console.log("Discoverer: unregistered Interpreter: "+ this._unregisteredInterpreters[i].name);
-					for (j in this._unregisteredInterpreters[i].inOut.out){
-						console.log("Discoverer: unregistered Interpreters outAttribute: "+ this._unregisteredInterpreters[i].inOut.out[j].name);
-					}
-					for (k in this._unregisteredInterpreters[i].inOut.in){
-						console.log("Discoverer: unregistered Interpreters inAttribute: "+ this._unregisteredInterpreters[i].inOut.in[j].name);
-					}
 
-				}*/
 
 				/**
 				 * List of translations or synonymous attributes, respectively.
@@ -344,7 +329,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			 * @param {boolean} all If true all attributes must be satisfied by a single component.
 			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
 			 */
-			Discoverer.prototype._getComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes){
+			Discoverer.prototype.getComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes){
 				//Discoverer gets a list of attributes to satisfy
 
 				console.log('Discoverer: I need to satisfy the following attributes: '+unsatisfiedAttributes.getItems()+' .' );
@@ -394,7 +379,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 									console.log("Discoverer: I can't satisfy " + theInAttribute + ", but i will search for components that can");
 									var newAttributeList = new AttributeList();
 									newAttributeList.put(theInAttribute);
-									this._getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
+									this.getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
 									// if the attribute still can't be satisfied drop the interpreter
 									if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
 										console.log("Discoverer: I couldn't find a component to satisfy " + theInAttribute + ". Dropping interpreter " + theComponent.getName() + ". Bye bye.");
@@ -536,7 +521,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 											console.log("Discoverer: I can't satisfy " + theInAttribute + ", but i will search for components that can");
 											var newAttributeList = new AttributeList();
 											newAttributeList.put(theInAttribute);
-											this._getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
+											this.getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
 											// if the attribute still can't be satisfied drop the interpreter
 											if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
 												console.log("Discoverer: I couldn't find a component to satisfy " + theInAttribute + ". Dropping interpreter " + theInterpreter.name + ". Bye bye.");
@@ -545,7 +530,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 											}
 											var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
 											this.getAggregator(aggregatorId).addWidgetSubscription(newInterpreter);
-											console.log("Discoverer: I registered the Interpreter \"" + theInterpreter.name + "\" and subscribed to it.");
+											console.log("Discoverer: I registered the Interpreter \"" + theInterpreter.name + "\" .");
 											// remove satisfied attributes
 											var interpreterOutAttributes = newInterpreter.getOutAttributes();
 											for (var toRemoveIndex = 0; toRemoveIndex < interpreterOutAttributes.size(); toRemoveIndex++) {
