@@ -129,20 +129,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @protected
 			 */
 			Widget.prototype._initOutAttributes = function(attributes) {
-				var outAttributes = [];
-				for(var outAttributeIndex in Widget.inOut.out) {
-					var name = Widget.inOut.out[outAttributeIndex].name;
-					var type = Widget.inOut.out[outAttributeIndex].type;
-					var parameterList = [];
-					for (var i = 0; i < Widget.inOut.out[outAttributeIndex].parameterList.length; i += 2) {
-						var innerParameter = [];
-						innerParameter.push(Widget.inOut.out[outAttributeIndex].parameterList[i]);
-						innerParameter.push(Widget.inOut.out[outAttributeIndex].parameterList[i + 1]);
-						parameterList.push(innerParameter);
-					}
-					var synonyms = Widget.inOut.out[outAttributeIndex].synonymList;
-					outAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
-				}
 				this._outAttributes = attributes;
 			};
 
