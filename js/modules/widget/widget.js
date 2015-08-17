@@ -123,35 +123,35 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Initializes the provided Attributes.
 			 *
-			 * @abstract
-			 * @protected
+			 * @private
 			 */
-			Widget.prototype._initOutAttributes = function(attributes) {
-				this._outAttributes = attributes;
+			Widget.prototype._initOutAttributes = function() {
+				for(var outAttributeIndex in this.constructor.inOut.out) {
+					var out = this.constructor.inOut.out[outAttributeIndex];
+					this._outAttributes.put(this._discoverer.buildAttribute(
+						out.name,
+						out.type,
+						out.parameterList,
+						true
+					));
+				}
 			};
 
 			/**
 			 * Initializes the provided ConstantAttributes.
 			 *
-			 * @abstract
-			 * @protected
+			 * @private
 			 */
 			Widget.prototype._initConstantOutAttributes = function() {
-				var constOutAttributes = [];
-				for(var constOutAttributeIndex in Widget.inOut.out) {
-					var name = Widget.inOut.out[constOutAttributeIndex].name;
-					var type = Widget.inOut.out[constOutAttributeIndex].type;
-					var parameterList = [];
-					for (var i = 0; i < Widget.inOut.out[constOutAttributeIndex].parameterList.length; i += 2) {
-						var innerParameter = [];
-						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i]);
-						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i + 1]);
-						parameterList.push(innerParameter);
-					}
-					var synonyms = Widget.inOut.out[constOutAttributeIndex].synonymList;
-					constOutAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
+				for(var constAttributeIndex in this.constructor.inOut.const) {
+					var constants = this.constructor.inOut.const[constAttributeIndex];
+					this._outAttributes.put(this._discoverer.buildAttribute(
+						constants.name,
+						constants.type,
+						constants.parameterList,
+						true
+					));
 				}
-				this._constantOutAttributes = constOutAttributes;
 			};
 
 			/**
@@ -171,7 +171,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @protected
 			 */
 			Widget.prototype._init = function(attributes) {
-				this._initOutAttributes(attributes);
+				this._initOutAttributes();
 				this._initConstantOutAttributes();
 				this._initCallbacks();
 

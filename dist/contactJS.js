@@ -3013,37 +3013,35 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Initializes the provided Attributes.
 			 *
-			 * @abstract
-			 * @protected
+			 * @private
 			 */
-			Widget.prototype._initOutAttributes = function(attributes) {
-				// this.constructor.inOut.in
-
-				this._outAttributes = attributes;
+			Widget.prototype._initOutAttributes = function() {
+				for(var outAttributeIndex in this.constructor.inOut.out) {
+					var out = this.constructor.inOut.out[outAttributeIndex];
+					this._outAttributes.put(this._discoverer.buildAttribute(
+						out.name,
+						out.type,
+						out.parameterList,
+						true
+					));
+				}
 			};
 
 			/**
 			 * Initializes the provided ConstantAttributes.
 			 *
-			 * @abstract
-			 * @protected
+			 * @private
 			 */
 			Widget.prototype._initConstantOutAttributes = function() {
-				var constOutAttributes = [];
-				for(var constOutAttributeIndex in Widget.inOut.out) {
-					var name = Widget.inOut.out[constOutAttributeIndex].name;
-					var type = Widget.inOut.out[constOutAttributeIndex].type;
-					var parameterList = [];
-					for (var i = 0; i < Widget.inOut.out[constOutAttributeIndex].parameterList.length; i += 2) {
-						var innerParameter = [];
-						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i]);
-						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i + 1]);
-						parameterList.push(innerParameter);
-					}
-					var synonyms = Widget.inOut.out[constOutAttributeIndex].synonymList;
-					constOutAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
+				for(var constAttributeIndex in this.constructor.inOut.const) {
+					var constants = this.constructor.inOut.const[constAttributeIndex];
+					this._outAttributes.put(this._discoverer.buildAttribute(
+						constants.name,
+						constants.type,
+						constants.parameterList,
+						true
+					));
 				}
-				this._constantOutAttributes = constOutAttributes;
 			};
 
 			/**
@@ -3063,7 +3061,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @protected
 			 */
 			Widget.prototype._init = function(attributes) {
-				this._initOutAttributes(attributes);
+				this._initOutAttributes();
 				this._initConstantOutAttributes();
 				this._initCallbacks();
 
@@ -3793,23 +3791,17 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 					{
 						'name':'',
 						'type':'',
-						'parameterList': [],
-						"synonymList": [],
-						'value':'',
-						'timestamp':''
+						'parameterList': []
 					}
 				],
 				out: [
 					{
 						'name':'',
 						'type':'',
-						'parameterList': [],
-						"synonymList": [],
-						'value':'',
-						'timestamp':''
+						'parameterList': []
 					}
 				]
-			}
+			};
 
 			/**
 			 * Generates the id and initializes the (in and out) types and values.
@@ -3818,7 +3810,7 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 			 * @classdesc The Widget handles the access to sensors.
 			 * @constructs Interpreter
 			 */
-			function Interpreter(discoverer, inAttributes, outAttributes) {
+			function Interpreter(discoverer) {
 				/**
 				 * Name of the Interpreter.
 				 *
@@ -3869,7 +3861,7 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 				this._discoverer = discoverer;
 
 				this._register();
-				this._initInterpreter(inAttributes, outAttributes);
+				this._initInterpreter();
 
 				return this;
 			}
@@ -3899,30 +3891,43 @@ define('interpreter',['MathUuid', 'attribute', 'attributeList', 'interpreterResu
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initInterpreter = function(inAttributes, outAttributes) {
-				this._initInAttributes(inAttributes);
-				this._initOutAttributes(outAttributes);
+			Interpreter.prototype._initInterpreter = function() {
+				this._initInAttributes();
+				this._initOutAttributes();
 			};
 
 			/**
 			 * Initializes the inAttributes.
 			 *
-			 * @abstract
-			 * @protected
+			 * @private
 			 */
-			Interpreter.prototype._initInAttributes = function(inAttributes) {
-				this._inAttributes = inAttributes;
-
+			Interpreter.prototype._initInAttributes = function() {
+				for(var inAttributeIndex in this.constructor.inOut.in) {
+					var inA = this.constructor.inOut.in[inAttributeIndex];
+					this._inAttributes.put(this._discoverer.buildAttribute(
+						inA.name,
+						inA.type,
+						inA.parameterList,
+						true
+					));
+				}
 			};
 
 			/**
 			 * Initializes the outAttributes.
 			 *
-			 * @abstract
-			 * @protected
+			 * @private
 			 */
-			Interpreter.prototype._initOutAttributes = function(outAttributes) {
-				this._outAttributes = outAttributes;
+			Interpreter.prototype._initOutAttributes = function() {
+				for(var outAttributeIndex in this.constructor.inOut.out) {
+					var out = this.constructor.inOut.out[outAttributeIndex];
+					this._outAttributes.put(this._discoverer.buildAttribute(
+						out.name,
+						out.type,
+						out.parameterList,
+						true
+					));
+				}
 
 			};
 
@@ -5216,25 +5221,24 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			 *
 			 * @param name
 			 * @param type
-			 * @param parameterList
+			 * @param {Array} [parameterList=[]]
              * @param {Boolean} [withSynonyms=true]
 			 * @returns {Attribute}
 			 */
 			Discoverer.prototype.buildAttribute = function(name, type, parameterList, withSynonyms) {
 				if (typeof withSynonyms == 'undefined') withSynonyms = true;
+				if (typeof parameterList == 'undefined') parameterList = [];
 
                 if (typeof name != 'string' || typeof type != 'string')
                     throw new Error("Parameters name and type must be of type String!");
 
                 var newAttribute = new Attribute(true).withName(name).withType(type);
 
-				while (typeof parameterList != 'undefined' && parameterList.length > 0)
-				{
-					var param = parameterList.pop();
-					var value = param.pop();
-					var key = param.pop();
-					if (typeof key != 'undefined' && typeof value != 'undefined')
-						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
+				for (var i = 0; i < parameterList.length; i++) {
+					var param = parameterList[i];
+					var value = param[1];
+					var key = param[0];
+					if (typeof key != 'undefined' && typeof value != 'undefined') newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
 				}
 
                 if (withSynonyms) {
@@ -5400,15 +5404,8 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 						for(var tempOutAttributeIndex in theWidget.inOut.out) {
 							var name = theWidget.inOut.out[tempOutAttributeIndex].name;
 							var type = theWidget.inOut.out[tempOutAttributeIndex].type;
-							var parameterList = [];
-							for (var i = 0; i < theWidget.inOut.out[tempOutAttributeIndex].parameterList.length; i += 2) {
-								var innerParameter = [];
-								innerParameter.push(theWidget.inOut.out[tempOutAttributeIndex].parameterList[i]);
-								innerParameter.push(theWidget.inOut.out[tempOutAttributeIndex].parameterList[i + 1]);
-								parameterList.push(innerParameter);
-							}
-							var synonyms = theWidget.inOut.out[tempOutAttributeIndex].synonymList;
-							tempWidgetOutList.put(this.buildAttribute(name, type, parameterList, synonyms));
+							var parameterList = theWidget.inOut.out[tempOutAttributeIndex].parameterList;
+							tempWidgetOutList.put(this.buildAttribute(name, type, parameterList, true));
 						}
 						for(var tempOutAttribute = 0; tempOutAttribute < tempWidgetOutList.size(); tempOutAttribute++) {
 							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempOutAttribute])) {
@@ -5449,15 +5446,8 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 							for (var interpreterOutAttributeIndex in theInterpreter.inOut.out) {
 								var outName = theInterpreter.inOut.out[interpreterOutAttributeIndex].name;
 								var outType = theInterpreter.inOut.out[interpreterOutAttributeIndex].type;
-								var outParameterList = [];
-								for (var i = 0; i < theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList.length; i += 2) {
-									var innerParameter = [];
-									innerParameter.push(theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList[i]);
-									innerParameter.push(theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList[i + 1]);
-									outParameterList.push(innerParameter);
-								}
-								var outSynonyms = theInterpreter.inOut.out[interpreterOutAttributeIndex].synonymList;
-								tempOutList.put(this.buildAttribute(outName, outType, outParameterList, outSynonyms));
+								var outParameterList = theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList;
+								tempOutList.put(this.buildAttribute(outName, outType, outParameterList, true));
 							}
 
 							//create temporary inAttributeList
@@ -5465,15 +5455,8 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 							for (var interpreterInAttributeIndex in theInterpreter.inOut.in) {
 								var inName = theInterpreter.inOut.in[interpreterInAttributeIndex].name;
 								var inType = theInterpreter.inOut.in[interpreterInAttributeIndex].type;
-								var inParameterList = [];
-								for (var j = 0; j < theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList.length; j = 2) {
-									var innerParameter = [];
-									innerParameter.push(theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList[j]);
-									innerParameter.push(theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList[j + 1]);
-									inParameterList.push(innerParameter);
-								}
-								var inSynonyms = theInterpreter.inOut.in[interpreterInAttributeIndex].synonymList;
-								var tempInAttribute = this.buildAttribute(inName, inType, inParameterList, inSynonyms);
+								var inParameterList = theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList;
+								var tempInAttribute = this.buildAttribute(inName, inType, inParameterList, true);
 								tempInList.put(tempInAttribute);
 							}
 

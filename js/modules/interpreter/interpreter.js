@@ -12,23 +12,17 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 					{
 						'name':'',
 						'type':'',
-						'parameterList': [],
-						"synonymList": [],
-						'value':'',
-						'timestamp':''
+						'parameterList': []
 					}
 				],
 				out: [
 					{
 						'name':'',
 						'type':'',
-						'parameterList': [],
-						"synonymList": [],
-						'value':'',
-						'timestamp':''
+						'parameterList': []
 					}
 				]
-			}
+			};
 
 			/**
 			 * Generates the id and initializes the (in and out) types and values.
@@ -37,7 +31,7 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 * @classdesc The Widget handles the access to sensors.
 			 * @constructs Interpreter
 			 */
-			function Interpreter(discoverer, inAttributes, outAttributes) {
+			function Interpreter(discoverer) {
 				/**
 				 * Name of the Interpreter.
 				 *
@@ -88,7 +82,7 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 				this._discoverer = discoverer;
 
 				this._register();
-				this._initInterpreter(inAttributes, outAttributes);
+				this._initInterpreter();
 
 				return this;
 			}
@@ -118,30 +112,43 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initInterpreter = function(inAttributes, outAttributes) {
-				this._initInAttributes(inAttributes);
-				this._initOutAttributes(outAttributes);
+			Interpreter.prototype._initInterpreter = function() {
+				this._initInAttributes();
+				this._initOutAttributes();
 			};
 
 			/**
 			 * Initializes the inAttributes.
 			 *
-			 * @abstract
-			 * @protected
+			 * @private
 			 */
-			Interpreter.prototype._initInAttributes = function(inAttributes) {
-				this._inAttributes = inAttributes;
-
+			Interpreter.prototype._initInAttributes = function() {
+				for(var inAttributeIndex in this.constructor.inOut.in) {
+					var inA = this.constructor.inOut.in[inAttributeIndex];
+					this._inAttributes.put(this._discoverer.buildAttribute(
+						inA.name,
+						inA.type,
+						inA.parameterList,
+						true
+					));
+				}
 			};
 
 			/**
 			 * Initializes the outAttributes.
 			 *
-			 * @abstract
-			 * @protected
+			 * @private
 			 */
-			Interpreter.prototype._initOutAttributes = function(outAttributes) {
-				this._outAttributes = outAttributes;
+			Interpreter.prototype._initOutAttributes = function() {
+				for(var outAttributeIndex in this.constructor.inOut.out) {
+					var out = this.constructor.inOut.out[outAttributeIndex];
+					this._outAttributes.put(this._discoverer.buildAttribute(
+						out.name,
+						out.type,
+						out.parameterList,
+						true
+					));
+				}
 
 			};
 
