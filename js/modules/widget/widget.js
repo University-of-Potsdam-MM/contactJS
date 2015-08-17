@@ -6,6 +6,33 @@
 define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
 	function(MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
 		return (function() {
+
+			/**
+			 * Defines all outAttributes and constOutAttributes as an object.
+			 * @type {object}
+			 * @public
+			 */
+			Widget.inOut = {
+				out: [
+					{
+						"name":"",
+						"type":"",
+						'parameterList': [],
+						"value":"",
+						"timestamp":""
+					}
+				],
+				const: [
+					{
+						"name":"",
+						"type":"",
+						'parameterList': [],
+						"value":"",
+						"timestamp":""
+					}
+				]
+			};
+
 			/**
 			 * Constructor: Generates the ID and initializes the
 			 * Widget with attributes, callbacks and subscriber
@@ -92,6 +119,76 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 
 				return this;
 			}
+
+			/**
+			 * Initializes the provided Attributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initOutAttributes = function(attributes) {
+				this._outAttributes = attributes;
+			};
+
+			/**
+			 * Initializes the provided ConstantAttributes.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initConstantOutAttributes = function() {
+				var constOutAttributes = [];
+				for(var constOutAttributeIndex in Widget.inOut.out) {
+					var name = Widget.inOut.out[constOutAttributeIndex].name;
+					var type = Widget.inOut.out[constOutAttributeIndex].type;
+					var parameterList = [];
+					for (var i = 0; i < Widget.inOut.out[constOutAttributeIndex].parameterList.length; i += 2) {
+						var innerParameter = [];
+						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i]);
+						innerParameter.push(Widget.inOut.out[constOutAttributeIndex].parameterList[i + 1]);
+						parameterList.push(innerParameter);
+					}
+					var synonyms = Widget.inOut.out[constOutAttributeIndex].synonymList;
+					constOutAttributes.push(this._discoverer.buildAttribute(name, type, parameterList, synonyms));
+				}
+				this._constantOutAttributes = constOutAttributes;
+			};
+
+			/**
+			 * Initializes the provided Callbacks.
+			 *
+			 * @abstract
+			 * @protected
+			 */
+			Widget.prototype._initCallbacks = function() {
+				throw new Error("Abstract function!");
+			};
+
+			/**
+			 * Function for initializing. Calls all initFunctions
+			 * and will be called by the constructor.
+			 *
+			 * @protected
+			 */
+			Widget.prototype._init = function(attributes) {
+				this._initOutAttributes(attributes);
+				this._initConstantOutAttributes();
+				this._initCallbacks();
+
+				this.didFinishInitialization(attributes);
+			};
+
+			/**
+			 * Method will be invoked after the initialization of the widget finished.
+			 * Can be overridden by inheriting classes to take action after initialization.
+			 *
+			 * @public
+			 * @virtual
+			 * @param attributes
+			 */
+			Widget.prototype.didFinishInitialization = function(attributes) {
+
+			};
 
 			/**
 			 * Returns the name of the widget.
@@ -283,23 +380,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
 			 */
 			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
-				var list = [];
-				if (constantAttributes instanceof Array) {
-					list = constantAttributes;
-				} else if (Class.isA(AttributeValueList, constantAttributes)) {
-					list = constantAttributes.getItems();
-				}
-				for ( var i in list) {
-					var constantAttribute = list[i];
-					if (Class.isA(AttributeValue, constantAttribute)) {
-						constantAttribute.setTimestamp(this.getCurrentTime());
-						this.constantAttributes.put(constantAttribute);
-						var type = new AttributeType().withName(constantAttribute.getName())
-							.withType(constantAttribute.getType())
-							.withParameters(constantAttribute.getParameters());
-						this.constantAttributeTypes.put(type);
-					}
-				}
+				this._constantOutAttributes = new AttributeList().withItems(constantAttributes);
 			};
 
 			/**
@@ -434,62 +515,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 */
 			Widget.prototype._isOutAttribute = function(attribute) {
 				return !!this._outAttributes.containsTypeOf(attribute);
-			};
-
-			/**
-			 * Initializes the provided Attributes.
-			 *
-			 * @abstract
-			 * @protected
-			 */
-			Widget.prototype._initOutAttributes = function() {
-				throw new Error("Call to abstract function '_initOutAttributes'!");
-			};
-
-			/**
-			 * Initializes the provided ConstantAttributes.
-			 *
-			 * @abstract
-			 * @protected
-			 */
-			Widget.prototype._initConstantOutAttributes = function() {
-				throw new Error("Abstract function!");
-			};
-
-			/**
-			 * Initializes the provided Callbacks.
-			 *
-			 * @abstract
-			 * @protected
-			 */
-			Widget.prototype._initCallbacks = function() {
-				throw new Error("Abstract function!");
-			};
-
-			/**
-			 * Function for initializing. Calls all initFunctions
-			 * and will be called by the constructor.
-			 *
-			 * @protected
-			 */
-			Widget.prototype._init = function(attributes) {
-				this._initOutAttributes();
-				this._initConstantOutAttributes();
-				this._initCallbacks();
-
-				this.didFinishInitialization(attributes);
-			};
-
-			/**
-			 * Method will be invoked after the initialization of the widget finished.
-			 * Can be overridden by inheriting classes to take action after initialization.
-			 *
-			 * @public
-			 * @virtual
-			 * @param attributes
-			 */
-			Widget.prototype.didFinishInitialization = function(attributes) {
-
 			};
 
 			/**

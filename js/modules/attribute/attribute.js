@@ -338,16 +338,21 @@ define(['parameterList'], function(ParameterList) {
 
             // check synonyms for equality
             var theseSynonyms = this.getSynonyms();
-            var thoseSynonyms = attribute.getSynonyms();
-            for (var i in theseSynonyms) {
-                var thisSynonym = theseSynonyms[i];
-                if (attribute._equalsTypeOf(thisSynonym))
-                    return true;
-            }
-            for (var i in thoseSynonyms) {
-                var thatSynonym = thoseSynonyms[i];
-                if (this._equalsTypeOf(thatSynonym))
-                    return true;
+
+            if (attribute instanceof Attribute) {
+                var thoseSynonyms = attribute.getSynonyms();
+                for (var i in theseSynonyms) {
+                    var thisSynonym = theseSynonyms[i];
+                    if (attribute._equalsTypeOf(thisSynonym)) {
+                        return true;
+                    }
+                }
+                for (var i in thoseSynonyms) {
+                    var thatSynonym = thoseSynonyms[i];
+                    if (this._equalsTypeOf(thatSynonym)) {
+                        return true;
+                    }
+                }
             }
             return false;
         };

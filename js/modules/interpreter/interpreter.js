@@ -1,6 +1,35 @@
 define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 	function(MathUuid, Attribute, AttributeList, InterpreterResult) {
 		return (function() {
+
+			/**
+			 * Defines all in and outAttributes as an object.
+			 * @type {object}
+			 * @public
+			 */
+			Interpreter.inOut = {
+				in: [
+					{
+						'name':'',
+						'type':'',
+						'parameterList': [],
+						"synonymList": [],
+						'value':'',
+						'timestamp':''
+					}
+				],
+				out: [
+					{
+						'name':'',
+						'type':'',
+						'parameterList': [],
+						"synonymList": [],
+						'value':'',
+						'timestamp':''
+					}
+				]
+			}
+
 			/**
 			 * Generates the id and initializes the (in and out) types and values.
 			 *
@@ -8,7 +37,7 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 * @classdesc The Widget handles the access to sensors.
 			 * @constructs Interpreter
 			 */
-			function Interpreter(discoverer) {
+			function Interpreter(discoverer, inAttributes, outAttributes) {
 				/**
 				 * Name of the Interpreter.
 				 *
@@ -59,7 +88,7 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 				this._discoverer = discoverer;
 
 				this._register();
-				this._initInterpreter();
+				this._initInterpreter(inAttributes, outAttributes);
 
 				return this;
 			}
@@ -89,9 +118,9 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initInterpreter = function() {
-				this._initInAttributes();
-				this._initOutAttributes();
+			Interpreter.prototype._initInterpreter = function(inAttributes, outAttributes) {
+				this._initInAttributes(inAttributes);
+				this._initOutAttributes(outAttributes);
 			};
 
 			/**
@@ -100,8 +129,9 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 * @abstract
 			 * @protected
 			 */
-			Interpreter.prototype._initInAttributes = function() {
-				throw Error("Abstract function call!");
+			Interpreter.prototype._initInAttributes = function(inAttributes) {
+				this._inAttributes = inAttributes;
+
 			};
 
 			/**
@@ -110,8 +140,9 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 * @abstract
 			 * @protected
 			 */
-			Interpreter.prototype._initOutAttributes = function() {
-				throw Error("Abstract function call!");
+			Interpreter.prototype._initOutAttributes = function(outAttributes) {
+				this._outAttributes = outAttributes;
+
 			};
 
 			/**

@@ -1,5 +1,5 @@
-define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'interpreter', 'aggregator' ],
-	function(AttributeList, Attribute, Translation, Parameter, Widget, Interpreter, Aggregator) {
+define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList', 'widget', 'interpreter', 'aggregator',  'interpretation' ],
+	function(AttributeList, Attribute, Translation, Parameter, ParameterList, Widget, Interpreter, Aggregator, Interpretation) {
 		return (function() {
 			/**
 			 * Constructor: All known components given in the associated functions will be registered as startup.
@@ -17,6 +17,15 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'int
 				this._widgets = [];
 
 				/**
+				 * List of unregistered Widgets
+				 *
+				 * @type (Array)
+				 * @private
+				 */
+				this._unregisteredWidgets = widgets;
+
+
+				/**
 				 * List of available Aggregators.
 				 *
 				 * @type {Array}
@@ -31,6 +40,14 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'int
 				 * @private
 				 */
 				this._interpreters = [];
+
+				/**
+				 * List of unregistered Interpreters
+				 *
+				 * @type (Array)
+				 * @private
+				 */
+				this._unregisteredInterpreters = interpreters;
 
 				/**
 				 * List of translations or synonymous attributes, respectively.
@@ -231,10 +248,11 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'int
 			 * @param name
 			 * @param type
 			 * @param parameterList
-             * @param withSynonym
+             * @param {Boolean} [withSynonyms=true]
 			 * @returns {Attribute}
 			 */
 			Discoverer.prototype.buildAttribute = function(name, type, parameterList, withSynonyms) {
+				if (typeof withSynonyms == 'undefined') withSynonyms = true;
 
                 if (typeof name != 'string' || typeof type != 'string')
                     throw new Error("Parameters name and type must be of type String!");
@@ -250,7 +268,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'int
 						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
 				}
 
-                if (typeof withSynonyms == 'undefined' || withSynonyms) {
+                if (withSynonyms) {
                     for (var index in this._translations) {
                         var translation = this._translations[index];
 						newAttribute = translation.translate(newAttribute);
@@ -298,6 +316,240 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'widget', 'int
 					}
 				}
 				return false;
+			};
+
+			/**
+			 * Searches for components that can satisfy the requested attributes. Searches recursively through all
+			 * registered and unregistered components and initiates them.
+			 *
+			 * @private
+			 * @param {String} aggregatorId the aggregator's ID
+			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
+			 * @param {boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
+			 */
+			Discoverer.prototype.getComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes){
+				//Discoverer gets a list of attributes to satisfy
+
+				console.log('Discoverer: I need to satisfy the following attributes: '+unsatisfiedAttributes.getItems()+' .' );
+
+				//look at all the already registered components
+				console.log("Discoverer: Let's look at my registered components.");
+
+				var relevantComponents = this.getComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
+				console.log("Discoverer: I found " + relevantComponents.length + " registered component(s) that might satisfy the requested attributes.");
+
+				//iterate over the found components
+				for(var index in relevantComponents) {
+					var theComponent = relevantComponents[index];
+					console.log("Discoverer: Let's look at component " + theComponent.getName() + ".");
+
+					// if the component was added before, ignore it
+					if (!this.getAggregator(aggregatorId)._hasComponent(theComponent.getId())) {
+						var outAttributes = theComponent.getOutAttributes().getItems();
+
+						// if component is a widget and it wasn't added before, subscribe to its callbacks
+						if (theComponent instanceof Widget) {
+							console.log("Discoverer: It's a Widget.");
+
+							console.log("Discoverer: You should subscribe to the Widget.");
+							this.getAggregator(aggregatorId).addWidgetSubscription(theComponent);
+							// remove satisfied attributes
+							for (var widgetOutAttributeIndex in outAttributes) {
+								var widgetOutAttribute = outAttributes[widgetOutAttributeIndex];
+								// add the attribute type to the aggregators list of handled attribute types
+								if (!this.getAggregator(aggregatorId).getOutAttributes().containsTypeOf(widgetOutAttribute)) this.getAggregator(aggregatorId).addOutAttribute(widgetOutAttribute);
+								console.log("Aggregator: I can now satisfy attribute " + widgetOutAttribute + " with the help of " + theComponent.getName() + "! That was easy :)");
+								unsatisfiedAttributes.removeAttributeWithTypeOf(widgetOutAttribute);
+							}
+						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
+							console.log("Discoverer: It's an Interpreter.");
+							var inAttributes = theComponent.getInAttributes().getItems();
+							var canSatisfyInAttributes = true;
+
+							// iterate over the attributes needed to satisfy the interpreter
+							for (var inAttributeIdentifier in inAttributes) {
+								// get the attribute
+								var theInAttribute = inAttributes[inAttributeIdentifier];
+								console.log("Discoverer: The Interpreter needs the attribute: " + theInAttribute + ".");
+
+								// if required attribute is not already satisfied by the aggregator search for components that do
+								if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
+									console.log("Discoverer: I can't satisfy " + theInAttribute + ", but i will search for components that can");
+									var newAttributeList = new AttributeList();
+									newAttributeList.put(theInAttribute);
+									this.getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
+									// if the attribute still can't be satisfied drop the interpreter
+									if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
+										console.log("Discoverer: I couldn't find a component to satisfy " + theInAttribute + ". Dropping interpreter " + theComponent.getName() + ". Bye bye.");
+										canSatisfyInAttributes = false;
+										break;
+									}
+								} else {
+									console.log("Discoverer: It seems that I already satisfy the attribute " + theInAttribute + ". Let's move on.");
+								}
+							}
+							if (canSatisfyInAttributes) {
+								// remove satisfied attribute
+								for (var interpreterOutAttributeIndex in outAttributes) {
+									var interpreterOutAttribute = outAttributes[interpreterOutAttributeIndex];
+									// add the attribute type to the aggregators list of handled attribute types
+									for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
+										var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+										if (theUnsatisfiedAttribute.equalsTypeOf(interpreterOutAttribute)) {
+											this.getAggregator(aggregatorId).addOutAttribute(theUnsatisfiedAttribute);
+											console.log("Discoverer: I can now satisfy attribute " + theUnsatisfiedAttribute + " with the help of " + theComponent.getName() + "! Great!");
+											this.getAggregator(aggregatorId)._interpretations.push(new Interpretation(theComponent.getId(), theComponent.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
+										}
+									}
+									unsatisfiedAttributes.removeAttributeWithTypeOf(interpreterOutAttribute, true);
+								}
+							} else {
+								console.log("Discoverer: Found interpreter but can't satisfy required attributes.");
+								for (var j in theComponent.getInAttributes().getItems()) {
+									console.log("Discoverer: Missing " + theComponent.getInAttributes().getItems()[j] + ".");
+								}
+							}
+						}
+					}
+				}
+
+				//look at all unregistered components
+				console.log("Discoverer: Let's look at the unregistered Components.");
+
+				//check all Widget's outAttributes
+				console.log("Discoverer: Let's look at the unregistered Widgets.")
+				var foundWidget = false;
+				for(var widgetIndex in this._unregisteredWidgets){
+					var theWidget = this._unregisteredWidgets[widgetIndex];
+					for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
+						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
+
+						//create temporary OutAttributeList
+						var tempWidgetOutList = new AttributeList();
+						for(var tempOutAttributeIndex in theWidget.inOut.out) {
+							var name = theWidget.inOut.out[tempOutAttributeIndex].name;
+							var type = theWidget.inOut.out[tempOutAttributeIndex].type;
+							var parameterList = [];
+							for (var i = 0; i < theWidget.inOut.out[tempOutAttributeIndex].parameterList.length; i += 2) {
+								var innerParameter = [];
+								innerParameter.push(theWidget.inOut.out[tempOutAttributeIndex].parameterList[i]);
+								innerParameter.push(theWidget.inOut.out[tempOutAttributeIndex].parameterList[i + 1]);
+								parameterList.push(innerParameter);
+							}
+							var synonyms = theWidget.inOut.out[tempOutAttributeIndex].synonymList;
+							tempWidgetOutList.put(this.buildAttribute(name, type, parameterList, synonyms));
+						}
+						for(var tempOutAttribute = 0; tempOutAttribute < tempWidgetOutList.size(); tempOutAttribute++) {
+							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempOutAttribute])) {
+								console.log("Discoverer: I have found an unregistered Widget \"" + theWidget.name + "\".");
+								var newWidget = new theWidget(this, tempWidgetOutList);
+								this.getAggregator(aggregatorId).addWidgetSubscription(newWidget);
+
+								console.log("Discoverer: I registered the Widget \"" + theWidget.name + "\" and subscribed to it.");
+								// remove satisfied attributes
+								var widgetOutAttributes = newWidget.getOutAttributes();
+								for (var toRemoveIndex = 0; toRemoveIndex < widgetOutAttributes.size(); toRemoveIndex++) {
+									var toRemoveOutAttribute = newWidget.getOutAttributes().getItems()[toRemoveIndex];
+									// add the attribute type to the aggregators list of handled attribute types
+									if (!this.getAggregator(aggregatorId).getOutAttributes().containsTypeOf(toRemoveOutAttribute)) this.getAggregator(aggregatorId).addOutAttribute(toRemoveOutAttribute);
+									console.log("Aggregator "+this.getAggregator(aggregatorId).id+": I can now satisfy attribute " + toRemoveOutAttribute + " with the help of " + newWidget.getName() + "! That was easy :)");
+									unsatisfiedAttributes.removeAttributeWithTypeOf(toRemoveOutAttribute);
+								}
+								foundWidget = true;
+
+							}
+						}
+
+
+					}
+
+				}
+				if (!foundWidget) {
+					//check all interpreters' outAttributes
+					console.log("Discoverer: Let's look at the unregistered interpreters.")
+					for (var index in this._unregisteredInterpreters) {
+						var theInterpreter = this._unregisteredInterpreters[index];
+						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
+							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+							//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
+
+							//create temporary outAttributeList
+							var tempOutList = new AttributeList();
+							for (var interpreterOutAttributeIndex in theInterpreter.inOut.out) {
+								var outName = theInterpreter.inOut.out[interpreterOutAttributeIndex].name;
+								var outType = theInterpreter.inOut.out[interpreterOutAttributeIndex].type;
+								var outParameterList = [];
+								for (var i = 0; i < theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList.length; i += 2) {
+									var innerParameter = [];
+									innerParameter.push(theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList[i]);
+									innerParameter.push(theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList[i + 1]);
+									outParameterList.push(innerParameter);
+								}
+								var outSynonyms = theInterpreter.inOut.out[interpreterOutAttributeIndex].synonymList;
+								tempOutList.put(this.buildAttribute(outName, outType, outParameterList, outSynonyms));
+							}
+
+							//create temporary inAttributeList
+							var tempInList = new AttributeList();
+							for (var interpreterInAttributeIndex in theInterpreter.inOut.in) {
+								var inName = theInterpreter.inOut.in[interpreterInAttributeIndex].name;
+								var inType = theInterpreter.inOut.in[interpreterInAttributeIndex].type;
+								var inParameterList = [];
+								for (var j = 0; j < theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList.length; j = 2) {
+									var innerParameter = [];
+									innerParameter.push(theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList[j]);
+									innerParameter.push(theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList[j + 1]);
+									inParameterList.push(innerParameter);
+								}
+								var inSynonyms = theInterpreter.inOut.in[interpreterInAttributeIndex].synonymList;
+								var tempInAttribute = this.buildAttribute(inName, inType, inParameterList, inSynonyms);
+								tempInList.put(tempInAttribute);
+							}
+
+							for (var tempOutAttribute = 0; tempOutAttribute < tempOutList.size(); tempOutAttribute++) {
+								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttribute])) {
+									console.log("Discoverer: I have found an unregistered Interpreter \"" + theInterpreter.name + "\".");
+									for (var inAttributeIndex = 0; inAttributeIndex < tempInList.size(); inAttributeIndex++) {
+										var theInAttribute = tempInList.getItems()[inAttributeIndex];
+										console.log("Discoverer: The Interpreter needs the attribute: " + theInAttribute + ".");
+
+										// if required attribute is not already satisfied by the aggregator search for components that do
+										if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
+											console.log("Discoverer: I can't satisfy " + theInAttribute + ", but i will search for components that can");
+											var newAttributeList = new AttributeList();
+											newAttributeList.put(theInAttribute);
+											this.getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
+											// if the attribute still can't be satisfied drop the interpreter
+											if (!this.getAggregator(aggregatorId).doesSatisfyTypeOf(theInAttribute)) {
+												console.log("Discoverer: I couldn't find a component to satisfy " + theInAttribute + ". Dropping interpreter " + theInterpreter.name + ". Bye bye.");
+												canSatisfyInAttributes = false;
+												break;
+											}
+											var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
+											this.getAggregator(aggregatorId).addWidgetSubscription(newInterpreter);
+											console.log("Discoverer: I registered the Interpreter \"" + theInterpreter.name + "\" .");
+											// remove satisfied attributes
+											var interpreterOutAttributes = newInterpreter.getOutAttributes();
+											for (var toRemoveIndex = 0; toRemoveIndex < interpreterOutAttributes.size(); toRemoveIndex++) {
+												var toRemoveOutAttribute = newInterpreter.getOutAttributes().getItems()[toRemoveIndex];
+												// add the attribute type to the aggregators list of handled attribute types
+												if (!this.getAggregator(aggregatorId).getOutAttributes().containsTypeOf(toRemoveOutAttribute)) this.getAggregator(aggregatorId).addOutAttribute(toRemoveOutAttribute);
+												console.log("Aggregator "+this.getAggregator(aggregatorId).id+": I can now satisfy attribute " + toRemoveOutAttribute + " with the help of " + newInterpreter.getName() + "! That was easy :)");
+												this.getAggregator(aggregatorId)._interpretations.push(new Interpretation(newInterpreter.getId(), newInterpreter.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
+												unsatisfiedAttributes.removeAttributeWithTypeOf(toRemoveOutAttribute);
+											}
+										} else {
+											console.log("Discoverer: It seems that I already satisfy the attribute " + theInAttribute + ". Let's move on.");
+										}
+									}
+								}
+							}
+
+						}
+					}
+				}
 			};
 
 			return Discoverer;
