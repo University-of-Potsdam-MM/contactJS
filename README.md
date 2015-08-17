@@ -7,6 +7,25 @@ It is based on a port of the *[Context Toolkit](http://contexttoolkit.sourceforg
 
 Here be the table fo contents
 
+## Installation
+
+Download the latest release from GitHub. From the *./dist* folder copy the *contact.js* file to your project and add it to the require.js configuration file. For example:
+
+```JavaScript
+paths: {
+    contactJS: 'lib/contactJS',
+    ...
+}
+```
+
+In your project you can now include contactJS by using require.js's define mechanism. For example:
+
+```JavaScript
+define(['contactJS'], function(contactJS)) {
+    ...
+}
+```
+
 ## Components
 
 ### Discoverer
