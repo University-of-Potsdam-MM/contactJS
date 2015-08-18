@@ -17,18 +17,14 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 					{
 						"name":"",
 						"type":"",
-						'parameterList': [],
-						"value":"",
-						"timestamp":""
+						"value":""
 					}
 				],
 				const: [
 					{
 						"name":"",
 						"type":"",
-						'parameterList': [],
-						"value":"",
-						"timestamp":""
+						"value":""
 					}
 				]
 			};

@@ -6,7 +6,6 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
         /**
          * @class
          * @classdesc This class represents a list for Attribute.
-         * @requires Attribute~Attribute
          * @extends AbstractList
          * @constructs AttributeList
          */
@@ -20,6 +19,26 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
 
         AttributeList.prototype = Object.create(AbstractList.prototype);
         AttributeList.prototype.constructor = AttributeList;
+
+        /**
+         * Create an AttributeList from the description provided by a Widget or Interpreter.
+         *
+         * @static
+         * @param {Discoverer} discoverer
+         * @param {Array} attributeDescription
+         * @returns {AttributeList}
+         */
+        AttributeList.fromAttributeDescription = function(discoverer, attributeDescription) {
+            var theAttributeList = new AttributeList();
+            for(var attributeDescriptionIndex in attributeDescription) {
+                theAttributeList.put(discoverer.buildAttribute(
+                    attributeDescription[attributeDescriptionIndex].name,
+                    attributeDescription[attributeDescriptionIndex].type,
+                    attributeDescription[attributeDescriptionIndex].parameterList,
+                    true));
+            }
+            return theAttributeList;
+        };
 
         /**
          * Adds the specified item to the itemList.

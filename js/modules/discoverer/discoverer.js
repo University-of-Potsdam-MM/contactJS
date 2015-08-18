@@ -329,7 +329,6 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			 */
 			Discoverer.prototype.getComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes){
 				//Discoverer gets a list of attributes to satisfy
-
 				console.log('Discoverer: I need to satisfy the following attributes: '+unsatisfiedAttributes.getItems()+' .' );
 
 				//look at all the already registered components
@@ -426,13 +425,8 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
 
 						//create temporary OutAttributeList
-						var tempWidgetOutList = new AttributeList();
-						for(var tempOutAttributeIndex in theWidget.inOut.out) {
-							var name = theWidget.inOut.out[tempOutAttributeIndex].name;
-							var type = theWidget.inOut.out[tempOutAttributeIndex].type;
-							var parameterList = theWidget.inOut.out[tempOutAttributeIndex].parameterList;
-							tempWidgetOutList.put(this.buildAttribute(name, type, parameterList, true));
-						}
+						var tempWidgetOutList = AttributeList.fromAttributeDescription(this, theWidget.inOut.out);
+						
 						for(var tempOutAttribute = 0; tempOutAttribute < tempWidgetOutList.size(); tempOutAttribute++) {
 							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempOutAttribute])) {
 								console.log("Discoverer: I have found an unregistered Widget \"" + theWidget.name + "\".");
@@ -468,23 +462,9 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 							//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
 
 							//create temporary outAttributeList
-							var tempOutList = new AttributeList();
-							for (var interpreterOutAttributeIndex in theInterpreter.inOut.out) {
-								var outName = theInterpreter.inOut.out[interpreterOutAttributeIndex].name;
-								var outType = theInterpreter.inOut.out[interpreterOutAttributeIndex].type;
-								var outParameterList = theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList;
-								tempOutList.put(this.buildAttribute(outName, outType, outParameterList, true));
-							}
-
+							var tempOutList = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.out);
 							//create temporary inAttributeList
-							var tempInList = new AttributeList();
-							for (var interpreterInAttributeIndex in theInterpreter.inOut.in) {
-								var inName = theInterpreter.inOut.in[interpreterInAttributeIndex].name;
-								var inType = theInterpreter.inOut.in[interpreterInAttributeIndex].type;
-								var inParameterList = theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList;
-								var tempInAttribute = this.buildAttribute(inName, inType, inParameterList, true);
-								tempInList.put(tempInAttribute);
-							}
+							var tempInList = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.in);
 
 							for (var tempOutAttribute = 0; tempOutAttribute < tempOutList.size(); tempOutAttribute++) {
 								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttribute])) {

@@ -1132,7 +1132,6 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         /**
          * @class
          * @classdesc This class represents a list for Attribute.
-         * @requires Attribute~Attribute
          * @extends AbstractList
          * @constructs AttributeList
          */
@@ -1146,6 +1145,25 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
 
         AttributeList.prototype = Object.create(AbstractList.prototype);
         AttributeList.prototype.constructor = AttributeList;
+
+        /**
+         * Create an AttributeList from the description by a Widget or Interpreter.
+         *
+         * @param {Discoverer} discoverer
+         * @param {Array} attributeDescription
+         * @returns {AttributeList}
+         */
+        AttributeList.fromAttributeDescription = function(discoverer, attributeDescription) {
+            var theAttributeList = new AttributeList();
+            for(var attributeDescriptionIndex in attributeDescription) {
+                theAttributeList.put(discoverer.buildAttribute(
+                    attributeDescription[attributeDescriptionIndex].name,
+                    attributeDescription[attributeDescriptionIndex].type,
+                    attributeDescription[attributeDescriptionIndex].parameterList,
+                    true));
+            }
+            return theAttributeList;
+        };
 
         /**
          * Adds the specified item to the itemList.
@@ -2907,18 +2925,14 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 					{
 						"name":"",
 						"type":"",
-						'parameterList': [],
-						"value":"",
-						"timestamp":""
+						"value":""
 					}
 				],
 				const: [
 					{
 						"name":"",
 						"type":"",
-						'parameterList': [],
-						"value":"",
-						"timestamp":""
+						"value":""
 					}
 				]
 			};
@@ -5400,13 +5414,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
 
 						//create temporary OutAttributeList
-						var tempWidgetOutList = new AttributeList();
-						for(var tempOutAttributeIndex in theWidget.inOut.out) {
-							var name = theWidget.inOut.out[tempOutAttributeIndex].name;
-							var type = theWidget.inOut.out[tempOutAttributeIndex].type;
-							var parameterList = theWidget.inOut.out[tempOutAttributeIndex].parameterList;
-							tempWidgetOutList.put(this.buildAttribute(name, type, parameterList, true));
-						}
+						var tempWidgetOutList = AttributeList.fromAttributeDescription(this, theWidget.inOut.out);
 						for(var tempOutAttribute = 0; tempOutAttribute < tempWidgetOutList.size(); tempOutAttribute++) {
 							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempOutAttribute])) {
 								console.log("Discoverer: I have found an unregistered Widget \"" + theWidget.name + "\".");
@@ -5442,23 +5450,9 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 							//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
 
 							//create temporary outAttributeList
-							var tempOutList = new AttributeList();
-							for (var interpreterOutAttributeIndex in theInterpreter.inOut.out) {
-								var outName = theInterpreter.inOut.out[interpreterOutAttributeIndex].name;
-								var outType = theInterpreter.inOut.out[interpreterOutAttributeIndex].type;
-								var outParameterList = theInterpreter.inOut.out[interpreterOutAttributeIndex].parameterList;
-								tempOutList.put(this.buildAttribute(outName, outType, outParameterList, true));
-							}
-
+							var tempOutList = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.out);
 							//create temporary inAttributeList
-							var tempInList = new AttributeList();
-							for (var interpreterInAttributeIndex in theInterpreter.inOut.in) {
-								var inName = theInterpreter.inOut.in[interpreterInAttributeIndex].name;
-								var inType = theInterpreter.inOut.in[interpreterInAttributeIndex].type;
-								var inParameterList = theInterpreter.inOut.in[interpreterInAttributeIndex].parameterList;
-								var tempInAttribute = this.buildAttribute(inName, inType, inParameterList, true);
-								tempInList.put(tempInAttribute);
-							}
+							var tempInList = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.in);
 
 							for (var tempOutAttribute = 0; tempOutAttribute < tempOutList.size(); tempOutAttribute++) {
 								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttribute])) {
