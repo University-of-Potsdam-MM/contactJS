@@ -487,7 +487,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 */
 			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
-				console.log("Aggregator "+this.id+": I need to satisfy attributes, let's ask the discoverer.");
+				console.log("Aggregator: I need to satisfy Attributes, let's ask the Discoverer.");
 				this._discoverer.getComponentsForUnsatisfiedAttributes(this.id, unsatisfiedAttributes, all, componentTypes);
 			};
 

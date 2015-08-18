@@ -16,15 +16,13 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 				out: [
 					{
 						"name":"",
-						"type":"",
-						"value":""
+						"type":""
 					}
 				],
 				const: [
 					{
 						"name":"",
-						"type":"",
-						"value":""
+						"type":""
 					}
 				]
 			};

@@ -11,15 +11,13 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 				in: [
 					{
 						'name':'',
-						'type':'',
-						'parameterList': []
+						'type':''
 					}
 				],
 				out: [
 					{
 						'name':'',
-						'type':'',
-						'parameterList': []
+						'type':''
 					}
 				]
 			};
