@@ -120,15 +120,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @private
 			 */
 			Widget.prototype._initOutAttributes = function() {
-				for(var outAttributeIndex in this.constructor.inOut.out) {
-					var out = this.constructor.inOut.out[outAttributeIndex];
-					this._outAttributes.put(this._discoverer.buildAttribute(
-						out.name,
-						out.type,
-						out.parameterList,
-						true
-					));
-				}
+				this._outAttributes = AttributeList.fromAttributeDescription(this._discoverer, this.constructor.inOut.out);
 			};
 
 			/**
@@ -137,15 +129,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @private
 			 */
 			Widget.prototype._initConstantOutAttributes = function() {
-				for(var constAttributeIndex in this.constructor.inOut.const) {
-					var constants = this.constructor.inOut.const[constAttributeIndex];
-					this._outAttributes.put(this._discoverer.buildAttribute(
-						constants.name,
-						constants.type,
-						constants.parameterList,
-						true
-					));
-				}
+				this._constantOutAttributes = AttributeList.fromAttributeDescription(this._discoverer, this.constructor.inOut.const);
 			};
 
 			/**
