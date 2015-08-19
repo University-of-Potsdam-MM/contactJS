@@ -200,7 +200,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			};
 
 			/**
-			 * Returns all components that have the specified attribute as
+			 * Returns all registered components that have the specified attribute as
 			 * outAttribute. It can be chosen between the verification of
 			 * all attributes or at least one attribute.
 			 *
@@ -209,7 +209,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			 * @param {Array} componentTypes Components types to search for
 			 * @returns {Array}
 			 */
-			Discoverer.prototype.getComponentsByAttributes = function(attributeListOrArray, all, componentTypes) {
+			Discoverer.prototype.getRegisteredComponentsByAttributes = function(attributeListOrArray, all, componentTypes) {
 				var componentList = [];
 				var list = [];
 				if (typeof componentTypes == "undefined") componentTypes = [Widget, Interpreter, Aggregator];
@@ -349,7 +349,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				var theAggregator = this.getAggregator(aggregatorId);
 				console.log("Discoverer: Let's look at my registered components.");
 
-				var relevantComponents = this.getComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
+				var relevantComponents = this.getRegisteredComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
 				console.log("Discoverer: I found " + relevantComponents.length + " registered component(s) that might satisfy the requested attributes.");
 
 				//iterate over the found components
