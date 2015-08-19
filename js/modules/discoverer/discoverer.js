@@ -406,7 +406,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						var tempWidgetOutList = AttributeList.fromAttributeDescription(this, theWidget.inOut.out);
 
 						for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
-							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems[tempWidgetOutListIndex])) {
+							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
 								console.log("Discoverer: I have found an unregistered "+theWidget.name+".");
 								var newWidget = new theWidget(this, tempWidgetOutList);
 								theAggregator.addWidgetSubscription(newWidget);
