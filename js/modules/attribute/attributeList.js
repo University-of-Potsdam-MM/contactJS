@@ -286,8 +286,8 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
         /**
          * Returns the attribute value that matches the provided attribute type.
          *
-         * @param {AttributeType} attribute
-         * @returns {Attribute}
+         * @param {Attribute} attribute
+         * @returns {String}
          */
         AttributeList.prototype.getValueForAttributeWithTypeOf = function(attribute) {
             return this.getAttributeWithTypeOf(attribute).getValue();

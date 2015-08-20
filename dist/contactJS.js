@@ -1412,8 +1412,8 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
         /**
          * Returns the attribute value that matches the provided attribute type.
          *
-         * @param {AttributeType} attribute
-         * @returns {Attribute}
+         * @param {Attribute} attribute
+         * @returns {String}
          */
         AttributeList.prototype.getValueForAttributeWithTypeOf = function(attribute) {
             return this.getAttributeWithTypeOf(attribute).getValue();
@@ -2946,8 +2946,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @constructs Widget
 			 */
 			function Widget(discoverer, attributes) {
-				var self = this;
-
 				/**
 				 * Name of the Widget.
 				 *
@@ -3136,19 +3134,16 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Returns the last acquired attribute value with the given attribute type.
 			 *
-			 * @param {AttributeType} attributeType The attribute type to return the last value for.
+			 * @param {Attribute} attribute The attribute to return the last value for.
 			 * @returns {*}
 			 */
-			Widget.prototype.getValueForAttributeWithTypeOf = function(attributeType) {
-				return this.getOutAttributes().getAttributeWithTypeOf(attributeType).getValue();
+			Widget.prototype.getLastValueForAttributeWithTypeOf = function(attribute) {
+				return this.getOutAttributes().getAttributeWithTypeOf(attribute).getValue();
 			};
 
 			/**
 			 * Returns the old Attributes.
 			 *
-			 * @private
-			 * @alias getOldAttributes
-			 * @memberof Widget#
 			 * @returns {AttributeList}
 			 */
 			Widget.prototype.getOldAttributes = function() {
@@ -3159,9 +3154,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Returns a list of callbacks that can be
 			 * subscribed to.
 			 *
-			 * @public
-			 * @alias getCallbacks
-			 * @memberof Widget#
 			 * @returns {CallbackList}
 			 */
 			Widget.prototype.getCallbackList = function() {
@@ -3280,17 +3272,11 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * @param {Attribute} constantAttribute AttributeValue
 			 */
 			Widget.prototype._addConstantOutAttribute = function(constantAttribute) {
-				if (Class.isA(AttributeValue, constantAttribute)) {
-					if (!this.constantAttributes
-							.contains(constantAttribute)) {
-
-						var type = new AttributeType().withName(constantAttribute.getName())
-							.withType(constantAttribute.getType())
-							.withParameters(constantAttribute.getParameters());
-						this.constantAttributeTypes.put(type);
+				if (constantAttribute instanceof Attribute) {
+					if (!this._constantOutAttributes.containsTypeOf(constantAttribute)) {
+						constantAttribute.setTimestamp(this.getCurrentTime());
+						this._constantOutAttributes.put(constantAttribute);
 					}
-					_attribute.setTimestamp(this.getCurrentTime());
-					this.constantAttributes.put(constantAttribute);
 				}
 			};
 
@@ -3394,11 +3380,9 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Verifies whether the specified attributes is a
 			 * provided Attribute.
 			 *
-			 * @protected
-			 * @alias isOutAttribute
-			 * @memberof Widget#
 			 * @param {Attribute} attribute
-			 * @returns {boolean}
+			 * @returns {Boolean}
+			 * @protected
 			 */
 			Widget.prototype._isOutAttribute = function(attribute) {
 				return !!this._outAttributes.containsTypeOf(attribute);
