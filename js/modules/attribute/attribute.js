@@ -63,6 +63,14 @@ define(['parameterList'], function(ParameterList) {
             return this;
         }
 
+        Attribute.fromAttributeDescription = function(discoverer, attributeDescription) {
+            return discoverer.buildAttribute(
+                attributeDescription.name,
+                attributeDescription.type,
+                attributeDescription.parameterList,
+                true);
+        };
+
         /**
          * Builder for name.
          *
@@ -392,10 +400,10 @@ define(['parameterList'], function(ParameterList) {
         /**
          * Returns an identifier that uniquely describes the attribute type and its parameters.
          * The identifier can be used to compare two attribute types. <br/>
-         * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterValue]…
+         * Format: (AttributeName:AttributeType)#[FirstParameterName:FirstParameterType:FirstParameterValue]…
          *
          * @returns {String}
-         * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:52][CP_TARGET_LONGITUDE:13][CP_UNIT:KILOMETERS]
+         * @example (CI_USER_LOCATION_DISTANCE:FLOAT)#[CP_TARGET_LATITUDE:INTEGER:52][CP_TARGET_LONGITUDE:INTEGER:13][CP_UNIT:STRING:KILOMETERS]
          */
         Attribute.prototype.toString = function(typeOnly) {
             var identifier = "(" + this.getName() + ":" + this.getType() + ")";

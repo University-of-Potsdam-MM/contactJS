@@ -4,6 +4,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			/**
 			 * Generates the id and initializes the Aggregator.
 			 *
+			 * @param {Discoverer} discoverer
+			 * @param {AttributeList} attributes
 			 * @classdesc The Widget handles the access to sensors.
 			 * @constructs Aggregator
 			 * @extends Widget
@@ -176,12 +178,12 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * Initializes the provided attributeValues that are only specific to the Aggregator.
 			 * Called by aggregatorSetup().
 			 *
-			 * @virtual
+			 * @param {AttributeList} attributes
 			 * @protected
 			 */
 			Aggregator.prototype._setAggregatorAttributeValues = function(attributes) {
-				for (var index in attributes) {
-					var theAttribute = attributes[index];
+				for (var index in attributes.getItems()) {
+					var theAttribute = attributes.getItems()[index];
 					this.addOutAttribute(theAttribute);
 				}
 			};

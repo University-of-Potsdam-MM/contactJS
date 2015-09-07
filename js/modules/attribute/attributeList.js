@@ -11,9 +11,7 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
          */
         function AttributeList() {
             AbstractList.call(this);
-
             this._type = Attribute;
-
             return this;
         }
 
@@ -28,15 +26,29 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
          * @param {Array} attributeDescription
          * @returns {AttributeList}
          */
-        AttributeList.fromAttributeDescription = function(discoverer, attributeDescription) {
+        AttributeList.fromAttributeDescriptions = function(discoverer, attributeDescription) {
             var theAttributeList = new AttributeList();
             for(var attributeDescriptionIndex in attributeDescription) {
-                theAttributeList.put(discoverer.buildAttribute(
-                    attributeDescription[attributeDescriptionIndex].name,
-                    attributeDescription[attributeDescriptionIndex].type,
-                    attributeDescription[attributeDescriptionIndex].parameterList,
-                    true));
+                theAttributeList.put(Attribute.fromAttributeDescription(discoverer, attributeDescription[attributeDescriptionIndex]));
             }
+            return theAttributeList;
+        };
+
+        /**
+         *
+         * @param {Discoverer} discoverer
+         * @param {Array<String>} attributeNames
+         * @returns {AttributeList}
+         */
+        AttributeList.fromAttributeNames = function(discoverer, attributeNames) {
+            var theAttributeList = new AttributeList();
+            var possibleAttributes = discoverer.getPossibleAttributes();
+
+            for (var attributeNameIndex in attributeNames) {
+                var theAttributeName = attributeNames[attributeNameIndex];
+                theAttributeList.put(possibleAttributes._getAttributeWithName(theAttributeName));
+            }
+
             return theAttributeList;
         };
 
@@ -45,7 +57,7 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
          *
          * @public
          * @param {Attribute} attribute AttributeType
-         * @param {boolean} multipleInstances
+         * @param {Boolean} [multipleInstances=false]
          */
 
         AttributeList.prototype.put = function(attribute, multipleInstances) {
@@ -76,6 +88,10 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
             for ( var i in list) {
                 this.put(list[i]);
             }
+        };
+
+        AttributeList.prototype.putIfTypeNotContained = function(attribute) {
+            if (!this.containsTypeOf(attribute)) this.put(attribute);
         };
 
         /**
@@ -170,6 +186,20 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
                 return true;
             }
             return false;
+        };
+
+        /**
+         *
+         * @param {String} attributeName
+         * @returns {?Attribute}
+         * @private
+         */
+        AttributeList.prototype._getAttributeWithName = function(attributeName) {
+            for (var index in this._items) {
+                var theAttribute = this._items[index];
+                if (theAttribute.getName() == attributeName) return theAttribute;
+            }
+            return null;
         };
 
         /**

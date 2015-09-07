@@ -17,6 +17,13 @@ define(function(){
 			 * @type {string}
 			 * @private
 			 */
+			this._type = '';
+
+			/**
+			 *
+			 * @type {string}
+			 * @private
+			 */
 			this._value = '';
 
 			return this;
@@ -31,6 +38,17 @@ define(function(){
 		 */
 		Parameter.prototype.withKey = function(key){
 			this.setKey(key);
+			return this;
+		};
+
+		/**
+		 * Builder for type.
+		 *
+		 * @param type
+		 * @return {Parameter}
+		 */
+		Parameter.prototype.withType = function(type) {
+			this.setType(type);
 			return this;
 		};
 
@@ -52,8 +70,17 @@ define(function(){
 		 * @public
 		 * @returns {string}
 		 */
-		Parameter.prototype.getKey = function(){
+		Parameter.prototype.getKey = function() {
 			return this._key;
+		};
+
+		/**
+		 * Return the type.
+		 *
+		 * @returns {string}
+		 */
+		Parameter.prototype.getType = function() {
+			return this._type;
 		};
 
 		/**
@@ -73,9 +100,16 @@ define(function(){
 		 * @param {string} newKey Key
 		 */
 		Parameter.prototype.setKey = function(newKey){
-			if(typeof newKey === 'string'){
-				this._key = newKey;
-			}
+			if(typeof newKey === 'string') this._key = newKey;
+		};
+
+		/**
+		 * Sets the type.
+		 *
+		 * @param newType
+		 */
+		Parameter.prototype.setType = function(newType) {
+			if(typeof newType === "string") this._type = newType;
 		};
 
 		/**
@@ -85,9 +119,7 @@ define(function(){
 		 * @param {string} newValue Value
 		 */
 		Parameter.prototype.setValue = function(newValue){
-			if(typeof newValue === 'string'){
-				this._value = newValue;
-			}
+			if(typeof newValue === 'string') this._value = newValue;
 		};
 
 		/**
@@ -99,9 +131,9 @@ define(function(){
 		Parameter.prototype.equals = function(parameter) {
 			if(parameter.constructor === Parameter){
 				if (parameter.getValue() == "PV_INPUT" || this.getValue() == "PV_INPUT") {
-					return this.getKey() == parameter.getKey();
+					return this.getKey() == parameter.getKey() && this.getType() == parameter.getType();
 				} else {
-					return this.getKey() == parameter.getKey() && this.getValue() == parameter.getValue();
+					return this.getKey() == parameter.getKey() && this.getType() == parameter.getType() && this.getValue() == parameter.getValue();
 				}
 			}
 			return false;
@@ -109,12 +141,12 @@ define(function(){
 
 		/**
 		 * Returns a description of the parameter.
-		 * Format: [ParameterName:ParameterValue]
+		 * Format: [ParameterName:ParameterType:ParameterValue]
 		 *
-		 * @example [CP_UNIT:KILOMETERS]
+		 * @example [CP_UNIT:STRING:KILOMETERS]
 		 */
 		Parameter.prototype.toString = function() {
-			return "["+this.getKey()+":"+this.getValue()+"]";
+			return "["+this.getKey()+":"+this.getType()+":"+this.getValue()+"]";
 		};
 
 		return Parameter;

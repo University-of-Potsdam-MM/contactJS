@@ -83,7 +83,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
                         false
                     );
 					// add built attributes to translations
-                    this._translations.push(new Translation(firstAttribute,secondAttribute));
+                    this._translations.push(new Translation(firstAttribute, secondAttribute));
                 }
 
 				return this;
@@ -245,26 +245,28 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			 * Builds a new attribute from given name, type and parameters,
 			 * adding known translations to its synonyms.
 			 *
-			 * @param name
-			 * @param type
+			 * @param attributeName
+			 * @param attributeType
 			 * @param {Array} [parameterList=[]]
              * @param {Boolean} [withSynonyms=true]
 			 * @returns {Attribute}
 			 */
-			Discoverer.prototype.buildAttribute = function(name, type, parameterList, withSynonyms) {
+			Discoverer.prototype.buildAttribute = function(attributeName, attributeType, parameterList, withSynonyms) {
 				if (typeof withSynonyms == 'undefined') withSynonyms = true;
 				if (typeof parameterList == 'undefined') parameterList = [];
 
-                if (typeof name != 'string' || typeof type != 'string')
+                if (typeof attributeName != 'string' || typeof attributeType != 'string')
                     throw new Error("Parameters name and type must be of type String!");
 
-                var newAttribute = new Attribute(true).withName(name).withType(type);
+                var newAttribute = new Attribute(true).withName(attributeName).withType(attributeType);
 
 				for (var i = 0; i < parameterList.length; i++) {
 					var param = parameterList[i];
-					var value = param[1];
+					var value = param[2];
+					var type = param[1];
 					var key = param[0];
-					if (typeof key != 'undefined' && typeof value != 'undefined') newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withValue(value));
+					if (typeof key != 'undefined' && typeof value != 'undefined')
+						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withType(type).withValue(value));
 				}
 
                 if (withSynonyms) {
@@ -403,7 +405,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
 
 						//create temporary OutAttributeList
-						var tempWidgetOutList = AttributeList.fromAttributeDescription(this, theWidget.inOut.out);
+						var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.inOut.out);
 
 						for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
 							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
@@ -426,9 +428,9 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
 							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 							//create temporary outAttributeList
-							var tempOutList = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.out);
+							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.out);
 							//create temporary inAttributeList
-							var tempInList = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.in);
+							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.in);
 
 							for (var tempOutAttributeIndex in tempOutList.getItems()) {
 								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
@@ -465,7 +467,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				if (theInterpreter instanceof Interpreter) {
 					attributes = theInterpreter.getInAttributes().getItems();
 				} else {
-					attributes = AttributeList.fromAttributeDescription(this, theInterpreter.inOut.in).getItems();
+					attributes = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.in).getItems();
 				}
 
 				for (var attributeIdentifier in attributes) {
@@ -536,6 +538,29 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 					}
 					unsatisfiedAttributes.removeAttributeWithTypeOf(theAttribute, true);
 				}
+			};
+
+			/**
+			 *
+			 * @returns {AttributeList}
+			 */
+			Discoverer.prototype.getPossibleAttributes = function() {
+				var possibleAttributes = new AttributeList();
+
+				// iterate over all unregistered widgets
+				for (var widgetIndex in this._unregisteredWidgets) {
+					var theWidget = this._unregisteredWidgets[widgetIndex];
+					for (var attributeDescriptionIndex in theWidget.inOut.out) {
+						var theAttribute = Attribute.fromAttributeDescription(this, theWidget.inOut.out[attributeDescriptionIndex]);
+						possibleAttributes.putIfTypeNotContained(theAttribute);
+					}
+				}
+
+				return possibleAttributes;
+			};
+
+			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
+				return AttributeList.fromAttributeNames(this, attributeNames);
 			};
 
 			return Discoverer;

@@ -32,6 +32,8 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Widget with attributes, callbacks and subscriber
 			 * that are specified in the provided functions.
 			 *
+			 * @param {Discoverer} discoverer
+ 			 * @param {AttributeList} attributes
 			 * @abstract
 			 * @classdesc The Widget handles the access to sensors.
 			 * @constructs Widget
@@ -118,7 +120,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @private
 			 */
 			Widget.prototype._initOutAttributes = function() {
-				this._outAttributes = AttributeList.fromAttributeDescription(this._discoverer, this.constructor.inOut.out);
+				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.out);
 			};
 
 			/**
@@ -127,7 +129,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @private
 			 */
 			Widget.prototype._initConstantOutAttributes = function() {
-				this._constantOutAttributes = AttributeList.fromAttributeDescription(this._discoverer, this.constructor.inOut.const);
+				this._constantOutAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.const);
 			};
 
 			/**
