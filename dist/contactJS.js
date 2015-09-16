@@ -3539,7 +3539,7 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 				}
 				for ( var i in list) {
 					var theAttribute = list[i];
-					if (theAttribute.type === Attribute && this.isOutAttribute(theAttribute)) {
+					if (theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)) {
 						this.addOutAttribute(theAttribute);
 					}
 				}
