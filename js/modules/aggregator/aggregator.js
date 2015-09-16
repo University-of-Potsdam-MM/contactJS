@@ -182,9 +182,11 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @protected
 			 */
 			Aggregator.prototype._setAggregatorAttributeValues = function(attributes) {
-				for (var index in attributes.getItems()) {
-					var theAttribute = attributes.getItems()[index];
-					this.addOutAttribute(theAttribute);
+				if (attributes instanceof AttributeList) {
+					for (var index in attributes.getItems()) {
+						var theAttribute = attributes.getItems()[index];
+						this.addOutAttribute(theAttribute);
+					}
 				}
 			};
 
