@@ -512,7 +512,6 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			/**
 			 * Updates all the widgets referenced by the aggregator and calls the provided callback afterwards.
 			 *
-			 * @public
 			 * @virtual
 			 * @param {Function} callback The callback to query after all the widget where updated.
 			 */
@@ -542,7 +541,6 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			/**
 			 * Let's all connected interpreters interpret data.
 			 *
-			 * @public
 			 * @param {function} callback The callback to query after all the interpreters did interpret data.
 			 */
 			Aggregator.prototype.queryReferencedInterpreters = function(callback) {
@@ -588,9 +586,6 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			/**
 			 * Query all referenced widgets and afterwards all connected interpreters.
 			 *
-			 * @public
-			 * @alias queryReferencedComponents
-			 * @memberof Aggregator#
 			 * @param {Function} callback the callback to query after all components did finish their work.
 			 */
 			Aggregator.prototype.queryReferencedComponents = function(callback) {
