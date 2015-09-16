@@ -556,9 +556,24 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 					}
 				}
 
+				// iterate over all unregistered interpreters
+				for (var interpreterIndex in this._unregisteredInterpreters) {
+					var theInterpreter = this._unregisteredInterpreters[interpreterIndex];
+					for (var outAttributeDescriptionIndex in theInterpreter.inOut.out) {
+						var theAttribute = Attribute.fromAttributeDescription(this, theInterpreter.inOut.out[outAttributeDescriptionIndex]);
+						possibleAttributes.putIfTypeNotContained(theAttribute);
+					}
+				}
+
 				return possibleAttributes;
 			};
 
+			/**
+			 *
+			 *
+			 * @param attributeNames
+			 * @returns {*}
+			 */
 			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
 				return AttributeList.fromAttributeNames(this, attributeNames);
 			};

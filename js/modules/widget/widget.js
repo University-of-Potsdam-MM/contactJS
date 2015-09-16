@@ -58,44 +58,39 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Widget#
 				 * @desc All available Attributes and their values.
 				 */
 				this._outAttributes = new AttributeList();
 
 				/**
-				 * @alias oldAttributes
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Widget#
 				 * @desc This temporary variable is used for storing the old attribute values.
 				 * 			So these can be used to check conditions.
 				 */
 				this._oldOutAttributes = new AttributeList();
 
 				/**
-				 * @alias constantAttributes
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Widget#
 				 * @desc All available constant Attributes and their values.
 				 */
 				this._constantOutAttributes = new AttributeList();
 
 				/**
-				 * @alias callbacks
+				 *
 				 * @protected
 				 * @type {CallbackList}
-				 * @memberof Widget#
 				 * @desc List of Callbacks.
 				 */
 				this._callbacks = new CallbackList();
 
 				/**
-				 * @alias subscribers
+				 *
 				 * @protected
 				 * @type {SubscriberList}
-				 * @memberof Widget#
 				 * @desc List of Subscriber.
 				 */
 				this._subscribers = new SubscriberList();
@@ -171,9 +166,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Returns the name of the widget.
 			 *
-			 * @public
-			 * @alias getName
-			 * @memberof Widget#
 			 * @returns {string}
 			 */
 			Widget.prototype.getName = function() {
@@ -183,9 +175,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Returns the id of the widget.
 			 *
-			 * @public
-			 * @alias getId
-			 * @memberof Widget#
 			 * @returns {string}
 			 */
 			Widget.prototype.getId = function() {
@@ -257,9 +246,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Returns the specified callbacks that can be
 			 * subscribed to.
 			 *
-			 * @public
-			 * @alias getCallbacks
-			 * @memberof Widget#
 			 * @returns {Array}
 			 */
 			Widget.prototype.getCallbacks = function() {
@@ -273,9 +259,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Returns the Subscriber.
 			 *
-			 * @public
-			 * @alias getSubscriber
-			 * @memberof Widget#
 			 * @returns {SubscriberList}
 			 */
 			Widget.prototype.getSubscriber = function() {
@@ -285,9 +268,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Sets the name of the Widget.
 			 *
-			 * @protected
-			 * @alias setName
-			 * @memberof Widget#
 			 * @param {string} name Name of the Widget.
 			 */
 			Widget.prototype.setName = function(name) {
@@ -300,8 +280,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Sets the id of the Widget.
 			 *
 			 * @protected
-			 * @alias setId
-			 * @memberof Widget#
 			 * @param {string} id Id of the Widget.
 			 */
 			Widget._setId = function(id) {
@@ -347,8 +325,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * associated AttributeTypes.
 			 *
 			 * @protected
-			 * @alias setConstantOutAttributes
-			 * @memberof Widget#
 			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
 			 */
 			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
@@ -377,8 +353,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Sets Callbacks.
 			 *
 			 * @protected
-			 * @alias setCallbacks
-			 * @memberof Widget#
 			 * @param {(CallbackList|Array)} callbacks List or Array of Callbacks.
 			 */
 			Widget.prototype._setCallbacks = function(callbacks) {
@@ -400,8 +374,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Adds a new Callback.
 			 *
 			 * @protected
-			 * @alias addCallback
-			 * @memberof Widget#
 			 * @param {Callback} callback List or Array of AttributeValues.
 			 */
 			Widget.prototype._addCallback = function(callback) {
@@ -418,8 +390,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Sets SubscriberList.
 			 *
 			 * @protected
-			 * @alias setSubscriber
-			 * @memberof Widget#
 			 * @param {(SubscriberList|Array)}  subscribers List or Array of Subscriber.
 			 */
 			Widget.prototype._setSubscriber = function(subscribers) {
@@ -536,9 +506,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Updates the attributes by calling queryGenerator.
 			 *
-			 * @public
-			 * @alias updateWidgetInformation
-			 * @memberof Widget#
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 *
 			 */
@@ -583,9 +550,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Updates and returns all available AttributeValues,
 			 * Attributes and ConstantAtrributes.
 			 *
-			 * @public
-			 * @alias updateAndQueryWidget
-			 * @memberof Widget#
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 * @returns {?AttributeList}
 			 */
@@ -631,9 +595,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Verifies if the attributes match to the specified conditions in case any exists.
 			 *
-			 * @private
-			 * @alias dataValid
-			 * @memberof Widget#
 			 * @param {string} conditions List of Conditions that will be verified.
 			 * @returns {boolean}
 			 */

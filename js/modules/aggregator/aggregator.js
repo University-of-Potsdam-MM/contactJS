@@ -165,6 +165,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * InitMethod for Aggregators. Called by constructor. Initializes the associated Storage.
 			 *
 			 * @protected
+			 * @param {AttributeList} attributes
 			 */
 			Aggregator.prototype._aggregatorSetup = function(attributes) {
 				this._setAggregatorAttributeValues(attributes);
@@ -449,9 +450,6 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			/**
 			 * Return true if a component with the provided UUID was connected to the aggregator.
 			 *
-			 * @private
-			 * @alias hasComponent
-			 * @memberof Aggregator#
 			 * @param {String} uuid The UUID of the component to check.
 			 * @returns {boolean}
 			 */
