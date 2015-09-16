@@ -3,8 +3,9 @@ require(['configTest'], function() {
 			function(contactJS){
 		
 			QUnit.test( "SubscriberList", function( assert ) {
+				var discoverer = new contactJS.Discoverer();
 				
-				var attributeType2 = new contactJS.Attribute().withName('testName').withType('integer');
+				var attributeType2 = discoverer.buildAttribute('testName', 'integer');
 
 				var attList = new contactJS.AttributeList().withItems([attributeType2]);
 

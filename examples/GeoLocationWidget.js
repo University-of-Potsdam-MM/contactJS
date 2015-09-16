@@ -3,6 +3,20 @@
  */
 define(['contactJS'], function (contactJS) {
 	return (function() {
+		GeoLocationWidget.inOut = {
+			out: [
+				{
+					'name':'latitude',
+					'type':'double'
+				},
+				{
+					'name':'longitude',
+					'type':'double'
+				}
+			],
+			const: []
+		};
+
 		/**
 		 *
 		 * @requires contactJS
@@ -13,21 +27,11 @@ define(['contactJS'], function (contactJS) {
 		function GeoLocationWidget(discoverer) {
 			contactJS.Widget.call(this, discoverer);
 			this.name = 'GeoLocationWidget';
+			return this;
 		}
 
 		GeoLocationWidget.prototype = Object.create(contactJS.Widget.prototype);
 		GeoLocationWidget.prototype.constructor = GeoLocationWidget;
-
-		GeoLocationWidget.prototype._initOutAttributes = function() {
-			this._setOutAttributes([
-				new contactJS.Attribute().withName('latitude').withType('double'),
-				new contactJS.Attribute().withName('longitude').withType('double')
-			]);
-		};
-
-		GeoLocationWidget.prototype._initConstantOutAttributes = function() {
-
-		};
 
 		GeoLocationWidget.prototype._initCallbacks = function() {
 			this._addCallback(new contactJS.Callback().withName('UPDATE').withAttributeTypes(this.getOutAttributes()));

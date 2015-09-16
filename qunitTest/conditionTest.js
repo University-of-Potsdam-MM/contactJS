@@ -2,9 +2,10 @@ require(['configTest'], function() {
 	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "Condition", function( assert ) {
+				var discoverer = new contactJS.Discoverer();
 				
-				var testA = new contactJS.Attribute().withName('test').withType('string').withValue('blubb');
-		    	var testA2 = new contactJS.Attribute().withName('test').withType('string').withValue('blubb2');
+				var testA = discoverer.buildAttribute('test', 'string').withValue('foo');
+		    	var testA2 = discoverer.buildAttribute('test', 'string').withValue('bar');
 		    	
 		    	var method = new contactJS.Equals();
 		    	var method2 = new contactJS.UnEquals();
