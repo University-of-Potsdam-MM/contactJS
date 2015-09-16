@@ -3037,44 +3037,39 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Widget#
 				 * @desc All available Attributes and their values.
 				 */
 				this._outAttributes = new AttributeList();
 
 				/**
-				 * @alias oldAttributes
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Widget#
 				 * @desc This temporary variable is used for storing the old attribute values.
 				 * 			So these can be used to check conditions.
 				 */
 				this._oldOutAttributes = new AttributeList();
 
 				/**
-				 * @alias constantAttributes
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Widget#
 				 * @desc All available constant Attributes and their values.
 				 */
 				this._constantOutAttributes = new AttributeList();
 
 				/**
-				 * @alias callbacks
+				 *
 				 * @protected
 				 * @type {CallbackList}
-				 * @memberof Widget#
 				 * @desc List of Callbacks.
 				 */
 				this._callbacks = new CallbackList();
 
 				/**
-				 * @alias subscribers
+				 *
 				 * @protected
 				 * @type {SubscriberList}
-				 * @memberof Widget#
 				 * @desc List of Subscriber.
 				 */
 				this._subscribers = new SubscriberList();
@@ -3150,9 +3145,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Returns the name of the widget.
 			 *
-			 * @public
-			 * @alias getName
-			 * @memberof Widget#
 			 * @returns {string}
 			 */
 			Widget.prototype.getName = function() {
@@ -3162,9 +3154,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Returns the id of the widget.
 			 *
-			 * @public
-			 * @alias getId
-			 * @memberof Widget#
 			 * @returns {string}
 			 */
 			Widget.prototype.getId = function() {
@@ -3236,9 +3225,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Returns the specified callbacks that can be
 			 * subscribed to.
 			 *
-			 * @public
-			 * @alias getCallbacks
-			 * @memberof Widget#
 			 * @returns {Array}
 			 */
 			Widget.prototype.getCallbacks = function() {
@@ -3252,9 +3238,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Returns the Subscriber.
 			 *
-			 * @public
-			 * @alias getSubscriber
-			 * @memberof Widget#
 			 * @returns {SubscriberList}
 			 */
 			Widget.prototype.getSubscriber = function() {
@@ -3264,9 +3247,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Sets the name of the Widget.
 			 *
-			 * @protected
-			 * @alias setName
-			 * @memberof Widget#
 			 * @param {string} name Name of the Widget.
 			 */
 			Widget.prototype.setName = function(name) {
@@ -3279,8 +3259,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Sets the id of the Widget.
 			 *
 			 * @protected
-			 * @alias setId
-			 * @memberof Widget#
 			 * @param {string} id Id of the Widget.
 			 */
 			Widget._setId = function(id) {
@@ -3326,8 +3304,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * associated AttributeTypes.
 			 *
 			 * @protected
-			 * @alias setConstantOutAttributes
-			 * @memberof Widget#
 			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
 			 */
 			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
@@ -3356,8 +3332,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Sets Callbacks.
 			 *
 			 * @protected
-			 * @alias setCallbacks
-			 * @memberof Widget#
 			 * @param {(CallbackList|Array)} callbacks List or Array of Callbacks.
 			 */
 			Widget.prototype._setCallbacks = function(callbacks) {
@@ -3379,8 +3353,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Adds a new Callback.
 			 *
 			 * @protected
-			 * @alias addCallback
-			 * @memberof Widget#
 			 * @param {Callback} callback List or Array of AttributeValues.
 			 */
 			Widget.prototype._addCallback = function(callback) {
@@ -3397,8 +3369,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Sets SubscriberList.
 			 *
 			 * @protected
-			 * @alias setSubscriber
-			 * @memberof Widget#
 			 * @param {(SubscriberList|Array)}  subscribers List or Array of Subscriber.
 			 */
 			Widget.prototype._setSubscriber = function(subscribers) {
@@ -3515,9 +3485,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Updates the attributes by calling queryGenerator.
 			 *
-			 * @public
-			 * @alias updateWidgetInformation
-			 * @memberof Widget#
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 *
 			 */
@@ -3562,9 +3529,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			 * Updates and returns all available AttributeValues,
 			 * Attributes and ConstantAtrributes.
 			 *
-			 * @public
-			 * @alias updateAndQueryWidget
-			 * @memberof Widget#
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 * @returns {?AttributeList}
 			 */
@@ -3610,9 +3574,6 @@ define('widget',['MathUuid', 'callback', 'callbackList', 'attribute', 'attribute
 			/**
 			 * Verifies if the attributes match to the specified conditions in case any exists.
 			 *
-			 * @private
-			 * @alias dataValid
-			 * @memberof Widget#
 			 * @param {string} conditions List of Conditions that will be verified.
 			 * @returns {boolean}
 			 */
@@ -4420,6 +4381,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * InitMethod for Aggregators. Called by constructor. Initializes the associated Storage.
 			 *
 			 * @protected
+			 * @param {AttributeList} attributes
 			 */
 			Aggregator.prototype._aggregatorSetup = function(attributes) {
 				this._setAggregatorAttributeValues(attributes);
@@ -4437,9 +4399,11 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @protected
 			 */
 			Aggregator.prototype._setAggregatorAttributeValues = function(attributes) {
-				for (var index in attributes.getItems()) {
-					var theAttribute = attributes.getItems()[index];
-					this.addOutAttribute(theAttribute);
+				if (attributes instanceof AttributeList) {
+					for (var index in attributes.getItems()) {
+						var theAttribute = attributes.getItems()[index];
+						this.addOutAttribute(theAttribute);
+					}
 				}
 			};
 
@@ -4702,9 +4666,6 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			/**
 			 * Return true if a component with the provided UUID was connected to the aggregator.
 			 *
-			 * @private
-			 * @alias hasComponent
-			 * @memberof Aggregator#
 			 * @param {String} uuid The UUID of the component to check.
 			 * @returns {boolean}
 			 */
@@ -4767,7 +4728,6 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			/**
 			 * Updates all the widgets referenced by the aggregator and calls the provided callback afterwards.
 			 *
-			 * @public
 			 * @virtual
 			 * @param {Function} callback The callback to query after all the widget where updated.
 			 */
@@ -4797,7 +4757,6 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			/**
 			 * Let's all connected interpreters interpret data.
 			 *
-			 * @public
 			 * @param {function} callback The callback to query after all the interpreters did interpret data.
 			 */
 			Aggregator.prototype.queryReferencedInterpreters = function(callback) {
@@ -4843,9 +4802,6 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			/**
 			 * Query all referenced widgets and afterwards all connected interpreters.
 			 *
-			 * @public
-			 * @alias queryReferencedComponents
-			 * @memberof Aggregator#
 			 * @param {Function} callback the callback to query after all components did finish their work.
 			 */
 			Aggregator.prototype.queryReferencedComponents = function(callback) {
@@ -5583,9 +5539,24 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 					}
 				}
 
+				// iterate over all unregistered interpreters
+				for (var interpreterIndex in this._unregisteredInterpreters) {
+					var theInterpreter = this._unregisteredInterpreters[interpreterIndex];
+					for (var outAttributeDescriptionIndex in theInterpreter.inOut.out) {
+						var theAttribute = Attribute.fromAttributeDescription(this, theInterpreter.inOut.out[outAttributeDescriptionIndex]);
+						possibleAttributes.putIfTypeNotContained(theAttribute);
+					}
+				}
+
 				return possibleAttributes;
 			};
 
+			/**
+			 *
+			 *
+			 * @param attributeNames
+			 * @returns {*}
+			 */
 			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
 				return AttributeList.fromAttributeNames(this, attributeNames);
 			};
