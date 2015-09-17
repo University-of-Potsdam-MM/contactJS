@@ -471,11 +471,29 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 *
 			 * @virtual
 			 * @public
-			 * @param {?function} callback For alternative actions, because an asynchronous function can be used.
+			 * @param {Callback} callback
 			 */
 			Widget.prototype.sendToSubscriber = function(callback) {
-				if (callback && typeof(callback) == 'function') {
-					callback();
+				if (callback && callback instanceof Callback) {
+					var subscriberList = this._subscribers.getItems();
+					for ( var i in subscriberList) {
+						var subscriber = subscriberList[i];
+						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
+							if(this._dataValid(subscriber.getConditions())){
+								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
+								var callSubset =  callback.getAttributeTypes();
+								var subscriberSubset = subscriber.getAttributesSubset();
+								var data = this._outAttributes.getSubset(callSubset);
+								if (subscriberSubset && subscriberSubset.size() > 0) {
+									data = data.getSubset(subscriberSubset);
+								}
+							}
+							if (data) {
+								this.log("Will send to subscriber "+subscriberInstance.getName()+" ("+subscriberInstance.getId()+").");
+								subscriberInstance.putData(data);
+							}
+						}
+					}
 				}
 			};
 
