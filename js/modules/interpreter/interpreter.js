@@ -1,5 +1,5 @@
-define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
-	function(MathUuid, Attribute, AttributeList, InterpreterResult) {
+define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
+	function(Component, MathUuid, Attribute, AttributeList, InterpreterResult) {
 		return (function() {
 
 			/**
@@ -30,21 +30,9 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 			 * @constructs Interpreter
 			 */
 			function Interpreter(discoverer) {
-				/**
-				 * Name of the Interpreter.
-				 *
-				 * @public
-				 * @type {string}
-				 */
-				this.name = 'Interpreter';
+				Component.call(this, discoverer);
 
-				/**
-				 * Id of the Interpreter. Will be generated.
-				 *
-				 * @public
-				 * @type {string}
-				 */
-				this.id = Math.uuid();
+				this.name = 'Interpreter';
 
 				/**
 				 * Types of all attributes that can be handled.
@@ -71,10 +59,9 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 				this._lastInterpretation = null;
 
 				/**
-				 * @alias discoverer
+				 *
 				 * @protected
 				 * @type {Discoverer}
-				 * @memberof Interpreter#
 				 * @desc Associated Discoverer.
 				 */
 				this._discoverer = discoverer;
@@ -85,25 +72,8 @@ define(['MathUuid', 'attribute', 'attributeList', 'interpreterResult' ],
 				return this;
 			}
 
-			/**
-			 * Returns the name of the interpreter.
-			 *
-			 * @public
-			 * @returns {string}
-			 */
-			Interpreter.prototype.getName = function() {
-				return this.name;
-			};
-
-			/**
-			 * Returns the id of the interpreter.
-			 *
-			 * @public
-			 * @returns {string}
-			 */
-			Interpreter.prototype.getId = function() {
-				return this.id;
-			};
+			Interpreter.prototype = Object.create(Component.prototype);
+			Interpreter.prototype.constructor = Interpreter;
 
 			/**
 			 * Initializes interpreter and sets the expected inAttributes and provided outAttributes.

@@ -8,10 +8,16 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * @param {String} name
 			 * @param {Number} time
 			 * @param {Number} counter
+			 * @param {Aggregator} aggregator
 			 * @returns {Storage}
 			 * @constructs Storage
 			 */
-			function Storage(name, time, counter) {
+			function Storage(name, time, counter, aggregator) {
+				/**
+				 * @type {Aggregator}
+				 */
+				this._parent = aggregator;
+
 				/**
 				 * Names of all stored Attributes (tableNames as string).
 				 *
@@ -132,7 +138,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 				if(this._db){
 					var tableName = this._tableName(attribute);
 					var statement = 'CREATE TABLE IF NOT EXISTS "' + tableName + '" (value_, type_, created_)';
-					console.log('CREATE TABLE IF NOT EXISTS "' + tableName + '"');
+					this._parent.log('CREATE TABLE IF NOT EXISTS "' + tableName + '"');
 					if(callback && typeof(callback) == 'function'){
 						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
 					} else {
@@ -160,7 +166,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 						+ attribute.getValue() + '", "'
 						+ attribute.getType() + '", "'
 						+ attribute.getTimestamp() + '")';
-					console.log('INSERT INTO "'+tableName+'" VALUES ('+attribute.getValue()+", "+attribute.getType()+", "+attribute.getTimestamp());
+					this._parent.log('INSERT INTO "'+tableName+'" VALUES ('+attribute.getValue()+", "+attribute.getType()+", "+attribute.getTimestamp());
 					if(callback && typeof(callback) == 'function'){
 						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
 					} else {

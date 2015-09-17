@@ -32,9 +32,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				 * @protected
 				 * @type {Storage}
 				 */
-				this._db = new Storage("DB_Aggregator", 7200000, 5);
-
-				Widget.call(this, discoverer, attributes);
+				this._db = new Storage("DB_Aggregator", 7200000, 5, this);
 
 				/**
 				 * Name of the Aggregator.
@@ -42,6 +40,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				 * @type {string}
 				 */
 				this.name = 'Aggregator';
+
+				Widget.call(this, discoverer, attributes);
 
 				return this;
 			}
@@ -310,7 +310,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				if(typeof widgetId == "string") {
 					var widget = this._discoverer.getComponent(widgetId);
 					if (widget) {
-						console.log('aggregator unsubscribeFrom: ' + widget.getName());
+						this.log('unsubscribeFrom: ' + widget.getName());
 						widget.removeSubscriber(this.id);
 						this._removeWidget(widgetId);
 					}
@@ -365,6 +365,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {Attribute} attribute data that should be stored
 			 */
 			Aggregator.prototype._store = function(attribute) {
+				this.log("I will store "+attribute+".");
+
 				this._db.store(attribute);
 			};
 
@@ -428,6 +430,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {Callback} callback The callback to query after the widget was updated.
 			 */
 			Aggregator.prototype.queryReferencedWidget = function(widgetId, callback) {
+				this.log("I will query "+this._discoverer.getWidget(widgetId).getName()+".");
 				this._discoverer.getWidget(widgetId).updateWidgetInformation(callback);
 			};
 
@@ -489,7 +492,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 */
 			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
-				console.log("Aggregator: I need to satisfy Attributes, let's ask the Discoverer.");
+				this.log("I need to satisfy Attributes, let's ask the Discoverer.");
 				this._discoverer.getComponentsForUnsatisfiedAttributes(this.id, unsatisfiedAttributes, all, componentTypes);
 			};
 
@@ -504,9 +507,9 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 
 				// get all components that satisfy attribute types
 				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Widget, Interpreter]);
-				console.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
-				console.log("Satisfied attributes: "+this.getOutAttributes().size());
-				console.log("Interpretations "+this._interpretations.length);
+				this.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
+				this.log("Satisfied attributes: "+this.getOutAttributes().size());
+				this.log("Interpretations "+this._interpretations.length);
 			};
 
 			/**
@@ -516,6 +519,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {Function} callback The callback to query after all the widget where updated.
 			 */
 			Aggregator.prototype.queryReferencedWidgets = function(callback) {
+				this.log("I will query all referenced Widgets ("+this._widgets.length+").");
+
 				var self = this;
 				var completedQueriesCounter = 0;
 
@@ -523,6 +528,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 					for (var index in this._widgets) {
 						var theWidgetId = this._widgets[index];
 						this.queryReferencedWidget(theWidgetId, function () {
+							self.log(self._discoverer.getWidget(theWidgetId).getName()+" did finish its work.");
+
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._widgets.length) {
 								if (callback && typeof(callback) == 'function') {
@@ -544,8 +551,9 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {function} callback The callback to query after all the interpreters did interpret data.
 			 */
 			Aggregator.prototype.queryReferencedInterpreters = function(callback) {
+				this.log("I will query all referenced Interpreters ("+this._interpretations.length+").");
+
 				/**
-				 *
 				 * @type {Aggregator}
 				 */
 				var self = this;
@@ -559,6 +567,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 						var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
 
 						self.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(interpretedData) {
+							self.log(self._discoverer.getInterpreter(theInterpreterId).getName()+" did finish its work.");
+
 							for (var j in interpretedData.getItems()) {
 								var theInterpretedData = interpretedData.getItems()[j];
 
@@ -589,6 +599,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {Function} callback the callback to query after all components did finish their work.
 			 */
 			Aggregator.prototype.queryReferencedComponents = function(callback) {
+				this.log("I will query all referenced Components.");
+
 				var self = this;
 
 				this.queryReferencedWidgets(function(_attributeValues) {
