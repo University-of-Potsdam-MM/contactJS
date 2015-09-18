@@ -1766,10 +1766,10 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 */
 			Storage.prototype._initStorage = function(name){
 				if(!window.openDatabase) {
-					console.log('Databases are not supported in this browser.');
+					this._parent.log('Databases are not supported in this browser.');
 				}else{
 					this._db = window.openDatabase(name, "1.0", "DB_" + name, 1024*1024);
-					console.log('initStorage: ' + name);
+					this._parent.log('I will initialize storage with name '+name+".");
 				}
 			};
 
@@ -4267,6 +4267,13 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 */
 			function Aggregator(discoverer, attributes) {
 				/**
+				 * Name of the Aggregator.
+				 *
+				 * @type {string}
+				 */
+				this.name = 'Aggregator';
+
+				/**
 				 * List of subscribed widgets referenced by ID.
 				 *
 				 * @protected
@@ -4280,21 +4287,6 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 				 * @type {Array.<Interpretation>}
 				 */
 				this._interpretations = [];
-
-				/**
-				 * Database of the Aggregator.
-				 *
-				 * @protected
-				 * @type {Storage}
-				 */
-				this._db = new Storage("DB_Aggregator", 7200000, 5, this);
-
-				/**
-				 * Name of the Aggregator.
-				 *
-				 * @type {string}
-				 */
-				this.name = 'Aggregator';
 
 				Widget.call(this, discoverer, attributes);
 
@@ -4400,7 +4392,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 				if(this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
-						this.initWidgetSubscription(widgetId);
+						this._initWidgetSubscription(widgetId);
 					}
 				}
 			};
@@ -4423,6 +4415,14 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @param {AttributeList} attributes
 			 */
 			Aggregator.prototype._aggregatorSetup = function(attributes) {
+				/**
+				 * Database of the Aggregator.
+				 *
+				 * @protected
+				 * @type {Storage}
+				 */
+				this._db = new Storage("DB_Aggregator", 7200000, 5, this);
+
 				this._setAggregatorAttributeValues(attributes);
 				this._setAggregatorConstantAttributeValues();
 				this._setAggregatorCallbacks();

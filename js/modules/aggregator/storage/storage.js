@@ -119,10 +119,10 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 */
 			Storage.prototype._initStorage = function(name){
 				if(!window.openDatabase) {
-					console.log('Databases are not supported in this browser.');
+					this._parent.log('Databases are not supported in this browser.');
 				}else{
 					this._db = window.openDatabase(name, "1.0", "DB_" + name, 1024*1024);
-					console.log('initStorage: ' + name);
+					this._parent.log('I will initialize storage with name '+name+".");
 				}
 			};
 

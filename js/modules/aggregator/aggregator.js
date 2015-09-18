@@ -12,6 +12,13 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 */
 			function Aggregator(discoverer, attributes) {
 				/**
+				 * Name of the Aggregator.
+				 *
+				 * @type {string}
+				 */
+				this.name = 'Aggregator';
+
+				/**
 				 * List of subscribed widgets referenced by ID.
 				 *
 				 * @protected
@@ -25,21 +32,6 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				 * @type {Array.<Interpretation>}
 				 */
 				this._interpretations = [];
-
-				/**
-				 * Database of the Aggregator.
-				 *
-				 * @protected
-				 * @type {Storage}
-				 */
-				this._db = new Storage("DB_Aggregator", 7200000, 5, this);
-
-				/**
-				 * Name of the Aggregator.
-				 *
-				 * @type {string}
-				 */
-				this.name = 'Aggregator';
 
 				Widget.call(this, discoverer, attributes);
 
@@ -145,7 +137,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				if(this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
-						this.initWidgetSubscription(widgetId);
+						this._initWidgetSubscription(widgetId);
 					}
 				}
 			};
@@ -168,6 +160,14 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {AttributeList} attributes
 			 */
 			Aggregator.prototype._aggregatorSetup = function(attributes) {
+				/**
+				 * Database of the Aggregator.
+				 *
+				 * @protected
+				 * @type {Storage}
+				 */
+				this._db = new Storage("DB_Aggregator", 7200000, 5, this);
+
 				this._setAggregatorAttributeValues(attributes);
 				this._setAggregatorConstantAttributeValues();
 				this._setAggregatorCallbacks();
