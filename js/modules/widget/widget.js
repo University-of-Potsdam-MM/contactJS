@@ -41,22 +41,20 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			function Widget(discoverer, attributes) {
 				Component.call(this, discoverer);
 
-				if (typeof this.name == "undefined") this.name = 'Widget';
-
 				/**
+				 * Name of the widget.
 				 *
-				 * @protected
-				 * @type {AttributeList}
-				 * @desc All available Attributes and their values.
+				 * @type {string}
+				 * @private
 				 */
-				this._outAttributes = new AttributeList();
+				this._name  = 'Widget';
 
 				/**
+				 * This temporary variable is used for storing the old attribute values.
+				 * So these can be used to check conditions.
 				 *
-				 * @protected
 				 * @type {AttributeList}
-				 * @desc This temporary variable is used for storing the old attribute values.
-				 * 			So these can be used to check conditions.
+				 * @protected
 				 */
 				this._oldOutAttributes = new AttributeList();
 
@@ -84,14 +82,6 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 				 */
 				this._subscribers = new SubscriberList();
 
-				/**
-				 * Associated discoverer.
-				 *
-				 * @type {Discoverer}
-				 * @private
-				 */
-				this._discoverer = discoverer;
-
 				this._register();
 				this._init(attributes);
 
@@ -100,6 +90,18 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 
 			Widget.prototype = Object.create(Component.prototype);
 			Widget.prototype.constructor = Widget;
+
+			/**
+			 * Function for initializing. Calls all initFunctions
+			 * and will be called by the constructor.
+			 *
+			 * @protected
+			 */
+			Widget.prototype._init = function(attributes) {
+				this._initOutAttributes();
+				this._initConstantOutAttributes();
+				this._initCallbacks();
+			};
 
 			/**
 			 * Initializes the provided Attributes.
@@ -127,48 +129,6 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			 */
 			Widget.prototype._initCallbacks = function() {
 				throw new Error("Abstract function!");
-			};
-
-			/**
-			 * Function for initializing. Calls all initFunctions
-			 * and will be called by the constructor.
-			 *
-			 * @protected
-			 */
-			Widget.prototype._init = function(attributes) {
-				this._initOutAttributes();
-				this._initConstantOutAttributes();
-				this._initCallbacks();
-
-				this.didFinishInitialization(attributes);
-			};
-
-			/**
-			 * Method will be invoked after the initialization of the widget finished.
-			 * Can be overridden by inheriting classes to take action after initialization.
-			 *
-			 * @public
-			 * @virtual
-			 * @param attributes
-			 */
-			Widget.prototype.didFinishInitialization = function(attributes) {
-
-			};
-
-			/**
-			 * Returns the available AttributeTypes.
-			 *
-			 * @public
-			 * @param {?AttributeList} [attributes]
-			 * @returns {AttributeList}
-			 */
-			Widget.prototype.getOutAttributes = function(attributes) {
-				// test if attributeList is a list
-				if (attributes && attributes instanceof AttributeList) {
-					return this._outAttributes.getSubset(attributes);
-				} else {
-					return this._outAttributes;
-				}
 			};
 
 			/**
@@ -237,40 +197,6 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			 */
 			Widget.prototype.getSubscriber = function() {
 				return this._subscribers;
-			};
-
-			/**
-			 * Sets the name of the Widget.
-			 *
-			 * @param {string} name Name of the Widget.
-			 */
-			Widget.prototype.setName = function(name) {
-				if (typeof name === 'string') {
-					this.name = name;
-				}
-			};
-
-			/**
-			 * Sets the id of the Widget.
-			 *
-			 * @protected
-			 * @param {string} id Id of the Widget.
-			 */
-			Widget._setId = function(id) {
-				if (typeof id === 'string') {
-					this.id = id;
-				}
-			};
-
-			/**
-			 * Sets the AttributeValueList and also the associated
-			 * AttributeTypes.
-			 *
-			 * @protected
-			 * @param {(AttributeList|Array)} attributesOrArray List or Array of AttributeValues
-			 */
-			Widget.prototype._setOutAttributes = function(attributesOrArray) {
-				this._outAttributes = new AttributeList().withItems(attributesOrArray);
 			};
 
 			/**
@@ -413,18 +339,6 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			};
 
 			/**
-			 * Verifies whether the specified attributes is a
-			 * provided Attribute.
-			 *
-			 * @param {Attribute} attribute
-			 * @returns {Boolean}
-			 * @protected
-			 */
-			Widget.prototype._isOutAttribute = function(attribute) {
-				return !!this._outAttributes.containsTypeOf(attribute);
-			};
-
-			/**
 			 * Notifies other components and sends the attributes.
 			 *
 			 * @virtual
@@ -546,7 +460,7 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 
 			/**
 			 * Updates and returns all available AttributeValues,
-			 * Attributes and ConstantAtrributes.
+			 * Attributes and Constant Attributes.
 			 *
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 * @returns {?AttributeList}
@@ -627,30 +541,6 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 				var self = this;
 				if (interval === parseInt(interval)) {
 					setInterval(function() {self.queryGenerator();}, interval);
-				}
-			};
-
-			/**
-			 * Sets the associated Discoverer and registers to that.
-			 *
-			 * @public
-			 * @param {Discoverer} _discoverer Discoverer
-			 */
-			Widget.prototype.setDiscoverer = function(_discoverer) {
-				if (!this._discoverer) {
-					this._discoverer = _discoverer;
-					this._register();
-				}
-			};
-
-			/**
-			 * Registers the component to the associated Discoverer.
-			 *
-			 * @protected
-			 */
-			Widget.prototype._register = function() {
-				if (this._discoverer) {
-					this._discoverer.registerNewComponent(this);
 				}
 			};
 

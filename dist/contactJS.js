@@ -1731,7 +1731,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 				 * @type {Database}
 				 * @private
 				 */
-				this._db = '';
+				this._storage = '';
 
 				this._initStorage(name);
 				if(time && time === parseInt(time) && time != 0) this._timeCondition = time;
@@ -1768,7 +1768,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 				if(!window.openDatabase) {
 					this._parent.log('Databases are not supported in this browser.');
 				}else{
-					this._db = window.openDatabase(name, "1.0", "DB_" + name, 1024*1024);
+					this._storage = window.openDatabase(name, "1.0", "DB_" + name, 1024*1024);
 					this._parent.log('I will initialize storage with name '+name+".");
 				}
 			};
@@ -1782,14 +1782,14 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 * @param {?function} callback For alternative actions, if an asynchronous function is used.
 			 */
 			Storage.prototype._createTable = function(attribute, callback){
-				if(this._db){
+				if(this._storage){
 					var tableName = this._tableName(attribute);
 					var statement = 'CREATE TABLE IF NOT EXISTS "' + tableName + '" (value_, type_, created_)';
 					this._parent.log('CREATE TABLE IF NOT EXISTS "' + tableName + '"');
 					if(callback && typeof(callback) == 'function'){
-						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
+						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
 					} else {
-						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
+						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
 					}
 					if(!this._attributeNames.indexOf(attribute.getName()) > -1){
 						this._attributeNames.push(tableName);
@@ -1806,7 +1806,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 * @param {?function} callback For alternative actions, if an asynchronous function is used.
 			 */
 			Storage.prototype._insertIntoTable = function(attribute, callback){
-				if(this._db && attribute && attribute.constructor === Attribute){
+				if(this._storage && attribute && attribute.constructor === Attribute){
 					var tableName = this._tableName(attribute);
 					var statement = 'INSERT INTO "' + tableName
 						+ '" (value_, type_, created_) VALUES ("'
@@ -1815,9 +1815,9 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 						+ attribute.getTimestamp() + '")';
 					this._parent.log('INSERT INTO "'+tableName+'" VALUES ('+attribute.getValue()+", "+attribute.getType()+", "+attribute.getTimestamp());
 					if(callback && typeof(callback) == 'function'){
-						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
+						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
 					} else {
-						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
+						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
 					}
 				}
 			};
@@ -1849,9 +1849,9 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 * @param {?function} [callback] For alternative actions, if an asynchronous function is used.
 			 */
 			Storage.prototype.getAttributeNames = function(callback){
-				if(this._db){
+				if(this._storage){
 					var self = this;
-					this._db.transaction(function(tx) {
+					this._storage.transaction(function(tx) {
 							self._queryTables(tx, self, callback);
 						}, function(error) {
 							self._errorCB(error);
@@ -1929,10 +1929,10 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			Storage.prototype.retrieveAttributes = function(tableName, callback){
 				console.log("retrieveAttributes from "+tableName);
 
-				if(this._db){
+				if(this._storage){
 					var self = this;
 					self._flushStorage();
-					this._db.transaction(function(tx) {
+					this._storage.transaction(function(tx) {
 						self._queryValues(tx, tableName, self, callback);
 					}, function(error) {
 						self._errorCB(error);
@@ -1952,7 +1952,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 			 */
 			Storage.prototype._queryValues = function(tx, tableName, self, callback){
 				if(self._tableExists(tableName)){
-					console.log('SELECT * FROM "' +tableName+"'");
+					this._parent.log('SELECT * FROM "' +tableName+"'");
 					var statement = 'SELECT * FROM "' + tableName+'"';
 					tx.executeSql(statement, [],
 						function(tx, results) {
@@ -1961,7 +1961,7 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 							self._errorCB(error);
 						});
 				} else {
-					console.log('Table "'+tableName+'" unavailable');
+					this._parent.log('Table "'+tableName+'" unavailable');
 				}
 			};
 
@@ -2165,68 +2165,168 @@ define('storage',['attribute', 'attributeList', 'retrievalResult', 'parameter', 
 /**
  * Created by tobias on 30.03.15.
  */
-define('component',[],function() {
-   return (function() {
+define('component',['attributeList'],
+    function(AttributeList) {
+        return (function() {
 
-       Component.lastLogId = "";
+            Component.lastLogId = "";
 
-       /**
-        *
-        * @returns {Component}
-        * @constructor
-        */
-       function Component() {
-           /**
-            * Name of the object.
+            /**
             *
-            * @public
-            * @type {string}
+            * @returns {Component}
+            * @constructs Component
             */
-           if (typeof this.name == "undefined") this.name = 'Component';
+            function Component(discoverer) {
+                /**
+                 * the name of the component.
+                 *
+                 * @type {string}
+                 * @private
+                 */
+                this._name = 'Component';
 
-           /**
-            * ID of the object. Will be generated.
+                /**
+                 * The uuid of the object.
+                 *
+                 * @type {string}
+                 * @private
+                 */
+                this._id  = Math.uuid();
+
+                /**
+                 * All available Attributes and their values.
+                 *
+                 * @type {AttributeList}
+                 * @private
+                 */
+                this._outAttributes = new AttributeList();
+
+                /**
+                 * Associated discoverer.
+                 *
+                 * @type {Discoverer}
+                 * @private
+                 */
+                this._discoverer = discoverer;
+
+                return this;
+            }
+
+            /**
+            * Returns the name of the object.
             *
-            * @type {string}
+            * @returns {string}
             */
-           this.id = Math.uuid();
+            Component.prototype.getName = function() {
+               return this._name;
+            };
 
-           return this;
-       }
+            /**
+            * Sets the name of the component if it wasn't set before.
+            *
+            * @param {string} name Name of the component.
+            */
+            Component.prototype.setName = function(name) {
+               if (typeof this._name == "undefined" && typeof name === 'string') {
+                   this._name = name;
+               }
+            };
 
-       /**
-        * Returns the name of the object.
-        *
-        * @returns {string}
-        */
-       Component.prototype.getName = function() {
-           return this.name;
-       };
+            /**
+            * Returns the id of the object.
+            *
+            * @returns {string}
+            */
+            Component.prototype.getId = function() {
+               return this._id;
+            };
 
-       /**
-        * Returns the id of the object.
-        *
-        * @returns {string}
-        */
-       Component.prototype.getId = function() {
-           return this.id;
-       };
+            /**
+             * Returns the available AttributeTypes.
+             *
+             * @param {?AttributeList} [attributes]
+             * @returns {AttributeList}
+             */
+            Component.prototype.getOutAttributes = function(attributes) {
+                // test if attributeList is a list
+                if (attributes && attributes instanceof AttributeList) {
+                    return this._outAttributes.getSubset(attributes);
+                } else {
+                    return this._outAttributes;
+                }
+            };
 
-       /**
-        *
-        * @param string
-        */
-       Component.prototype.log = function(string) {
-           if (Component.lastLogId != this.getId())
-               console.log(this.getName()+" ("+this.getId()+"): "+string);
-           else
-               console.log(this.getName()+" (...): "+string);
-           Component.lastLogId = this.getId();
-       };
+            /**
+             * Adds an outAttribute.
+             *
+             * @param {Attribute} attribute
+             * @protected
+             */
+            Component.prototype._setOutAttribute = function(attribute) {
+                this._outAttributes.put(attribute);
+            };
 
-       return Component;
-   })();
-});
+            /**
+             * Sets an outAttributes.
+             *
+             * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
+             * @protected
+             */
+            Component.prototype._setOutAttributes = function(attributesOrArray) {
+                this._outAttributes = new AttributeList().withItems(attributesOrArray);
+            };
+
+            /**
+             * Verifies whether the specified attribute is a provided Attribute.
+             *
+             * @param {Attribute} attribute
+             * @returns {Boolean}
+             * @protected
+             */
+            Component.prototype._isOutAttribute = function(attribute) {
+                return !!this._outAttributes.containsTypeOf(attribute);
+            };
+
+            /**
+             * Sets and registers to the associated Discoverer.
+             *
+             * @param {Discoverer} _discoverer Discoverer
+             */
+            Component.prototype.setDiscoverer = function(_discoverer) {
+                if (!this._discoverer) {
+                    this._discoverer = _discoverer;
+                    this._register();
+                }
+            };
+
+            /**
+             * Registers the component to the associated Discoverer.
+             *
+             * @private
+             */
+            Component.prototype._register = function() {
+                if (this._discoverer) {
+                    this._discoverer.registerNewComponent(this);
+                }
+            };
+
+            /**
+             * Create a log message.
+             *
+             * @param {string} string
+             */
+            Component.prototype.log = function(string) {
+               if (Component.lastLogId != this.getId())
+                   console.log(this.getName()+" ("+this.getId()+"): "+string);
+               else
+                   console.log(this.getName()+" (...): "+string);
+               Component.lastLogId = this.getId();
+            };
+
+            return Component;
+        })();
+    }
+);
 /**
  * This module represents a Callback.
  * Callbacks define events for sending data to subscribers
@@ -3091,22 +3191,20 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			function Widget(discoverer, attributes) {
 				Component.call(this, discoverer);
 
-				if (typeof this.name == "undefined") this.name = 'Widget';
-
 				/**
+				 * Name of the widget.
 				 *
-				 * @protected
-				 * @type {AttributeList}
-				 * @desc All available Attributes and their values.
+				 * @type {string}
+				 * @private
 				 */
-				this._outAttributes = new AttributeList();
+				this._name  = 'Widget';
 
 				/**
+				 * This temporary variable is used for storing the old attribute values.
+				 * So these can be used to check conditions.
 				 *
-				 * @protected
 				 * @type {AttributeList}
-				 * @desc This temporary variable is used for storing the old attribute values.
-				 * 			So these can be used to check conditions.
+				 * @protected
 				 */
 				this._oldOutAttributes = new AttributeList();
 
@@ -3134,14 +3232,6 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 				 */
 				this._subscribers = new SubscriberList();
 
-				/**
-				 * Associated discoverer.
-				 *
-				 * @type {Discoverer}
-				 * @private
-				 */
-				this._discoverer = discoverer;
-
 				this._register();
 				this._init(attributes);
 
@@ -3150,6 +3240,18 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 
 			Widget.prototype = Object.create(Component.prototype);
 			Widget.prototype.constructor = Widget;
+
+			/**
+			 * Function for initializing. Calls all initFunctions
+			 * and will be called by the constructor.
+			 *
+			 * @protected
+			 */
+			Widget.prototype._init = function(attributes) {
+				this._initOutAttributes();
+				this._initConstantOutAttributes();
+				this._initCallbacks();
+			};
 
 			/**
 			 * Initializes the provided Attributes.
@@ -3177,48 +3279,6 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			 */
 			Widget.prototype._initCallbacks = function() {
 				throw new Error("Abstract function!");
-			};
-
-			/**
-			 * Function for initializing. Calls all initFunctions
-			 * and will be called by the constructor.
-			 *
-			 * @protected
-			 */
-			Widget.prototype._init = function(attributes) {
-				this._initOutAttributes();
-				this._initConstantOutAttributes();
-				this._initCallbacks();
-
-				this.didFinishInitialization(attributes);
-			};
-
-			/**
-			 * Method will be invoked after the initialization of the widget finished.
-			 * Can be overridden by inheriting classes to take action after initialization.
-			 *
-			 * @public
-			 * @virtual
-			 * @param attributes
-			 */
-			Widget.prototype.didFinishInitialization = function(attributes) {
-
-			};
-
-			/**
-			 * Returns the available AttributeTypes.
-			 *
-			 * @public
-			 * @param {?AttributeList} [attributes]
-			 * @returns {AttributeList}
-			 */
-			Widget.prototype.getOutAttributes = function(attributes) {
-				// test if attributeList is a list
-				if (attributes && attributes instanceof AttributeList) {
-					return this._outAttributes.getSubset(attributes);
-				} else {
-					return this._outAttributes;
-				}
 			};
 
 			/**
@@ -3287,40 +3347,6 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			 */
 			Widget.prototype.getSubscriber = function() {
 				return this._subscribers;
-			};
-
-			/**
-			 * Sets the name of the Widget.
-			 *
-			 * @param {string} name Name of the Widget.
-			 */
-			Widget.prototype.setName = function(name) {
-				if (typeof name === 'string') {
-					this.name = name;
-				}
-			};
-
-			/**
-			 * Sets the id of the Widget.
-			 *
-			 * @protected
-			 * @param {string} id Id of the Widget.
-			 */
-			Widget._setId = function(id) {
-				if (typeof id === 'string') {
-					this.id = id;
-				}
-			};
-
-			/**
-			 * Sets the AttributeValueList and also the associated
-			 * AttributeTypes.
-			 *
-			 * @protected
-			 * @param {(AttributeList|Array)} attributesOrArray List or Array of AttributeValues
-			 */
-			Widget.prototype._setOutAttributes = function(attributesOrArray) {
-				this._outAttributes = new AttributeList().withItems(attributesOrArray);
 			};
 
 			/**
@@ -3463,18 +3489,6 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			};
 
 			/**
-			 * Verifies whether the specified attributes is a
-			 * provided Attribute.
-			 *
-			 * @param {Attribute} attribute
-			 * @returns {Boolean}
-			 * @protected
-			 */
-			Widget.prototype._isOutAttribute = function(attribute) {
-				return !!this._outAttributes.containsTypeOf(attribute);
-			};
-
-			/**
 			 * Notifies other components and sends the attributes.
 			 *
 			 * @virtual
@@ -3596,7 +3610,7 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 
 			/**
 			 * Updates and returns all available AttributeValues,
-			 * Attributes and ConstantAtrributes.
+			 * Attributes and Constant Attributes.
 			 *
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 * @returns {?AttributeList}
@@ -3677,30 +3691,6 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 				var self = this;
 				if (interval === parseInt(interval)) {
 					setInterval(function() {self.queryGenerator();}, interval);
-				}
-			};
-
-			/**
-			 * Sets the associated Discoverer and registers to that.
-			 *
-			 * @public
-			 * @param {Discoverer} _discoverer Discoverer
-			 */
-			Widget.prototype.setDiscoverer = function(_discoverer) {
-				if (!this._discoverer) {
-					this._discoverer = _discoverer;
-					this._register();
-				}
-			};
-
-			/**
-			 * Registers the component to the associated Discoverer.
-			 *
-			 * @protected
-			 */
-			Widget.prototype._register = function() {
-				if (this._discoverer) {
-					this._discoverer.registerNewComponent(this);
 				}
 			};
 
@@ -3905,28 +3895,12 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 				this._inAttributes = new AttributeList();
 
 				/**
-				 * Types of all attributes that will be returned.
-				 *
-				 * @private
-				 * @type {AttributeList}
-				 */
-				this._outAttributes = new AttributeList();
-
-				/**
 				 * Last interpretation time.
 				 *
 				 * @protected
 				 * @type {?Date}
 				 */
 				this._lastInterpretation = null;
-
-				/**
-				 *
-				 * @protected
-				 * @type {Discoverer}
-				 * @desc Associated Discoverer.
-				 */
-				this._discoverer = discoverer;
 
 				this._register();
 				this._initInterpreter();
@@ -3953,15 +3927,7 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 * @private
 			 */
 			Interpreter.prototype._initInAttributes = function() {
-				for(var inAttributeIndex in this.constructor.inOut.in) {
-					var inA = this.constructor.inOut.in[inAttributeIndex];
-					this._inAttributes.put(this._discoverer.buildAttribute(
-						inA.name,
-						inA.type,
-						inA.parameterList,
-						true
-					));
-				}
+				this._inAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.in);
 			};
 
 			/**
@@ -3970,16 +3936,7 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 * @private
 			 */
 			Interpreter.prototype._initOutAttributes = function() {
-				for(var outAttributeIndex in this.constructor.inOut.out) {
-					var out = this.constructor.inOut.out[outAttributeIndex];
-					this._outAttributes.put(this._discoverer.buildAttribute(
-						out.name,
-						out.type,
-						out.parameterList,
-						true
-					));
-				}
-
+				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.out);
 			};
 
 			/**
@@ -4021,47 +3978,6 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 */
 			Interpreter.prototype._isInAttribute = function(attribute) {
 				return !!this._inAttributes.containsTypeOf(attribute);
-			};
-
-			/**
-			 * Returns the provided outAttributeTypes.
-			 *
-			 * @public
-			 * @returns {AttributeList}
-			 */
-			Interpreter.prototype.getOutAttributes = function() {
-				return this._outAttributes;
-			};
-
-			/**
-			 * Adds an outAttribute.
-			 *
-			 * @protected
-			 * @param {Attribute} attribute
-			 */
-			Interpreter.prototype._setOutAttribute = function(attribute) {
-				this._outAttributes.put(attribute);
-			};
-
-			/**
-			 * Sets an outAttributes.
-			 *
-			 * @protected
-			 * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
-			 */
-			Interpreter.prototype._setOutAttributes = function(attributesOrArray) {
-				this._outAttributes = new AttributeList().withItems(attributesOrArray);
-			};
-
-			/**
-			 * Verifies whether the specified attribute is contained in outAttributeList.
-			 *
-			 * @protected
-			 * @param {Attribute} attribute Attribute that should be verified.
-			 * @return {boolean}
-			 */
-			Interpreter.prototype._isOutAttribute = function(attribute) {
-				return !!this._outAttributes.containsTypeOf(attribute);
 			};
 
 			/**
@@ -4115,7 +4031,7 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 				var list = [];
 				if (attributeListOrArray instanceof Array) {
 					list = attributeListOrArray;
-				} else if (attributeListOrArray.constructor === AttributeList) {
+				} else if (attributeListOrArray instanceof AttributeList) {
 					list = attributeListOrArray.getItems();
 				}
 				if (list.length == 0 || attributeListOrArray.size() != this.getInAttributes().size()) {
@@ -4163,30 +4079,6 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 			 */
 			Interpreter.prototype.getLastInterpretionTime = function() {
 				return this._lastInterpretation;
-			};
-
-			/**
-			 * Sets and registers to the associated Discoverer.
-			 *
-			 * @public
-			 * @param {Discoverer} discoverer Discoverer
-			 */
-			Interpreter.prototype.setDiscoverer = function(discoverer) {
-				if (!this._discoverer) {
-					this._discoverer = discoverer;
-					this._register();
-				}
-			};
-
-			/**
-			 * Registers the component to the associated Discoverer.
-			 *
-			 * @public
-			 */
-			Interpreter.prototype._register = function() {
-				if (this._discoverer) {
-					this._discoverer.registerNewComponent(this);
-				}
 			};
 
 			/**
@@ -4266,29 +4158,39 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @extends Widget
 			 */
 			function Aggregator(discoverer, attributes) {
+				Widget.call(this, discoverer, attributes);
+
 				/**
 				 * Name of the Aggregator.
 				 *
 				 * @type {string}
 				 */
-				this.name = 'Aggregator';
+				this._name = 'Aggregator';
 
 				/**
 				 * List of subscribed widgets referenced by ID.
 				 *
-				 * @protected
 				 * @type {Array.<String>}
+				 * @protected
 				 */
 				this._widgets = [];
 
 				/**
 				 *
-				 * @protected
 				 * @type {Array.<Interpretation>}
+				 * @protected
 				 */
 				this._interpretations = [];
 
-				Widget.call(this, discoverer, attributes);
+				/**
+				 * Database of the Aggregator.
+				 *
+				 * @type {Storage}
+				 * @protected
+				 */
+				this._storage = new Storage("DB_Aggregator", 7200000, 5, this);
+
+				this._aggregatorSetup(attributes);
 
 				return this;
 			}
@@ -4351,7 +4253,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @protected
 			 */
 			Aggregator.prototype._initOutAttributes = function() {
-				if(this._widgets.length > 0){
+				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
@@ -4370,7 +4272,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @override
 			 */
 			Aggregator.prototype._initConstantOutAttributes = function() {
-				if(this._widgets.length > 0){
+				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
@@ -4389,23 +4291,12 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @override
 			 */
 			Aggregator.prototype._initCallbacks = function() {
-				if(this._widgets.length > 0){
+				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						this._initWidgetSubscription(widgetId);
 					}
 				}
-			};
-
-			/**
-			 * Start the setup of the aggregator after the initialisation has finished.
-			 *
-			 * @public
-			 * @override
-			 * @param {AttributeList} attributes
-			 */
-			Aggregator.prototype.didFinishInitialization = function(attributes) {
-				this._aggregatorSetup(attributes);
 			};
 
 			/**
@@ -4415,14 +4306,6 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @param {AttributeList} attributes
 			 */
 			Aggregator.prototype._aggregatorSetup = function(attributes) {
-				/**
-				 * Database of the Aggregator.
-				 *
-				 * @protected
-				 * @type {Storage}
-				 */
-				this._db = new Storage("DB_Aggregator", 7200000, 5, this);
-
 				this._setAggregatorAttributeValues(attributes);
 				this._setAggregatorConstantAttributeValues();
 				this._setAggregatorCallbacks();
@@ -4489,8 +4372,8 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 */
 			Aggregator.prototype._subscribeTo = function(widget, callbacks, subSet, conditions){
 				if(widget instanceof Widget){
-					var subscriber = new Subscriber().withSubscriberId(this.id).
-						withSubscriberName(this.name).
+					var subscriber = new Subscriber().withSubscriberId(this.getId()).
+						withSubscriberName(this.getName()).
 						withSubscriptionCallbacks(callbacks).
 						withAttributesSubset(subSet).
 						withConditions(conditions);
@@ -4566,7 +4449,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 					var widget = this._discoverer.getComponent(widgetId);
 					if (widget) {
 						this.log('unsubscribeFrom: ' + widget.getName());
-						widget.removeSubscriber(this.id);
+						widget.removeSubscriber(this.getId());
 						this._removeWidget(widgetId);
 					}
 				}
@@ -4590,7 +4473,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 					var theAttribute = list[i];
 					if(theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)){
 						this.addOutAttribute(theAttribute);
-						if(this._db){
+						if(this._storage){
 							this._store(theAttribute);
 						}
 					}
@@ -4622,7 +4505,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			Aggregator.prototype._store = function(attribute) {
 				this.log("I will store "+attribute+".");
 
-				this._db.store(attribute);
+				this._storage.store(attribute);
 			};
 
 			/**
@@ -4637,7 +4520,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @param {?function} callback for alternative  actions, because an asynchronous function is used
 			 */
 			Aggregator.prototype.queryAttribute = function(name, callback){
-				this._db.retrieveAttributes(name, callback);
+				this._storage.retrieveAttributes(name, callback);
 			};
 
 			/**
@@ -4648,7 +4531,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @returns {RetrievalResult}
 			 */
 			Aggregator.prototype.retrieveStorage = function() {
-				return this._db.getCurrentData();
+				return this._storage.getCurrentData();
 			};
 
 			/**
@@ -4662,7 +4545,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @returns {?Array}
 			 */
 			Aggregator.prototype.getStorageOverview = function() {
-				return this._db.getAttributesOverview();
+				return this._storage.getAttributesOverview();
 			};
 
 			/**
@@ -4673,7 +4556,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			 * @param {?function} callback for alternative actions, because an asynchronous function is used
 			 */
 			Aggregator.prototype.queryTables = function(callback) {
-				this._db.getAttributeNames(callback);
+				this._storage.getAttributeNames(callback);
 			};
 
 			/**
@@ -4748,7 +4631,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
 				this.log("I need to satisfy Attributes, let's ask the Discoverer.");
-				this._discoverer.getComponentsForUnsatisfiedAttributes(this.id, unsatisfiedAttributes, all, componentTypes);
+				this._discoverer.getComponentsForUnsatisfiedAttributes(this.getId(), unsatisfiedAttributes, all, componentTypes);
 			};
 
 			/**
@@ -4828,7 +4711,7 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 								var theInterpretedData = interpretedData.getItems()[j];
 
 								self.addOutAttribute(theInterpretedData);
-								if (self._db){
+								if (self._storage){
 									self._store(theInterpretedData);
 								}
 							}
@@ -5398,7 +5281,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 						// if component is a widget and it wasn't added before, subscribe to its callbacks
 						if (theComponent instanceof Widget) {
 							theAggregator.addWidgetSubscription(theComponent);
-							console.log("Discoverer: I found "+theComponent.name+" and the Aggregator did subscribe to it.");
+							console.log("Discoverer: I found "+theComponent.getName()+" and the Aggregator did subscribe to it.");
 							this._removeAttributesSatisfiedByWidget(aggregatorId, theComponent, unsatisfiedAttributes);
 						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
 							console.log("Discoverer: It's an Interpreter.");
@@ -5474,7 +5357,7 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 									if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
 										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
 										//theAggregator.addWidgetSubscription(newInterpreter);
-										console.log("Discoverer: I registered the Interpreter \"" + theInterpreter.name + "\" .");
+										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
 										// remove satisfied attributes
 										this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
 									} else {

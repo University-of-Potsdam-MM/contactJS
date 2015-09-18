@@ -11,29 +11,39 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @extends Widget
 			 */
 			function Aggregator(discoverer, attributes) {
+				Widget.call(this, discoverer, attributes);
+
 				/**
 				 * Name of the Aggregator.
 				 *
 				 * @type {string}
 				 */
-				this.name = 'Aggregator';
+				this._name = 'Aggregator';
 
 				/**
 				 * List of subscribed widgets referenced by ID.
 				 *
-				 * @protected
 				 * @type {Array.<String>}
+				 * @protected
 				 */
 				this._widgets = [];
 
 				/**
 				 *
-				 * @protected
 				 * @type {Array.<Interpretation>}
+				 * @protected
 				 */
 				this._interpretations = [];
 
-				Widget.call(this, discoverer, attributes);
+				/**
+				 * Database of the Aggregator.
+				 *
+				 * @type {Storage}
+				 * @protected
+				 */
+				this._storage = new Storage("DB_Aggregator", 7200000, 5, this);
+
+				this._aggregatorSetup(attributes);
 
 				return this;
 			}
@@ -96,7 +106,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @protected
 			 */
 			Aggregator.prototype._initOutAttributes = function() {
-				if(this._widgets.length > 0){
+				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
@@ -115,7 +125,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @override
 			 */
 			Aggregator.prototype._initConstantOutAttributes = function() {
-				if(this._widgets.length > 0){
+				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
@@ -134,23 +144,12 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @override
 			 */
 			Aggregator.prototype._initCallbacks = function() {
-				if(this._widgets.length > 0){
+				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						this._initWidgetSubscription(widgetId);
 					}
 				}
-			};
-
-			/**
-			 * Start the setup of the aggregator after the initialisation has finished.
-			 *
-			 * @public
-			 * @override
-			 * @param {AttributeList} attributes
-			 */
-			Aggregator.prototype.didFinishInitialization = function(attributes) {
-				this._aggregatorSetup(attributes);
 			};
 
 			/**
@@ -160,14 +159,6 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {AttributeList} attributes
 			 */
 			Aggregator.prototype._aggregatorSetup = function(attributes) {
-				/**
-				 * Database of the Aggregator.
-				 *
-				 * @protected
-				 * @type {Storage}
-				 */
-				this._db = new Storage("DB_Aggregator", 7200000, 5, this);
-
 				this._setAggregatorAttributeValues(attributes);
 				this._setAggregatorConstantAttributeValues();
 				this._setAggregatorCallbacks();
@@ -234,8 +225,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 */
 			Aggregator.prototype._subscribeTo = function(widget, callbacks, subSet, conditions){
 				if(widget instanceof Widget){
-					var subscriber = new Subscriber().withSubscriberId(this.id).
-						withSubscriberName(this.name).
+					var subscriber = new Subscriber().withSubscriberId(this.getId()).
+						withSubscriberName(this.getName()).
 						withSubscriptionCallbacks(callbacks).
 						withAttributesSubset(subSet).
 						withConditions(conditions);
@@ -311,7 +302,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 					var widget = this._discoverer.getComponent(widgetId);
 					if (widget) {
 						this.log('unsubscribeFrom: ' + widget.getName());
-						widget.removeSubscriber(this.id);
+						widget.removeSubscriber(this.getId());
 						this._removeWidget(widgetId);
 					}
 				}
@@ -335,7 +326,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 					var theAttribute = list[i];
 					if(theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)){
 						this.addOutAttribute(theAttribute);
-						if(this._db){
+						if(this._storage){
 							this._store(theAttribute);
 						}
 					}
@@ -367,7 +358,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			Aggregator.prototype._store = function(attribute) {
 				this.log("I will store "+attribute+".");
 
-				this._db.store(attribute);
+				this._storage.store(attribute);
 			};
 
 			/**
@@ -382,7 +373,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {?function} callback for alternative  actions, because an asynchronous function is used
 			 */
 			Aggregator.prototype.queryAttribute = function(name, callback){
-				this._db.retrieveAttributes(name, callback);
+				this._storage.retrieveAttributes(name, callback);
 			};
 
 			/**
@@ -393,7 +384,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @returns {RetrievalResult}
 			 */
 			Aggregator.prototype.retrieveStorage = function() {
-				return this._db.getCurrentData();
+				return this._storage.getCurrentData();
 			};
 
 			/**
@@ -407,7 +398,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @returns {?Array}
 			 */
 			Aggregator.prototype.getStorageOverview = function() {
-				return this._db.getAttributesOverview();
+				return this._storage.getAttributesOverview();
 			};
 
 			/**
@@ -418,7 +409,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @param {?function} callback for alternative actions, because an asynchronous function is used
 			 */
 			Aggregator.prototype.queryTables = function(callback) {
-				this._db.getAttributeNames(callback);
+				this._storage.getAttributeNames(callback);
 			};
 
 			/**
@@ -493,7 +484,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
 				this.log("I need to satisfy Attributes, let's ask the Discoverer.");
-				this._discoverer.getComponentsForUnsatisfiedAttributes(this.id, unsatisfiedAttributes, all, componentTypes);
+				this._discoverer.getComponentsForUnsatisfiedAttributes(this.getId(), unsatisfiedAttributes, all, componentTypes);
 			};
 
 			/**
@@ -573,7 +564,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 								var theInterpretedData = interpretedData.getItems()[j];
 
 								self.addOutAttribute(theInterpretedData);
-								if (self._db){
+								if (self._storage){
 									self._store(theInterpretedData);
 								}
 							}

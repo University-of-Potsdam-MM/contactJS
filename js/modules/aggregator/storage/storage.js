@@ -84,7 +84,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 				 * @type {Database}
 				 * @private
 				 */
-				this._db = '';
+				this._storage = '';
 
 				this._initStorage(name);
 				if(time && time === parseInt(time) && time != 0) this._timeCondition = time;
@@ -121,7 +121,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 				if(!window.openDatabase) {
 					this._parent.log('Databases are not supported in this browser.');
 				}else{
-					this._db = window.openDatabase(name, "1.0", "DB_" + name, 1024*1024);
+					this._storage = window.openDatabase(name, "1.0", "DB_" + name, 1024*1024);
 					this._parent.log('I will initialize storage with name '+name+".");
 				}
 			};
@@ -135,14 +135,14 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * @param {?function} callback For alternative actions, if an asynchronous function is used.
 			 */
 			Storage.prototype._createTable = function(attribute, callback){
-				if(this._db){
+				if(this._storage){
 					var tableName = this._tableName(attribute);
 					var statement = 'CREATE TABLE IF NOT EXISTS "' + tableName + '" (value_, type_, created_)';
 					this._parent.log('CREATE TABLE IF NOT EXISTS "' + tableName + '"');
 					if(callback && typeof(callback) == 'function'){
-						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
+						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
 					} else {
-						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
+						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
 					}
 					if(!this._attributeNames.indexOf(attribute.getName()) > -1){
 						this._attributeNames.push(tableName);
@@ -159,7 +159,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * @param {?function} callback For alternative actions, if an asynchronous function is used.
 			 */
 			Storage.prototype._insertIntoTable = function(attribute, callback){
-				if(this._db && attribute && attribute.constructor === Attribute){
+				if(this._storage && attribute && attribute.constructor === Attribute){
 					var tableName = this._tableName(attribute);
 					var statement = 'INSERT INTO "' + tableName
 						+ '" (value_, type_, created_) VALUES ("'
@@ -168,9 +168,9 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 						+ attribute.getTimestamp() + '")';
 					this._parent.log('INSERT INTO "'+tableName+'" VALUES ('+attribute.getValue()+", "+attribute.getType()+", "+attribute.getTimestamp());
 					if(callback && typeof(callback) == 'function'){
-						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
+						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
 					} else {
-						this._db.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
+						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
 					}
 				}
 			};
@@ -202,9 +202,9 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * @param {?function} [callback] For alternative actions, if an asynchronous function is used.
 			 */
 			Storage.prototype.getAttributeNames = function(callback){
-				if(this._db){
+				if(this._storage){
 					var self = this;
-					this._db.transaction(function(tx) {
+					this._storage.transaction(function(tx) {
 							self._queryTables(tx, self, callback);
 						}, function(error) {
 							self._errorCB(error);
@@ -282,10 +282,10 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			Storage.prototype.retrieveAttributes = function(tableName, callback){
 				console.log("retrieveAttributes from "+tableName);
 
-				if(this._db){
+				if(this._storage){
 					var self = this;
 					self._flushStorage();
-					this._db.transaction(function(tx) {
+					this._storage.transaction(function(tx) {
 						self._queryValues(tx, tableName, self, callback);
 					}, function(error) {
 						self._errorCB(error);
@@ -305,7 +305,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 */
 			Storage.prototype._queryValues = function(tx, tableName, self, callback){
 				if(self._tableExists(tableName)){
-					console.log('SELECT * FROM "' +tableName+"'");
+					this._parent.log('SELECT * FROM "' +tableName+"'");
 					var statement = 'SELECT * FROM "' + tableName+'"';
 					tx.executeSql(statement, [],
 						function(tx, results) {
@@ -314,7 +314,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 							self._errorCB(error);
 						});
 				} else {
-					console.log('Table "'+tableName+'" unavailable');
+					this._parent.log('Table "'+tableName+'" unavailable');
 				}
 			};
 

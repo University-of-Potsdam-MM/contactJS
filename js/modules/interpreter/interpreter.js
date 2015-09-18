@@ -43,28 +43,12 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 				this._inAttributes = new AttributeList();
 
 				/**
-				 * Types of all attributes that will be returned.
-				 *
-				 * @private
-				 * @type {AttributeList}
-				 */
-				this._outAttributes = new AttributeList();
-
-				/**
 				 * Last interpretation time.
 				 *
 				 * @protected
 				 * @type {?Date}
 				 */
 				this._lastInterpretation = null;
-
-				/**
-				 *
-				 * @protected
-				 * @type {Discoverer}
-				 * @desc Associated Discoverer.
-				 */
-				this._discoverer = discoverer;
 
 				this._register();
 				this._initInterpreter();
@@ -91,15 +75,7 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 			 * @private
 			 */
 			Interpreter.prototype._initInAttributes = function() {
-				for(var inAttributeIndex in this.constructor.inOut.in) {
-					var inA = this.constructor.inOut.in[inAttributeIndex];
-					this._inAttributes.put(this._discoverer.buildAttribute(
-						inA.name,
-						inA.type,
-						inA.parameterList,
-						true
-					));
-				}
+				this._inAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.in);
 			};
 
 			/**
@@ -108,16 +84,7 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 			 * @private
 			 */
 			Interpreter.prototype._initOutAttributes = function() {
-				for(var outAttributeIndex in this.constructor.inOut.out) {
-					var out = this.constructor.inOut.out[outAttributeIndex];
-					this._outAttributes.put(this._discoverer.buildAttribute(
-						out.name,
-						out.type,
-						out.parameterList,
-						true
-					));
-				}
-
+				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.out);
 			};
 
 			/**
@@ -159,47 +126,6 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 			 */
 			Interpreter.prototype._isInAttribute = function(attribute) {
 				return !!this._inAttributes.containsTypeOf(attribute);
-			};
-
-			/**
-			 * Returns the provided outAttributeTypes.
-			 *
-			 * @public
-			 * @returns {AttributeList}
-			 */
-			Interpreter.prototype.getOutAttributes = function() {
-				return this._outAttributes;
-			};
-
-			/**
-			 * Adds an outAttribute.
-			 *
-			 * @protected
-			 * @param {Attribute} attribute
-			 */
-			Interpreter.prototype._setOutAttribute = function(attribute) {
-				this._outAttributes.put(attribute);
-			};
-
-			/**
-			 * Sets an outAttributes.
-			 *
-			 * @protected
-			 * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
-			 */
-			Interpreter.prototype._setOutAttributes = function(attributesOrArray) {
-				this._outAttributes = new AttributeList().withItems(attributesOrArray);
-			};
-
-			/**
-			 * Verifies whether the specified attribute is contained in outAttributeList.
-			 *
-			 * @protected
-			 * @param {Attribute} attribute Attribute that should be verified.
-			 * @return {boolean}
-			 */
-			Interpreter.prototype._isOutAttribute = function(attribute) {
-				return !!this._outAttributes.containsTypeOf(attribute);
 			};
 
 			/**
@@ -253,7 +179,7 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 				var list = [];
 				if (attributeListOrArray instanceof Array) {
 					list = attributeListOrArray;
-				} else if (attributeListOrArray.constructor === AttributeList) {
+				} else if (attributeListOrArray instanceof AttributeList) {
 					list = attributeListOrArray.getItems();
 				}
 				if (list.length == 0 || attributeListOrArray.size() != this.getInAttributes().size()) {
@@ -301,30 +227,6 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 			 */
 			Interpreter.prototype.getLastInterpretionTime = function() {
 				return this._lastInterpretation;
-			};
-
-			/**
-			 * Sets and registers to the associated Discoverer.
-			 *
-			 * @public
-			 * @param {Discoverer} discoverer Discoverer
-			 */
-			Interpreter.prototype.setDiscoverer = function(discoverer) {
-				if (!this._discoverer) {
-					this._discoverer = discoverer;
-					this._register();
-				}
-			};
-
-			/**
-			 * Registers the component to the associated Discoverer.
-			 *
-			 * @public
-			 */
-			Interpreter.prototype._register = function() {
-				if (this._discoverer) {
-					this._discoverer.registerNewComponent(this);
-				}
 			};
 
 			/**

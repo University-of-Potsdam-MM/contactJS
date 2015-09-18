@@ -31,7 +31,7 @@ define(['contactJS'], function(contactJS) {
 		 */
 		function AddressInterpreter(discoverer) {
 			contactJS.Interpreter.call(this, discoverer);
-			this.name = "AddressInterpreter";
+			this._name = "AddressInterpreter";
 		}
 
 		AddressInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
