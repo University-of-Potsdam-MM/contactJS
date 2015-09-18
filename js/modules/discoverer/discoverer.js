@@ -364,7 +364,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						// if component is a widget and it wasn't added before, subscribe to its callbacks
 						if (theComponent instanceof Widget) {
 							theAggregator.addWidgetSubscription(theComponent);
-							console.log("Discoverer: I found "+theComponent.name+" and the Aggregator did subscribe to it.");
+							console.log("Discoverer: I found "+theComponent.getName()+" and the Aggregator did subscribe to it.");
 							this._removeAttributesSatisfiedByWidget(aggregatorId, theComponent, unsatisfiedAttributes);
 						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
 							console.log("Discoverer: It's an Interpreter.");
@@ -440,7 +440,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 									if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
 										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
 										//theAggregator.addWidgetSubscription(newInterpreter);
-										console.log("Discoverer: I registered the Interpreter \"" + theInterpreter.name + "\" .");
+										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
 										// remove satisfied attributes
 										this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
 									} else {
