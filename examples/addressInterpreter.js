@@ -3,7 +3,7 @@
  */
 define(['contactJS'], function(contactJS) {
 	return (function() {
-		AddressInterpreter.inOut = {
+		AddressInterpreter.description = {
 			in: [
 				{
 					'name':'latitude',
@@ -47,7 +47,7 @@ define(['contactJS'], function(contactJS) {
 				if (latitude && longitude) {
 					var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=false";
 					$.getJSON(url, function(json) {
-						if (!json["status"] == ("OK")) {
+						if (json["status"] != ("OK")) {
 							//TODO: handle error case
 							addressValue.setValue("NO_VALUE");
 						} else {

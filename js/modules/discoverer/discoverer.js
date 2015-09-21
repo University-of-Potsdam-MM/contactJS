@@ -405,7 +405,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
 
 						//create temporary OutAttributeList
-						var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.inOut.out);
+						var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.description.out);
 
 						for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
 							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
@@ -428,9 +428,9 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
 							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 							//create temporary outAttributeList
-							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.out);
+							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.out);
 							//create temporary inAttributeList
-							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.in);
+							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in);
 
 							for (var tempOutAttributeIndex in tempOutList.getItems()) {
 								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
@@ -467,7 +467,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				if (theInterpreter instanceof Interpreter) {
 					attributes = theInterpreter.getInAttributes().getItems();
 				} else {
-					attributes = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.in).getItems();
+					attributes = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in).getItems();
 				}
 
 				for (var attributeIdentifier in attributes) {
@@ -550,8 +550,8 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				// iterate over all unregistered widgets
 				for (var widgetIndex in this._unregisteredWidgets) {
 					var theWidget = this._unregisteredWidgets[widgetIndex];
-					for (var attributeDescriptionIndex in theWidget.inOut.out) {
-						var theAttribute = Attribute.fromAttributeDescription(this, theWidget.inOut.out[attributeDescriptionIndex]);
+					for (var attributeDescriptionIndex in theWidget.description.out) {
+						var theAttribute = Attribute.fromAttributeDescription(this, theWidget.description.out[attributeDescriptionIndex]);
 						possibleAttributes.putIfTypeNotContained(theAttribute);
 					}
 				}
@@ -559,8 +559,8 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				// iterate over all unregistered interpreters
 				for (var interpreterIndex in this._unregisteredInterpreters) {
 					var theInterpreter = this._unregisteredInterpreters[interpreterIndex];
-					for (var outAttributeDescriptionIndex in theInterpreter.inOut.out) {
-						var theAttribute = Attribute.fromAttributeDescription(this, theInterpreter.inOut.out[outAttributeDescriptionIndex]);
+					for (var outAttributeDescriptionIndex in theInterpreter.description.out) {
+						var theAttribute = Attribute.fromAttributeDescription(this, theInterpreter.description.out[outAttributeDescriptionIndex]);
 						possibleAttributes.putIfTypeNotContained(theAttribute);
 					}
 				}

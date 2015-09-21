@@ -153,9 +153,9 @@ define(['attributeList'],
              */
             Component.prototype.log = function(string) {
                if (Component.lastLogId != this.getId())
-                   console.log(this.getName()+" ("+this.getId()+"): "+string);
+                   console.log(this.getName()+" ("+this.getId()+") "+string);
                else
-                   console.log(this.getName()+" (...): "+string);
+                   console.log(this.getName()+" (...) "+string);
                Component.lastLogId = this.getId();
             };
 

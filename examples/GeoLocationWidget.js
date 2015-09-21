@@ -3,7 +3,7 @@
  */
 define(['contactJS'], function (contactJS) {
 	return (function() {
-		GeoLocationWidget.inOut = {
+		GeoLocationWidget.description = {
 			out: [
 				{
 					'name':'latitude',
@@ -14,7 +14,9 @@ define(['contactJS'], function (contactJS) {
 					'type':'double'
 				}
 			],
-			const: []
+			const: [],
+			updateInterval: 5000
+
 		};
 
 		/**

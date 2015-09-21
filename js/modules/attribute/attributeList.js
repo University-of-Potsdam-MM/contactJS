@@ -213,7 +213,7 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
             var list = [];
             if (attributeList instanceof Array) {
                 list = attributeList;
-            } else if (attributeList.constructor === AttributeList) {
+            } else if (attributeList instanceof AttributeList) {
                 list = attributeList.getItems();
             }
             for (var i in list) {
@@ -231,7 +231,7 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
         /**
          * Returns a subset without the given types.
          *
-         * @param {(AttributeList|Array)} attributeList AttributeTypes that should not be included
+         * @param {(AttributeList|Array)} attributeList Attributes to be excluded
          * @returns {AttributeList}
          */
         AttributeList.prototype.getSubsetWithoutItems = function(attributeList) {

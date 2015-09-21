@@ -7,7 +7,7 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 			 * @type {object}
 			 * @public
 			 */
-			Interpreter.inOut = {
+			Interpreter.description = {
 				in: [
 					{
 						'name':'',
@@ -75,7 +75,7 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 			 * @private
 			 */
 			Interpreter.prototype._initInAttributes = function() {
-				this._inAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.in);
+				this._inAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.in);
 			};
 
 			/**
@@ -84,7 +84,7 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 			 * @private
 			 */
 			Interpreter.prototype._initOutAttributes = function() {
-				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.out);
+				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.out);
 			};
 
 			/**

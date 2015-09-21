@@ -50,7 +50,7 @@ define(function() {
 		 * @param {*} item item that should be added
 		 */
 		AbstractList.prototype.put = function(item) {
-			if (item.constructor === this._type) {
+			if (item instanceof this._type) {
 				if (!(this.contains(item))) {
 					this._items.push(item);
 				}
