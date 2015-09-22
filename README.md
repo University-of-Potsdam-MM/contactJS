@@ -93,10 +93,14 @@ The type of information that a widget detects is defined as its **out attributes
 * name
 * type
 * parameters (optional)
+These attributes are encapsulated within the widget's **description**.
+The description further includes a list of **const** attributes and a property **updateInterval**.
+The **const** attributes are legacy from context toolkit and right now there are none, thus none must be defined.
+The **updateInterval**, however, determines after how many milliseconds the widget repeats its detection.
 
 **Example of out attributes:**
 ```JavaScript
-MyUnixTimeMillisecondsWidget.inOut = {
+MyUnixTimeMillisecondsWidget.description = {
     out: [
         {
             'name':'CI_CURRENT_UNIX_TIME',
@@ -109,7 +113,8 @@ MyUnixTimeMillisecondsWidget.inOut = {
             'name':'',
             'type':''
         }
-    ]
+    ],
+    updateInterval: 30000
 };
 ```
 
@@ -123,15 +128,16 @@ For example:
 The interpreter 'DateTimeInterpreter' accepts that timestamp as input and processes it in order to return the current date and time.
 
 The type of information that an interpreter requires as input is defined as its **in attributes**.
-The type of information returned by that interpreter is in turn defined as its **out attributes**.\
-The respective attributes are defined, analogously to widgets, by:
+The type of information returned by that interpreter is in turn defined as its **out attributes**.
+
+The respective attributes are, analogously to widgets, encapsulated within the interpreter's **description** and defined by:
 * name
 * type
 * parameters (optional)
 
 **Example of in and out attributes:**
 ```JavaScript
-MySecondsInterpreter.inOut = {
+MySecondsInterpreter.description = {
      in: [
          {
              'name':'CI_BASE_UNIT_OF_TIME',
@@ -307,7 +313,7 @@ The main file *interpreters.js* should look very much alike.
 define(['contactJS'], function (contactJS) {
     return (function() {
 
-        MyUnixTimeWidget.inOut = {
+        MyUnixTimeWidget.description = {
             out: [
                 {
                     'name':'CI_CURRENT_UNIX_TIME',
@@ -366,7 +372,7 @@ define(['contactJS'], function (contactJS) {
 define(['contactJS'], function(contactJS) {
     return (function() {
     
-        MySecondsInterpreter.inOut = {
+        MySecondsInterpreter.description = {
             in: [
                 {
                     'name':'CI_BASE_UNIT_OF_TIME',
