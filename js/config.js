@@ -7,6 +7,7 @@ requirejs.config({
     {
         jquery: '../libs/jquery/jquery',
         MathUuid: '../libs/uuid/Math.uuid',
+		component: 'modules/component',
         retrievalResult: 'modules/aggregator/storage/retrievalResult',
 		storage: 'modules/aggregator/storage/storage',
 		aggregator: 'modules/aggregator/aggregator',

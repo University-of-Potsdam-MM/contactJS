@@ -2,11 +2,10 @@ require(['configTest'], function() {
 	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "Subscriber", function( assert ) {
-				
-				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
-				
-				var attributeType = new contactJS.Attribute();
-				var attributeType2 = new contactJS.Attribute().withName('testName').withType('integer').withParameter(parameter);
+				var discoverer = new contactJS.Discoverer();
+
+				var attributeType = discoverer.buildAttribute('', '');
+				var attributeType2 = discoverer.buildAttribute('testName', 'integer', [['testKey', 'testType', 'testValue']]);
 
 				var attList = new contactJS.AttributeList().withItems([attributeType]);
 				var attList2 = new contactJS.AttributeList().withItems([attributeType, attributeType2]);

@@ -3,8 +3,8 @@
  * 
  * @module Widget
  */
-define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
-	function(MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
+define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(Component, MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
 		return (function() {
 
 			/**
@@ -12,7 +12,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @type {object}
 			 * @public
 			 */
-			Widget.inOut = {
+			Widget.description = {
 				out: [
 					{
 						"name":"",
@@ -24,7 +24,8 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 						"name":"",
 						"type":""
 					}
-				]
+				],
+				updateInterval: 30000
 			};
 
 			/**
@@ -39,74 +40,50 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @constructs Widget
 			 */
 			function Widget(discoverer, attributes) {
-				/**
-				 * Name of the Widget.
-				 *
-				 * @public
-				 * @type {string}
-				 */
-				this.name = 'Widget';
+				Component.call(this, discoverer);
 
 				/**
-				 * ID of the Widget. Will be generated.
+				 * Name of the widget.
 				 *
 				 * @type {string}
+				 * @private
 				 */
-				this.id = Math.uuid();
+				this._name  = 'Widget';
 
 				/**
+				 * This temporary variable is used for storing the old attribute values.
+				 * So these can be used to check conditions.
 				 *
-				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Widget#
-				 * @desc All available Attributes and their values.
-				 */
-				this._outAttributes = new AttributeList();
-
-				/**
-				 * @alias oldAttributes
 				 * @protected
-				 * @type {AttributeList}
-				 * @memberof Widget#
-				 * @desc This temporary variable is used for storing the old attribute values.
-				 * 			So these can be used to check conditions.
 				 */
 				this._oldOutAttributes = new AttributeList();
 
 				/**
-				 * @alias constantAttributes
+				 *
 				 * @protected
 				 * @type {AttributeList}
-				 * @memberof Widget#
 				 * @desc All available constant Attributes and their values.
 				 */
 				this._constantOutAttributes = new AttributeList();
 
 				/**
-				 * @alias callbacks
+				 *
 				 * @protected
 				 * @type {CallbackList}
-				 * @memberof Widget#
 				 * @desc List of Callbacks.
 				 */
 				this._callbacks = new CallbackList();
 
 				/**
-				 * @alias subscribers
+				 *
 				 * @protected
 				 * @type {SubscriberList}
-				 * @memberof Widget#
 				 * @desc List of Subscriber.
 				 */
 				this._subscribers = new SubscriberList();
 
-				/**
-				 * Associated discoverer.
-				 *
-				 * @type {Discoverer}
-				 * @private
-				 */
-				this._discoverer = discoverer;
+				this._updateInterval = null;
 
 				this._register();
 				this._init(attributes);
@@ -114,33 +91,8 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 				return this;
 			}
 
-			/**
-			 * Initializes the provided Attributes.
-			 *
-			 * @private
-			 */
-			Widget.prototype._initOutAttributes = function() {
-				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.out);
-			};
-
-			/**
-			 * Initializes the provided ConstantAttributes.
-			 *
-			 * @private
-			 */
-			Widget.prototype._initConstantOutAttributes = function() {
-				this._constantOutAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.inOut.const);
-			};
-
-			/**
-			 * Initializes the provided Callbacks.
-			 *
-			 * @abstract
-			 * @protected
-			 */
-			Widget.prototype._initCallbacks = function() {
-				throw new Error("Abstract function!");
-			};
+			Widget.prototype = Object.create(Component.prototype);
+			Widget.prototype.constructor = Widget;
 
 			/**
 			 * Function for initializing. Calls all initFunctions
@@ -152,60 +104,34 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 				this._initOutAttributes();
 				this._initConstantOutAttributes();
 				this._initCallbacks();
-
-				this.didFinishInitialization(attributes);
 			};
 
 			/**
-			 * Method will be invoked after the initialization of the widget finished.
-			 * Can be overridden by inheriting classes to take action after initialization.
+			 * Initializes the provided Attributes.
 			 *
-			 * @public
-			 * @virtual
-			 * @param attributes
+			 * @private
 			 */
-			Widget.prototype.didFinishInitialization = function(attributes) {
-
+			Widget.prototype._initOutAttributes = function() {
+				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.out);
 			};
 
 			/**
-			 * Returns the name of the widget.
+			 * Initializes the provided ConstantAttributes.
 			 *
-			 * @public
-			 * @alias getName
-			 * @memberof Widget#
-			 * @returns {string}
+			 * @private
 			 */
-			Widget.prototype.getName = function() {
-				return this.name;
+			Widget.prototype._initConstantOutAttributes = function() {
+				this._constantOutAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.const);
 			};
 
 			/**
-			 * Returns the id of the widget.
+			 * Initializes the provided Callbacks.
 			 *
-			 * @public
-			 * @alias getId
-			 * @memberof Widget#
-			 * @returns {string}
+			 * @abstract
+			 * @protected
 			 */
-			Widget.prototype.getId = function() {
-				return this.id;
-			};
-
-			/**
-			 * Returns the available AttributeTypes.
-			 *
-			 * @public
-			 * @param {?AttributeList} [attributes]
-			 * @returns {AttributeList}
-			 */
-			Widget.prototype.getOutAttributes = function(attributes) {
-				// test if attributeList is a list
-				if (attributes && attributes instanceof AttributeList) {
-					return this._outAttributes.getSubset(attributes);
-				} else {
-					return this._outAttributes;
-				}
+			Widget.prototype._initCallbacks = function() {
+				throw new Error("Abstract function!");
 			};
 
 			/**
@@ -257,9 +183,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Returns the specified callbacks that can be
 			 * subscribed to.
 			 *
-			 * @public
-			 * @alias getCallbacks
-			 * @memberof Widget#
 			 * @returns {Array}
 			 */
 			Widget.prototype.getCallbacks = function() {
@@ -273,52 +196,10 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Returns the Subscriber.
 			 *
-			 * @public
-			 * @alias getSubscriber
-			 * @memberof Widget#
 			 * @returns {SubscriberList}
 			 */
 			Widget.prototype.getSubscriber = function() {
 				return this._subscribers;
-			};
-
-			/**
-			 * Sets the name of the Widget.
-			 *
-			 * @protected
-			 * @alias setName
-			 * @memberof Widget#
-			 * @param {string} name Name of the Widget.
-			 */
-			Widget.prototype.setName = function(name) {
-				if (typeof name === 'string') {
-					this.name = name;
-				}
-			};
-
-			/**
-			 * Sets the id of the Widget.
-			 *
-			 * @protected
-			 * @alias setId
-			 * @memberof Widget#
-			 * @param {string} id Id of the Widget.
-			 */
-			Widget._setId = function(id) {
-				if (typeof id === 'string') {
-					this.id = id;
-				}
-			};
-
-			/**
-			 * Sets the AttributeValueList and also the associated
-			 * AttributeTypes.
-			 *
-			 * @protected
-			 * @param {(AttributeList|Array)} attributesOrArray List or Array of AttributeValues
-			 */
-			Widget.prototype._setOutAttributes = function(attributesOrArray) {
-				this._outAttributes = new AttributeList().withItems(attributesOrArray);
 			};
 
 			/**
@@ -332,13 +213,12 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * @param {Boolean} multipleInstances
 			 */
 			Widget.prototype.addOutAttribute = function(attribute, multipleInstances) {
+				this.log("will add or update attribute "+attribute+".");
 				multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+				this._oldOutAttributes = this._outAttributes;
+				attribute.setTimestamp(this.getCurrentTime());
 				if (attribute instanceof Attribute) {
-					if (!this._outAttributes.containsTypeOf(attribute)) {
-						this._oldOutAttributes = this._outAttributes;
-						attribute.setTimestamp(this.getCurrentTime());
-						this._outAttributes.put(attribute, multipleInstances);
-					}
+					this._outAttributes.put(attribute, multipleInstances);
 				}
 			};
 
@@ -347,8 +227,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * associated AttributeTypes.
 			 *
 			 * @protected
-			 * @alias setConstantOutAttributes
-			 * @memberof Widget#
 			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
 			 */
 			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
@@ -377,8 +255,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Sets Callbacks.
 			 *
 			 * @protected
-			 * @alias setCallbacks
-			 * @memberof Widget#
 			 * @param {(CallbackList|Array)} callbacks List or Array of Callbacks.
 			 */
 			Widget.prototype._setCallbacks = function(callbacks) {
@@ -400,8 +276,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Adds a new Callback.
 			 *
 			 * @protected
-			 * @alias addCallback
-			 * @memberof Widget#
 			 * @param {Callback} callback List or Array of AttributeValues.
 			 */
 			Widget.prototype._addCallback = function(callback) {
@@ -418,8 +292,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Sets SubscriberList.
 			 *
 			 * @protected
-			 * @alias setSubscriber
-			 * @memberof Widget#
 			 * @param {(SubscriberList|Array)}  subscribers List or Array of Subscriber.
 			 */
 			Widget.prototype._setSubscriber = function(subscribers) {
@@ -446,6 +318,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			Widget.prototype.addSubscriber = function(subscriber) {
 				if (subscriber && subscriber instanceof Subscriber) {
 					this._subscribers.put(subscriber);
+					this._intervalRunning();
 				}
 			};
 
@@ -470,24 +343,13 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			};
 
 			/**
-			 * Verifies whether the specified attributes is a
-			 * provided Attribute.
-			 *
-			 * @param {Attribute} attribute
-			 * @returns {Boolean}
-			 * @protected
-			 */
-			Widget.prototype._isOutAttribute = function(attribute) {
-				return !!this._outAttributes.containsTypeOf(attribute);
-			};
-
-			/**
 			 * Notifies other components and sends the attributes.
 			 *
 			 * @virtual
 			 * @public
 			 */
 			Widget.prototype.notify = function() {
+				this.log("will notify its subscribers.");
 				var callbacks = this.getCallbacks();
 				for (var i in callbacks) {
 					this.sendToSubscriber(callbacks[i]);
@@ -501,11 +363,29 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 *
 			 * @virtual
 			 * @public
-			 * @param {?function} callback For alternative actions, because an asynchronous function can be used.
+			 * @param {Callback} callback
 			 */
 			Widget.prototype.sendToSubscriber = function(callback) {
-				if (callback && typeof(callback) == 'function') {
-					callback();
+				if (callback && callback instanceof Callback) {
+					var subscriberList = this._subscribers.getItems();
+					for ( var i in subscriberList) {
+						var subscriber = subscriberList[i];
+						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
+							if(this._dataValid(subscriber.getConditions())){
+								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
+								var callSubset =  callback.getAttributeTypes();
+								var subscriberSubset = subscriber.getAttributesSubset();
+								var data = this._outAttributes.getSubset(callSubset);
+								if (subscriberSubset && subscriberSubset.size() > 0) {
+									data = data.getSubset(subscriberSubset);
+								}
+							}
+							if (data) {
+								this.log("will send to "+subscriberInstance.getName()+" ("+subscriberInstance.getId()+").");
+								subscriberInstance.putData(data);
+							}
+						}
+					}
 				}
 			};
 
@@ -536,13 +416,12 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Updates the attributes by calling queryGenerator.
 			 *
-			 * @public
-			 * @alias updateWidgetInformation
-			 * @memberof Widget#
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 *
 			 */
 			Widget.prototype.updateWidgetInformation = function(callback) {
+				this.log("will update my attributes.");
+
 				this.queryGenerator(callback);
 			};
 
@@ -560,7 +439,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 				}
 				for ( var i in list) {
 					var theAttribute = list[i];
-					if (theAttribute.type === Attribute && this.isOutAttribute(theAttribute)) {
+					if (theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)) {
 						this.addOutAttribute(theAttribute);
 					}
 				}
@@ -581,11 +460,8 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 
 			/**
 			 * Updates and returns all available AttributeValues,
-			 * Attributes and ConstantAtrributes.
+			 * Attributes and Constant Attributes.
 			 *
-			 * @public
-			 * @alias updateAndQueryWidget
-			 * @memberof Widget#
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 * @returns {?AttributeList}
 			 */
@@ -631,9 +507,6 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			/**
 			 * Verifies if the attributes match to the specified conditions in case any exists.
 			 *
-			 * @private
-			 * @alias dataValid
-			 * @memberof Widget#
 			 * @param {string} conditions List of Conditions that will be verified.
 			 * @returns {boolean}
 			 */
@@ -660,38 +533,16 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Runs the context acquisition constantly in an interval.
 			 * Can be called by init.
 			 *
-			 * @virtual
-			 * @protected
-			 * @param {Number} interval Interval in ms
+			 * @private
 			 */
-			Widget.prototype._intervalRunning = function(interval) {
+			Widget.prototype._intervalRunning = function() {
 				var self = this;
-				if (interval === parseInt(interval)) {
-					setInterval(function() {self.queryGenerator();}, interval);
-				}
-			};
-
-			/**
-			 * Sets the associated Discoverer and registers to that.
-			 *
-			 * @public
-			 * @param {Discoverer} _discoverer Discoverer
-			 */
-			Widget.prototype.setDiscoverer = function(_discoverer) {
-				if (!this._discoverer) {
-					this._discoverer = _discoverer;
-					this._register();
-				}
-			};
-
-			/**
-			 * Registers the component to the associated Discoverer.
-			 *
-			 * @protected
-			 */
-			Widget.prototype._register = function() {
-				if (this._discoverer) {
-					this._discoverer.registerNewComponent(this);
+				if (!isNaN(this.constructor.description.updateInterval) && this._updateInterval === null) {
+					this.log("will query its context generator every "+this.constructor.description.updateInterval+" milliseconds ("+(this.constructor.description.updateInterval/1000)+" seconds).");
+					this._updateInterval = setInterval(function() {
+						self.log("Interval Trigger -> queryGenerator");
+						self.queryGenerator();
+					}, this.constructor.description.updateInterval);
 				}
 			};
 
@@ -699,7 +550,7 @@ define(['MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'c
 			 * Returns true if the widget can satisfy the requested attribute type.
 			 *
 			 * @public
-			 * @param {AttributeType} attribute
+			 * @param {Attribute} attribute
 			 * @returns {boolean}
 			 */
 			Widget.prototype.doesSatisfyTypeOf = function(attribute) {

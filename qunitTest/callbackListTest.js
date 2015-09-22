@@ -2,13 +2,10 @@ require(['configTest'], function() {
 	require(['contactJS'],function(contactJS){
 		
 			QUnit.test( "CallbackList", function( assert ) {
+				var discoverer = new contactJS.Discoverer();
 				
-				
-				var attribute = new contactJS.Attribute();
-				
-				var parameter = new contactJS.Parameter().withKey('testKey').withValue('testValue');
-				
-				var attribute2 = new contactJS.Attribute().withName('testName').withType('integer').withParameter(parameter);
+				var attribute = discoverer.buildAttribute('', '');
+				var attribute2 = discoverer.buildAttribute('testName', 'integer', [['testKey', 'testType', 'testValue']]);
 
 				var array = [];
 				array.push(attribute);

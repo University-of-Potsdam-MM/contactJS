@@ -364,7 +364,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						// if component is a widget and it wasn't added before, subscribe to its callbacks
 						if (theComponent instanceof Widget) {
 							theAggregator.addWidgetSubscription(theComponent);
-							console.log("Discoverer: I found "+theComponent.name+" and the Aggregator did subscribe to it.");
+							console.log("Discoverer: I found "+theComponent.getName()+" and the Aggregator did subscribe to it.");
 							this._removeAttributesSatisfiedByWidget(aggregatorId, theComponent, unsatisfiedAttributes);
 						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
 							console.log("Discoverer: It's an Interpreter.");
@@ -405,7 +405,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
 
 						//create temporary OutAttributeList
-						var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.inOut.out);
+						var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.description.out);
 
 						for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
 							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
@@ -428,9 +428,9 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
 							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 							//create temporary outAttributeList
-							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.out);
+							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.out);
 							//create temporary inAttributeList
-							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.in);
+							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in);
 
 							for (var tempOutAttributeIndex in tempOutList.getItems()) {
 								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
@@ -440,7 +440,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 									if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
 										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
 										//theAggregator.addWidgetSubscription(newInterpreter);
-										console.log("Discoverer: I registered the Interpreter \"" + theInterpreter.name + "\" .");
+										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
 										// remove satisfied attributes
 										this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
 									} else {
@@ -467,7 +467,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				if (theInterpreter instanceof Interpreter) {
 					attributes = theInterpreter.getInAttributes().getItems();
 				} else {
-					attributes = AttributeList.fromAttributeDescriptions(this, theInterpreter.inOut.in).getItems();
+					attributes = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in).getItems();
 				}
 
 				for (var attributeIdentifier in attributes) {
@@ -532,7 +532,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 						if (theUnsatisfiedAttribute.equalsTypeOf(theAttribute)) {
 							if (!theAggregator.getOutAttributes().containsTypeOf(theAttribute)) theAggregator.addOutAttribute(theAttribute);
-							console.log("Aggregator: The Aggregator can now satisfy Attribute "+theAttribute.toString(true)+" with the help of "+theInterpreter.getName()+".");
+							console.log("Discoverer: The Aggregator can now satisfy Attribute "+theAttribute.toString(true)+" with the help of "+theInterpreter.getName()+".");
 							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
 						}
 					}
@@ -550,8 +550,17 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				// iterate over all unregistered widgets
 				for (var widgetIndex in this._unregisteredWidgets) {
 					var theWidget = this._unregisteredWidgets[widgetIndex];
-					for (var attributeDescriptionIndex in theWidget.inOut.out) {
-						var theAttribute = Attribute.fromAttributeDescription(this, theWidget.inOut.out[attributeDescriptionIndex]);
+					for (var attributeDescriptionIndex in theWidget.description.out) {
+						var theAttribute = Attribute.fromAttributeDescription(this, theWidget.description.out[attributeDescriptionIndex]);
+						possibleAttributes.putIfTypeNotContained(theAttribute);
+					}
+				}
+
+				// iterate over all unregistered interpreters
+				for (var interpreterIndex in this._unregisteredInterpreters) {
+					var theInterpreter = this._unregisteredInterpreters[interpreterIndex];
+					for (var outAttributeDescriptionIndex in theInterpreter.description.out) {
+						var theAttribute = Attribute.fromAttributeDescription(this, theInterpreter.description.out[outAttributeDescriptionIndex]);
 						possibleAttributes.putIfTypeNotContained(theAttribute);
 					}
 				}
@@ -559,6 +568,12 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				return possibleAttributes;
 			};
 
+			/**
+			 *
+			 *
+			 * @param attributeNames
+			 * @returns {*}
+			 */
 			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
 				return AttributeList.fromAttributeNames(this, attributeNames);
 			};

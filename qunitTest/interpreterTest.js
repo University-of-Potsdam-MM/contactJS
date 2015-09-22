@@ -11,31 +11,31 @@ require(['configTest'], function() {
 				assert.ok( testInterpreter instanceof contactJS.Interpreter, "Passed!: type -> Interpreter" );
 				
 				//getInAttributeTypes
-				var latitudeType = new contactJS.Attribute().withName('latitude').withType('double');
-				var longitudeType = new contactJS.Attribute().withName('longitude').withType('double');
+				var latitudeAttribute = discoverer.buildAttribute('latitude', 'double');
+				var longitudeAttribute = discoverer.buildAttribute('longitude', 'double');
 				var inTypes = testInterpreter.getInAttributes();
 
 				assert.ok( inTypes.size() == 2,"Passed!: 2 defined type in addressInterpreter" );
-				assert.ok( inTypes.getAttributeWithTypeOf(latitudeType),"Passed!:type latitude exists" );
-				assert.ok( inTypes.getAttributeWithTypeOf(latitudeType).equalsTypeOf(latitudeType),"Passed!:type latitude equals expected type" );
-				assert.ok( inTypes.getAttributeWithTypeOf(longitudeType),"Passed!:type longitude exists" );
-				assert.ok( inTypes.getAttributeWithTypeOf(longitudeType).equalsTypeOf(longitudeType),"Passed!: longitude equals expected type" );
+				assert.ok( inTypes.getAttributeWithTypeOf(latitudeAttribute),"Passed!:type latitude exists" );
+				assert.ok( inTypes.getAttributeWithTypeOf(latitudeAttribute).equalsTypeOf(latitudeAttribute),"Passed!:type latitude equals expected type" );
+				assert.ok( inTypes.getAttributeWithTypeOf(longitudeAttribute),"Passed!:type longitude exists" );
+				assert.ok( inTypes.getAttributeWithTypeOf(longitudeAttribute).equalsTypeOf(longitudeAttribute),"Passed!: longitude equals expected type" );
 			
 				//getOutAttributeTypes
-				var formattedAddress = new contactJS.Attribute().withName('formattedAddress').withType('string');
+				var formattedAddress = discoverer.buildAttribute('formattedAddress', 'string');
 				var outTypes = testInterpreter.getOutAttributes();
 				assert.ok( outTypes.size() == 1,"Passed!: 1 defined outType in addressInterpreter" );
 				assert.ok( outTypes.getAttributeWithTypeOf(formattedAddress),"Passed!: formattedAddress exists" );
 				assert.ok( outTypes.getAttributeWithTypeOf(formattedAddress).equalsTypeOf(formattedAddress),"Passed!: formattedAddress equals expected type" );
 				
 				//callInterpreter && getInterpretedData with callback
-				var latitudeValue = new contactJS.Attribute().withName('latitude').withType('double').withValue(52.3992404);
-				var longitudeValue = new contactJS.Attribute().withName('longitude').withType('double').withValue(13.066132);
+				var latitudeValue = discoverer.buildAttribute('latitude', 'double').withValue(52.3992404);
+				var longitudeValue = discoverer.buildAttribute('longitude', 'double').withValue(13.066132);
 
 				var attributeList = new contactJS.AttributeList().withItems([latitudeValue, longitudeValue]);
 					    		    		
 		    	var assertData2 = function(result){
-		    		assert.ok(testInterpreter.getLastInterpretionTime,"Callback passed!: getLastInterpretionTime exists" );
+		    		assert.ok(testInterpreter.getLastInterpretionTime,"Callback passed!: getLastInterpretationTime exists" );
 		    		assert.equal(result.size(), 1, "Callback passed!: one outAttribute");
 		    		var list = result.getItems();
 		    		for(var i in list){

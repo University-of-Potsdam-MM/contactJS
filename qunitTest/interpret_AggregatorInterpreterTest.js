@@ -3,23 +3,21 @@ require(['configTest'], function() {
 	         	function(GeoLocationWidget, AddressInterpreter, contactJS){
 		
 			QUnit.asyncTest( "interpret", function( assert ) {
-				
-				//initializes the test environment
 				var discoverer = new contactJS.Discoverer();
 				new GeoLocationWidget(discoverer);
 				new AddressInterpreter(discoverer);
 
-				var formattedAddressType = new contactJS.Attribute().withName('formattedAddress').withType('string');
+				var formattedAddressType = discoverer.buildAttribute('formattedAddress', 'string');
 
-				var testAggregator = new contactJS.Aggregator(discoverer, [
+				var testAggregator = new contactJS.Aggregator(discoverer, new contactJS.AttributeList().withItems([
 					formattedAddressType
-				]);
+				]));
 				
 				var interpreters = discoverer.getComponents([contactJS.Interpreter]);
 				
 				//put data into aggregator
-				var latitudeValue = new contactJS.Attribute().withName('latitude').withType('double').withValue(52.3992404);
-				var longitudeValue = new contactJS.Attribute().withName('longitude').withType('double').withValue(13.066132);
+				var latitudeValue = discoverer.buildAttribute('latitude', 'double').withValue(52.3992404);
+				var longitudeValue = discoverer.buildAttribute('longitude', 'double').withValue(13.066132);
 
 				var list = new contactJS.AttributeList().withItems([latitudeValue, longitudeValue]);
 				testAggregator.putData(list);	

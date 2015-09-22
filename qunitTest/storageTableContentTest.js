@@ -4,15 +4,16 @@ require(['configTest'], function() {
 		
 			QUnit.asyncTest( "Storage Table Content", function( assert ) {
 				var discoverer = new contactJS.Discoverer();
+
 				//initializes the test environment
-				var testAggregator = new contactJS.Aggregator(discoverer, [
-					new contactJS.Attribute().withName('latitude').withType('double'),
-					new contactJS.Attribute().withName('longitude').withType('double')
-				]);
+				var testAggregator = new contactJS.Aggregator(discoverer, new contactJS.AttributeList().withItems([
+					discoverer.buildAttribute('latitude', 'double'),
+					discoverer.buildAttribute('longitude', 'double')
+				]));
 
 				//put data into aggregator
-				var latitudeValue = new contactJS.Attribute().withName('latitude').withType('double').withValue(52.3992404);
-				var longitudeValue = new contactJS.Attribute().withName('longitude').withType('double').withValue(13.066132);
+				var latitudeValue = discoverer.buildAttribute('latitude', 'double').withValue(52.3992404);
+				var longitudeValue = discoverer.buildAttribute('longitude', 'double').withValue(13.066132);
 
 				testAggregator.putData(new contactJS.AttributeList().withItems([latitudeValue, longitudeValue]));
 				

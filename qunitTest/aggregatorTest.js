@@ -1,13 +1,16 @@
 require(['configTest'], function() {
 	require(['../examples/GeoLocationWidget', 'contactJS'], function(GeoLocationWidget, contactJS){
 		QUnit.test( "aggregatorTest.js", function(assert) {
-			var latitudeType = new contactJS.Attribute().withName('latitude').withType('double');
-			var longitudeType = new contactJS.Attribute().withName('longitude').withType('double');
+			var discoverer = new contactJS.Discoverer();
+
+			var latitudeType = discoverer.buildAttribute('latitude', 'double');
+			var longitudeType = discoverer.buildAttribute('longitude', 'double');
 
 			//initializes the infrastructure
 			var discoverer = new contactJS.Discoverer();
-			var testAggregator = new contactJS.Aggregator(discoverer);
 			new GeoLocationWidget(discoverer);
+
+			var testAggregator = new contactJS.Aggregator(discoverer);
 
 			var aggregatorId = testAggregator.getId();
 			assert.ok(aggregatorId && aggregatorId !== "null" && aggregatorId !== "undefined", "Passed!: id is not null" );

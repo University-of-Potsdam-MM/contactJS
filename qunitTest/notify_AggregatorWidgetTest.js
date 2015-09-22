@@ -6,14 +6,14 @@ require(['configTest'], function() {
                 var discoverer = new contactJS.Discoverer();
 				new GeoLocationWidget(discoverer);
 
-				var latitudeType = new contactJS.Attribute().withName('latitude').withType('double');
-				var longitudeType = new contactJS.Attribute().withName('longitude').withType('double');
+				var latitudeType = discoverer.buildAttribute('latitude', 'double');
+				var longitudeType = discoverer.buildAttribute('longitude', 'double');
 
                 //initializes the Infrastructure
-		    	var testAggregator = new contactJS.Aggregator(discoverer, [
+		    	var testAggregator = new contactJS.Aggregator(discoverer, new contactJS.AttributeList().withItems([
 					latitudeType,
 					longitudeType
-				]);
+				]));
 	    	
 				//notify
 				var checkValues = function(newValues){

@@ -1,8 +1,10 @@
 require(['configTest'], function() {
 	require(['contactJS'],function(contactJS){
 		QUnit.test( "ConditionList", function( assert ) {
-			var type = new contactJS.Attribute().withName('test').withType('string');
-			var type2 = new contactJS.Attribute().withName('test').withType('string');
+			var discoverer = new contactJS.Discoverer();
+
+			var type = discoverer.buildAttribute('test', 'string');
+			var type2 = discoverer.buildAttribute('test', 'string');
 
 			var method = new contactJS.Equals();
 			var method2 = new contactJS.UnEquals();

@@ -3,6 +3,25 @@
  */
 define(['contactJS'], function(contactJS) {
 	return (function() {
+		AddressInterpreter.description = {
+			in: [
+				{
+					'name':'latitude',
+					'type':'double'
+				},
+				{
+					'name':'longitude',
+					'type':'double'
+				}
+			],
+			out: [
+				{
+					'name':'formattedAddress',
+					'type':'string'
+				}
+			]
+		};
+
 		/**
 		 *
 		 * @requires contactJS
@@ -12,24 +31,11 @@ define(['contactJS'], function(contactJS) {
 		 */
 		function AddressInterpreter(discoverer) {
 			contactJS.Interpreter.call(this, discoverer);
-			this.name = "AddressInterpreter";
+			this._name = "AddressInterpreter";
 		}
 
 		AddressInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
 		AddressInterpreter.prototype.constructor = AddressInterpreter;
-
-		AddressInterpreter.prototype._initInAttributes = function() {
-			this._setInAttributes([
-				new contactJS.Attribute().withName('latitude').withType('double'),
-				new contactJS.Attribute().withName('longitude').withType('double')
-			]);
-		};
-
-		AddressInterpreter.prototype._initOutAttributes = function() {
-			this._setOutAttributes([
-				new contactJS.Attribute().withName('formattedAddress').withType('string')
-			]);
-		};
 
 		AddressInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
 			var addressValue = outAttributes.getItems()[0];
@@ -41,7 +47,7 @@ define(['contactJS'], function(contactJS) {
 				if (latitude && longitude) {
 					var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+"&sensor=false";
 					$.getJSON(url, function(json) {
-						if (!json["status"] == ("OK")) {
+						if (json["status"] != ("OK")) {
 							//TODO: handle error case
 							addressValue.setValue("NO_VALUE");
 						} else {
