@@ -6,22 +6,22 @@ It is based on a port of the *[Context Toolkit](http://contexttoolkit.sourceforg
 
 ## Contents
 
-[Installation](#installation)
-[Components](#components)
-    [Discoverer](#discoverer)
-    [Aggregator](#aggregator)
-    [Attributes](#attributes)
-    [Widgets](#widgets)
-    [Interpreters](#interpreters)
-[Usage](#usage)
-    [Discoverer](#usage-discoverer)
-        [Initialization](#discoverer-init)
-        [Translations](#translations)
-    [Aggregator](#usage-aggregator)
-        [Initialization](#aggregator-init)
-    [Widgets and Interpreters](#usage-widgets-interpreters)
-        [Initialization](#widgets-interpreters-init)
-        [Custom Widgets and Interpreters](#custom-widgets-interpreters)
+* [Installation](#installation)
+* [Components](#components)
+    * [Discoverer](#discoverer)
+    * [Aggregator](#aggregator)
+    * [Attributes](#attributes)
+    * [Widgets](#widgets)
+    * [Interpreters](#interpreters)
+* [Usage](#usage)
+    * [Discoverer](#usage-discoverer)
+        * [Initialization](#discoverer-init)
+        * [Translations](#translations)
+    * [Aggregator](#usage-aggregator)
+        * [Initialization](#aggregator-init)
+    * [Widgets and Interpreters](#usage-widgets-interpreters)
+        * [Initialization](#widgets-interpreters-init)
+        * [Custom Widgets and Interpreters](#custom-widgets-interpreters)
 
 
 ## Installation <a name="installation" />
@@ -93,12 +93,13 @@ The type of information that a widget detects is defined as its **out attributes
 * name
 * type
 * parameters (optional)
+
 These attributes are encapsulated within the widget's **description**.
 The description further includes a list of **const** attributes and a property **updateInterval**.
 The **const** attributes are legacy from context toolkit and right now there are none, thus none must be defined.
 The **updateInterval**, however, determines after how many milliseconds the widget repeats its detection.
 
-**Example of out attributes:**
+**Example of widget description:**
 ```JavaScript
 MyUnixTimeMillisecondsWidget.description = {
     out: [
@@ -135,7 +136,7 @@ The respective attributes are, analogously to widgets, encapsulated within the i
 * type
 * parameters (optional)
 
-**Example of in and out attributes:**
+**Example of interpreter description:**
 ```JavaScript
 MySecondsInterpreter.description = {
      in: [
