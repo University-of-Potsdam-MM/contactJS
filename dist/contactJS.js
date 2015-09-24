@@ -4476,6 +4476,8 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 					list = attributeListOrArray.getItems();
 				}
 
+				var interpretationsToBeQueried = [];
+
 				// add attributes to memory and persistent storage
 				for(var i in list){
 					var theAttribute = list[i];
@@ -4492,12 +4494,19 @@ define('aggregator',['MathUuid', 'widget', 'attribute', 'attributeList', 'subscr
 								var inAttributes = theInterpretation.inAttributeTypes;
 
 								if (inAttributes.containsTypeOf(theAttribute)) {
-									this.log("found an interpretation that needs "+theAttribute+".");
-									this.queryReferencedInterpretation(theInterpretation);
+									if ($.inArray(theInterpretation, interpretationsToBeQueried) == -1) {
+										this.log("found an new interpretation that needs "+theAttribute+".");
+										interpretationsToBeQueried.push(theInterpretation);
+									}
 								}
 							}
 						}
 					}
+				}
+
+				// call interpretations
+				for (var index in interpretationsToBeQueried) {
+					this.queryReferencedInterpretation(this._interpretations[index]);
 				}
 			};
 
@@ -5365,31 +5374,29 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 					}
 				}
 
-				if (!foundWidget) {
-					//check all interpreters' outAttributes
-					for (var index in this._unregisteredInterpreters) {
-						var theInterpreter = this._unregisteredInterpreters[index];
-						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
-							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-							//create temporary outAttributeList
-							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.out);
-							//create temporary inAttributeList
-							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in);
+				//check all interpreters' outAttributes
+				for (var index in this._unregisteredInterpreters) {
+					var theInterpreter = this._unregisteredInterpreters[index];
+					for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
+						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+						//create temporary outAttributeList
+						var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.out);
+						//create temporary inAttributeList
+						var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in);
 
-							for (var tempOutAttributeIndex in tempOutList.getItems()) {
-								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
-									console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested Attribute.");
+						for (var tempOutAttributeIndex in tempOutList.getItems()) {
+							if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
+								console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested Attribute.");
 
-									//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
-									if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
-										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
-										//theAggregator.addWidgetSubscription(newInterpreter);
-										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
-										// remove satisfied attributes
-										this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
-									} else {
-										console.log("Discoverer: I found an unregistered Interpreter but I couldn't satisfy the required Attributes.");
-									}
+								//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
+								if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
+									var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
+									//theAggregator.addWidgetSubscription(newInterpreter);
+									console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
+									// remove satisfied attributes
+									this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
+								} else {
+									console.log("Discoverer: I found an unregistered Interpreter but I couldn't satisfy the required Attributes.");
 								}
 							}
 						}

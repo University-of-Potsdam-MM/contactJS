@@ -327,6 +327,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 					list = attributeListOrArray.getItems();
 				}
 
+				var interpretationsToBeQueried = [];
+
 				// add attributes to memory and persistent storage
 				for(var i in list){
 					var theAttribute = list[i];
@@ -343,12 +345,19 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 								var inAttributes = theInterpretation.inAttributeTypes;
 
 								if (inAttributes.containsTypeOf(theAttribute)) {
-									this.log("found an interpretation that needs "+theAttribute+".");
-									this.queryReferencedInterpretation(theInterpretation);
+									if ($.inArray(theInterpretation, interpretationsToBeQueried) == -1) {
+										this.log("found an new interpretation that needs "+theAttribute+".");
+										interpretationsToBeQueried.push(theInterpretation);
+									}
 								}
 							}
 						}
 					}
+				}
+
+				// call interpretations
+				for (var index in interpretationsToBeQueried) {
+					this.queryReferencedInterpretation(this._interpretations[index]);
 				}
 			};
 
