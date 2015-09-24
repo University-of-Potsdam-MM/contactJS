@@ -25,7 +25,8 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 						"type":""
 					}
 				],
-				updateInterval: 30000
+				updateInterval: 30000,
+				requiredObjects: []
 			};
 
 			/**
@@ -555,6 +556,29 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			 */
 			Widget.prototype.doesSatisfyTypeOf = function(attribute) {
 				return this._outAttributes.containsTypeOf(attribute);
+			};
+
+			/**
+			 *
+			 * @returns {boolean}
+			 */
+			Widget.prototype.available = function() {
+				return this._checkRequiredObjects();
+			};
+
+			/**
+			 *
+			 * @returns {boolean}
+			 * @private
+			 */
+			Widget.prototype._checkRequiredObjects = function() {
+				if (this.constructor.description.requiredObjects && this.constructor.description.requiredObjects instanceof Array) {
+					for (var index in this.constructor.description.requiredObjects) {
+						var theRequiredObject = this.constructor.description.requiredObjects[index];
+						if (typeof window[theRequiredObject] == "undefined") return false;
+					}
+				}
+				return true;
 			};
 
 			return Widget;

@@ -3175,7 +3175,8 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 						"type":""
 					}
 				],
-				updateInterval: 30000
+				updateInterval: 30000,
+				requiredObjects: []
 			};
 
 			/**
@@ -3705,6 +3706,29 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			 */
 			Widget.prototype.doesSatisfyTypeOf = function(attribute) {
 				return this._outAttributes.containsTypeOf(attribute);
+			};
+
+			/**
+			 *
+			 * @returns {boolean}
+			 */
+			Widget.prototype.available = function() {
+				return this._checkRequiredObjects();
+			};
+
+			/**
+			 *
+			 * @returns {boolean}
+			 * @private
+			 */
+			Widget.prototype._checkRequiredObjects = function() {
+				if (this.constructor.description.requiredObjects && this.constructor.description.requiredObjects instanceof Array) {
+					for (var index in this.constructor.description.requiredObjects) {
+						var theRequiredObject = this.constructor.description.requiredObjects[index];
+						if (typeof window[theRequiredObject] == "undefined") return false;
+					}
+				}
+				return true;
 			};
 
 			return Widget;
@@ -5350,25 +5374,26 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 				console.log("Discoverer: Let's look at the unregistered components.");
 
 				//check all Widget's outAttributes
-				var foundWidget = false;
 				for(var widgetIndex in this._unregisteredWidgets){
 					var theWidget = this._unregisteredWidgets[widgetIndex];
-					for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
-						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
+					// check i
+					if (this._checkWidgetRequirements(theWidget)) {
+						for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
+							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+							//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
 
-						//create temporary OutAttributeList
-						var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.description.out);
+							//create temporary OutAttributeList
+							var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.description.out);
 
-						for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
-							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
-								console.log("Discoverer: I have found an unregistered "+theWidget.name+".");
-								var newWidget = new theWidget(this, tempWidgetOutList);
-								theAggregator.addWidgetSubscription(newWidget);
-								console.log("Discoverer: I registered "+theWidget.name+" and the Aggregator subscribed to it.");
-								// remove satisfied attributes
-								this._removeAttributesSatisfiedByWidget(aggregatorId, newWidget, unsatisfiedAttributes);
-								foundWidget = true;
+							for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
+								if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
+									console.log("Discoverer: I have found an unregistered "+theWidget.name+".");
+									var newWidget = new theWidget(this, tempWidgetOutList);
+									theAggregator.addWidgetSubscription(newWidget);
+									console.log("Discoverer: I registered "+theWidget.name+" and the Aggregator subscribed to it.");
+									// remove satisfied attributes
+									this._removeAttributesSatisfiedByWidget(aggregatorId, newWidget, unsatisfiedAttributes);
+								}
 							}
 						}
 					}
@@ -5527,6 +5552,22 @@ define('discoverer',['attributeList', 'attribute', 'translation', 'parameter', '
 			 */
 			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
 				return AttributeList.fromAttributeNames(this, attributeNames);
+			};
+
+			/**
+			 *
+			 * @param theWidget
+			 * @returns {boolean}
+			 * @private
+			 */
+			Discoverer.prototype._checkWidgetRequirements = function(theWidget) {
+				if (theWidget.description.requiredObjects && theWidget.description.requiredObjects instanceof Array) {
+					for (var index in theWidget.description.requiredObjects) {
+						var theRequiredObject = theWidget.description.requiredObjects[index];
+						if (typeof window[theRequiredObject] == "undefined") return false;
+					}
+				}
+				return true;
 			};
 
 			return Discoverer;

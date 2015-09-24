@@ -397,25 +397,26 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				console.log("Discoverer: Let's look at the unregistered components.");
 
 				//check all Widget's outAttributes
-				var foundWidget = false;
 				for(var widgetIndex in this._unregisteredWidgets){
 					var theWidget = this._unregisteredWidgets[widgetIndex];
-					for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
-						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-						//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
+					// check i
+					if (this._checkWidgetRequirements(theWidget)) {
+						for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
+							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
+							//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
 
-						//create temporary OutAttributeList
-						var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.description.out);
+							//create temporary OutAttributeList
+							var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.description.out);
 
-						for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
-							if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
-								console.log("Discoverer: I have found an unregistered "+theWidget.name+".");
-								var newWidget = new theWidget(this, tempWidgetOutList);
-								theAggregator.addWidgetSubscription(newWidget);
-								console.log("Discoverer: I registered "+theWidget.name+" and the Aggregator subscribed to it.");
-								// remove satisfied attributes
-								this._removeAttributesSatisfiedByWidget(aggregatorId, newWidget, unsatisfiedAttributes);
-								foundWidget = true;
+							for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
+								if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
+									console.log("Discoverer: I have found an unregistered "+theWidget.name+".");
+									var newWidget = new theWidget(this, tempWidgetOutList);
+									theAggregator.addWidgetSubscription(newWidget);
+									console.log("Discoverer: I registered "+theWidget.name+" and the Aggregator subscribed to it.");
+									// remove satisfied attributes
+									this._removeAttributesSatisfiedByWidget(aggregatorId, newWidget, unsatisfiedAttributes);
+								}
 							}
 						}
 					}
@@ -574,6 +575,22 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			 */
 			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
 				return AttributeList.fromAttributeNames(this, attributeNames);
+			};
+
+			/**
+			 *
+			 * @param theWidget
+			 * @returns {boolean}
+			 * @private
+			 */
+			Discoverer.prototype._checkWidgetRequirements = function(theWidget) {
+				if (theWidget.description.requiredObjects && theWidget.description.requiredObjects instanceof Array) {
+					for (var index in theWidget.description.requiredObjects) {
+						var theRequiredObject = theWidget.description.requiredObjects[index];
+						if (typeof window[theRequiredObject] == "undefined") return false;
+					}
+				}
+				return true;
 			};
 
 			return Discoverer;
