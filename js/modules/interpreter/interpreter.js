@@ -19,7 +19,8 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 						'name':'',
 						'type':''
 					}
-				]
+				],
+				requiredObjects: []
 			};
 
 			/**
