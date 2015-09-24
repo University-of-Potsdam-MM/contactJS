@@ -400,7 +400,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				for(var widgetIndex in this._unregisteredWidgets){
 					var theWidget = this._unregisteredWidgets[widgetIndex];
 					// check i
-					if (this._checkWidgetRequirements(theWidget)) {
+					if (this._checkComponentRequirements(theWidget)) {
 						for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
 							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
 							//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
@@ -579,15 +579,33 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 
 			/**
 			 *
-			 * @param theWidget
+			 * @param {Component} theComponent
 			 * @returns {boolean}
 			 * @private
 			 */
-			Discoverer.prototype._checkWidgetRequirements = function(theWidget) {
-				if (theWidget.description.requiredObjects && theWidget.description.requiredObjects instanceof Array) {
-					for (var index in theWidget.description.requiredObjects) {
-						var theRequiredObject = theWidget.description.requiredObjects[index];
-						if (typeof window[theRequiredObject] == "undefined") return false;
+			Discoverer.prototype._checkComponentRequirements = function(theComponent) {
+				if (theComponent.description.requiredObjects && theComponent.description.requiredObjects instanceof Array) {
+					for (var index in theComponent.description.requiredObjects) {
+						var theRequiredObject = theComponent.description.requiredObjects[index];
+						var theRequiredObjectSplit = theRequiredObject.split(".");
+
+						if (theRequiredObjectSplit.length > 1) {
+							var scope = window;
+							for (var objectIndex in theRequiredObjectSplit) {
+								var objectComponent = theRequiredObjectSplit[objectIndex];
+								if (typeof scope[objectComponent] !== "undefined") {
+									scope = scope[objectComponent]
+								} else {
+									console.log("Discoverer: A component requires "+theRequiredObject+", but it's not available.");
+									return false;
+								}
+							}
+						} else {
+							if (typeof window[theRequiredObject] === "undefined") {
+								console.log("Discoverer: A component requires "+theRequiredObject+", but it's not available.");
+								return false;
+							}
+						}
 					}
 				}
 				return true;

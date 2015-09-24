@@ -50,7 +50,7 @@ define(['parameterList'], function(ParameterList) {
              * @type {string}
              * @private
              */
-            this._value = 'NO_VALUE';
+            this._value = 'CV_UNKNOWN';
 
             /**
              * Time when the value was set.
