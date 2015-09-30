@@ -63,7 +63,7 @@ define(['parameterList'], function(ParameterList) {
 
             /**
              *
-             * @type {string}
+             * @type {*}
              * @private
              */
             this._value = this._VALUE_UNKNOWN;
@@ -323,7 +323,7 @@ define(['parameterList'], function(ParameterList) {
         /**
          * Sets the value.
          *
-         * @param {string} value value
+         * @param {*} value the value
          * @returns {Attribute}
          */
         Attribute.prototype.setValue = function(value) {

@@ -33,6 +33,12 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 			function Interpreter(discoverer) {
 				Component.call(this, discoverer);
 
+				/**
+				 * Name of the interpreter.
+				 *
+				 * @type {string}
+				 * @private
+				 */
 				this.name = 'Interpreter';
 
 				/**
