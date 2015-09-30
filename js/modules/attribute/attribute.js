@@ -16,6 +16,22 @@ define(['parameterList'], function(ParameterList) {
                 throw new Error("Attributes must be created by discoverer's buildAttribute() method!");
 
             /**
+             *
+             * @constant
+             * @type {string}
+             * @private
+             */
+            this._VALUE_UNKNOWN = "CV_UNKNOWN";
+
+            /**
+             *
+             * @constant
+             * @type {string}
+             * @private
+             */
+            this._VALUE_ERROR = "CV_ERROR";
+
+            /**
              * Name of the Attribute.
              *
              * @type {String}
@@ -50,7 +66,7 @@ define(['parameterList'], function(ParameterList) {
              * @type {string}
              * @private
              */
-            this._value = 'CV_UNKNOWN';
+            this._value = this._VALUE_UNKNOWN;
 
             /**
              * Time when the value was set.
@@ -141,11 +157,11 @@ define(['parameterList'], function(ParameterList) {
         /**
          * Builder for synonyms from single translation.
          *
-         * @param translation
+         * @param {Attribute} attribute
          * @returns {Attribute}
          */
-        Attribute.prototype.withSynonym = function(translation){
-            this.addSynonym(translation);
+        Attribute.prototype.withSynonym = function(attribute){
+            this.addSynonym(attribute);
             return this;
         };
 
@@ -185,6 +201,23 @@ define(['parameterList'], function(ParameterList) {
          */
         Attribute.prototype.getParameters = function(){
             return this._parameterList;
+        };
+
+        /**
+         * Returns the synonym with the specified name if existent or itself, otherwise.
+         *
+         * @param {String} name
+         * @returns {Attribute}
+         */
+        Attribute.prototype.getSynonymWithName = function(name) {
+            var synonyms = this.getSynonyms();
+            for (var index in synonyms) {
+                if (synonyms.hasOwnProperty(index)) {
+                    var synonym = this.getSynonyms()[index];
+                    if (synonym.getName() == name) return synonym;
+                }
+            }
+            return this;
         };
 
         /**
@@ -416,6 +449,28 @@ define(['parameterList'], function(ParameterList) {
             }
             if (!typeOnly) identifier += ":" + this.getValue();
             return identifier;
+        };
+
+        /**
+         *
+         */
+        Attribute.prototype.setValueUnknown = function() {
+            this.setValue(this._VALUE_UNKNOWN);
+        };
+
+        /**
+         *
+         */
+        Attribute.prototype.setValueError = function() {
+            this.setValue(this._VALUE_ERROR);
+        };
+
+        /**
+         *
+         * @returns {boolean}
+         */
+        Attribute.prototype.isKnown = function() {
+            return this.getValue() != this._VALUE_UNKNOWN && this.getValue() != this._VALUE_ERROR;
         };
 
         return Attribute;

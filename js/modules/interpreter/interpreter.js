@@ -143,10 +143,13 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 				if (!inAttributes || !this._canHandleInAttributes(inAttributes)) throw "Empty input attribute list or unhandled input attribute.";
 				if (!outAttributes || !this._canHandleOutAttributes(outAttributes)) throw "Empty output attribute list or unhandled output attribute.";
 
-				this._interpretData(inAttributes, outAttributes, function(interpretedData) {
+				// get expected input attributes
+				var expectedInAttributes = this._getExpectedInAttributes(inAttributes);
+
+				this._interpretData(expectedInAttributes, outAttributes, function(interpretedData) {
 					var response = new AttributeList().withItems(interpretedData);
 
-					if (!self._canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
+					if (!self._canHandleOutAttributes(response)) throw "Unhandled output attribute(s) generated.";
 
 					self._setInAttributes(inAttributes);
 					self.lastInterpretation = new Date();
@@ -218,6 +221,24 @@ define(['component', 'MathUuid', 'attribute', 'attributeList', 'interpreterResul
 					}
 				}
 				return true;
+			};
+
+			/**
+			 * Returns a attribute list which consists of the synonyms that are expected by the interpreter, if possible.
+			 *
+			 * @param attributes
+			 * @returns {*}
+			 * @private
+			 */
+			Interpreter.prototype._getExpectedInAttributes = function(attributes) {
+				var self = this;
+				var expectedAttributes = new AttributeList();
+
+				attributes.getItems().forEach(function(attribute, index) {
+					expectedAttributes.put(attribute.getSynonymWithName(self.getInAttributes().getItems()[index].getName()).setValue(attribute.getValue()));
+				});
+
+				return expectedAttributes;
 			};
 
 			/**

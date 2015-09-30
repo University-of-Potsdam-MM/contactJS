@@ -23,18 +23,19 @@ define(['abstractList', 'attribute'], function(AbstractList, Attribute) {
          *
          * @static
          * @param {Discoverer} discoverer
-         * @param {Array} attributeDescription
+         * @param {Array} attributeDescriptions
          * @returns {AttributeList}
          */
-        AttributeList.fromAttributeDescriptions = function(discoverer, attributeDescription) {
+        AttributeList.fromAttributeDescriptions = function(discoverer, attributeDescriptions) {
             var theAttributeList = new AttributeList();
-            for(var attributeDescriptionIndex in attributeDescription) {
-                theAttributeList.put(Attribute.fromAttributeDescription(discoverer, attributeDescription[attributeDescriptionIndex]));
+            for(var attributeDescriptionIndex in attributeDescriptions) {
+                theAttributeList.put(Attribute.fromAttributeDescription(discoverer, attributeDescriptions[attributeDescriptionIndex]));
             }
             return theAttributeList;
         };
 
         /**
+         * Creates an attribute list from an array of attribute names.
          *
          * @param {Discoverer} discoverer
          * @param {Array<String>} attributeNames

@@ -84,6 +84,11 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 				 */
 				this._subscribers = new SubscriberList();
 
+				/**
+				 *
+				 * @type {null}
+				 * @private
+				 */
 				this._updateInterval = null;
 
 				this._register();
@@ -538,7 +543,7 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			 */
 			Widget.prototype._intervalRunning = function() {
 				var self = this;
-				if (!isNaN(this.constructor.description.updateInterval) && this._updateInterval === null) {
+				if (typeof this.constructor.description.updateInterval !== "undefined" && !isNaN(this.constructor.description.updateInterval) && this._updateInterval === null) {
 					this.log("will query its context generator every "+this.constructor.description.updateInterval+" milliseconds ("+(this.constructor.description.updateInterval/1000)+" seconds).");
 					this._updateInterval = setInterval(function() {
 						self.log("Interval Trigger -> queryGenerator");

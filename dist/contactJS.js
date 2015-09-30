@@ -759,6 +759,22 @@ define('attribute',['parameterList'], function(ParameterList) {
                 throw new Error("Attributes must be created by discoverer's buildAttribute() method!");
 
             /**
+             *
+             * @constant
+             * @type {string}
+             * @private
+             */
+            this._VALUE_UNKNOWN = "CV_UNKNOWN";
+
+            /**
+             *
+             * @constant
+             * @type {string}
+             * @private
+             */
+            this._VALUE_ERROR = "CV_ERROR";
+
+            /**
              * Name of the Attribute.
              *
              * @type {String}
@@ -793,7 +809,7 @@ define('attribute',['parameterList'], function(ParameterList) {
              * @type {string}
              * @private
              */
-            this._value = 'CV_UNKNOWN';
+            this._value = this._VALUE_UNKNOWN;
 
             /**
              * Time when the value was set.
@@ -884,11 +900,11 @@ define('attribute',['parameterList'], function(ParameterList) {
         /**
          * Builder for synonyms from single translation.
          *
-         * @param translation
+         * @param {Attribute} attribute
          * @returns {Attribute}
          */
-        Attribute.prototype.withSynonym = function(translation){
-            this.addSynonym(translation);
+        Attribute.prototype.withSynonym = function(attribute){
+            this.addSynonym(attribute);
             return this;
         };
 
@@ -928,6 +944,23 @@ define('attribute',['parameterList'], function(ParameterList) {
          */
         Attribute.prototype.getParameters = function(){
             return this._parameterList;
+        };
+
+        /**
+         * Returns the synonym with the specified name if existent or itself, otherwise.
+         *
+         * @param {String} name
+         * @returns {Attribute}
+         */
+        Attribute.prototype.getSynonymWithName = function(name) {
+            var synonyms = this.getSynonyms();
+            for (var index in synonyms) {
+                if (synonyms.hasOwnProperty(index)) {
+                    var synonym = this.getSynonyms()[index];
+                    if (synonym.getName() == name) return synonym;
+                }
+            }
+            return this;
         };
 
         /**
@@ -1161,6 +1194,28 @@ define('attribute',['parameterList'], function(ParameterList) {
             return identifier;
         };
 
+        /**
+         *
+         */
+        Attribute.prototype.setValueUnknown = function() {
+            this.setValue(this._VALUE_UNKNOWN);
+        };
+
+        /**
+         *
+         */
+        Attribute.prototype.setValueError = function() {
+            this.setValue(this._VALUE_ERROR);
+        };
+
+        /**
+         *
+         * @returns {boolean}
+         */
+        Attribute.prototype.isKnown = function() {
+            return this.getValue() != this._VALUE_UNKNOWN && this.getValue() != this._VALUE_ERROR;
+        };
+
         return Attribute;
     })();
 });
@@ -1189,18 +1244,19 @@ define('attributeList',['abstractList', 'attribute'], function(AbstractList, Att
          *
          * @static
          * @param {Discoverer} discoverer
-         * @param {Array} attributeDescription
+         * @param {Array} attributeDescriptions
          * @returns {AttributeList}
          */
-        AttributeList.fromAttributeDescriptions = function(discoverer, attributeDescription) {
+        AttributeList.fromAttributeDescriptions = function(discoverer, attributeDescriptions) {
             var theAttributeList = new AttributeList();
-            for(var attributeDescriptionIndex in attributeDescription) {
-                theAttributeList.put(Attribute.fromAttributeDescription(discoverer, attributeDescription[attributeDescriptionIndex]));
+            for(var attributeDescriptionIndex in attributeDescriptions) {
+                theAttributeList.put(Attribute.fromAttributeDescription(discoverer, attributeDescriptions[attributeDescriptionIndex]));
             }
             return theAttributeList;
         };
 
         /**
+         * Creates an attribute list from an array of attribute names.
          *
          * @param {Discoverer} discoverer
          * @param {Array<String>} attributeNames
@@ -3234,6 +3290,11 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 				 */
 				this._subscribers = new SubscriberList();
 
+				/**
+				 *
+				 * @type {null}
+				 * @private
+				 */
 				this._updateInterval = null;
 
 				this._register();
@@ -3688,7 +3749,7 @@ define('widget',['component', 'MathUuid', 'callback', 'callbackList', 'attribute
 			 */
 			Widget.prototype._intervalRunning = function() {
 				var self = this;
-				if (!isNaN(this.constructor.description.updateInterval) && this._updateInterval === null) {
+				if (typeof this.constructor.description.updateInterval !== "undefined" && !isNaN(this.constructor.description.updateInterval) && this._updateInterval === null) {
 					this.log("will query its context generator every "+this.constructor.description.updateInterval+" milliseconds ("+(this.constructor.description.updateInterval/1000)+" seconds).");
 					this._updateInterval = setInterval(function() {
 						self.log("Interval Trigger -> queryGenerator");
@@ -4021,10 +4082,13 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 				if (!inAttributes || !this._canHandleInAttributes(inAttributes)) throw "Empty input attribute list or unhandled input attribute.";
 				if (!outAttributes || !this._canHandleOutAttributes(outAttributes)) throw "Empty output attribute list or unhandled output attribute.";
 
-				this._interpretData(inAttributes, outAttributes, function(interpretedData) {
+				// get expected input attributes
+				var expectedInAttributes = this._getExpectedInAttributes(inAttributes);
+
+				this._interpretData(expectedInAttributes, outAttributes, function(interpretedData) {
 					var response = new AttributeList().withItems(interpretedData);
 
-					if (!self._canHandleOutAttributes(response)) throw "Unhandled output attribute generated.";
+					if (!self._canHandleOutAttributes(response)) throw "Unhandled output attribute(s) generated.";
 
 					self._setInAttributes(inAttributes);
 					self.lastInterpretation = new Date();
@@ -4096,6 +4160,24 @@ define('interpreter',['component', 'MathUuid', 'attribute', 'attributeList', 'in
 					}
 				}
 				return true;
+			};
+
+			/**
+			 * Returns a attribute list which consists of the synonyms that are expected by the interpreter, if possible.
+			 *
+			 * @param attributes
+			 * @returns {*}
+			 * @private
+			 */
+			Interpreter.prototype._getExpectedInAttributes = function(attributes) {
+				var self = this;
+				var expectedAttributes = new AttributeList();
+
+				attributes.getItems().forEach(function(attribute, index) {
+					expectedAttributes.put(attribute.getSynonymWithName(self.getInAttributes().getItems()[index].getName()).setValue(attribute.getValue()));
+				});
+
+				return expectedAttributes;
 			};
 
 			/**
