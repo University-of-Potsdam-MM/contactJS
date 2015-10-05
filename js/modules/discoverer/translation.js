@@ -3,33 +3,32 @@
  * 
  * @module Translation
  */
-define('translation', ['attribute'], function(Attribute) {
+define('translation', ['contextInformation'], function(ContextInformation) {
 	return (function() {
 		/**
-		 * Constructs a translation tuple.
+		 * This class represents a translation tuple. It holds two synonymous contextual information.
 		 *
-		 * @classdesc This class represents a translation tuple. It holds two synonymous attribute types.
-		 * @requires attribute
-		 * @constructs Translation
+		 * @requires ContextInformation
+		 * @class Translation
 		 */
-		function Translation(fromAttribute, toAttribute) {
+		function Translation(fromContextInformation, toContextInformation) {
 			/**
 			 *
-			 * @type {?Attribute}
+			 * @type {?ContextInformation}
 			 * @private
 			 */
-			this._fromAttribute = null;
+			this._fromContextInformation = null;
 
 			/**
 			 *
-			 * @type {?Attribute}
+			 * @type {?ContextInformation}
 			 * @private
 			 */
-			this._toAttribute = null;
+			this._toContextInformation = null;
 
-			if (fromAttribute instanceof Attribute && toAttribute instanceof Attribute) {
-				this._fromAttribute = fromAttribute;
-				this._toAttribute = toAttribute;
+			if (fromContextInformation instanceof ContextInformation && toContextInformation instanceof ContextInformation) {
+				this._fromContextInformation = fromContextInformation;
+				this._toContextInformation = toContextInformation;
 			}
 
 			return this;
@@ -38,56 +37,56 @@ define('translation', ['attribute'], function(Attribute) {
 		/**
 		 * Return the target synonym.
 		 *
-		 * @returns {Attribute} The synonymous attribute
+		 * @returns {ContextInformation} The synonymous contextual information.
 		 */
 		Translation.prototype.getSynonym = function() {
-			return this._toAttribute;
+			return this._toContextInformation;
 		};
 
 		/**
-		 * Return the original attribute for which a translation exists.
+		 * Return the original contextual information for which a translation exists.
 		 *
-		 * @returns {Attribute} The original attribute
+		 * @returns {ContextInformation} The original contextual information
 		 */
 		Translation.prototype.getOrigin = function() {
-			return this._fromAttribute;
+			return this._fromContextInformation;
 		};
 
 		/**
 		 * Look for a translation and return true if one exists.
 		 *
-		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @param {ContextInformation} contextInformation The contextual information whose synonym is queried.
 		 * @returns {boolean}
 		 */
-		Translation.prototype.hasTranslation = function(attribute) {
-			return this._fromAttribute.equalsTypeOf(attribute);
+		Translation.prototype.hasTranslation = function(contextInformation) {
+			return this._fromContextInformation.isKindOf(contextInformation);
 		};
 
 		/**
 		 * Look for a translation result and return true if one exists.
 		 *
-		 * @param {Attribute} attribute Attribute whose synonym is queried
+		 * @param {ContextInformation} contextInformation The contextual information whose synonym is queried
 		 * @returns {boolean}
 		 */
-		Translation.prototype.isTranslation = function(attribute) {
-			return this._toAttribute.equalsTypeOf(attribute);
+		Translation.prototype.isTranslation = function(contextInformation) {
+			return this._toContextInformation.isKindOf(contextInformation);
 		};
 
 		/**
-		 * Look for a translation and return the (translated) attribute.
+		 * Look for a translation and return the (translated) contextual information.
 		 *
-		 * @param {Attribute} attribute Attribute whose synonym is queried
-		 * @returns {Attribute}
+		 * @param {ContextInformation} contextInformation The contextual information whose synonym is queried
+		 * @returns {ContextInformation}
 		 */
-		Translation.prototype.translate = function(attribute) {
-			if (this.hasTranslation(attribute) && !attribute.hasSynonym(this._toAttribute)) {
-				return attribute.withSynonym(this._toAttribute);
+		Translation.prototype.translate = function(contextInformation) {
+			if (this.hasTranslation(contextInformation) && !contextInformation.hasSynonym(this._toContextInformation)) {
+				return contextInformation.withSynonym(this._toContextInformation);
 			}
-			else if (this.isTranslation(attribute) && !attribute.hasSynonym(this._fromAttribute)) {
-				return attribute.withSynonym(this._fromAttribute);
+			else if (this.isTranslation(contextInformation) && !contextInformation.hasSynonym(this._fromContextInformation)) {
+				return contextInformation.withSynonym(this._fromContextInformation);
 			}
 			else {
-				return attribute;
+				return contextInformation;
 			}
 		};
 

@@ -1,11 +1,11 @@
-define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList', 'widget', 'interpreter', 'aggregator',  'interpretation' ],
-	function(AttributeList, Attribute, Translation, Parameter, ParameterList, Widget, Interpreter, Aggregator, Interpretation) {
+define(['contextInformation', 'contextInformationList', 'translation', 'parameter', 'parameterList', 'widget', 'interpreter', 'aggregator',  'interpretation' ],
+	function(ContextInformation, ContextInformationList, Translation, Parameter, ParameterList, Widget, Interpreter, Aggregator, Interpretation) {
 		return (function() {
 			/**
-			 * Constructor: All known components given in the associated functions will be registered as startup.
+			 * The Discoverer handles requests for components and contextual information.
+			 * All known components given in the associated functions will be registered as startup.
 			 *
-			 * @classdesc The Discoverer handles requests for components and attributes.
-			 * @constructs Discoverer
+			 * @class Discoverer
 			 */
 			function Discoverer(widgets, interpreters, translations) {
 				/**
@@ -50,7 +50,7 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 				this._unregisteredInterpreters = interpreters;
 
 				/**
-				 * List of translations or synonymous attributes, respectively.
+				 * List of translations or synonymous contextual information, respectively.
 				 *
 				 * @type {Array}
 				 * @private
@@ -63,27 +63,27 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
                     var translationArray = translations[i];
 					// check for correct cardinality
                     if (translationArray.length != 2)
-                        throw new Error("Translations must consist of exactly 2 attributes!");
-					// check for correct number of attribute building blocks
+                        throw new Error("Translations must consist of exactly 2 contextual information!");
+					// check for correct number of contextual information building blocks
 					for (var j in translationArray) {
                         if (translationArray[j].length > 3 || translationArray[j].length < 2)
                             throw new Error("Please provide a name, type and (optional) list of parameters!");
                     }
-					// build attributes from arrays containing name, type (and parameters)
-                    var firstAttribute = this.buildAttribute(
+					// build contextual information from arrays containing name, type (and parameters)
+                    var firstContextInformation = this.buildContextInformation(
                         translationArray[0][0],
                         translationArray[0][1],
                         translationArray[0][2],
                         false
                     );
-                    var secondAttribute = this.buildAttribute(
+                    var secondContextInformation = this.buildContextInformation(
                         translationArray[1][0],
                         translationArray[1][1],
                         translationArray[1][2],
                         false
                     );
-					// add built attributes to translations
-                    this._translations.push(new Translation(firstAttribute, secondAttribute));
+					// add built contextual information to translations
+                    this._translations.push(new Translation(firstContextInformation, secondContextInformation));
                 }
 
 				return this;
@@ -200,31 +200,31 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			};
 
 			/**
-			 * Returns all registered components that have the specified attribute as
-			 * outAttribute. It can be chosen between the verification of
-			 * all attributes or at least one attribute.
+			 * Returns all registered components that have the specified contextual information as
+			 * outContextInformation. It can be chosen between the verification of
+			 * all contextual information or at least one information.
 			 *
-			 * @param {AttributeList|Array} attributeListOrArray list of searched attributes
-			 * @param {Boolean} all choise of the verification mode
-			 * @param {Array} componentTypes Components types to search for
+			 * @param {ContextInformationList|Array.<ContextInformation>} contextInformationListOrArray A list of searched contextual information.
+			 * @param {Boolean} all Selection of the verification mode.
+			 * @param {Array} componentTypes Components types to search for.
 			 * @returns {Array}
 			 */
-			Discoverer.prototype.getRegisteredComponentsByAttributes = function(attributeListOrArray, all, componentTypes) {
+			Discoverer.prototype.getRegisteredComponentsByContextInformation = function(contextInformationListOrArray, all, componentTypes) {
 				var componentList = [];
 				var list = [];
 				if (typeof componentTypes == "undefined") componentTypes = [Widget, Interpreter, Aggregator];
-				if (attributeListOrArray instanceof Array) {
-					list = attributeListOrArray;
-				} else if (attributeListOrArray.constructor === AttributeList) {
-					list = attributeListOrArray.getItems();
+				if (contextInformationListOrArray instanceof Array) {
+					list = contextInformationListOrArray;
+				} else if (contextInformationListOrArray instanceof ContextInformationList) {
+					list = contextInformationListOrArray.getItems();
 				}
 				if (typeof list != "undefined") {
 					var components = this.getComponents(componentTypes);
 					for (var i in components) {
 						var theComponent = components[i];
-						if(all && this._containsAllAttributes(theComponent, list)) {
+						if(all && this._containsAllContextInformation(theComponent, list)) {
 							componentList.push(theComponent);
-						} else if(!all && this._containsAtLeastOneAttribute(theComponent, list)) {
+						} else if(!all && this._containsAtLeastOneContextInformation(theComponent, list)) {
 							componentList.push(theComponent);
 						}
 					}
@@ -242,23 +242,23 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			};
 
 			/**
-			 * Builds a new attribute from given name, type and parameters,
+			 * Builds a new {ContextInformation} from given name, type and parameters,
 			 * adding known translations to its synonyms.
 			 *
-			 * @param attributeName
-			 * @param attributeType
-			 * @param {Array} [parameterList=[]]
-             * @param {Boolean} [withSynonyms=true]
-			 * @returns {Attribute}
+			 * @param {string} contextInformationName
+			 * @param {string} contextInformationDataType
+			 * @param {array} [parameterList=[]]
+             * @param {boolean} [withSynonyms=true]
+			 * @returns {ContextInformation}
 			 */
-			Discoverer.prototype.buildAttribute = function(attributeName, attributeType, parameterList, withSynonyms) {
+			Discoverer.prototype.buildContextInformation = function(contextInformationName, contextInformationDataType, parameterList, withSynonyms) {
 				if (typeof withSynonyms == 'undefined') withSynonyms = true;
 				if (typeof parameterList == 'undefined') parameterList = [];
 
-                if (typeof attributeName != 'string' || typeof attributeType != 'string')
+                if (typeof contextInformationName != 'string' || typeof contextInformationDataType != 'string')
                     throw new Error("Parameters name and type must be of type String!");
 
-                var newAttribute = new Attribute(true).withName(attributeName).withType(attributeType);
+                var newContextInformation = new ContextInformation(true).withName(contextInformationName).withDataType(contextInformationDataType);
 
 				for (var i = 0; i < parameterList.length; i++) {
 					var param = parameterList[i];
@@ -266,17 +266,17 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 					var type = param[1];
 					var key = param[0];
 					if (typeof key != 'undefined' && typeof value != 'undefined')
-						newAttribute = newAttribute.withParameter(new Parameter().withKey(key).withType(type).withValue(value));
+						newContextInformation = newContextInformation.withParameter(new Parameter().withKey(key).withDataType(type).withValue(value));
 				}
 
                 if (withSynonyms) {
                     for (var index in this._translations) {
                         var translation = this._translations[index];
-						newAttribute = translation.translate(newAttribute);
+						newContextInformation = translation.translate(newContextInformation);
                     }
                 }
 
-				return newAttribute;
+				return newContextInformation;
 			};
 
 
@@ -284,17 +284,17 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			 * Helper *
 			 **********************************************************************/
 			/**
-			 * Helper: Verifies whether a component description contains all searched attributes.
+			 * Helper: Verifies whether a component description contains all searched contextual information.
 			 *
 			 * @private
 			 * @param {Widget|Interpreter|Aggregator} component description of a component
-			 * @param {Array} list searched attributes
+			 * @param {Array} list searched contextual information
 			 * @returns {boolean}
 			 */
-			Discoverer.prototype._containsAllAttributes = function(component, list) {
+			Discoverer.prototype._containsAllContextInformation = function(component, list) {
 				for (var j in list) {
-					var attribute = list[j];
-					if (!component.doesSatisfyTypeOf(attribute)) {
+					var contextInformation = list[j];
+					if (!component.doesSatisfyKindOf(contextInformation)) {
 						return false;
 					}
 				}
@@ -302,17 +302,17 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			};
 
 			/**
-			 * Helper: Verifies whether a component description contains at least on searched attributes.
+			 * Helper: Verifies whether a component description contains at least on searched contextual information.
 			 *
 			 * @private
 			 * @param {Widget|Interpreter|Aggregator} component description of a component
-			 * @param {Array} list searched attributes
+			 * @param {Array} list searched contextual information
 			 * @returns {boolean}
 			 */
-			Discoverer.prototype._containsAtLeastOneAttribute = function(component, list) {
+			Discoverer.prototype._containsAtLeastOneContextInformation = function(component, list) {
 				for (var j in list) {
-					var attribute = list[j];
-					if (component.doesSatisfyTypeOf(attribute)) {
+					var contextInformation = list[j];
+					if (component.doesSatisfyKindOf(contextInformation)) {
 						return true;
 					}
 				}
@@ -320,39 +320,38 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			};
 
 			/**
-			 * Searches for components that can satisfy the requested attributes. Searches recursively through all
+			 * Searches for components that can satisfy the requested contextual information. Searches recursively through all
 			 * registered and unregistered components and initiates them.
 			 *
 			 * @param {String} aggregatorId The aggregator's ID
-			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
-			 * @param {Boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {ContextInformationList} unsatisfiedContextInformation A list of contextual information that components should be searched for.
+			 * @param {Boolean} all If true all contextual information must be satisfied by a single component.
 			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
-			 * @private
 			 */
-			Discoverer.prototype.getComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes){
-				// the discoverer gets a list of attributes to satisfy
-				console.log('Discoverer: I will look for components that satisfy the following Attributes: '+unsatisfiedAttributes.getItems()+'.' );
+			Discoverer.prototype.getComponentsForUnsatisfiedContextInformation = function(aggregatorId, unsatisfiedContextInformation, all, componentTypes){
+				// the discoverer gets a list of contextual information to satisfy
+				console.log('Discoverer: I will look for components that satisfy the following contextual information: '+unsatisfiedContextInformation.getItems()+'.' );
 				// look at all the already registered components
-				this._getRegisteredComponentsForUnsatisfiedAttributes(aggregatorId, unsatisfiedAttributes, all, componentTypes);
+				this._getRegisteredComponentsForUnsatisfiedContextInformation(aggregatorId, unsatisfiedContextInformation, all, componentTypes);
 				// look at all unregistered components
-				this._getUnregisteredComponentsForUnsatisfiedAttributes(aggregatorId, unsatisfiedAttributes);
+				this._getUnregisteredComponentsForUnsatisfiedContextInformation(aggregatorId, unsatisfiedContextInformation);
 			};
 
 			/**
-			 * Searches for registered components that satisfy the requested attributes.
+			 * Searches for registered components that satisfy the requested contextual information.
 			 *
 			 * @param {String} aggregatorId The aggregator's ID
-			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
-			 * @param {Boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {ContextInformationList} unsatisfiedContextInformation A list of contextual information that components should be searched for.
+			 * @param {Boolean} all If true all contextual information must be satisfied by a single component.
 			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
 			 * @private
 			 */
-			Discoverer.prototype._getRegisteredComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes, all, componentTypes) {
+			Discoverer.prototype._getRegisteredComponentsForUnsatisfiedContextInformation = function(aggregatorId, unsatisfiedContextInformation, all, componentTypes) {
 				var theAggregator = this.getAggregator(aggregatorId);
 				console.log("Discoverer: Let's look at my registered components.");
 
-				var relevantComponents = this.getRegisteredComponentsByAttributes(unsatisfiedAttributes, all, componentTypes);
-				console.log("Discoverer: I found " + relevantComponents.length + " registered component(s) that might satisfy the requested attributes.");
+				var relevantComponents = this.getRegisteredComponentsByContextInformation(unsatisfiedContextInformation, all, componentTypes);
+				console.log("Discoverer: I found " + relevantComponents.length + " registered component(s) that might satisfy the requested contextual information.");
 
 				//iterate over the found components
 				for(var index in relevantComponents) {
@@ -365,17 +364,17 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 						if (theComponent instanceof Widget) {
 							theAggregator.addWidgetSubscription(theComponent);
 							console.log("Discoverer: I found "+theComponent.getName()+" and the Aggregator did subscribe to it.");
-							this._removeAttributesSatisfiedByWidget(aggregatorId, theComponent, unsatisfiedAttributes);
-						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its in attributes can be satisfied, add the interpreter
+							this._removeContextInformationSatisfiedByWidget(aggregatorId, theComponent, unsatisfiedContextInformation);
+						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its input contextual information can be satisfied, add the interpreter
 							console.log("Discoverer: It's an Interpreter.");
 
-							if (this._checkInterpreterInAttributes(aggregatorId, theComponent)) {
-								// remove satisfied attributes
-								this._removeAttributesSatisfiedByInterpreter(aggregatorId, theComponent, unsatisfiedAttributes);
+							if (this._checkInterpreterInContextInformation(aggregatorId, theComponent)) {
+								// remove satisfied contextual information
+								this._removeContextInformationSatisfiedByInterpreter(aggregatorId, theComponent, unsatisfiedContextInformation);
 							} else {
-								console.log("Discoverer: I found a registered Interpreter but I couldn't satisfy the required attributes.");
-								for (var j in theComponent.getInAttributes().getItems()) {
-									console.log("Discoverer: It is missing " + theComponent.getInAttributes().getItems()[j] + ".");
+								console.log("Discoverer: I found a registered Interpreter but I couldn't satisfy the required contextual information.");
+								for (var j in theComponent.getInContextInformation().getItems()) {
+									console.log("Discoverer: It is missing " + theComponent.getInContextInformation().getItems()[j] + ".");
 								}
 							}
 						} else {
@@ -386,66 +385,66 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			};
 
 			/**
-			 * Searches for unregistered components that satisfy the requested attributes.
+			 * Searches for unregistered components that satisfy the requested contextual information.
 			 *
 			 * @param {String} aggregatorId The aggregator's ID
-			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
+			 * @param {ContextInformationList} unsatisfiedContextInformation A list of contextual information that components should be searched for.
 			 * @private
 			 */
-			Discoverer.prototype._getUnregisteredComponentsForUnsatisfiedAttributes = function(aggregatorId, unsatisfiedAttributes) {
+			Discoverer.prototype._getUnregisteredComponentsForUnsatisfiedContextInformation = function(aggregatorId, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 				console.log("Discoverer: Let's look at the unregistered components.");
 
-				//check all Widget's outAttributes
+				//check all Widget's output contextual information
 				for(var widgetIndex in this._unregisteredWidgets){
 					var theWidget = this._unregisteredWidgets[widgetIndex];
 					// check i
 					if (this._checkComponentRequirements(theWidget)) {
-						for(var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()){
-							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-							//if a Widget can satisfy the Attribute, register it and subscribe the Aggregator
+						for(var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()){
+							var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
+							//if a Widget can satisfy the ContextInformation, register it and subscribe the Aggregator
 
-							//create temporary OutAttributeList
-							var tempWidgetOutList = AttributeList.fromAttributeDescriptions(this, theWidget.description.out);
+							//create temporary OutContextInformationList
+							var tempWidgetOutList = ContextInformationList.fromContextInformationDescriptions(this, theWidget.description.out);
 
 							for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
-								if (theUnsatisfiedAttribute.equalsTypeOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
+								if (theUnsatisfiedContextInformation.isKindOf(tempWidgetOutList.getItems()[tempWidgetOutListIndex])) {
 									console.log("Discoverer: I have found an unregistered "+theWidget.name+".");
 									var newWidget = new theWidget(this, tempWidgetOutList);
 									theAggregator.addWidgetSubscription(newWidget);
 									console.log("Discoverer: I registered "+theWidget.name+" and the Aggregator subscribed to it.");
-									// remove satisfied attributes
-									this._removeAttributesSatisfiedByWidget(aggregatorId, newWidget, unsatisfiedAttributes);
+									// remove satisfied contextual information
+									this._removeContextInformationSatisfiedByWidget(aggregatorId, newWidget, unsatisfiedContextInformation);
 								}
 							}
 						}
 					}
 				}
 
-				//check all interpreters' outAttributes
+				//check all interpreters' output contextual information
 				for (var index in this._unregisteredInterpreters) {
 					var theInterpreter = this._unregisteredInterpreters[index];
 					if (this._checkComponentRequirements(theInterpreter)) {
-						for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
-							var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-							//create temporary outAttributeList
-							var tempOutList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.out);
-							//create temporary inAttributeList
-							var tempInList = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in);
+						for (var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()) {
+							var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
+							//create temporary outContextInformationList
+							var tempOutList = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.out);
+							//create temporary inContextInformationList
+							var tempInList = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.in);
 
-							for (var tempOutAttributeIndex in tempOutList.getItems()) {
-								if (theUnsatisfiedAttribute.equalsTypeOf(tempOutList.getItems()[tempOutAttributeIndex])) {
-									console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested Attribute.");
+							for (var tempOutContextInformationIndex in tempOutList.getItems()) {
+								if (theUnsatisfiedContextInformation.isKindOf(tempOutList.getItems()[tempOutContextInformationIndex])) {
+									console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested contextual information.");
 
-									//if an interpreter can satisfy the Attribute, check if the inAttributes are satisfied
-									if (this._checkInterpreterInAttributes(aggregatorId, theInterpreter)) {
+									//if an interpreter can satisfy the ContextInformation, check if the inContextInformation are satisfied
+									if (this._checkInterpreterInContextInformation(aggregatorId, theInterpreter)) {
 										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
 										//theAggregator.addWidgetSubscription(newInterpreter);
 										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
-										// remove satisfied attributes
-										this._removeAttributesSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedAttributes);
+										// remove satisfied contextual information
+										this._removeContextInformationSatisfiedByInterpreter(aggregatorId, newInterpreter, unsatisfiedContextInformation);
 									} else {
-										console.log("Discoverer: I found an unregistered Interpreter but I couldn't satisfy the required Attributes.");
+										console.log("Discoverer: I found an unregistered Interpreter but I couldn't satisfy the required contextual information.");
 									}
 								}
 							}
@@ -461,57 +460,57 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			 * @returns {boolean}
 			 * @private
 			 */
-			Discoverer.prototype._checkInterpreterInAttributes = function(aggregatorId, theInterpreter) {
+			Discoverer.prototype._checkInterpreterInContextInformation = function(aggregatorId, theInterpreter) {
 				var theAggregator = this.getComponent(aggregatorId);
-				var canSatisfyInAttributes = true;
-				var attributes;
+				var canSatisfyInContextInformation = true;
+				var contextInformation;
 				if (theInterpreter instanceof Interpreter) {
-					attributes = theInterpreter.getInAttributes().getItems();
+					contextInformation = theInterpreter.getInContextInformation().getItems();
 				} else {
-					attributes = AttributeList.fromAttributeDescriptions(this, theInterpreter.description.in).getItems();
+					contextInformation = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.in).getItems();
 				}
 
-				for (var attributeIdentifier in attributes) {
-					// get the attribute
-					var theAttribute = attributes[attributeIdentifier];
-					console.log("Discoverer: The Interpreter needs the Attribute: "+theAttribute.toString(true)+".");
-					// if required attribute is not already satisfied by the aggregator search for components that do
-					if (!theAggregator.doesSatisfyTypeOf(theAttribute)) {
-						console.log("Discoverer: The Aggregator doesn't satisfy "+theAttribute.toString(true)+", but I will search for components that do.");
-						var newAttributeList = new AttributeList();
-						newAttributeList.put(theAttribute);
-						this.getComponentsForUnsatisfiedAttributes(aggregatorId, newAttributeList, false, [Widget, Interpreter]);
-						// if the attribute still can't be satisfied drop the interpreter
-						if (!theAggregator.doesSatisfyTypeOf(theAttribute)) {
-							console.log("Discoverer: I couldn't find a component to satisfy "+theAttribute.toString(true)+". Dropping interpreter.");
-							canSatisfyInAttributes = false;
+				for (var contextInformationIdentifier in contextInformation) {
+					// get the contextual information
+					var theContextInformation = contextInformation[contextInformationIdentifier];
+					console.log("Discoverer: The Interpreter needs the contextual information: "+theContextInformation.toString(true)+".");
+					// if required contextual information is not already satisfied by the aggregator search for components that do
+					if (!theAggregator.doesSatisfyKindOf(theContextInformation)) {
+						console.log("Discoverer: The Aggregator doesn't satisfy "+theContextInformation.toString(true)+", but I will search for components that do.");
+						var newContextInformationList = new ContextInformationList();
+						newContextInformationList.put(theContextInformation);
+						this.getComponentsForUnsatisfiedContextInformation(aggregatorId, newContextInformationList, false, [Widget, Interpreter]);
+						// if the contextual information still can't be satisfied drop the interpreter
+						if (!theAggregator.doesSatisfyKindOf(theContextInformation)) {
+							console.log("Discoverer: I couldn't find a component to satisfy "+theContextInformation.toString(true)+". Dropping interpreter.");
+							canSatisfyInContextInformation = false;
 							break;
 						}
 					} else {
-						console.log("Discoverer: It seems that the Aggregator already satisfies the Attribute "+theAttribute.toString(true)+". Will move on.");
+						console.log("Discoverer: It seems that the Aggregator already satisfies the contextual information "+theContextInformation.toString(true)+". Will move on.");
 					}
 				}
 
-				return canSatisfyInAttributes;
+				return canSatisfyInContextInformation;
 			};
 
 			/**
 			 *
 			 * @param aggregatorId
 			 * @param theWidget
-			 * @param unsatisfiedAttributes
+			 * @param unsatisfiedContextInformation
 			 * @private
 			 */
-			Discoverer.prototype._removeAttributesSatisfiedByWidget = function(aggregatorId, theWidget, unsatisfiedAttributes) {
+			Discoverer.prototype._removeContextInformationSatisfiedByWidget = function(aggregatorId, theWidget, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 
-				var attributes = theWidget.getOutAttributes().getItems();
-				for (var attributeIndex in attributes) {
-					var theAttribute = attributes[attributeIndex];
-					// add the attribute type to the aggregator's list of handled attribute types
-					if (!theAggregator.getOutAttributes().containsTypeOf(theAttribute)) theAggregator.addOutAttribute(theAttribute);
-					console.log("Discoverer: The Aggregator can now satisfy attribute "+theAttribute.toString(true)+" with the help of "+theWidget.getName()+".");
-					unsatisfiedAttributes.removeAttributeWithTypeOf(theAttribute);
+				var contextInformation = theWidget.getOutContextInformation().getItems();
+				for (var contextInformationIndex in contextInformation) {
+					var theContextInformation = contextInformation[contextInformationIndex];
+					// add the contextual information type to the aggregator's list of handled contextual information
+					if (!theAggregator.getOutContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutContextInformation(theContextInformation);
+					console.log("Discoverer: The Aggregator can now satisfy contextual information "+theContextInformation.toString(true)+" with the help of "+theWidget.getName()+".");
+					unsatisfiedContextInformation.removeContextInformationOfKind(theContextInformation);
 				}
 			};
 
@@ -519,64 +518,64 @@ define(['attributeList', 'attribute', 'translation', 'parameter', 'parameterList
 			 *
 			 * @param aggregatorId
 			 * @param theInterpreter
-			 * @param unsatisfiedAttributes
+			 * @param unsatisfiedContextInformation
 			 * @private
 			 */
-			Discoverer.prototype._removeAttributesSatisfiedByInterpreter = function(aggregatorId, theInterpreter, unsatisfiedAttributes) {
+			Discoverer.prototype._removeContextInformationSatisfiedByInterpreter = function(aggregatorId, theInterpreter, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 
-				var attributes = theInterpreter.getOutAttributes().getItems();
-				for (var attributeIndex in attributes) {
-					var theAttribute = attributes[attributeIndex];
-					// add the attribute type to the aggregator's list of handled attribute types
-					for (var unsatisfiedAttributeIndex in unsatisfiedAttributes.getItems()) {
-						var theUnsatisfiedAttribute = unsatisfiedAttributes.getItems()[unsatisfiedAttributeIndex];
-						if (theUnsatisfiedAttribute.equalsTypeOf(theAttribute)) {
-							if (!theAggregator.getOutAttributes().containsTypeOf(theAttribute)) theAggregator.addOutAttribute(theAttribute);
-							console.log("Discoverer: The Aggregator can now satisfy Attribute "+theAttribute.toString(true)+" with the help of "+theInterpreter.getName()+".");
-							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInAttributes(), new AttributeList().withItems([theUnsatisfiedAttribute])));
+				var contextInformation = theInterpreter.getOutContextInformation().getItems();
+				for (var contextInformationIndex in contextInformation) {
+					var theContextInformation = contextInformation[contextInformationIndex];
+					// add the contextual informationto the aggregator's list of handled contextual information
+					for (var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()) {
+						var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
+						if (theUnsatisfiedContextInformation.isKindOf(theContextInformation)) {
+							if (!theAggregator.getOutContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutContextInformation(theContextInformation);
+							console.log("Discoverer: The Aggregator can now satisfy contextual information "+theContextInformation.toString(true)+" with the help of "+theInterpreter.getName()+".");
+							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInContextInformation(), new ContextInformationList().withItems([theUnsatisfiedContextInformation])));
 						}
 					}
-					unsatisfiedAttributes.removeAttributeWithTypeOf(theAttribute, true);
+					unsatisfiedContextInformation.removeContextInformationOfKind(theContextInformation, true);
 				}
 			};
 
 			/**
 			 *
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
-			Discoverer.prototype.getPossibleAttributes = function() {
-				var possibleAttributes = new AttributeList();
+			Discoverer.prototype.getPossibleContextInformation = function() {
+				var possibleContextInformation = new ContextInformationList();
 
 				// iterate over all unregistered widgets
 				for (var widgetIndex in this._unregisteredWidgets) {
 					var theWidget = this._unregisteredWidgets[widgetIndex];
-					for (var attributeDescriptionIndex in theWidget.description.out) {
-						var theAttribute = Attribute.fromAttributeDescription(this, theWidget.description.out[attributeDescriptionIndex]);
-						possibleAttributes.putIfTypeNotContained(theAttribute);
+					for (var contextInformationDescriptionIndex in theWidget.description.out) {
+						var theContextInformation = ContextInformation.fromContextInformationDescription(this, theWidget.description.out[contextInformationDescriptionIndex]);
+						possibleContextInformation.putIfKindOfNotContained(theContextInformation);
 					}
 				}
 
 				// iterate over all unregistered interpreters
 				for (var interpreterIndex in this._unregisteredInterpreters) {
 					var theInterpreter = this._unregisteredInterpreters[interpreterIndex];
-					for (var outAttributeDescriptionIndex in theInterpreter.description.out) {
-						var theAttribute = Attribute.fromAttributeDescription(this, theInterpreter.description.out[outAttributeDescriptionIndex]);
-						possibleAttributes.putIfTypeNotContained(theAttribute);
+					for (var outContextInformationDescriptionIndex in theInterpreter.description.out) {
+						var theContextInformation = ContextInformation.fromContextInformationDescription(this, theInterpreter.description.out[outContextInformationDescriptionIndex]);
+						possibleContextInformation.putIfKindOfNotContained(theContextInformation);
 					}
 				}
 
-				return possibleAttributes;
+				return possibleContextInformation;
 			};
 
 			/**
 			 *
 			 *
-			 * @param attributeNames
+			 * @param contextInformationNames
 			 * @returns {*}
 			 */
-			Discoverer.prototype.getAttributesWithNames = function(attributeNames) {
-				return AttributeList.fromAttributeNames(this, attributeNames);
+			Discoverer.prototype.getContextInformationWithNames = function(contextInformationNames) {
+				return ContextInformation.fromContextInformationNames(this, contextInformationNames);
 			};
 
 			/**

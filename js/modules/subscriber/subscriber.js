@@ -3,8 +3,8 @@
  * 
  * @module Subscriber
  */
-define(['attributeList', 'callbackList', 'condition', 'conditionList'],
- 	function(AttributeList, CallbackList, Condition, ConditionList)  {
+define(['contextInformationList', 'callbackList', 'condition', 'conditionList'],
+ 	function(ContextInformationList, CallbackList, Condition, ConditionList)  {
 		return (function() {
 			/**
 			 * Constructor: Initializes the subscriptionCallbacks, subscriptionCallbacks and conditions.
@@ -38,14 +38,14 @@ define(['attributeList', 'callbackList', 'condition', 'conditionList'],
 				this._subscriptionCallbacks = new CallbackList();
 
 				/**
-				 * Restricts the associated Attributes of the callback to a subset
+				 * Restricts the associated contextual information of the callback to a subset
 				 * 		(i.e: the subscriber wants a subset from the available the context data).
-				 * 		If no attributes are specified, all available attributes will returned.
+				 * 		If no contextual information is specified, all available contextual information will be returned.
 				 *
 				 * @private
-				 * @type {AttributeList}
+				 * @type {ContextInformationList}
 				 */
-				this._attributesSubset = new AttributeList();
+				this._contextInformationSubset = new ContextInformationList();
 
 				/**
 				 * Defines special conditions for notification.
@@ -92,13 +92,13 @@ define(['attributeList', 'callbackList', 'condition', 'conditionList'],
 			};
 
 			/**
-			 * Builder for attributesSubset.
+			 * Builder for contextInformationSubset.
 			 *
-			 * @param {AttributeList} attributesSubset attributesSubset
+			 * @param {ContextInformationList} contextInformationList
 			 * @returns {Subscriber}
 			 */
-			Subscriber.prototype.withAttributesSubset = function(attributesSubset) {
-				this.setAttributesSubset(attributesSubset);
+			Subscriber.prototype.withContextInformationSubset = function(contextInformationList) {
+				this.setContextInformationSubset(contextInformationList);
 				return this;
 			};
 
@@ -174,29 +174,29 @@ define(['attributeList', 'callbackList', 'condition', 'conditionList'],
 			};
 
 			/**
-			 * Returns the attributesSubset.
+			 * Returns the contextInformationSubset.
 			 *
-			 * @returns {string}
+			 * @returns {ContextInformationList}
 			 */
-			Subscriber.prototype.getAttributesSubset = function() {
-				return this._attributesSubset;
+			Subscriber.prototype.getContextInformationSubset = function() {
+				return this._contextInformationSubset;
 			};
 
 			/**
-			 * Sets the attributesSubset.
+			 * Sets the contextInformationSubset.
 			 *
-			 * @param {AttributeList} attributesSubset attributesSubset
+			 * @param {ContextInformationList} contextInformationList
 			 */
-			Subscriber.prototype.setAttributesSubset = function(attributesSubset){
-				if(attributesSubset && attributesSubset.constructor === AttributeList) {
-					this._attributesSubset = attributesSubset;
+			Subscriber.prototype.setContextInformationSubset = function(contextInformationList){
+				if(contextInformationList && contextInformationList instanceof ContextInformationList) {
+					this._contextInformationSubset = contextInformationList;
 				}
 			};
 
 			/**
 			 * Returns the conditions.
 			 *
-			 * @returns {string}
+			 * @returns {ConditionList}
 			 */
 			Subscriber.prototype.getConditions = function() {
 				return this._conditions;
@@ -254,7 +254,7 @@ define(['attributeList', 'callbackList', 'condition', 'conditionList'],
 					if(subscriber.getSubscriberName() == this.getSubscriberName()
 						&& subscriber.getSubscriberId() == this.getSubscriberId()
 						&& subscriber.getSubscriptionCallbacks().equals(this.getSubscriptionCallbacks())
-						&& subscriber.getAttributesSubset().equals(this.getAttributesSubset())
+						&& subscriber.getContextInformationSubset().equals(this.getContextInformationSubset())
 						&& subscriber.getConditions().equals(this.getConditions())){
 						return true;
 					}

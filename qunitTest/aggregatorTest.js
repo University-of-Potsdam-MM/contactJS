@@ -3,11 +3,10 @@ require(['configTest'], function() {
 		QUnit.test( "aggregatorTest.js", function(assert) {
 			var discoverer = new contactJS.Discoverer();
 
-			var latitudeType = discoverer.buildAttribute('latitude', 'double');
-			var longitudeType = discoverer.buildAttribute('longitude', 'double');
+			var latitudeType = discoverer.buildContextInformation('latitude', 'double');
+			var longitudeType = discoverer.buildContextInformation('longitude', 'double');
 
 			//initializes the infrastructure
-			var discoverer = new contactJS.Discoverer();
 			new GeoLocationWidget(discoverer);
 
 			var testAggregator = new contactJS.Aggregator(discoverer);
@@ -26,8 +25,8 @@ require(['configTest'], function() {
 			//subscription
 			var widgets = discoverer.getComponents([contactJS.Widget]);
 
-			var list = new contactJS.AttributeList().withItems([latitudeType, longitudeType]);
-			var callList = new contactJS.CallbackList().withItems([new contactJS.Callback().withName('UPDATE').withAttributeTypes(list)]);
+			var list = new contactJS.ContextInformationList().withItems([latitudeType, longitudeType]);
+			var callList = new contactJS.CallbackList().withItems([new contactJS.Callback().withName('UPDATE').withContextInformation(list)]);
 			testAggregator.addWidgetSubscription(widgets[0], callList);
 
 			widgetIds = testAggregator.getWidgets();
@@ -38,17 +37,17 @@ require(['configTest'], function() {
 
 			assert.equal(subscriber.size(), 1,"subscribe Passed!: one subscribed Widget in geolocationWidget too");
 
-			var values = testAggregator.getOutAttributes();
+			var values = testAggregator.getOutContextInformation();
 			assert.equal( values.size(), 2, "Passed!: two available attributes" );
-			var latitude = values.getAttributeWithTypeOf(latitudeType);
+			var latitude = values.getContextInformationOfKind(latitudeType);
 			assert.equal(latitude.getName(), 'latitude',"subscribed Attributes Passed!: latitude exists" );
-			assert.equal(latitude.getValue(), 'NO_VALUE',"subscribed Attributes Passed!: value of latitude is NO_VALUE" );
+			assert.equal(latitude.getValue(), contactJS.ContextInformation.VALUE_UNKNOWN, "subscribed Attributes Passed!: value of latitude is NO_VALUE" );
 
-			var longitude =values.getAttributeWithTypeOf(longitudeType);
+			var longitude =values.getContextInformationOfKind(longitudeType);
 			assert.equal(longitude.getName(), 'longitude',"subscribed Attributes Passed!: longitude exists" );
-			assert.equal(longitude.getValue(), 'NO_VALUE',"subscribed Attributes Passed!: value of longitude is NO_VALUE" );
+			assert.equal(longitude.getValue(), contactJS.ContextInformation.VALUE_UNKNOWN, "subscribed Attributes Passed!: value of longitude is NO_VALUE" );
 
-			//unsubscribe
+			// unsubscribe
 			testAggregator.unsubscribeFrom(widgetIds[0]);
 			assert.equal( widgetIds.length, 0,"unsubscribeFrom Passed!: no widgetHandles in Aggregator" );
 			var subscriber = geoLocationWidget.getSubscriber();

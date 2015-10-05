@@ -52,8 +52,8 @@ require(['configTest'], function() {
 				assert.equal( interpreter2.getName(), 'AddressInterpreter',"getComponent passed!: name of the instance is te expected one" );
 				
 				//register Aggregator
-				new contactJS.Aggregator(discoverer, new contactJS.AttributeList().withItems([
-					discoverer.buildAttribute('formattedAddress', 'string')
+				new contactJS.Aggregator(discoverer, new contactJS.ContextInformationList().withItems([
+					discoverer.buildContextInformation('formattedAddress', 'string')
 				]));
 
 				//tested with getWidgetDescriptions

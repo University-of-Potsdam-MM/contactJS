@@ -3,12 +3,12 @@
  * 
  * @module Widget
  */
-define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attributeList', 'conditionList', 'subscriber', 'subscriberList'],
-	function(Component, MathUuid, Callback, CallbackList, Attribute, AttributeList, ConditionList, Subscriber, SubscriberList) {
+define(['component', 'callback', 'callbackList', 'contextInformation', 'contextInformationList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(Component, Callback, CallbackList, ContextInformation, ContextInformationList, ConditionList, Subscriber, SubscriberList) {
 		return (function() {
 
 			/**
-			 * Defines all outAttributes and constOutAttributes as an object.
+			 * Defines all output contextual information and constant output contextual information as an object.
 			 * @type {object}
 			 * @public
 			 */
@@ -31,16 +31,15 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 
 			/**
 			 * Constructor: Generates the ID and initializes the
-			 * Widget with attributes, callbacks and subscriber
+			 * Widget with contextual information, callbacks and subscriber
 			 * that are specified in the provided functions.
 			 *
-			 * @param {Discoverer} discoverer
- 			 * @param {AttributeList} attributes
 			 * @abstract
-			 * @classdesc The Widget handles the access to sensors.
-			 * @constructs Widget
+			 * @class Widget
+			 * @extends Component
+			 * @param {Discoverer} discoverer
 			 */
-			function Widget(discoverer, attributes) {
+			function Widget(discoverer) {
 				Component.call(this, discoverer);
 
 				/**
@@ -52,21 +51,21 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 				this._name  = 'Widget';
 
 				/**
-				 * This temporary variable is used for storing the old attribute values.
+				 * This temporary variable is used for storing the old contextual information values.
 				 * So these can be used to check conditions.
 				 *
-				 * @type {AttributeList}
+				 * @type {ContextInformationList}
 				 * @protected
 				 */
-				this._oldOutAttributes = new AttributeList();
+				this._oldOutContextInformation = new ContextInformationList();
 
 				/**
 				 *
 				 * @protected
-				 * @type {AttributeList}
-				 * @desc All available constant Attributes and their values.
+				 * @type {ContextInformationList}
+				 * @desc All available constant contextual information and their values.
 				 */
-				this._constantOutAttributes = new AttributeList();
+				this._constantOutContextInformation = new ContextInformationList();
 
 				/**
 				 *
@@ -92,7 +91,7 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 				this._updateInterval = null;
 
 				this._register();
-				this._init(attributes);
+				this._init();
 
 				return this;
 			}
@@ -106,28 +105,28 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			 *
 			 * @protected
 			 */
-			Widget.prototype._init = function(attributes) {
-				this._initOutAttributes();
-				this._initConstantOutAttributes();
+			Widget.prototype._init = function() {
+				this._initOutContextInformation();
+				this._initConstantOutContextInformation();
 				this._initCallbacks();
 			};
 
 			/**
-			 * Initializes the provided Attributes.
+			 * Initializes the provided contextual information.
 			 *
 			 * @private
 			 */
-			Widget.prototype._initOutAttributes = function() {
-				this._outAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.out);
+			Widget.prototype._initOutContextInformation = function() {
+				this._outContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out);
 			};
 
 			/**
-			 * Initializes the provided ConstantAttributes.
+			 * Initializes the provided constant contextual information.
 			 *
 			 * @private
 			 */
-			Widget.prototype._initConstantOutAttributes = function() {
-				this._constantOutAttributes = AttributeList.fromAttributeDescriptions(this._discoverer, this.constructor.description.const);
+			Widget.prototype._initConstantOutContextInformation = function() {
+				this._constantOutContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.const);
 			};
 
 			/**
@@ -141,38 +140,37 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			};
 
 			/**
-			 * Returns the available ConstantAttributeTypes
-			 * (attributes that do not change).
+			 * Returns the available constant contextual information.
+			 * (contextual information that do not change).
 			 *
-			 * @public
-			 * @param {?AttributeList} attributes
-			 * @returns {AttributeList}
+			 * @param {?ContextInformationList} contextInformationList
+			 * @returns {ContextInformationList}
 			 */
-			Widget.prototype.getConstantOutAttributes = function(attributes) {
-				if (attributes && attributes instanceof AttributeList) {
-					return this._constantOutAttributes.getSubset(attributes);
+			Widget.prototype.getConstantOutContextInformation = function(contextInformationList) {
+				if (contextInformationList && contextInformationList instanceof ContextInformationList) {
+					return this._constantOutContextInformation.getSubset(contextInformationList);
 				} else {
-					return this._constantOutAttributes;
+					return this._constantOutContextInformation;
 				}
 			};
 
 			/**
-			 * Returns the last acquired attribute value with the given attribute type.
+			 * Returns the last acquired contextual information value with the given contextual information's kind.
 			 *
-			 * @param {Attribute} attribute The attribute to return the last value for.
+			 * @param {ContextInformation} contextInformation The contextual information to return the last value for.
 			 * @returns {*}
 			 */
-			Widget.prototype.getLastValueForAttributeWithTypeOf = function(attribute) {
-				return this.getOutAttributes().getAttributeWithTypeOf(attribute).getValue();
+			Widget.prototype.getLastValueForContextInformationOfKind = function(contextInformation) {
+				return this.getOutContextInformation().getContextInformationOfKind(contextInformation).getValue();
 			};
 
 			/**
-			 * Returns the old Attributes.
+			 * Returns the old contextual information.
 			 *
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
-			Widget.prototype.getOldAttributes = function() {
-				return this._oldOutAttributes;
+			Widget.prototype.getOldOutContextInformation = function() {
+				return this._oldOutContextInformation;
 			};
 
 			/**
@@ -209,50 +207,49 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			};
 
 			/**
-			 * Adds a new AttributeValue. If the given value is
+			 * Adds a new contextual information value. If the given value is
 			 * not included in the list, the associated type will
 			 * be also added. Otherwise, only the value will be
 			 * updated.
 			 *
 			 * @public
-			 * @param {Attribute} attribute
-			 * @param {Boolean} multipleInstances
+			 * @param {ContextInformation} contextInformation
+			 * @param {boolean} multipleInstances
 			 */
-			Widget.prototype.addOutAttribute = function(attribute, multipleInstances) {
-				this.log("will add or update attribute "+attribute+".");
+			Widget.prototype.addOutContextInformation = function(contextInformation, multipleInstances) {
+				this.log("will add or update contextual information "+contextInformation+".");
 				multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
-				this._oldOutAttributes = this._outAttributes;
-				attribute.setTimestamp(this.getCurrentTime());
-				if (attribute instanceof Attribute) {
-					this._outAttributes.put(attribute, multipleInstances);
+				this._oldOutContextInformation = this._outContextInformation;
+				contextInformation.setTimestamp(this.getCurrentTime());
+				if (contextInformation instanceof ContextInformation) {
+					this._outContextInformation.put(contextInformation, multipleInstances);
 				}
 			};
 
 			/**
-			 * Sets the ConstantAttributeValueList and also the
-			 * associated AttributeTypes.
+			 * Sets the constant contextual information list.
 			 *
 			 * @protected
-			 * @param {(AttributeList|Array)} constantAttributes List or Array of AttributeValues
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray List or Array of contextual information.
 			 */
-			Widget.prototype._setConstantOutAttributes = function(constantAttributes) {
-				this._constantOutAttributes = new AttributeList().withItems(constantAttributes);
+			Widget.prototype._setConstantOutContextInformation = function(contextInformationListOrArray) {
+				this._constantOutContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
 			};
 
 			/**
-			 * Adds a new constantAttributeValue. If the given value is
+			 * Adds a new constant contextual information. If the given value is
 			 * not included in the list, the associated type will
 			 * be also added. Otherwise, only the value will be
 			 * updated.
 			 *
 			 * @protected
-			 * @param {Attribute} constantAttribute AttributeValue
+			 * @param {ContextInformation} contextInformation
 			 */
-			Widget.prototype._addConstantOutAttribute = function(constantAttribute) {
-				if (constantAttribute instanceof Attribute) {
-					if (!this._constantOutAttributes.containsTypeOf(constantAttribute)) {
-						constantAttribute.setTimestamp(this.getCurrentTime());
-						this._constantOutAttributes.put(constantAttribute);
+			Widget.prototype._addConstantOutContextInformation = function(contextInformation) {
+				if (contextInformation instanceof ContextInformation) {
+					if (!this._constantOutContextInformation.containsKindOf(contextInformation)) {
+						contextInformation.setTimestamp(this.getCurrentTime());
+						this._constantOutContextInformation.put(contextInformation);
 					}
 				}
 			};
@@ -282,7 +279,7 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			 * Adds a new Callback.
 			 *
 			 * @protected
-			 * @param {Callback} callback List or Array of AttributeValues.
+			 * @param {Callback} callback List or Array of contextual information.
 			 */
 			Widget.prototype._addCallback = function(callback) {
 				if (callback instanceof Callback) {
@@ -298,7 +295,7 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			 * Sets SubscriberList.
 			 *
 			 * @protected
-			 * @param {(SubscriberList|Array)}  subscribers List or Array of Subscriber.
+			 * @param {(SubscriberList|Array.<Subscriber>)}  subscribers List or Array of Subscriber.
 			 */
 			Widget.prototype._setSubscriber = function(subscribers) {
 				var list = [];
@@ -339,17 +336,7 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			};
 
 			/**
-			 * Returns the current time.
-			 *
-			 * @private
-			 * @returns {Date}
-			 */
-			Widget.prototype.getCurrentTime = function() {
-				return new Date();
-			};
-
-			/**
-			 * Notifies other components and sends the attributes.
+			 * Notifies other components and sends the contextual information.
 			 *
 			 * @virtual
 			 * @public
@@ -358,30 +345,28 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 				this.log("will notify its subscribers.");
 				var callbacks = this.getCallbacks();
 				for (var i in callbacks) {
-					this.sendToSubscriber(callbacks[i]);
+					this._sendToSubscriber(callbacks[i]);
 				}
 			};
 
 			/**
-			 * Queries the associated sensor and updates the attributes with new values.
-			 * Must be overridden by the subclasses. Overriding subclasses can call
-			 * this.__super(_function) to invoke the provided callback function.
+			 * Queries the associated sensor and updates the contextual information with new values.
+			 * Must be overridden by the subclasses.
 			 *
-			 * @virtual
-			 * @public
+			 * @protected
 			 * @param {Callback} callback
 			 */
-			Widget.prototype.sendToSubscriber = function(callback) {
+			Widget.prototype._sendToSubscriber = function(callback) {
 				if (callback && callback instanceof Callback) {
 					var subscriberList = this._subscribers.getItems();
-					for ( var i in subscriberList) {
+					for (var i in subscriberList) {
 						var subscriber = subscriberList[i];
 						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
 							if(this._dataValid(subscriber.getConditions())){
 								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
-								var callSubset =  callback.getAttributeTypes();
-								var subscriberSubset = subscriber.getAttributesSubset();
-								var data = this._outAttributes.getSubset(callSubset);
+								var callSubset =  callback.getContextInformation();
+								var subscriberSubset = subscriber.getContextInformationSubset();
+								var data = this._outContextInformation.getSubset(callSubset);
 								if (subscriberSubset && subscriberSubset.size() > 0) {
 									data = data.getSubset(subscriberSubset);
 								}
@@ -420,56 +405,55 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			};
 
 			/**
-			 * Updates the attributes by calling queryGenerator.
+			 * Updates the contextual information by calling queryGenerator.
 			 *
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
 			 *
 			 */
 			Widget.prototype.updateWidgetInformation = function(callback) {
-				this.log("will update my attributes.");
+				this.log("will update my contextual information.");
 
 				this.queryGenerator(callback);
 			};
 
 			/**
-			 * Updates the Attributes by external components.
+			 * Updates the contextual information by external components.
 			 *
-			 * @param {(AttributeList|Array)} attributes Data that should be entered.
+			 * @param {(ContextInformationList|Array)} contextInformationListOrArray Data that should be entered.
 			 */
-			Widget.prototype.putData = function(attributes) {
+			Widget.prototype.putData = function(contextInformationListOrArray) {
 				var list = [];
-				if (attributes instanceof Array) {
-					list = attributes;
-				} else if (attributes instanceof AttributeList) {
-					list = attributes.getItems();
+				if (contextInformationListOrArray instanceof Array) {
+					list = contextInformationListOrArray;
+				} else if (contextInformationListOrArray instanceof ContextInformationList) {
+					list = contextInformationListOrArray.getItems();
 				}
 				for ( var i in list) {
-					var theAttribute = list[i];
-					if (theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)) {
-						this.addOutAttribute(theAttribute);
+					var theContextInformation = list[i];
+					if (theContextInformation instanceof ContextInformation && this._isOutContextInformation(theContextInformation)) {
+						this.addOutContextInformation(theContextInformation);
 					}
 				}
 			};
 
 			/**
-			 * Returns all available AttributeValues, Attributes and ConstantAttributes.
+			 * Returns all available contextual information value and constant contextual information.
 			 *
 			 * @public
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
 			Widget.prototype.queryWidget = function() {
-				var response = new AttributeList();
-				response.putAll(this.getOutAttributes());
-				response.putAll(this.getConstantOutAttributes());
+				var response = new ContextInformationList();
+				response.putAll(this.getOutContextInformation());
+				response.putAll(this.getConstantOutContextInformation());
 				return response;
 			};
 
 			/**
-			 * Updates and returns all available AttributeValues,
-			 * Attributes and Constant Attributes.
+			 * Updates and returns all available contextual information value and constant contextual information.
 			 *
 			 * @param {?function} callback For alternative  actions, because an asynchronous function can be used.
-			 * @returns {?AttributeList}
+			 * @returns {?ContextInformationList}
 			 */
 			Widget.prototype.updateAndQueryWidget = function(callback) {
 				if(callback && typeof(callback) === 'function'){
@@ -481,54 +465,23 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 			};
 
 			/**
-			 * Sends all Attributes, specified in the given callback,
-			 * to components which are subscribed to this Callback.
+			 * Verifies if the contextual information match to the specified conditions in case any exists.
 			 *
-			 * @protected
-			 * @param {string} callback Name of the searched Callback.
-			 */
-			Widget.prototype._sendToSubscriber = function(callback) {
-				if (callback && callback instanceof Callback) {
-					var subscriberList = this._subscribers.getItems();
-					for (var i in subscriberList) {
-						var subscriber = subscriberList[i];
-						if (subscriber.getSubscriptionCallbacks().contains(callback)) {
-							if(this.dataValid(subscriber.getConditions())){
-								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
-								var callSubset =  callback.getAttributeTypes();
-								var subscriberSubset = subscriber.getAttributesSubset();
-								var data = this.outAttributes.getSubset(callSubset);
-								if (subscriberSubset && subscriberSubset.size() > 0) {
-									data = data.getSubset(subscriberSubset);
-								}
-							}
-							if (data) {
-								subscriberInstance.putData(data);
-							}
-						}
-					}
-				}
-			};
-
-			/**
-			 * Verifies if the attributes match to the specified conditions in case any exists.
-			 *
-			 * @param {string} conditions List of Conditions that will be verified.
+			 * @param {ConditionList} conditionList List of Conditions that will be verified.
 			 * @returns {boolean}
 			 */
-			Widget.prototype._dataValid = function(conditions) {
-				if (conditions instanceof ConditionList) {
+			Widget.prototype._dataValid = function(conditionList) {
+				if (conditionList instanceof ConditionList) {
 					return true;
 				}
-				if (!conditions.isEmpty()) {
-					var items = _condition.getItems();
+				if (!conditionList.isEmpty()) {
+					var items = conditionList.getItems();
 					for (var i in items) {
 						var condition = items[i];
-						var conditionAttributeType = condition.getAttributeType();
-						var conditionAttributeTypeList = new AttributeTypeList()
-							.withItems(new Array(conditionAttributeType));
-						var newValue = this.getAttributes().getSubset(conditionAttributeTypeList);
-						var oldValue = this.getOldAttributes.getSubset(conditionAttributeTypeList);
+						var conditionContextInformation = condition.getContextInformation();
+						var conditionContextInformationList = new ContextInformationList().withItems(new Array(conditionContextInformation));
+						var newValue = this.getOutContextInformation().getSubset(conditionContextInformationList);
+						var oldValue = this.getOldOutContextInformation.getSubset(conditionContextInformationList);
 						return condition.compare(newValue, oldValue);
 					}
 				}
@@ -550,17 +503,6 @@ define(['component', 'MathUuid', 'callback', 'callbackList', 'attribute', 'attri
 						self.queryGenerator();
 					}, this.constructor.description.updateInterval);
 				}
-			};
-
-			/**
-			 * Returns true if the widget can satisfy the requested attribute type.
-			 *
-			 * @public
-			 * @param {Attribute} attribute
-			 * @returns {boolean}
-			 */
-			Widget.prototype.doesSatisfyTypeOf = function(attribute) {
-				return this._outAttributes.containsTypeOf(attribute);
 			};
 
 			/**

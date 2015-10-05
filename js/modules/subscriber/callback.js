@@ -4,7 +4,7 @@
  * 
  * @module Subscriber
  */
-define(['attribute', 'attributeList'], function(Attribute, AttributeList){
+define(['contextInformation', 'contextInformationList'], function(ContextInformation, ContextInformationList){
 	return (function() {
 		/**
 		 * Constructor: Initializes the AttributeTypeList.
@@ -22,12 +22,12 @@ define(['attribute', 'attributeList'], function(Attribute, AttributeList){
 			this._name = '';
 
 			/**
-			 * Associated Attributes that will be send to Subscriber.
+			 * Associated contextual information that will be send to the subscriber.
 			 *
-			 * @type {AttributeList}
+			 * @type {ContextInformationList}
 			 * @private
 			 */
-			this._attributes = new AttributeList();
+			this._contextInformation = new ContextInformationList();
 
 			return this;
 		}
@@ -46,11 +46,11 @@ define(['attribute', 'attributeList'], function(Attribute, AttributeList){
 		/**
 		 * Builder for AttributeTypes.
 		 *
-		 * @param {(AttributeList|Array)} attributeListOrArray attributeTypes
+		 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray
 		 * @returns {Callback}
 		 */
-		Callback.prototype.withAttributeTypes = function(attributeListOrArray) {
-			this.setAttributeTypes(attributeListOrArray);
+		Callback.prototype.withContextInformation = function(contextInformationListOrArray) {
+			this.setContextInformation(contextInformationListOrArray);
 			return this;
 		};
 
@@ -75,50 +75,50 @@ define(['attribute', 'attributeList'], function(Attribute, AttributeList){
 		};
 
 		/**
-		 * Returns the associated attributes (only the types).
+		 * Returns the associated contextual information.
 		 *
-		 * @returns {AttributeList}
+		 * @returns {ContextInformationList}
 		 */
-		Callback.prototype.getAttributeTypes = function() {
-			return this._attributes;
+		Callback.prototype.getContextInformation = function() {
+			return this._contextInformation;
 		};
 
 		/**
-		 * Adds a list of AttributeTypes.
+		 * Adds a list of contextual information.
 		 *
-		 * @param {AttributeList|Array} _attributes AttributeTypeList
+		 * @param {ContextInformationList|Array.<ContextInformation>} contextInformationListOrArray
 		 */
-		Callback.prototype.setAttributeTypes = function(_attributes){
+		Callback.prototype.setContextInformation = function(contextInformationListOrArray){
 			var list = [];
-			if(_attributes instanceof Array){
-				list = _attributes;
-			} else if (_attributes.constructor === AttributeList) {
-				list = _attributes.getItems();
+			if(contextInformationListOrArray instanceof Array){
+				list = contextInformationListOrArray;
+			} else if (contextInformationListOrArray instanceof ContextInformationList) {
+				list = contextInformationListOrArray.getItems();
 			}
 			for(var i in list){
-				this.addAttributeType(list[i]);
+				this.addContextInformation(list[i]);
 			}
 		};
 
 		/**
-		 * Adds an attribute to AttributeTypeList.
+		 * Adds a contextual information to ContextInformationList.
 		 *
-		 * @param {Attribute} attribute Attribute
+		 * @param {ContextInformation} contextInformation
 		 */
-		Callback.prototype.addAttributeType = function(attribute){
-			if(attribute.constructor === Attribute && !this._attributes.containsTypeOf(attribute)){
-				this._attributes.put(attribute);
+		Callback.prototype.addContextInformation = function(contextInformation){
+			if(contextInformation instanceof ContextInformation && !this._contextInformation.containsKindOf(contextInformation)){
+				this._contextInformation.put(contextInformation);
 			}
 		};
 
 		/**
-		 * Removes an attribute from AttributeTypeList.
+		 * Removes a contextual information from the ContextInformationList.
 		 *
-		 * @param {Attribute} attribute AttributeType
+		 * @param {ContextInformation} contextInformation
 		 */
-		Callback.prototype.removeAttributeType = function(attribute){
-			if(attribute.constructor === Attribute){
-				this._attributes.removeItem(attribute);
+		Callback.prototype.removeAttributeType = function(contextInformation){
+			if(contextInformation instanceof ContextInformation){
+				this._contextInformation.removeItem(contextInformation);
 			}
 		};
 
@@ -131,7 +131,7 @@ define(['attribute', 'attributeList'], function(Attribute, AttributeList){
 		Callback.prototype.equals = function(_callback) {
 			if (_callback.constructor === Callback){
 				if(_callback.getName() == this.getName()
-					&& _callback.getAttributeTypes().equals(this.getAttributeTypes())) {
+					&& _callback.getContextInformation().equals(this.getContextInformation())) {
 					return true;
 				}
 			}

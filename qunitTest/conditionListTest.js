@@ -3,18 +3,15 @@ require(['configTest'], function() {
 		QUnit.test( "ConditionList", function( assert ) {
 			var discoverer = new contactJS.Discoverer();
 
-			var type = discoverer.buildAttribute('test', 'string');
-			var type2 = discoverer.buildAttribute('test', 'string');
+			var contextInformation = discoverer.buildContextInformation('test', 'string');
+			var contextInformation2 = discoverer.buildContextInformation('test', 'string');
 
 			var method = new contactJS.Equals();
 			var method2 = new contactJS.UnEquals();
 
-			var condition = new contactJS.Condition().withName('condition').withAttributeType(type)
-											.withComparisonMethod(method);
-			var condition2 = new contactJS.Condition().withName('condition2').withAttributeType(type2)
-											.withComparisonMethod(method);
-			var condition3 = new contactJS.Condition().withName('condition3').withAttributeType(type)
-											.withComparisonMethod(method2);
+			var condition = new contactJS.Condition().withName('condition').withContextInformation(contextInformation).withComparisonMethod(method);
+			var condition2 = new contactJS.Condition().withName('condition2').withContextInformation(contextInformation2).withComparisonMethod(method);
+			var condition3 = new contactJS.Condition().withName('condition3').withContextInformation(contextInformation).withComparisonMethod(method2);
 
 			var list = new contactJS.ConditionList().withItems([condition2, condition3]);
 			assert.equal(list.size(), 2, "Passed!: Builder (withItems)" );

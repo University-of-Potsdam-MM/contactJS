@@ -17,7 +17,7 @@ define(function(){
 			 * @type {string}
 			 * @private
 			 */
-			this._type = '';
+			this._dataType = '';
 
 			/**
 			 *
@@ -44,11 +44,11 @@ define(function(){
 		/**
 		 * Builder for type.
 		 *
-		 * @param type
+		 * @param dataType
 		 * @return {Parameter}
 		 */
-		Parameter.prototype.withType = function(type) {
-			this.setType(type);
+		Parameter.prototype.withDataType = function(dataType) {
+			this.setDataType(dataType);
 			return this;
 		};
 
@@ -79,8 +79,8 @@ define(function(){
 		 *
 		 * @returns {string}
 		 */
-		Parameter.prototype.getType = function() {
-			return this._type;
+		Parameter.prototype.getDataType = function() {
+			return this._dataType;
 		};
 
 		/**
@@ -106,10 +106,10 @@ define(function(){
 		/**
 		 * Sets the type.
 		 *
-		 * @param newType
+		 * @param newDataType
 		 */
-		Parameter.prototype.setType = function(newType) {
-			if(typeof newType === "string") this._type = newType;
+		Parameter.prototype.setDataType = function(newDataType) {
+			if(typeof newDataType === "string") this._dataType = newDataType;
 		};
 
 		/**
@@ -131,9 +131,9 @@ define(function(){
 		Parameter.prototype.equals = function(parameter) {
 			if(parameter.constructor === Parameter){
 				if (parameter.getValue() == "PV_INPUT" || this.getValue() == "PV_INPUT") {
-					return this.getKey() == parameter.getKey() && this.getType() == parameter.getType();
+					return this.getKey() == parameter.getKey() && this.getDataType() == parameter.getDataType();
 				} else {
-					return this.getKey() == parameter.getKey() && this.getType() == parameter.getType() && this.getValue() == parameter.getValue();
+					return this.getKey() == parameter.getKey() && this.getDataType() == parameter.getDataType() && this.getValue() == parameter.getValue();
 				}
 			}
 			return false;
@@ -146,7 +146,7 @@ define(function(){
 		 * @example [CP_UNIT:STRING:KILOMETERS]
 		 */
 		Parameter.prototype.toString = function() {
-			return "["+this.getKey()+":"+this.getType()+":"+this.getValue()+"]";
+			return "["+this.getKey()+":"+this.getDataType()+":"+this.getValue()+"]";
 		};
 
 		return Parameter;

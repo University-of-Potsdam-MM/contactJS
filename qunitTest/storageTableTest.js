@@ -6,16 +6,16 @@ require(['configTest'], function() {
 				var discoverer = new contactJS.Discoverer();
 
 				//initializes the test environment
-				var testAggregator = new contactJS.Aggregator(discoverer, new contactJS.AttributeList().withItems([
-					discoverer.buildAttribute('latitude', 'double'),
-					discoverer.buildAttribute('longitude', 'double')
+				var testAggregator = new contactJS.Aggregator(discoverer, new contactJS.ContextInformationList().withItems([
+					discoverer.buildContextInformation('latitude', 'double'),
+					discoverer.buildContextInformation('longitude', 'double')
 				]));
 				
 				//put data into aggregator
-				var latitudeValue = discoverer.buildAttribute('latitude', 'double').withValue(52.3992404);
-				var longitudeValue = discoverer.buildAttribute('longitude', 'double').withValue(13.066132);
+				var latitudeValue = discoverer.buildContextInformation('latitude', 'double').withValue(52.3992404);
+				var longitudeValue = discoverer.buildContextInformation('longitude', 'double').withValue(13.066132);
 
-				var list = new contactJS.AttributeList().withItems([latitudeValue, longitudeValue]);
+				var list = new contactJS.ContextInformationList().withItems([latitudeValue, longitudeValue]);
 				testAggregator.putData(list);
 				
 				var data = testAggregator.getCurrentData();

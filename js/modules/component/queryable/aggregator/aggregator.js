@@ -1,17 +1,16 @@
-define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
- 	function(MathUuid, Widget, Attribute, AttributeList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
+define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
+ 	function(Widget, ContextInformation, ContextInformationList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
 		return (function() {
 			/**
 			 * Generates the id and initializes the Aggregator.
 			 *
-			 * @param {Discoverer} discoverer
-			 * @param {AttributeList} attributes
-			 * @classdesc The Widget handles the access to sensors.
-			 * @constructs Aggregator
+			 * @class Aggregator
 			 * @extends Widget
+			 * @param {Discoverer} discoverer
+			 * @param {ContextInformationList} contextInformation
 			 */
-			function Aggregator(discoverer, attributes) {
-				Widget.call(this, discoverer, attributes);
+			function Aggregator(discoverer, contextInformation) {
+				Widget.call(this, discoverer);
 
 				/**
 				 * Name of the Aggregator.
@@ -43,7 +42,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				 */
 				this._storage = new Storage("DB_Aggregator", 7200000, 5, this);
 
-				this._aggregatorSetup(attributes);
+				this._aggregatorSetup(contextInformation);
 
 				return this;
 			}
@@ -101,37 +100,37 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			};
 
 			/**
-			 * Retrieves all Attributes of the specified widgets.
+			 * Retrieves all contextual information of the specified widgets.
 			 *
 			 * @protected
 			 */
-			Aggregator.prototype._initOutAttributes = function() {
+			Aggregator.prototype._initOutContextInformation = function() {
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
 						var theWidget = this._discoverer.getComponent(widgetId);
 						if (theWidget) {
-							this._setOutAttributes(theWidget.getOutAttributes());
+							this._setOutContextInformation(theWidget.getOutContextInformation());
 						}
 					}
 				}
 			};
 
 			/**
-			 * Retrieves all ConstantAttributes of the specified widgets.
+			 * Retrieves all constant contextual information of the specified widgets.
 			 *
 			 * @protected
 			 * @override
 			 */
-			Aggregator.prototype._initConstantOutAttributes = function() {
+			Aggregator.prototype._initConstantOutContextInformation = function() {
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
 						var theWidget = this._discoverer.getComponent(widgetId);
 						if (theWidget) {
-							this._setConstantOutAttributes(theWidget.getConstantOutAttributes());
+							this._setConstantOutContextInformation(theWidget.getConstantOutContextInformation());
 						}
 					}
 				}
@@ -156,40 +155,40 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * InitMethod for Aggregators. Called by constructor. Initializes the associated Storage.
 			 *
 			 * @protected
-			 * @param {AttributeList} attributes
+			 * @param {ContextInformationList} contextInformationList
 			 */
-			Aggregator.prototype._aggregatorSetup = function(attributes) {
-				this._setAggregatorAttributeValues(attributes);
-				this._setAggregatorConstantAttributeValues();
+			Aggregator.prototype._aggregatorSetup = function(contextInformationList) {
+				this._setAggregatorOutContextInformation(contextInformationList);
+				this._setAggregatorConstantContextInformation();
 				this._setAggregatorCallbacks();
 
 				this.didFinishSetup();
 			};
 
 			/**
-			 * Initializes the provided attributeValues that are only specific to the Aggregator.
+			 * Initializes the provided contextual information that are only specific to the Aggregator.
 			 * Called by aggregatorSetup().
 			 *
-			 * @param {AttributeList} attributes
+			 * @param {ContextInformationList} contextInformationList
 			 * @protected
 			 */
-			Aggregator.prototype._setAggregatorAttributeValues = function(attributes) {
-				if (attributes instanceof AttributeList) {
-					for (var index in attributes.getItems()) {
-						var theAttribute = attributes.getItems()[index];
-						this.addOutAttribute(theAttribute);
+			Aggregator.prototype._setAggregatorOutContextInformation = function(contextInformationList) {
+				if (contextInformationList instanceof ContextInformationList) {
+					for (var index in contextInformationList.getItems()) {
+						var theContextInformation = contextInformationList.getItems()[index];
+						this.addOutContextInformation(theContextInformation);
 					}
 				}
 			};
 
 			/**
-			 * Initializes the provided ConstantAttributeValues that are only specific to the Aggregator.
+			 * Initializes the provided constant contextual information that are only specific to the Aggregator.
 			 * Called by aggregatorSetup().
 			 *
 			 * @virtual
 			 * @protected
 			 */
-			Aggregator.prototype._setAggregatorConstantAttributeValues = function() {
+			Aggregator.prototype._setAggregatorConstantContextInformation = function() {
 
 			};
 
@@ -205,13 +204,13 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			};
 
 			/**
-			 * Returns the current Attributes that are saved in the cache.
+			 * Returns the current contextual information that are saved in the cache.
 			 *
 			 * @public
-			 * @returns {AttributeList}
+			 * @returns {ContextInformationList}
 			 */
 			Aggregator.prototype.getCurrentData = function() {
-				return this._outAttributes;
+				return this._outContextInformation;
 			};
 
 			/**
@@ -228,7 +227,7 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 					var subscriber = new Subscriber().withSubscriberId(this.getId()).
 						withSubscriberName(this.getName()).
 						withSubscriptionCallbacks(callbacks).
-						withAttributesSubset(subSet).
+						withContextInformationSubset(subSet).
 						withConditions(conditions);
 					widget.addSubscriber(subscriber);
 				}
@@ -279,10 +278,10 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 						var callsList = callbackList.getItems();
 						for(var x in callsList){
 							var singleCallback = callsList[x];
-							var typeList = singleCallback.getAttributeTypes().getItems();
+							var typeList = singleCallback.getContextInformation().getItems();
 							for(var y in typeList){
 								var singleType = typeList[y];
-								this.addOutAttribute(singleType);
+								this.addOutContextInformation(singleType);
 							}
 						}
 						this.addWidget(widgetIdOrWidget);
@@ -313,40 +312,40 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 *
 			 * @override
 			 * @public
-			 * @param {(AttributeList|Array)} attributeListOrArray data that shall be input
+			 * @param {(ContextInformationList|Array)} contextInformationListOrArray data that shall be input
 			 */
-			Aggregator.prototype.putData = function(attributeListOrArray){
+			Aggregator.prototype.putData = function(contextInformationListOrArray){
 				this.log("did receive data from a subscribed component.");
 
 				var list = [];
 
-				// prepare attributes
-				if(attributeListOrArray instanceof Array){
-					list = attributeListOrArray;
-				} else if (attributeListOrArray instanceof AttributeList) {
-					list = attributeListOrArray.getItems();
+				// prepare contextual information
+				if(contextInformationListOrArray instanceof Array){
+					list = contextInformationListOrArray;
+				} else if (contextInformationListOrArray instanceof ContextInformationList) {
+					list = contextInformationListOrArray.getItems();
 				}
 
 				var interpretationsToBeQueried = [];
 
-				// add attributes to memory and persistent storage
+				// add contextual information to memory and persistent storage
 				for(var i in list){
-					var theAttribute = list[i];
-					if(theAttribute instanceof Attribute && this._isOutAttribute(theAttribute)){
-						this.addOutAttribute(theAttribute);
+					var theContextInformation = list[i];
+					if(theContextInformation instanceof ContextInformation && this._isOutContextInformation(theContextInformation)){
+						this.addOutContextInformation(theContextInformation);
 						if(this._storage) {
-							this._store(theAttribute);
+							this._store(theContextInformation);
 						}
 
 						// check for interpreters to be called
 						if (this._interpretations.length > 0) {
 							for (var index in this._interpretations) {
 								var theInterpretation = this._interpretations[index];
-								var inAttributes = theInterpretation.inAttributeTypes;
+								var inContextInformation = theInterpretation.inContextInformation;
 
-								if (inAttributes.containsTypeOf(theAttribute)) {
+								if (inContextInformation.containsKindOf(theContextInformation)) {
 									if ($.inArray(theInterpretation, interpretationsToBeQueried) == -1) {
-										this.log("found an new interpretation that needs "+theAttribute+".");
+										this.log("found an new interpretation that needs "+theContextInformation+".");
 										interpretationsToBeQueried.push(theInterpretation);
 									}
 								}
@@ -366,14 +365,14 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 *
 			 * @public
 			 * @param {String} interpreterId ID of the searched Interpreter
-			 * @param {AttributeList} inAttributes
-			 * @param {AttributeList} outAttributes
+			 * @param {ContextInformationList} inContextInformation
+			 * @param {ContextInformationList} outContextInformation
 			 * @param {?function} callback for additional actions, if an asynchronous function is used
 			 */
-			Aggregator.prototype.interpretData = function(interpreterId, inAttributes, outAttributes, callback){
+			Aggregator.prototype.interpretData = function(interpreterId, inContextInformation, outContextInformation, callback){
 				var interpreter = this._discoverer.getComponent(interpreterId);
 				if (interpreter instanceof Interpreter) {
-					interpreter.callInterpreter(inAttributes, outAttributes, callback);
+					interpreter.callInterpreter(inContextInformation, outContextInformation, callback);
 				}
 			};
 
@@ -381,10 +380,10 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * Stores the data.
 			 *
 			 * @protected
-			 * @param {Attribute} attribute data that should be stored
+			 * @param {ContextInformation} contextInformation data that should be stored
 			 */
-			Aggregator.prototype._store = function(attribute) {
-				this._storage.store(attribute);
+			Aggregator.prototype._store = function(contextInformation) {
+				this._storage.store(contextInformation);
 			};
 
 			/**
@@ -395,11 +394,11 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * in retrieveStorage().
 			 *
 			 * @public
-			 * @param {String} name Name of the searched AtTributes.
+			 * @param {String} name Name of the searched contextual information.
 			 * @param {?function} callback for alternative  actions, because an asynchronous function is used
 			 */
-			Aggregator.prototype.queryAttribute = function(name, callback){
-				this._storage.retrieveAttributes(name, callback);
+			Aggregator.prototype.queryContextInformation = function(name, callback){
+				this._storage.retrieveContextInformation(name, callback);
 			};
 
 			/**
@@ -414,8 +413,8 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			};
 
 			/**
-			 * Returns an overview about the stored attributes.
-			 * It may be that the overview about the stored attributes is not up to date,
+			 * Returns an overview about the stored contextual information.
+			 * It may be that the overview about the stored contextual information is not up to date,
 			 * because an asynchronous function is used for the retrieval.
 			 * For retrieving the current data, this function can be used as callback function
 			 * in queryTables().
@@ -424,18 +423,18 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 * @returns {?Array}
 			 */
 			Aggregator.prototype.getStorageOverview = function() {
-				return this._storage.getAttributesOverview();
+				return this._storage.getContextInformationOverview();
 			};
 
 			/**
-			 * Only updates the attribute cache in the database.
+			 * Only updates the contextual information cache in the database.
 			 * For an alternative action a callback can be used.
 			 *
 			 * @public
 			 * @param {?function} callback for alternative actions, because an asynchronous function is used
 			 */
 			Aggregator.prototype.queryTables = function(callback) {
-				this._storage.getAttributeNames(callback);
+				this._storage.getContextInformationNames(callback);
 			};
 
 			/**
@@ -461,10 +460,10 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 				var self = this;
 
 				var theInterpreterId = theInterpretation.interpreterId;
-				var interpretationInAttributeValues = this.getOutAttributes(theInterpretation.inAttributeTypes);
-				var interpretationOutAttributeValues = this.getOutAttributes(theInterpretation.outAttributeTypes);
+				var interpretationInContextInformation = this.getOutContextInformation(theInterpretation.inContextInformation);
+				var interpretationOutContextInformation = this.getOutContextInformation(theInterpretation.outContextInformation);
 
-				this.interpretData(theInterpreterId, interpretationInAttributeValues, interpretationOutAttributeValues, function(interpretedData) {
+				this.interpretData(theInterpreterId, interpretationInContextInformation, interpretationOutContextInformation, function(interpretedData) {
 					self.putData(interpretedData);
 
 					if (callback && typeof(callback) == 'function') {
@@ -503,16 +502,16 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			 *
 			 * @override
 			 * @public
-			 * @param {Attribute} attribute
+			 * @param {ContextInformation} contextInformation
 			 * @returns {boolean}
 			 */
-			Aggregator.prototype.doesSatisfyTypeOf = function(attribute) {
+			Aggregator.prototype.doesSatisfyKindOf = function(contextInformation) {
 				var componentUUIDs = this.getComponentUUIDs();
 				var doesSatisfy = false;
 
 				for (var index in componentUUIDs) {
 					var theComponent = this._discoverer.getComponent(componentUUIDs[index]);
-					if (theComponent.doesSatisfyTypeOf(attribute)) {
+					if (theComponent.doesSatisfyKindOf(contextInformation)) {
 						doesSatisfy = true;
 					}
 				}
@@ -521,33 +520,33 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 			};
 
 			/**
-			 * Searches for components that can satisfy the requested attributes. Through recursion it is possible to search
-			 * for components that satisfy attributes of components that have been found in the process.
+			 * Searches for components that can satisfy the requested contextual information. Through recursion it is possible to search
+			 * for components that satisfy the contextual information of the components that have been found in the process.
 			 *
 			 * @private
-			 * @param {AttributeList} unsatisfiedAttributes A list of attributes that components should be searched for.
-			 * @param {boolean} all If true all attributes must be satisfied by a single component.
+			 * @param {ContextInformationList} unsatisfiedContextInformation A list of contextual information that components should be searched for.
+			 * @param {boolean} all If true all contextual information must be satisfied by a single component.
 			 * @param {Array} componentTypes An array of components classes that should be searched for (e.g. Widget, Interpreter and Aggregator).
 			 */
-			Aggregator.prototype._getComponentsForUnsatisfiedAttributes = function(unsatisfiedAttributes, all, componentTypes) {
+			Aggregator.prototype._getComponentsForUnsatisfiedContextInformation = function(unsatisfiedContextInformation, all, componentTypes) {
 				// ask the discoverer for components that satisfy the requested components
-				this.log("needs to satisfy Attributes and will ask the Discoverer.");
-				this._discoverer.getComponentsForUnsatisfiedAttributes(this.getId(), unsatisfiedAttributes, all, componentTypes);
+				this.log("needs to satisfy contextual information and will ask the Discoverer.");
+				this._discoverer.getComponentsForUnsatisfiedContextInformation(this.getId(), unsatisfiedContextInformation, all, componentTypes);
 			};
 
 			/**
-			 * After the aggregator finished its setup start searching for component that satisfy the attributes that where requrested.
+			 * After the aggregator finished its setup start searching for component that satisfy the contextual information that where requested.
 			 *
 			 * @public
 			 * @virtual
 			 */
 			Aggregator.prototype.didFinishSetup = function() {
-				var unsatisfiedAttributes = this.getOutAttributes().clone();
+				var unsatisfiedContextInformation = this.getOutContextInformation().clone();
 
-				// get all components that satisfy attribute types
-				this._getComponentsForUnsatisfiedAttributes(unsatisfiedAttributes, false, [Widget, Interpreter]);
-				this.log("Unsatisfied attributes: "+unsatisfiedAttributes.size());
-				this.log("Satisfied attributes: "+this.getOutAttributes().size());
+				// get all components that satisfy contextual information
+				this._getComponentsForUnsatisfiedContextInformation(unsatisfiedContextInformation, false, [Widget, Interpreter]);
+				this.log("Unsatisfied contextual information: "+unsatisfiedContextInformation.size());
+				this.log("Satisfied contextual information: "+this.getOutContextInformation().size());
 				this.log("Interpretations "+this._interpretations.length);
 			};
 
@@ -572,14 +571,14 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._widgets.length) {
 								if (callback && typeof(callback) == 'function') {
-									callback(self.getOutAttributes());
+									callback(self.getOutContextInformation());
 								}
 							}
 						});
 					}
 				} else {
 					if (callback && typeof(callback) == 'function') {
-						callback(self.getOutAttributes());
+						callback(self.getOutContextInformation());
 					}
 				}
 			};
@@ -606,14 +605,14 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._interpretations.length) {
 								if (callback && typeof(callback) == 'function') {
-									callback(self.getOutAttributes());
+									callback(self.getOutContextInformation());
 								}
 							}
 						});
 					}
 				} else {
 					if (callback && typeof(callback) == 'function') {
-						callback(self.getOutAttributes());
+						callback(self.getOutContextInformation());
 					}
 				}
 			};
@@ -628,10 +627,10 @@ define(['MathUuid', 'widget', 'attribute', 'attributeList', 'subscriber', 'subsc
 
 				var self = this;
 
-				this.queryReferencedWidgets(function(_attributeValues) {
-					self.queryReferencedInterpretations(function(_attributeValues) {
+				this.queryReferencedWidgets(function(_contextInformation) {
+					self.queryReferencedInterpretations(function(_contextInformation) {
 						if (callback && typeof(callback) == 'function') {
-							callback(_attributeValues);
+							callback(_contextInformation);
 						}
 					});
 				});

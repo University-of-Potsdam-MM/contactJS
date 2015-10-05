@@ -1,8 +1,8 @@
 /**
  * Created by tobias on 30.03.15.
  */
-define(['attributeList'],
-    function(AttributeList) {
+define(['contextInformationList'],
+    function(ContextInformationList) {
         return (function() {
 
             Component.lastLogId = "";
@@ -10,7 +10,7 @@ define(['attributeList'],
             /**
             *
             * @returns {Component}
-            * @constructs Component
+            * @class Component
             */
             function Component(discoverer) {
                 /**
@@ -30,12 +30,12 @@ define(['attributeList'],
                 this._id  = Math.uuid();
 
                 /**
-                 * All available Attributes and their values.
+                 * All available contextual information and their values.
                  *
-                 * @type {AttributeList}
+                 * @type {ContextInformationList}
                  * @private
                  */
-                this._outAttributes = new AttributeList();
+                this._outContextInformation = new ContextInformationList();
 
                 /**
                  * Associated discoverer.
@@ -78,49 +78,49 @@ define(['attributeList'],
             };
 
             /**
-             * Returns the available AttributeTypes.
+             * Returns the available contextual information.
              *
-             * @param {?AttributeList} [attributes]
-             * @returns {AttributeList}
+             * @param {?ContextInformationList} [contextInformationList]
+             * @returns {ContextInformationList}
              */
-            Component.prototype.getOutAttributes = function(attributes) {
-                // test if attributeList is a list
-                if (attributes && attributes instanceof AttributeList) {
-                    return this._outAttributes.getSubset(attributes);
+            Component.prototype.getOutContextInformation = function(contextInformationList) {
+                // test if contextual information is a list
+                if (contextInformationList && contextInformationList instanceof ContextInformationList) {
+                    return this._outContextInformation.getSubset(contextInformationList);
                 } else {
-                    return this._outAttributes;
+                    return this._outContextInformation;
                 }
             };
 
             /**
-             * Adds an outAttribute.
+             * Adds an output contextual information.
              *
-             * @param {Attribute} attribute
+             * @param {ContextInformation} contextInformation
              * @protected
              */
-            Component.prototype._setOutAttribute = function(attribute) {
-                this._outAttributes.put(attribute);
+            Component.prototype._addOutContextInformation = function(contextInformation) {
+                this._outContextInformation.put(contextInformation);
             };
 
             /**
-             * Sets an outAttributes.
+             * Sets an output contextual information.
              *
-             * @param {(AttributeList|Array)} attributesOrArray Attributes to set.
+             * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray The contextual information to set.
              * @protected
              */
-            Component.prototype._setOutAttributes = function(attributesOrArray) {
-                this._outAttributes = new AttributeList().withItems(attributesOrArray);
+            Component.prototype._setOutContextInformation = function(contextInformationListOrArray) {
+                this._outContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
             };
 
             /**
-             * Verifies whether the specified attribute is a provided Attribute.
+             * Verifies whether the specified contextual information is a provided contextual information.
              *
-             * @param {Attribute} attribute
+             * @param {ContextInformation} contextInformation
              * @returns {Boolean}
              * @protected
              */
-            Component.prototype._isOutAttribute = function(attribute) {
-                return !!this._outAttributes.containsTypeOf(attribute);
+            Component.prototype._isOutContextInformation = function(contextInformation) {
+                return !!this._outContextInformation.containsKindOf(contextInformation);
             };
 
             /**
@@ -138,7 +138,7 @@ define(['attributeList'],
             /**
              * Registers the component to the associated Discoverer.
              *
-             * @private
+             * @protected
              */
             Component.prototype._register = function() {
                 if (this._discoverer) {
@@ -157,6 +157,26 @@ define(['attributeList'],
                else
                    console.log(this.getName()+" (...) "+string);
                Component.lastLogId = this.getId();
+            };
+
+            /**
+             *
+             * @param {ContextInformation} contextInformation
+             * @returns {boolean}
+             */
+            Component.prototype.doesSatisfyKindOf = function(contextInformation) {
+                return this._outContextInformation.containsKindOf(contextInformation);
+            };
+
+            /*** Helper ***/
+
+            /**
+             * Returns the current time.
+             *
+             * @returns {Date}
+             */
+            Component.prototype.getCurrentTime = function() {
+                return new Date();
             };
 
             return Component;

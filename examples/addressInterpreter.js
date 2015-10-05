@@ -24,24 +24,24 @@ define(['contactJS'], function(contactJS) {
 
 		/**
 		 *
-		 * @requires contactJS
 		 * @extends Interpreter
-		 * @param discoverer
-		 * @constructor
+		 * @class AddressInterpreter
+		 * @param {Discoverer} discoverer
 		 */
 		function AddressInterpreter(discoverer) {
 			contactJS.Interpreter.call(this, discoverer);
 			this._name = "AddressInterpreter";
+			return this;
 		}
 
 		AddressInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
 		AddressInterpreter.prototype.constructor = AddressInterpreter;
 
-		AddressInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
-			var addressValue = outAttributes.getItems()[0];
+		AddressInterpreter.prototype._interpretData = function(inContextInformation, outContextInformation, callback) {
+			var addressValue = outContextInformation.getItems()[0];
 
-			var latitude = inAttributes.getValueForAttributeWithTypeOf(this._inAttributes.getItems()[0]);
-			var longitude = inAttributes.getValueForAttributeWithTypeOf(this._inAttributes.getItems()[1]);
+			var latitude = inContextInformation.getValueForContextInformationOfKind(this._inContextInformation.getItems()[0]);
+			var longitude = inContextInformation.getValueForContextInformationOfKind(this._inContextInformation.getItems()[1]);
 
 			if(navigator.onLine){
 				if (latitude && longitude) {

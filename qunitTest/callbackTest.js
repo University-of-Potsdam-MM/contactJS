@@ -4,19 +4,19 @@ require(['configTest'], function() {
 			QUnit.test( "Callback", function( assert ) {
 				var discoverer = new contactJS.Discoverer();
 
-				var attributeType = discoverer.buildAttribute('', '');
-				var attributeType2 = discoverer.buildAttribute('testName', 'integer', [['testKey', 'testType', 'testValue']]);
+				var contextInformation = discoverer.buildContextInformation('', '');
+				var contextInformation2 = discoverer.buildContextInformation('testName', 'integer', [['testKey', 'testType', 'testValue']]);
 
 				var array = [];
-				array.push(attributeType);
-				var attList = new contactJS.AttributeList().withItems(array);
-				var call = new contactJS.Callback().withName('test').withAttributeTypes(array);
-				var call2 = new contactJS.Callback().withName('test').withAttributeTypes(attList);
+				array.push(contextInformation);
+				var attList = new contactJS.ContextInformationList().withItems(array);
+				var call = new contactJS.Callback().withName('test').withContextInformation(array);
+				var call2 = new contactJS.Callback().withName('test').withContextInformation(attList);
 				
-				array.push(attributeType2);
-				var attList2 = new contactJS.AttributeList().withItems(array);
-				var call3 = new contactJS.Callback().withName('test').withAttributeTypes(attList2);
-				var call4 = new contactJS.Callback().withName('test1').withAttributeTypes(attList2);
+				array.push(contextInformation2);
+				var attList2 = new contactJS.ContextInformationList().withItems(array);
+				var call3 = new contactJS.Callback().withName('test').withContextInformation(attList2);
+				var call4 = new contactJS.Callback().withName('test1').withContextInformation(attList2);
 				
 				assert.ok( call.equals(call2),"Passed!: equals -> true" );
 				assert.ok( !call.equals(call3),"Passed!: equals -> false" );

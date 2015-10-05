@@ -4,16 +4,16 @@ require(['configTest'], function() {
 			QUnit.test( "CallbackList", function( assert ) {
 				var discoverer = new contactJS.Discoverer();
 				
-				var attribute = discoverer.buildAttribute('', '');
-				var attribute2 = discoverer.buildAttribute('testName', 'integer', [['testKey', 'testType', 'testValue']]);
+				var contextInformation = discoverer.buildContextInformation('', '');
+				var contextInformation2 = discoverer.buildContextInformation('testName', 'integer', [['testKey', 'testType', 'testValue']]);
 
 				var array = [];
-				array.push(attribute);
-				var attList = new contactJS.AttributeList().withItems(array);
+				array.push(contextInformation);
+				var attList = new contactJS.ContextInformationList().withItems(array);
 				
-				var call = new contactJS.Callback().withName('test').withAttributeTypes(array);
-				var call2 = new contactJS.Callback().withName('test2').withAttributeTypes(attList);
-				var call3 = new contactJS.Callback().withName('test3').withAttributeTypes(attList);
+				var call = new contactJS.Callback().withName('test').withContextInformation(array);
+				var call2 = new contactJS.Callback().withName('test2').withContextInformation(attList);
+				var call3 = new contactJS.Callback().withName('test3').withContextInformation(attList);
 				
 				var array = [];
 				array.push(call2);

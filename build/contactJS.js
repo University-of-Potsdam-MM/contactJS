@@ -1,8 +1,8 @@
 	define(['retrievalResult',
 			'storage',
 			'aggregator',
-		    'attribute',
-		    'attributeList',
+		    'contextInformation',
+		    'contextInformationList',
 		    'parameter',
 		    'parameterList',		
 		    'condition',
@@ -23,8 +23,8 @@
 		function(RetrievalResult,
 				Storage,
 				Aggregator,
-			    Attribute,
-			    AttributeList,
+			    ContextInformation,
+				ContextInformationList,
 			    Parameter,
 			    ParameterList,		
 			    Condition,
@@ -52,8 +52,8 @@
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
-	contactJS.Attribute = Attribute;
-	contactJS.AttributeList = AttributeList;
+	contactJS.ContextInformation = ContextInformation;
+	contactJS.ContextInformationList = ContextInformationList;
 	contactJS.Parameter = Parameter;
 	contactJS.ParameterList = ParameterList;
 	contactJS.Condition = Condition;

@@ -1,12 +1,13 @@
-define(["attributeList"], function(AttributeList){
+define(["contextInformationList"], function(ContextInformationList){
 	return (function() {
 		/**
-		 * @classdesc Contains the data that were retrieved from the database.
-		 * @constructs RetrievalResult
+		 * Contains the data that were retrieved from the database.
+		 *
+		 * @class RetrievalResult
 		 */
 		function RetrievalResult() {
 			/**
-			 * Name of the retrieved Attribute.
+			 * Name of the retrieved contextual information.
 			 *
 			 * @private
 			 * @type {string}
@@ -22,12 +23,12 @@ define(["attributeList"], function(AttributeList){
 			this._timestamp = '';
 
 			/**
-			 * Retrieved Attributes.
+			 * Retrieved contextual information.
 			 *
-			 * @type {AttributeList}
+			 * @type {ContextInformationList}
 			 * @private
 			 */
-			this._values = new AttributeList();
+			this._values = new ContextInformationList();
 
 			return this;
 		}
@@ -66,7 +67,7 @@ define(["attributeList"], function(AttributeList){
 		};
 
 		/**
-		 * Returns the Attribute name.
+		 * Returns the contextual information name.
 		 *
 		 * @returns {string}
 		 */
@@ -84,18 +85,18 @@ define(["attributeList"], function(AttributeList){
 		};
 
 		/**
-		 * Returns the retrieved Attributes.
+		 * Returns the retrieved contextual information.
 		 *
-		 * @returns {AttributeList}
+		 * @returns {ContextInformationList}
 		 */
 		RetrievalResult.prototype.getValues = function(){
 			return this._values;
 		};
 
 		/**
-		 * Sets the Attribute name.
+		 * Sets the contextual information name.
 		 *
-		 * @param {string} name Name of the retrieved Attribute.
+		 * @param {string} name Name of the retrieved contextual information.
 		 */
 		RetrievalResult.prototype.setName = function(name){
 			if(typeof name === 'string'){
@@ -117,7 +118,7 @@ define(["attributeList"], function(AttributeList){
 		/**
 		 * Sets the retrieved values.
 		 *
-		 * @param {Array} values Retrieved Attributes.
+		 * @param {Array} values Retrieved contextual information.
 		 */
 		RetrievalResult.prototype.setValues = function(values){
 			if(values instanceof Array){

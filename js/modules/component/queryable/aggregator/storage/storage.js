@@ -1,5 +1,5 @@
-define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameterList'],
- 	function(Attribute, AttributeList, RetrievalResult, Parameter, ParameterList){
+define(['contextInformation', 'contextInformationList', 'retrievalResult', 'parameter', 'parameterList'],
+ 	function(ContextInformation, ContextInformationList, RetrievalResult, Parameter, ParameterList){
 		return (function() {
 			/**
 			 * Initializes the database and all return values.
@@ -19,12 +19,12 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 				this._parent = aggregator;
 
 				/**
-				 * Names of all stored Attributes (tableNames as string).
+				 * Names of all stored contextual information (tableNames as string).
 				 *
 				 * @type {Array}
 				 * @private
 				 */
-				this._attributeNames = [];
+				this._contextInformationNames = [];
 
 				/**
 				 * Data of a retrieval.
@@ -32,18 +32,18 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 				 * @type {RetrievalResult}
 				 * @private
 				 */
-				this._attributes = new RetrievalResult();
+				this._contextInformation = new RetrievalResult();
 
 				/**
 				 * Cache before storing the new data in the database.
 				 *
-				 * @type {AttributeList}
+				 * @type {ContextInformationList}
 				 * @private
 				 */
-				this._data = new AttributeList();
+				this._data = new ContextInformationList();
 
 				/**
-				 * Names of all stored Attributes.
+				 * Names of all stored contextual information.
 				 *
 				 * @type {Number}
 				 * @private
@@ -70,7 +70,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 
 				/**
 				 * Condition at which point of time data are supposed to be flushed.
-				 * If at least 'countCondition' attributes are collected data will be flushed.
+				 * If at least 'countCondition' contextual information are collected data will be flushed.
 				 * Initial value is 5.
 				 *
 				 * @type {Number}
@@ -94,21 +94,21 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			}
 
 			/**
-			 * Returns the last retrieved Attributes.
+			 * Returns the last retrieved contextual information.
 			 *
 			 * @returns {RetrievalResult}
 			 */
 			Storage.prototype.getCurrentData = function() {
-				return this._attributes;
+				return this._contextInformation;
 			};
 
 			/**
-			 * Returns the names of all stored Attributes (tableNames as string).
+			 * Returns the names of all stored contextual information (tableNames as string).
 			 *
 			 * @returns {Array}
 			 */
-			Storage.prototype.getAttributesOverview = function() {
-				return this._attributeNames;
+			Storage.prototype.getContextInformationOverview = function() {
+				return this._contextInformationNames;
 			};
 
 			/**
@@ -127,16 +127,16 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			};
 
 			/**
-			 * Creates a new table. A table contains the values of one AttributeType.
-			 * So the name is the AttributeName.
+			 * Creates a new table. A table contains the values of one contextual information.
+			 * So the name is the contextual information name.
 			 *
 			 * @private
-			 * @param {Attribute} attribute tableName (should be the attributeName)
+			 * @param {ContextInformation} contextInformation tableName (should be the contextual information name)
 			 * @param {?function} callback For alternative actions, if an asynchronous function is used.
 			 */
-			Storage.prototype._createTable = function(attribute, callback){
+			Storage.prototype._createTable = function(contextInformation, callback){
 				if(this._storage){
-					var tableName = this._tableName(attribute);
+					var tableName = this._tableName(contextInformation);
 					var statement = 'CREATE TABLE IF NOT EXISTS "' + tableName + '" (value_, type_, created_)';
 					this._parent.log('CREATE TABLE IF NOT EXISTS "' + tableName + '"');
 					if(callback && typeof(callback) == 'function'){
@@ -144,29 +144,29 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 					} else {
 						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, this._successCB);
 					}
-					if(!this._attributeNames.indexOf(attribute.getName()) > -1){
-						this._attributeNames.push(tableName);
+					if(!this._contextInformationNames.indexOf(contextInformation.getName()) > -1){
+						this._contextInformationNames.push(tableName);
 					}
 				}
 			};
 
 			/**
-			 * Inserts value into a table. The name of the given Attribute
+			 * Inserts value into a table. The name of the given contextual information.
 			 * identifies the table.
 			 *
 			 * @private
-			 * @param {Attribute} attribute Attribute that should be stored.
+			 * @param {ContextInformation} contextInformation The contextual information that should be stored.
 			 * @param {?function} callback For alternative actions, if an asynchronous function is used.
 			 */
-			Storage.prototype._insertIntoTable = function(attribute, callback){
-				if(this._storage && attribute && attribute.constructor === Attribute){
-					var tableName = this._tableName(attribute);
+			Storage.prototype._insertIntoTable = function(contextInformation, callback){
+				if(this._storage && contextInformation && contextInformation instanceof ContextInformation){
+					var tableName = this._tableName(contextInformation);
 					var statement = 'INSERT INTO "' + tableName
 						+ '" (value_, type_, created_) VALUES ("'
-						+ attribute.getValue() + '", "'
-						+ attribute.getType() + '", "'
-						+ attribute.getTimestamp() + '")';
-					this._parent.log('INSERT INTO "'+tableName+'" VALUES ('+attribute.getValue()+", "+attribute.getType()+", "+attribute.getTimestamp());
+						+ contextInformation.getValue() + '", "'
+						+ contextInformation.getDataType() + '", "'
+						+ contextInformation.getTimestamp() + '")';
+					this._parent.log('INSERT INTO "'+tableName+'" VALUES ('+contextInformation.getValue()+", "+contextInformation.getDataType()+", "+contextInformation.getTimestamp());
 					if(callback && typeof(callback) == 'function'){
 						this._storage.transaction(function(tx){tx.executeSql(statement);}, this._errorCB, callback);
 					} else {
@@ -197,11 +197,11 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 
 
 			/**
-			 * Sets the attributeNames array.
+			 * Returns the contextual information names array.
 			 *
 			 * @param {?function} [callback] For alternative actions, if an asynchronous function is used.
 			 */
-			Storage.prototype.getAttributeNames = function(callback){
+			Storage.prototype.getContextInformationNames = function(callback){
 				if(this._storage){
 					var self = this;
 					this._storage.transaction(function(tx) {
@@ -214,7 +214,6 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			};
 
 			/**
-			 * Sets the attributeNames array. Is used in getAttributeNames().
 			 *
 			 * @callback
 			 * @private
@@ -242,12 +241,12 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * @param {?function} callback
 			 */
 			Storage.prototype._queryTableSuccess = function(tx, results, self, callback){
-				self._attributeNames = [];
+				self._contextInformationNames = [];
 				var len = results.rows.length;
 				for(var i=0; i<len; i++){
 					var table = results.rows.item(i).name;
 					if(table.indexOf("DatabaseInfoTable") == -1){
-						self._attributeNames.push(results.rows.item(i).name);
+						self._contextInformationNames.push(results.rows.item(i).name);
 					}
 
 				}
@@ -257,18 +256,18 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			};
 
 			/**
-			 * Verifies if a table for an attribute exists.
+			 * Verifies if a table for an contextual information exists.
 			 *
 			 * @private
-			 * @param {(Attribute|String)} attributeOrName Attribute or name for the verification.
+			 * @param {(ContextInformation|String)} contextInformationOrName The contextual information or its name for the verification.
 			 * @returns {boolean}
 			 */
-			Storage.prototype._tableExists = function(attributeOrName){
-				if(attributeOrName.constructor === Attribute){
-					var name = this._tableName(attributeOrName);
-					return this._attributeNames.indexOf(name) > -1;
-				} else if(typeof attributeOrName === 'string'){
-					return this._attributeNames.indexOf(attributeOrName) > -1;
+			Storage.prototype._tableExists = function(contextInformationOrName){
+				if(contextInformationOrName instanceof ContextInformation){
+					var name = this._tableName(contextInformationOrName);
+					return this._contextInformationNames.indexOf(name) > -1;
+				} else if(typeof contextInformationOrName === 'string'){
+					return this._contextInformationNames.indexOf(contextInformationOrName) > -1;
 				}
 				return false;
 			};
@@ -279,8 +278,8 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * @param {String} tableName Name for the table that should be retrieved.
 			 * @param {?function} callback For additional actions, if an asynchronous function is used.
 			 */
-			Storage.prototype.retrieveAttributes = function(tableName, callback){
-				console.log("retrieveAttributes from "+tableName);
+			Storage.prototype.retrieveContextInformation = function(tableName, callback){
+				console.log("retrieve contextual information from "+tableName);
 
 				if(this._storage){
 					var self = this;
@@ -294,7 +293,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			};
 
 			/**
-			 * Query function for given attribute.
+			 * Query function for given contextual information.
 			 *
 			 * @callback
 			 * @private
@@ -319,48 +318,48 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			};
 
 			/**
-			 * Success function for retrieveAttributes().
+			 * Success function for retrieveContextInformation().
 			 * Puts the retrieved data in RetrievalResult object.
 			 *
 			 * @callback
 			 * @private
 			 * @param {*} tx
 			 * @param {*} results
-			 * @param {String} tableName Name of the searched attribute.
+			 * @param {String} tableName Name of the searched contextual information.
 			 * @param self
 			 * @param {?function} callback For additional actions, if an asynchronous function is used.
 			 */
 			Storage.prototype._queryValuesSuccess = function(tx, results, tableName, self, callback){
 				var len = results.rows.length;
-				var attributeList = [];
-				var attributeName = this._resolveAttributeName(tableName);
+				var contextInformationList = [];
+				var contextInformationName = this._resolveContextInformationName(tableName);
 				var parameterList = this._resolveParameters(tableName);
 				for(var i=0; i<len; i++){
-					var attribute = new Attribute(true).
-						withName(attributeName).withValue(results.rows.item(i).value_).
-						withType(results.rows.item(i).type_).
+					var contextInformation = new ContextInformation(true).
+						withName(contextInformationName).withValue(results.rows.item(i).value_).
+						withDataType(results.rows.item(i).type_).
 						withTimestamp(results.rows.item(i).created_).
 						withParameters(parameterList);
-					attributeList.push(attribute);
+					contextInformationList.push(contextInformation);
 				}
-				self._attributes = new RetrievalResult().withName(tableName)
+				self._contextInformation = new RetrievalResult().withName(tableName)
 					.withTimestamp(new Date())
-					.withValues(attributeList);
+					.withValues(contextInformationList);
 				if(callback && typeof(callback) == 'function'){
 					callback();
 				}
 			};
 
 			/**
-			 * Stores the given Attribute.
+			 * Stores the given contextual information.
 			 * If the flush condition does not match,
 			 * the data is first added to the local cache before.
 			 *
 			 * @public
-			 * @param {Attribute} attributeValue Value that should be stored.
+			 * @param {ContextInformation} contextInformation Value that should be stored.
 			 */
-			Storage.prototype.store = function(attributeValue) {
-				this._addData(attributeValue);
+			Storage.prototype.store = function(contextInformation) {
+				this._addData(contextInformation);
 				if(this._checkFlushCondition){
 					this._flushStorage();
 					this._resetForFlush();
@@ -372,11 +371,11 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * The cache is used to decrease the database access.
 			 *
 			 * @private
-			 * @param {Attribute} _attribute Value that should be stored.
+			 * @param {ContextInformation} contextInformation Value that should be stored.
 			 */
-			Storage.prototype._addData = function(_attribute){
-				if(_attribute.constructor === Attribute){
-					this._data.put(_attribute);
+			Storage.prototype._addData = function(contextInformation){
+				if(contextInformation instanceof ContextInformation){
+					this._data.put(contextInformation);
 					this._dataCount++;
 				}
 			};
@@ -404,7 +403,7 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * @private
 			 */
 			Storage.prototype._resetForFlush = function(){
-				this._data = new AttributeList();
+				this._data = new ContextInformationList();
 				this._dataCount = 0;
 				this._lastFlush = new Date();
 			};
@@ -471,24 +470,24 @@ define(['attribute', 'attributeList', 'retrievalResult', 'parameter', 'parameter
 			 * 			Helper			*
 			 ****************************/
 			/**
-			 * Builds the tableName for the given attribute.
+			 * Builds the tableName for the given contextual information.
 			 *
 			 * @private
-			 * @param {Attribute} attribute Attribute that should be stored.
+			 * @param {ContextInformation} contextInformation The contextual information that should be stored.
 			 * @returns{String}
 			 */
-			Storage.prototype._tableName = function(attribute){
-				return attribute.toString(true);
+			Storage.prototype._tableName = function(contextInformation){
+				return contextInformation.toString(true);
 			};
 
 			/**
-			 * Extracts the attributeName form the table name.
+			 * Extracts the contextual information name from the table name.
 			 *
 			 * @private
 			 * @param {String} tableName Table name that should be resolved.
 			 * @returns{String}
 			 */
-			Storage.prototype._resolveAttributeName = function(tableName){
+			Storage.prototype._resolveContextInformationName = function(tableName){
 				var resolvedTableName = tableName.split('__');
 				return resolvedTableName[0];
 			};

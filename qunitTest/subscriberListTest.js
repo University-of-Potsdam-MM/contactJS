@@ -5,22 +5,23 @@ require(['configTest'], function() {
 			QUnit.test( "SubscriberList", function( assert ) {
 				var discoverer = new contactJS.Discoverer();
 				
-				var attributeType2 = discoverer.buildAttribute('testName', 'integer');
+				var contextInformation = discoverer.buildContextInformation('testName', 'integer');
 
-				var attList = new contactJS.AttributeList().withItems([attributeType2]);
+				var attList = new contactJS.ContextInformationList().withItems([contextInformation]);
 
-				var call = new contactJS.Callback().withName('test').withAttributeTypes(attList);
+				var call = new contactJS.Callback().withName('test').withContextInformation(attList);
 				var callList = new contactJS.CallbackList().withItems([call]);
 			
 				var subscriber = new contactJS.Subscriber().withSubscriberName('test')
 									.withSubscriberId('test')
 									.withSubscriptionCallbacks(callList)
-									.withAttributesSubset(attList);
+									.withContextInformationSubset(attList);
 			
 				var subscriber2 = new contactJS.Subscriber().withSubscriberName('test1')
 									.withSubscriberId('test1')
 									.withSubscriptionCallbacks(callList)
-									.withAttributesSubset(attList);
+									.withContextInformationSubset(attList);
+
 				var subscriber3 = new contactJS.Subscriber().withSubscriberName('test2')
 									.withSubscriberId('test2')
 									.withSubscriptionCallbacks(callList);

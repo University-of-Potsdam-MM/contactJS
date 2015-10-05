@@ -77,7 +77,7 @@ define(['abstractList', 'callback'], function(AbstractList, Callback){
 		 * @returns {boolean}
 		 */
 		CallbackList.prototype.contains = function(callback){
-			if (callback.constructor === Callback) {
+			if (callback instanceof Callback) {
 				for (var index in this._items) {
 					var tmp = this._items[index];
 					if (tmp.equals(callback)) {

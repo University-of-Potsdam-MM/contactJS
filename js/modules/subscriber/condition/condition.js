@@ -1,5 +1,5 @@
-define(['attribute', 'conditionMethod'],
- 	function(Attribute, ConditionMethod){
+define(['contextInformation', 'conditionMethod'],
+ 	function(ContextInformation, ConditionMethod){
 		return (function() {
 			/**
 			 * @classdesc Condition for subscribed Attributes.
@@ -14,12 +14,12 @@ define(['attribute', 'conditionMethod'],
 				 */
 				this._name = '';
 				/**
-				 * AttributeType that should be checked.
+				 * ContextInformation that should be checked.
 				 *
-				 * @type {Attribute}
+				 * @type {ContextInformation}
 				 * @private
 				 */
-				this._attributeType = '';
+				this._contextInformation = '';
 
 				/**
 				 * Method for comparison.
@@ -52,13 +52,13 @@ define(['attribute', 'conditionMethod'],
 			};
 
 			/**
-			 * Builder for AttributeType.
+			 * Builder for ContextInformation.
 			 *
-			 * @param {Attribute} attribute Attributes that would be verified.
+			 * @param {ContextInformation} contextInformation Contextual information that should be verified.
 			 * @returns {Condition}
 			 */
-			Condition.prototype.withAttributeType = function(attribute){
-				this.setAttributeType(attribute);
+			Condition.prototype.withContextInformation = function(contextInformation){
+				this.setContextInformation(contextInformation);
 				return this;
 			};
 
@@ -96,13 +96,13 @@ define(['attribute', 'conditionMethod'],
 			};
 
 			/**
-			 * Sets the attributeType.
+			 * Sets the ContextInformation.
 			 *
-			 * @param {Attribute} attribute AttributeType
+			 * @param {ContextInformation} contextInformation
 			 */
-			Condition.prototype.setAttributeType = function(attribute){
-				if(attribute.constructor === Attribute){
-					this._attributeType = attribute;
+			Condition.prototype.setContextInformation = function(contextInformation){
+				if(contextInformation instanceof ContextInformation){
+					this._contextInformation= contextInformation;
 				}
 			};
 
@@ -136,12 +136,12 @@ define(['attribute', 'conditionMethod'],
 			};
 
 			/**
-			 * Returns the AttributeType.
+			 * Returns the ContextInformation.
 			 *
-			 * @returns {Attribute}
+			 * @returns {ContextInformation}
 			 */
-			Condition.prototype.getAttributeType = function(){
-				return this._attributeType;
+			Condition.prototype.getContextInformation = function(){
+				return this._contextInformation;
 			};
 
 			/**
@@ -165,19 +165,19 @@ define(['attribute', 'conditionMethod'],
 			/**
 			 * Processes the comparison.
 			 *
-			 * @param {Attribute} newAttribute new Attribute that should be compared
-			 * @param {Attribute} oldAttribute old Attribute
+			 * @param {ContextInformation} newContextInformation New contextual information that should be compared.
+			 * @param {ContextInformation} oldContextInformation Old context information.
 			 * @returns {boolean}
 			 */
-			Condition.prototype.compare = function(newAttribute, oldAttribute){
-				if(!this.getAttributeType().equalsTypeOf(newAttribute) && !this.getAttributeType().equalsTypeOf(oldAttribute)){
+			Condition.prototype.compare = function(newContextInformation, oldContextInformation){
+				if(!this.getContextInformation().isKindOf(newContextInformation) && !this.getContextInformation().isKindOf(oldContextInformation)){
 					return false;
 				}
 				if(!this.getComparisonMethod()){
 					return false;
 				}
-				if(newAttribute.constructor === Attribute && oldAttribute.constructor === Attribute){
-					return this.getComparisonMethod().process(this.getReferenceValue(), newAttribute.getValue(), oldAttribute.getValue());
+				if(newContextInformation instanceof ContextInformation && oldContextInformation instanceof  ContextInformation){
+					return this.getComparisonMethod().process(this.getReferenceValue(), newContextInformation.getValue(), oldContextInformation.getValue());
 				}
 				return false;
 			};
@@ -192,7 +192,7 @@ define(['attribute', 'conditionMethod'],
 				if(condition.constructor === Condition){
 					if(condition.getName() == this.getName()
 						&& condition.getReferenceValue() == this.getReferenceValue()
-						&& condition.getAttributeType().equalsTypeOf(this.getAttributeType())
+						&& condition.getContextInformation().isKindOf(this.getContextInformation())
 						&& condition.getComparisonMethod() === this.getComparisonMethod()){
 						return true;
 					}
