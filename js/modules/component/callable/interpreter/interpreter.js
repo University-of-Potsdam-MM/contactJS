@@ -40,7 +40,7 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 				 * @type {string}
 				 * @private
 				 */
-				this.name = 'Interpreter';
+				this._name = 'Interpreter';
 
 				/**
 				 * Types of all contextual information that can be handled.
@@ -48,7 +48,7 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 				 * @private
 				 * @type {ContextInformationList}
 				 */
-				this._inContextInformation = new ContextInformationList();
+				this._inputContextInformation = new ContextInformationList();
 
 				/**
 				 * Last interpretation time.
@@ -73,8 +73,8 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 * @private
 			 */
 			Interpreter.prototype._initInterpreter = function() {
-				this._initInContextInformation();
-				this._initOutContextInformation();
+				this._initInputContextInformation();
+				this._initOutputContextInformation();
 			};
 
 			/**
@@ -82,8 +82,8 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initInContextInformation = function() {
-				this._setInContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.in));
+			Interpreter.prototype._initInputContextInformation = function() {
+				this._setInputContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.in));
 			};
 
 			/**
@@ -91,8 +91,39 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initOutContextInformation = function() {
-				this._setOutContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out));
+			Interpreter.prototype._initOutputContextInformation = function() {
+				this._setOutputContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out));
+			};
+
+			/**
+			 * Convenience accessor for getOutputData.
+			 *
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Contextual information that should be entered.
+			 * @returns {ContextInformationList}
+			 */
+			Interpreter.prototype.getOutputContextInformation = function(contextInformationListOrArray) {
+				return /** @type {ContextInformationList} */ this.getOutputData(contextInformationListOrArray);
+			};
+
+			/**
+			 * Convenience accessor for _setOutputData.
+			 *
+			 * @param contextInformation
+			 * @private
+			 */
+			Interpreter.prototype._setOutputContextInformation = function(contextInformation) {
+				this._setOutputData(contextInformation);
+			};
+
+			/**
+			 * Convenience accessor for _isOutputData.
+			 *
+			 * @param {ContextInformation} contextInformation
+			 * @returns {Boolean}
+			 * @private
+			 */
+			Interpreter.prototype._isOutputContextInformation = function(contextInformation) {
+				return this._isOutputData(contextInformation);
 			};
 
 			/**
@@ -101,8 +132,8 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 * @public
 			 * @returns {ContextInformationList}
 			 */
-			Interpreter.prototype.getInContextInformation = function() {
-				return this._inContextInformation;
+			Interpreter.prototype.getInputContextInformation = function() {
+				return this._inputContextInformation;
 			};
 
 			/**
@@ -111,8 +142,8 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 * @protected
 			 * @param {ContextInformation} contextInformation
 			 */
-			Interpreter.prototype._addInContextInformation = function(contextInformation) {
-				this._inContextInformation.put(contextInformation);
+			Interpreter.prototype._addInputContextInformation = function(contextInformation) {
+				this._inputContextInformation.put(contextInformation);
 			};
 
 			/**
@@ -121,44 +152,44 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 * @protected
 			 * @param {(ContextInformationList|Array)} contextInformationListOrArray The contextual information to set.
 			 */
-			Interpreter.prototype._setInContextInformation = function(contextInformationListOrArray) {
-				this._inContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
+			Interpreter.prototype._setInputContextInformation = function(contextInformationListOrArray) {
+				this._inputContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
 			};
 
 			/**
-			 * Verifies whether the specified contextual information is contained in _inContextInformation.
+			 * Verifies whether the specified contextual information is contained in _inputContextInformation.
 			 *
 			 * @protected
 			 * @param {ContextInformation} contextInformation The contextual information that should be verified.
 			 * @return {boolean}
 			 */
-			Interpreter.prototype._isInContextInformation = function(contextInformation) {
-				return !!this._inContextInformation.containsKindOf(contextInformation);
+			Interpreter.prototype._isInputContextInformation = function(contextInformation) {
+				return !!this._inputContextInformation.containsKindOf(contextInformation);
 			};
 
 			/**
 			 * Validates the data and calls interpretData.
 			 *
 			 * @public
-			 * @param {ContextInformationList} inContextInformation Data that should be interpreted.
-			 * @param {ContextInformationList} outContextInformation
+			 * @param {ContextInformationList} inputContextInformation Data that should be interpreted.
+			 * @param {ContextInformationList} outputContextInformation
 			 * @param {?function} callback For additional actions, if an asynchronous function is used.
 			 */
-			Interpreter.prototype.callInterpreter = function(inContextInformation, outContextInformation, callback) {
+			Interpreter.prototype.callInterpreter = function(inputContextInformation, outputContextInformation, callback) {
 				var self = this;
 
-				if (!inContextInformation || !this._canHandleInContextInformation(inContextInformation)) throw "Empty input contextual information list or unhandled input contextual information.";
-				if (!outContextInformation || !this._canHandleOutContextInformation(outContextInformation)) throw "Empty output contextual information list or unhandled output contextual information.";
+				if (!inputContextInformation || !this._canHandleInputContextInformation(inputContextInformation)) throw "Empty input contextual information list or unhandled input contextual information.";
+				if (!outputContextInformation || !this._canHandleOutputContextInformation(outputContextInformation)) throw "Empty output contextual information list or unhandled output contextual information.";
 
 				// get expected input contextual information
-				var expectedInContextInformation = this._getExpectedInContextInformation(inContextInformation);
+				var expectedInputContextInformation = this._getExpectedInputContextInformation(inputContextInformation);
 
-				this._interpretData(expectedInContextInformation, outContextInformation, function(interpretedData) {
+				this._interpretData(expectedInputContextInformation, outputContextInformation, function(interpretedData) {
 					var response = new ContextInformationList().withItems(interpretedData);
 
-					if (!self._canHandleOutContextInformation(response)) throw "Unhandled output contextual information generated.";
+					if (!self._canHandleOutputContextInformation(response)) throw "Unhandled output contextual information generated.";
 
-					self._setInContextInformation(inContextInformation);
+					self._setInputContextInformation(inputContextInformation);
 					self.lastInterpretation = new Date();
 
 					if (callback && typeof(callback) == 'function'){
@@ -186,19 +217,19 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 * @protected
 			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Data that should be verified.
 			 */
-			Interpreter.prototype._canHandleInContextInformation = function(contextInformationListOrArray) {
+			Interpreter.prototype._canHandleInputContextInformation = function(contextInformationListOrArray) {
 				var list = [];
 				if (contextInformationListOrArray instanceof Array) {
 					list = contextInformationListOrArray;
 				} else if (contextInformationListOrArray instanceof ContextInformationList) {
 					list = contextInformationListOrArray.getItems();
 				}
-				if (list.length == 0 || contextInformationListOrArray.size() != this.getInContextInformation().size()) {
+				if (list.length == 0 || contextInformationListOrArray.size() != this.getInputContextInformation().size()) {
 					return false;
 				}
 				for (var i in list) {
 					var inContextInformation = list[i];
-					if (!this._isInContextInformation(inContextInformation)) {
+					if (!this._isInputContextInformation(inContextInformation)) {
 						return false;
 					}
 				}
@@ -211,19 +242,19 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 * @protected
 			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Data that should be verified.
 			 */
-			Interpreter.prototype._canHandleOutContextInformation = function(contextInformationListOrArray) {
+			Interpreter.prototype._canHandleOutputContextInformation = function(contextInformationListOrArray) {
 				var list = [];
 				if (contextInformationListOrArray instanceof Array) {
 					list = contextInformationListOrArray;
 				} else if (contextInformationListOrArray instanceof ContextInformationList) {
 					list = contextInformationListOrArray.getItems();
 				}
-				if (list.length == 0 || contextInformationListOrArray.size() != this.getOutContextInformation().size()) {
+				if (list.length == 0 || contextInformationListOrArray.size() != this.getOutputContextInformation().size()) {
 					return false;
 				}
 				for (var i in list) {
 					var outContextInformation = list[i];
-					if (!this._isOutContextInformation(outContextInformation)) {
+					if (!this._isOutputContextInformation(outContextInformation)) {
 						return false;
 					}
 				}
@@ -237,12 +268,12 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 * @returns {*}
 			 * @private
 			 */
-			Interpreter.prototype._getExpectedInContextInformation = function(contextInformationList) {
+			Interpreter.prototype._getExpectedInputContextInformation = function(contextInformationList) {
 				var self = this;
 				var expectedContextInformation = new ContextInformationList();
 
 				contextInformationList.getItems().forEach(function(contextInformation, index) {
-					expectedContextInformation.put(contextInformation.getSynonymWithName(self.getInContextInformation().getItems()[index].getName()).setValue(contextInformation.getValue()));
+					expectedContextInformation.put(contextInformation.getSynonymWithName(self.getInputContextInformation().getItems()[index].getName()).setValue(contextInformation.getValue()));
 				});
 
 				return expectedContextInformation;
@@ -262,16 +293,16 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			 *
 			 * @returns {boolean}
 			 */
-			Interpreter.prototype.hasOutContextInformationWithInputParameters = function() {
-				return this._outContextInformation.hasContextInformationWithInputParameters();
+			Interpreter.prototype.hasOutputContextInformationWithInputParameters = function() {
+				return this._outputData.hasContextInformationWithInputParameters();
 			};
 
 			/**
 			 *
 			 * @returns {ContextInformationList}
 			 */
-			Interpreter.prototype.getOutContextInformationWithInputParameters = function() {
-				return this._outContextInformation.getContextInformationWithInputParameters();
+			Interpreter.prototype.getOutputContextInformationWithInputParameters = function() {
+				return this._outputData.getContextInformationWithInputParameters();
 			};
 
 			return Interpreter;

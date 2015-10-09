@@ -1,11 +1,21 @@
 /**
  * Created by tobias on 30.03.15.
  */
-define(['contextInformationList'],
-    function(ContextInformationList) {
+define(['data', 'dataList'],
+    function(Data, DataList) {
         return (function() {
 
             Component.lastLogId = "";
+
+            Component.description = {
+                out: [
+                    {
+                        "name":"",
+                        "type":""
+                    }
+                ],
+                requiredObjects: []
+            };
 
             /**
             *
@@ -32,10 +42,10 @@ define(['contextInformationList'],
                 /**
                  * All available contextual information and their values.
                  *
-                 * @type {ContextInformationList}
-                 * @private
+                 * @type {DataList}
+                 * @protected
                  */
-                this._outContextInformation = new ContextInformationList();
+                this._outputData = new DataList();
 
                 /**
                  * Associated discoverer.
@@ -80,47 +90,51 @@ define(['contextInformationList'],
             /**
              * Returns the available contextual information.
              *
-             * @param {?ContextInformationList} [contextInformationList]
-             * @returns {ContextInformationList}
+             * @param {?DataList} [dataList]
+             * @returns {DataList}
              */
-            Component.prototype.getOutContextInformation = function(contextInformationList) {
+            Component.prototype.getOutputData = function(dataList) {
                 // test if contextual information is a list
-                if (contextInformationList && contextInformationList instanceof ContextInformationList) {
-                    return this._outContextInformation.getSubset(contextInformationList);
+                if (dataList && dataList instanceof DataList) {
+                    return this._outputData.getSubset(dataList);
                 } else {
-                    return this._outContextInformation;
+                    return this._outputData;
                 }
             };
 
             /**
-             * Adds an output contextual information.
+             * Sets the output data.
              *
-             * @param {ContextInformation} contextInformation
+             * @param {DataList} dataList The data to be set.
              * @protected
              */
-            Component.prototype._addOutContextInformation = function(contextInformation) {
-                this._outContextInformation.put(contextInformation);
+            Component.prototype._setOutputData = function(dataList) {
+                this._outputData = dataList;
             };
 
             /**
-             * Sets an output contextual information.
              *
-             * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray The contextual information to set.
-             * @protected
+             * @param data
+             * @param multipleInstances
              */
-            Component.prototype._setOutContextInformation = function(contextInformationListOrArray) {
-                this._outContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
+            Component.prototype.addOutputData = function(data, multipleInstances) {
+                this.log("will add or update "+data+".");
+                multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+                data.setTimestamp(this.getCurrentTime());
+                if (data instanceof Data) {
+                    this._outputData.put(data, multipleInstances);
+                }
             };
 
             /**
-             * Verifies whether the specified contextual information is a provided contextual information.
+             * Verifies whether the specified data is provided by the component.
              *
-             * @param {ContextInformation} contextInformation
+             * @param {Data} data
              * @returns {Boolean}
              * @protected
              */
-            Component.prototype._isOutContextInformation = function(contextInformation) {
-                return !!this._outContextInformation.containsKindOf(contextInformation);
+            Component.prototype._isOutputData = function(data) {
+                return !!this._outputData.containsKindOf(data);
             };
 
             /**
@@ -161,11 +175,11 @@ define(['contextInformationList'],
 
             /**
              *
-             * @param {ContextInformation} contextInformation
+             * @param {Data} data
              * @returns {boolean}
              */
-            Component.prototype.doesSatisfyKindOf = function(contextInformation) {
-                return this._outContextInformation.containsKindOf(contextInformation);
+            Component.prototype.doesSatisfyKindOf = function(data) {
+                return this._outputData.containsKindOf(data);
             };
 
             /*** Helper ***/

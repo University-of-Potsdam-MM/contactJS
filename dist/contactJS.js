@@ -532,11 +532,58 @@ define('abstractList',[],function() {
 		return AbstractList;
 	})();
 });
+/**
+ * Created by tobias on 30.09.15.
+ */
+define('data',['data'],
+    function(Data) {
+        return (function() {
+
+            /**
+             *
+             * @returns {Data}
+             * @class Data
+             */
+            function Data() {
+
+
+                return this;
+            }
+
+            return Data;
+        })();
+    }
+);
+/**
+ * Created by tobias on 01.10.15.
+ */
+define('dataList',['abstractList', 'data'], function(AbstractList, Data) {
+    return (function() {
+        /**
+         * This class represents a list for Data.
+         *
+         * @extends AbstractList
+         * @class DataList
+         * @returns DataList
+         */
+        function DataList() {
+            AbstractList.call(this);
+            this._type = Data;
+            return this;
+        }
+
+        DataList.prototype = Object.create(AbstractList.prototype);
+        DataList.prototype.constructor = DataList;
+
+        return DataList;
+    })();
+});
 define('parameter',[],function(){
 	return (function() {
 		/**
-		 * @classdesc Parameter specifies the Attributes to that these are associated.
-		 * @constructs Parameter
+		 * Parameter specifies the Attributes to that these are associated.
+		 *
+		 * @class Parameter
 		 */
 		function Parameter() {
 			/**
@@ -689,10 +736,10 @@ define('parameter',[],function(){
 define('parameterList',['abstractList', 'parameter'], function(AbstractList, Parameter) {
 	return (function() {
 		/**
+		 * This class represents a list for Parameter.
 		 *
-		 * @classdesc This class represents a list for Parameter.
 		 * @extends AbstractList
-		 * @constructs ParameterList
+		 * @class ParameterList
 		 */
 		function ParameterList() {
 			AbstractList.call(this);
@@ -741,7 +788,7 @@ define('parameterList',['abstractList', 'parameter'], function(AbstractList, Par
 		return ParameterList;
 	})();
 });
-define('contextInformation',['parameterList'], function(ParameterList) {
+define('contextInformation',['data', 'parameterList'], function(Data, ParameterList) {
     return (function() {
 
         /**
@@ -764,8 +811,11 @@ define('contextInformation',['parameterList'], function(ParameterList) {
          * ContextInformation defines name, type (string, double,...) an associated parameter of a contextual information.
          *
          * @class ContextInformation
+         * @extends Data
          */
         function ContextInformation(overrideBuilderDependency) {
+            Data.call(this);
+
             // avoid inexpert meddling with contextual information construction
             if (typeof overrideBuilderDependency == 'undefined' || !overrideBuilderDependency)
                 throw new Error("Contextual information must be created by the discoverer's buildContextInformation() method!");
@@ -817,6 +867,9 @@ define('contextInformation',['parameterList'], function(ParameterList) {
 
             return this;
         }
+
+        ContextInformation.prototype = Object.create(Data.prototype);
+        ContextInformation.prototype.constructor = ContextInformation;
 
         ContextInformation.fromContextInformationDescription = function(discoverer, contextInformationDescription) {
             return discoverer.buildContextInformation(
@@ -1217,21 +1270,21 @@ define('contextInformation',['parameterList'], function(ParameterList) {
         return ContextInformation;
     })();
 });
-define('contextInformationList',['abstractList', 'contextInformation'], function(AbstractList, ContextInformation) {
+define('contextInformationList',['dataList', 'contextInformation'], function(DataList, ContextInformation) {
     return (function() {
         /**
          * This class represents a list for ContextInformation.
          *
-         * @extends AbstractList
+         * @extends DataList
          * @class ContextInformationList
          */
         function ContextInformationList() {
-            AbstractList.call(this);
+            DataList.call(this);
             this._type = ContextInformation;
             return this;
         }
 
-        ContextInformationList.prototype = Object.create(AbstractList.prototype);
+        ContextInformationList.prototype = Object.create(DataList.prototype);
         ContextInformationList.prototype.constructor = ContextInformationList;
 
         /**
@@ -1289,8 +1342,7 @@ define('contextInformationList',['abstractList', 'contextInformation'], function
         };
 
         /**
-         * Adds all items in the specified list to the
-         * itemList.
+         * Adds all items in the specified list to the itemList.
          *
          * @public
          * @param {(ContextInformationList|Array)} contextInformationList ContextInformationList
@@ -2196,11 +2248,21 @@ define('storage',['contextInformation', 'contextInformationList', 'retrievalResu
 /**
  * Created by tobias on 30.03.15.
  */
-define('component',['contextInformationList'],
-    function(ContextInformationList) {
+define('component',['data', 'dataList'],
+    function(Data, DataList) {
         return (function() {
 
             Component.lastLogId = "";
+
+            Component.description = {
+                out: [
+                    {
+                        "name":"",
+                        "type":""
+                    }
+                ],
+                requiredObjects: []
+            };
 
             /**
             *
@@ -2227,10 +2289,10 @@ define('component',['contextInformationList'],
                 /**
                  * All available contextual information and their values.
                  *
-                 * @type {ContextInformationList}
-                 * @private
+                 * @type {DataList}
+                 * @protected
                  */
-                this._outContextInformation = new ContextInformationList();
+                this._outputData = new DataList();
 
                 /**
                  * Associated discoverer.
@@ -2275,47 +2337,51 @@ define('component',['contextInformationList'],
             /**
              * Returns the available contextual information.
              *
-             * @param {?ContextInformationList} [contextInformationList]
-             * @returns {ContextInformationList}
+             * @param {?DataList} [dataList]
+             * @returns {DataList}
              */
-            Component.prototype.getOutContextInformation = function(contextInformationList) {
+            Component.prototype.getOutputData = function(dataList) {
                 // test if contextual information is a list
-                if (contextInformationList && contextInformationList instanceof ContextInformationList) {
-                    return this._outContextInformation.getSubset(contextInformationList);
+                if (dataList && dataList instanceof DataList) {
+                    return this._outputData.getSubset(dataList);
                 } else {
-                    return this._outContextInformation;
+                    return this._outputData;
                 }
             };
 
             /**
-             * Adds an output contextual information.
+             * Sets the output data.
              *
-             * @param {ContextInformation} contextInformation
+             * @param {DataList} dataList The data to be set.
              * @protected
              */
-            Component.prototype._addOutContextInformation = function(contextInformation) {
-                this._outContextInformation.put(contextInformation);
+            Component.prototype._setOutputData = function(dataList) {
+                this._outputData = dataList;
             };
 
             /**
-             * Sets an output contextual information.
              *
-             * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray The contextual information to set.
-             * @protected
+             * @param data
+             * @param multipleInstances
              */
-            Component.prototype._setOutContextInformation = function(contextInformationListOrArray) {
-                this._outContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
+            Component.prototype.addOutputData = function(data, multipleInstances) {
+                this.log("will add or update "+data+".");
+                multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+                data.setTimestamp(this.getCurrentTime());
+                if (data instanceof Data) {
+                    this._outputData.put(data, multipleInstances);
+                }
             };
 
             /**
-             * Verifies whether the specified contextual information is a provided contextual information.
+             * Verifies whether the specified data is provided by the component.
              *
-             * @param {ContextInformation} contextInformation
+             * @param {Data} data
              * @returns {Boolean}
              * @protected
              */
-            Component.prototype._isOutContextInformation = function(contextInformation) {
-                return !!this._outContextInformation.containsKindOf(contextInformation);
+            Component.prototype._isOutputData = function(data) {
+                return !!this._outputData.containsKindOf(data);
             };
 
             /**
@@ -2356,11 +2422,11 @@ define('component',['contextInformationList'],
 
             /**
              *
-             * @param {ContextInformation} contextInformation
+             * @param {Data} data
              * @returns {boolean}
              */
-            Component.prototype.doesSatisfyKindOf = function(contextInformation) {
-                return this._outContextInformation.containsKindOf(contextInformation);
+            Component.prototype.doesSatisfyKindOf = function(data) {
+                return this._outputData.containsKindOf(data);
             };
 
             /*** Helper ***/
@@ -3200,12 +3266,197 @@ define('subscriberList',['abstractList', 'subscriber'], function(AbstractList, S
 	})();
 });
 /**
+ * Created by tobias on 30.09.15.
+ */
+define('queryable',['component', 'contextInformation', 'contextInformationList', 'callback', 'callbackList', 'subscriber', 'subscriberList'], function(Component, ContextInformation, ContextInformationList, Callback, CallbackList, Subscriber, SubscriberList) {
+    return (function() {
+        /**
+         * Defines all output contextual information and constant output contextual information as an object.
+         * @type {object}
+         * @public
+         */
+        Queryable.description = {
+            out: [
+                {
+                    "name":"",
+                    "type":""
+                }
+            ],
+            const: [
+                {
+                    "name":"",
+                    "type":""
+                }
+            ],
+            updateInterval: 30000,
+            requiredObjects: []
+        };
+
+        /**
+         *
+         * @returns {Queryable}
+         * @class Queryable
+         * @extends Component
+         */
+        function Queryable(discoverer) {
+            Component.call(this, discoverer);
+
+            /**
+             * Name of the queryable.
+             *
+             * @type {string}
+             * @private
+             */
+            this._name = 'Queryable';
+
+            /**
+             * List of Callbacks.
+             *
+             * @protected
+             * @type {CallbackList}
+             */
+            this._callbacks = new CallbackList();
+
+            /**
+             * All available contextual information and their values.
+             *
+             * @type {ContextInformationList}
+             * @protected
+             */
+            this._outputData = new ContextInformationList();
+
+            /**
+             * This temporary variable is used for storing the old data values.
+             * So these can be used to check conditions.
+             *
+             * @type {ContextInformationList}
+             * @protected
+             */
+            this._oldOutputContextInformation = new ContextInformationList();
+
+            /**
+             *
+             * @protected
+             * @type {ContextInformationList}
+             * @desc All available constant contextual information and their values.
+             */
+            this._constantOutputContextInformation = new ContextInformationList();
+
+            /**
+             *
+             * @protected
+             * @type {SubscriberList}
+             * @desc List of Subscriber.
+             */
+            this._subscribers = new SubscriberList();
+
+            /**
+             *
+             * @type {null}
+             * @private
+             */
+            this._updateInterval = null;
+
+            return this;
+        }
+
+        Queryable.prototype = Object.create(Component.prototype);
+        Queryable.prototype.constructor = Queryable;
+
+        /**
+         * Initializes the provided contextual information.
+         *
+         * @protected
+         */
+        Queryable.prototype._initOutputContextInformation = function() {
+            this._outputData = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out);
+        };
+
+        /**
+         *
+         * @param {(ContextInformationList|Array.<ContextInformation>)} [contextInformationListOrArray]
+         * @returns {ContextInformationList}
+         */
+        Queryable.prototype.getOutputContextInformation = function(contextInformationListOrArray) {
+            return /** @type {ContextInformationList} */ this.getOutputData(contextInformationListOrArray);
+        };
+
+        /**
+         * Returns the old contextual information.
+         *
+         * @returns {ContextInformationList}
+         */
+        Queryable.prototype.getOldOutputContextInformation = function() {
+            return this._oldOutputContextInformation;
+        };
+
+        /**
+         *
+         * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray
+         * @protected
+         */
+        Queryable.prototype._setOutputContextInformation = function(contextInformationListOrArray) {
+            this._setOutputData(contextInformationListOrArray);
+        };
+
+        /**
+         *
+         * @param {ContextInformation} contextInformation
+         * @returns {Boolean}
+         * @protected
+         */
+        Queryable.prototype._isOutputContextInformation = function(contextInformation) {
+            return this._isOutputData(contextInformation);
+        };
+
+        /**
+         * Updates the contextual information that is maintained by the queryable.
+         *
+         * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Contextual information that should be entered.
+         */
+        Queryable.prototype.putData = function(contextInformationListOrArray) {
+            var list = [];
+            if (contextInformationListOrArray instanceof Array) {
+                list = contextInformationListOrArray;
+            } else if (contextInformationListOrArray instanceof ContextInformationList) {
+                list = contextInformationListOrArray.getItems();
+            }
+            for ( var i in list) {
+                var contextInformation = list[i];
+                if (contextInformation instanceof ContextInformation && this._isOutputContextInformation(contextInformation)) {
+                    this.addOutputContextInformation(contextInformation);
+                }
+            }
+        };
+
+        /**
+         * Adds a new context information value. If the given kind of
+         * contextual information is not included in the list, it will be also added.
+         * Otherwise, only the value will be updated.
+         *
+         * @param {ContextInformation} contextInformation
+         * @param {boolean} [multipleInstances=false]
+         */
+        Queryable.prototype.addOutputContextInformation = function(contextInformation, multipleInstances) {
+            this.log("will add or update contextual information "+contextInformation+".");
+            multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
+            this._oldOutputContextInformation = this._outputData;
+            contextInformation.setTimestamp(this.getCurrentTime());
+            if (contextInformation instanceof ContextInformation) {
+                this._outputData.put(contextInformation, multipleInstances);
+            }
+        };
+
+        return Queryable;
+    })();
+});
+/**
  * This module representing a Context Widget.
  * 
  * @module Widget
  */
-define('widget',['component', 'callback', 'callbackList', 'contextInformation', 'contextInformationList', 'conditionList', 'subscriber', 'subscriberList'],
-	function(Component, Callback, CallbackList, ContextInformation, ContextInformationList, ConditionList, Subscriber, SubscriberList) {
+define('widget',['queryable', 'callback', 'callbackList', 'contextInformation', 'contextInformationList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(Queryable, Callback, CallbackList, ContextInformation, ContextInformationList, ConditionList, Subscriber, SubscriberList) {
 		return (function() {
 
 			/**
@@ -3237,11 +3488,11 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			 *
 			 * @abstract
 			 * @class Widget
-			 * @extends Component
+			 * @extends Queryable
 			 * @param {Discoverer} discoverer
 			 */
 			function Widget(discoverer) {
-				Component.call(this, discoverer);
+				Queryable.call(this, discoverer);
 
 				/**
 				 * Name of the widget.
@@ -3251,53 +3502,13 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 				 */
 				this._name  = 'Widget';
 
-				/**
-				 * This temporary variable is used for storing the old contextual information values.
-				 * So these can be used to check conditions.
-				 *
-				 * @type {ContextInformationList}
-				 * @protected
-				 */
-				this._oldOutContextInformation = new ContextInformationList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {ContextInformationList}
-				 * @desc All available constant contextual information and their values.
-				 */
-				this._constantOutContextInformation = new ContextInformationList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {CallbackList}
-				 * @desc List of Callbacks.
-				 */
-				this._callbacks = new CallbackList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {SubscriberList}
-				 * @desc List of Subscriber.
-				 */
-				this._subscribers = new SubscriberList();
-
-				/**
-				 *
-				 * @type {null}
-				 * @private
-				 */
-				this._updateInterval = null;
-
 				this._register();
 				this._init();
 
 				return this;
 			}
 
-			Widget.prototype = Object.create(Component.prototype);
+			Widget.prototype = Object.create(Queryable.prototype);
 			Widget.prototype.constructor = Widget;
 
 			/**
@@ -3307,18 +3518,9 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			 * @protected
 			 */
 			Widget.prototype._init = function() {
-				this._initOutContextInformation();
-				this._initConstantOutContextInformation();
+				this._initOutputContextInformation();
+				this._initConstantOutputContextInformation();
 				this._initCallbacks();
-			};
-
-			/**
-			 * Initializes the provided contextual information.
-			 *
-			 * @private
-			 */
-			Widget.prototype._initOutContextInformation = function() {
-				this._outContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out);
 			};
 
 			/**
@@ -3326,8 +3528,8 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			 *
 			 * @private
 			 */
-			Widget.prototype._initConstantOutContextInformation = function() {
-				this._constantOutContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.const);
+			Widget.prototype._initConstantOutputContextInformation = function() {
+				this._constantOutputContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.const);
 			};
 
 			/**
@@ -3344,14 +3546,14 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			 * Returns the available constant contextual information.
 			 * (contextual information that do not change).
 			 *
-			 * @param {?ContextInformationList} contextInformationList
+			 * @param {?ContextInformationList} [contextInformationList]
 			 * @returns {ContextInformationList}
 			 */
-			Widget.prototype.getConstantOutContextInformation = function(contextInformationList) {
-				if (contextInformationList && contextInformationList instanceof ContextInformationList) {
-					return this._constantOutContextInformation.getSubset(contextInformationList);
+			Widget.prototype.getConstantOutputContextInformation = function(contextInformationList) {
+				if (typeof contextInformationList != "undefined" && contextInformationList instanceof ContextInformationList) {
+					return this._constantOutputContextInformation.getSubset(contextInformationList);
 				} else {
-					return this._constantOutContextInformation;
+					return this._constantOutputContextInformation;
 				}
 			};
 
@@ -3363,15 +3565,6 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			 */
 			Widget.prototype.getLastValueForContextInformationOfKind = function(contextInformation) {
 				return this.getOutContextInformation().getContextInformationOfKind(contextInformation).getValue();
-			};
-
-			/**
-			 * Returns the old contextual information.
-			 *
-			 * @returns {ContextInformationList}
-			 */
-			Widget.prototype.getOldOutContextInformation = function() {
-				return this._oldOutContextInformation;
 			};
 
 			/**
@@ -3408,26 +3601,6 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			};
 
 			/**
-			 * Adds a new contextual information value. If the given value is
-			 * not included in the list, the associated type will
-			 * be also added. Otherwise, only the value will be
-			 * updated.
-			 *
-			 * @public
-			 * @param {ContextInformation} contextInformation
-			 * @param {boolean} multipleInstances
-			 */
-			Widget.prototype.addOutContextInformation = function(contextInformation, multipleInstances) {
-				this.log("will add or update contextual information "+contextInformation+".");
-				multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
-				this._oldOutContextInformation = this._outContextInformation;
-				contextInformation.setTimestamp(this.getCurrentTime());
-				if (contextInformation instanceof ContextInformation) {
-					this._outContextInformation.put(contextInformation, multipleInstances);
-				}
-			};
-
-			/**
 			 * Sets the constant contextual information list.
 			 *
 			 * @protected
@@ -3446,11 +3619,11 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			 * @protected
 			 * @param {ContextInformation} contextInformation
 			 */
-			Widget.prototype._addConstantOutContextInformation = function(contextInformation) {
+			Widget.prototype._addConstantOutputContextInformation = function(contextInformation) {
 				if (contextInformation instanceof ContextInformation) {
-					if (!this._constantOutContextInformation.containsKindOf(contextInformation)) {
+					if (!this._constantOutputContextInformation.containsKindOf(contextInformation)) {
 						contextInformation.setTimestamp(this.getCurrentTime());
-						this._constantOutContextInformation.put(contextInformation);
+						this._constantOutputContextInformation.put(contextInformation);
 					}
 				}
 			};
@@ -3567,7 +3740,7 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
 								var callSubset =  callback.getContextInformation();
 								var subscriberSubset = subscriber.getContextInformationSubset();
-								var data = this._outContextInformation.getSubset(callSubset);
+								var data = this.getOutputContextInformation().getSubset(callSubset);
 								if (subscriberSubset && subscriberSubset.size() > 0) {
 									data = data.getSubset(subscriberSubset);
 								}
@@ -3618,26 +3791,6 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			};
 
 			/**
-			 * Updates the contextual information by external components.
-			 *
-			 * @param {(ContextInformationList|Array)} contextInformationListOrArray Data that should be entered.
-			 */
-			Widget.prototype.putData = function(contextInformationListOrArray) {
-				var list = [];
-				if (contextInformationListOrArray instanceof Array) {
-					list = contextInformationListOrArray;
-				} else if (contextInformationListOrArray instanceof ContextInformationList) {
-					list = contextInformationListOrArray.getItems();
-				}
-				for ( var i in list) {
-					var theContextInformation = list[i];
-					if (theContextInformation instanceof ContextInformation && this._isOutContextInformation(theContextInformation)) {
-						this.addOutContextInformation(theContextInformation);
-					}
-				}
-			};
-
-			/**
 			 * Returns all available contextual information value and constant contextual information.
 			 *
 			 * @public
@@ -3645,8 +3798,8 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 			 */
 			Widget.prototype.queryWidget = function() {
 				var response = new ContextInformationList();
-				response.putAll(this.getOutContextInformation());
-				response.putAll(this.getConstantOutContextInformation());
+				response.putAll(this.getOutputContextInformation());
+				response.putAll(this.getConstantOutputContextInformation());
 				return response;
 			};
 
@@ -3681,8 +3834,8 @@ define('widget',['component', 'callback', 'callbackList', 'contextInformation', 
 						var condition = items[i];
 						var conditionContextInformation = condition.getContextInformation();
 						var conditionContextInformationList = new ContextInformationList().withItems(new Array(conditionContextInformation));
-						var newValue = this.getOutContextInformation().getSubset(conditionContextInformationList);
-						var oldValue = this.getOldOutContextInformation.getSubset(conditionContextInformationList);
+						var newValue = this.getOutputContextInformation().getSubset(conditionContextInformationList);
+						var oldValue = this.getOldOutputContextInformation.getSubset(conditionContextInformationList);
 						return condition.compare(newValue, oldValue);
 					}
 				}
@@ -3916,7 +4069,7 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 				 * @type {string}
 				 * @private
 				 */
-				this.name = 'Interpreter';
+				this._name = 'Interpreter';
 
 				/**
 				 * Types of all contextual information that can be handled.
@@ -3924,7 +4077,7 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 				 * @private
 				 * @type {ContextInformationList}
 				 */
-				this._inContextInformation = new ContextInformationList();
+				this._inputContextInformation = new ContextInformationList();
 
 				/**
 				 * Last interpretation time.
@@ -3949,8 +4102,8 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 * @private
 			 */
 			Interpreter.prototype._initInterpreter = function() {
-				this._initInContextInformation();
-				this._initOutContextInformation();
+				this._initInputContextInformation();
+				this._initOutputContextInformation();
 			};
 
 			/**
@@ -3958,8 +4111,8 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initInContextInformation = function() {
-				this._setInContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.in));
+			Interpreter.prototype._initInputContextInformation = function() {
+				this._setInputContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.in));
 			};
 
 			/**
@@ -3967,8 +4120,39 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 *
 			 * @private
 			 */
-			Interpreter.prototype._initOutContextInformation = function() {
-				this._setOutContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out));
+			Interpreter.prototype._initOutputContextInformation = function() {
+				this._setOutputContextInformation(ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out));
+			};
+
+			/**
+			 * Convenience accessor for getOutputData.
+			 *
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Contextual information that should be entered.
+			 * @returns {ContextInformationList}
+			 */
+			Interpreter.prototype.getOutputContextInformation = function(contextInformationListOrArray) {
+				return /** @type {ContextInformationList} */ this.getOutputData(contextInformationListOrArray);
+			};
+
+			/**
+			 * Convenience accessor for _setOutputData.
+			 *
+			 * @param contextInformation
+			 * @private
+			 */
+			Interpreter.prototype._setOutputContextInformation = function(contextInformation) {
+				this._setOutputData(contextInformation);
+			};
+
+			/**
+			 * Convenience accessor for _isOutputData.
+			 *
+			 * @param {ContextInformation} contextInformation
+			 * @returns {Boolean}
+			 * @private
+			 */
+			Interpreter.prototype._isOutputContextInformation = function(contextInformation) {
+				return this._isOutputData(contextInformation);
 			};
 
 			/**
@@ -3977,8 +4161,8 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 * @public
 			 * @returns {ContextInformationList}
 			 */
-			Interpreter.prototype.getInContextInformation = function() {
-				return this._inContextInformation;
+			Interpreter.prototype.getInputContextInformation = function() {
+				return this._inputContextInformation;
 			};
 
 			/**
@@ -3987,8 +4171,8 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 * @protected
 			 * @param {ContextInformation} contextInformation
 			 */
-			Interpreter.prototype._addInContextInformation = function(contextInformation) {
-				this._inContextInformation.put(contextInformation);
+			Interpreter.prototype._addInputContextInformation = function(contextInformation) {
+				this._inputContextInformation.put(contextInformation);
 			};
 
 			/**
@@ -3997,44 +4181,44 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 * @protected
 			 * @param {(ContextInformationList|Array)} contextInformationListOrArray The contextual information to set.
 			 */
-			Interpreter.prototype._setInContextInformation = function(contextInformationListOrArray) {
-				this._inContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
+			Interpreter.prototype._setInputContextInformation = function(contextInformationListOrArray) {
+				this._inputContextInformation = new ContextInformationList().withItems(contextInformationListOrArray);
 			};
 
 			/**
-			 * Verifies whether the specified contextual information is contained in _inContextInformation.
+			 * Verifies whether the specified contextual information is contained in _inputContextInformation.
 			 *
 			 * @protected
 			 * @param {ContextInformation} contextInformation The contextual information that should be verified.
 			 * @return {boolean}
 			 */
-			Interpreter.prototype._isInContextInformation = function(contextInformation) {
-				return !!this._inContextInformation.containsKindOf(contextInformation);
+			Interpreter.prototype._isInputContextInformation = function(contextInformation) {
+				return !!this._inputContextInformation.containsKindOf(contextInformation);
 			};
 
 			/**
 			 * Validates the data and calls interpretData.
 			 *
 			 * @public
-			 * @param {ContextInformationList} inContextInformation Data that should be interpreted.
-			 * @param {ContextInformationList} outContextInformation
+			 * @param {ContextInformationList} inputContextInformation Data that should be interpreted.
+			 * @param {ContextInformationList} outputContextInformation
 			 * @param {?function} callback For additional actions, if an asynchronous function is used.
 			 */
-			Interpreter.prototype.callInterpreter = function(inContextInformation, outContextInformation, callback) {
+			Interpreter.prototype.callInterpreter = function(inputContextInformation, outputContextInformation, callback) {
 				var self = this;
 
-				if (!inContextInformation || !this._canHandleInContextInformation(inContextInformation)) throw "Empty input contextual information list or unhandled input contextual information.";
-				if (!outContextInformation || !this._canHandleOutContextInformation(outContextInformation)) throw "Empty output contextual information list or unhandled output contextual information.";
+				if (!inputContextInformation || !this._canHandleInputContextInformation(inputContextInformation)) throw "Empty input contextual information list or unhandled input contextual information.";
+				if (!outputContextInformation || !this._canHandleOutputContextInformation(outputContextInformation)) throw "Empty output contextual information list or unhandled output contextual information.";
 
 				// get expected input contextual information
-				var expectedInContextInformation = this._getExpectedInContextInformation(inContextInformation);
+				var expectedInputContextInformation = this._getExpectedInputContextInformation(inputContextInformation);
 
-				this._interpretData(expectedInContextInformation, outContextInformation, function(interpretedData) {
+				this._interpretData(expectedInputContextInformation, outputContextInformation, function(interpretedData) {
 					var response = new ContextInformationList().withItems(interpretedData);
 
-					if (!self._canHandleOutContextInformation(response)) throw "Unhandled output contextual information generated.";
+					if (!self._canHandleOutputContextInformation(response)) throw "Unhandled output contextual information generated.";
 
-					self._setInContextInformation(inContextInformation);
+					self._setInputContextInformation(inputContextInformation);
 					self.lastInterpretation = new Date();
 
 					if (callback && typeof(callback) == 'function'){
@@ -4062,19 +4246,19 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 * @protected
 			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Data that should be verified.
 			 */
-			Interpreter.prototype._canHandleInContextInformation = function(contextInformationListOrArray) {
+			Interpreter.prototype._canHandleInputContextInformation = function(contextInformationListOrArray) {
 				var list = [];
 				if (contextInformationListOrArray instanceof Array) {
 					list = contextInformationListOrArray;
 				} else if (contextInformationListOrArray instanceof ContextInformationList) {
 					list = contextInformationListOrArray.getItems();
 				}
-				if (list.length == 0 || contextInformationListOrArray.size() != this.getInContextInformation().size()) {
+				if (list.length == 0 || contextInformationListOrArray.size() != this.getInputContextInformation().size()) {
 					return false;
 				}
 				for (var i in list) {
 					var inContextInformation = list[i];
-					if (!this._isInContextInformation(inContextInformation)) {
+					if (!this._isInputContextInformation(inContextInformation)) {
 						return false;
 					}
 				}
@@ -4087,19 +4271,19 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 * @protected
 			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Data that should be verified.
 			 */
-			Interpreter.prototype._canHandleOutContextInformation = function(contextInformationListOrArray) {
+			Interpreter.prototype._canHandleOutputContextInformation = function(contextInformationListOrArray) {
 				var list = [];
 				if (contextInformationListOrArray instanceof Array) {
 					list = contextInformationListOrArray;
 				} else if (contextInformationListOrArray instanceof ContextInformationList) {
 					list = contextInformationListOrArray.getItems();
 				}
-				if (list.length == 0 || contextInformationListOrArray.size() != this.getOutContextInformation().size()) {
+				if (list.length == 0 || contextInformationListOrArray.size() != this.getOutputContextInformation().size()) {
 					return false;
 				}
 				for (var i in list) {
 					var outContextInformation = list[i];
-					if (!this._isOutContextInformation(outContextInformation)) {
+					if (!this._isOutputContextInformation(outContextInformation)) {
 						return false;
 					}
 				}
@@ -4113,12 +4297,12 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 * @returns {*}
 			 * @private
 			 */
-			Interpreter.prototype._getExpectedInContextInformation = function(contextInformationList) {
+			Interpreter.prototype._getExpectedInputContextInformation = function(contextInformationList) {
 				var self = this;
 				var expectedContextInformation = new ContextInformationList();
 
 				contextInformationList.getItems().forEach(function(contextInformation, index) {
-					expectedContextInformation.put(contextInformation.getSynonymWithName(self.getInContextInformation().getItems()[index].getName()).setValue(contextInformation.getValue()));
+					expectedContextInformation.put(contextInformation.getSynonymWithName(self.getInputContextInformation().getItems()[index].getName()).setValue(contextInformation.getValue()));
 				});
 
 				return expectedContextInformation;
@@ -4138,16 +4322,16 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			 *
 			 * @returns {boolean}
 			 */
-			Interpreter.prototype.hasOutContextInformationWithInputParameters = function() {
-				return this._outContextInformation.hasContextInformationWithInputParameters();
+			Interpreter.prototype.hasOutputContextInformationWithInputParameters = function() {
+				return this._outputData.hasContextInformationWithInputParameters();
 			};
 
 			/**
 			 *
 			 * @returns {ContextInformationList}
 			 */
-			Interpreter.prototype.getOutContextInformationWithInputParameters = function() {
-				return this._outContextInformation.getContextInformationWithInputParameters();
+			Interpreter.prototype.getOutputContextInformationWithInputParameters = function() {
+				return this._outputData.getContextInformationWithInputParameters();
 			};
 
 			return Interpreter;
@@ -4189,19 +4373,19 @@ define('interpretation',['interpreter', 'contextInformationList'], function(Inte
         return Interpretation;
     })();
 });
-define('aggregator',['widget', 'contextInformation', 'contextInformationList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
- 	function(Widget, ContextInformation, ContextInformationList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
+define('aggregator',['queryable', 'widget', 'contextInformation', 'contextInformationList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
+ 	function(Queryable, Widget, ContextInformation, ContextInformationList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
 		return (function() {
 			/**
 			 * Generates the id and initializes the Aggregator.
 			 *
 			 * @class Aggregator
-			 * @extends Widget
+			 * @extends Queryable
 			 * @param {Discoverer} discoverer
 			 * @param {ContextInformationList} contextInformation
 			 */
 			function Aggregator(discoverer, contextInformation) {
-				Widget.call(this, discoverer);
+				Queryable.call(this, discoverer);
 
 				/**
 				 * Name of the Aggregator.
@@ -4233,12 +4417,13 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 				 */
 				this._storage = new Storage("DB_Aggregator", 7200000, 5, this);
 
+				this._register();
 				this._aggregatorSetup(contextInformation);
 
 				return this;
 			}
 
-			Aggregator.prototype = Object.create(Widget.prototype);
+			Aggregator.prototype = Object.create(Queryable.prototype);
 			Aggregator.prototype.constructor = Aggregator;
 
 			/**
@@ -4295,14 +4480,14 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 			 *
 			 * @protected
 			 */
-			Aggregator.prototype._initOutContextInformation = function() {
+			Aggregator.prototype._initOutputContextInformation = function() {
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
 						var theWidget = this._discoverer.getComponent(widgetId);
 						if (theWidget) {
-							this._setOutContextInformation(theWidget.getOutContextInformation());
+							this._setOutputContextInformation(theWidget.getOutputContextInformation());
 						}
 					}
 				}
@@ -4314,14 +4499,14 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 			 * @protected
 			 * @override
 			 */
-			Aggregator.prototype._initConstantOutContextInformation = function() {
+			Aggregator.prototype._initConstantOutputContextInformation = function() {
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
 						var theWidget = this._discoverer.getComponent(widgetId);
 						if (theWidget) {
-							this._setConstantOutContextInformation(theWidget.getConstantOutContextInformation());
+							this._setConstantOutputContextInformation(theWidget.getConstantOutputContextInformation());
 						}
 					}
 				}
@@ -4334,6 +4519,7 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 			 * @override
 			 */
 			Aggregator.prototype._initCallbacks = function() {
+				new Error("Call the aggregator _initCallbacks.");
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
@@ -4349,7 +4535,7 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 			 * @param {ContextInformationList} contextInformationList
 			 */
 			Aggregator.prototype._aggregatorSetup = function(contextInformationList) {
-				this._setAggregatorOutContextInformation(contextInformationList);
+				this._setAggregatorOutputContextInformation(contextInformationList);
 				this._setAggregatorConstantContextInformation();
 				this._setAggregatorCallbacks();
 
@@ -4363,11 +4549,11 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 			 * @param {ContextInformationList} contextInformationList
 			 * @protected
 			 */
-			Aggregator.prototype._setAggregatorOutContextInformation = function(contextInformationList) {
+			Aggregator.prototype._setAggregatorOutputContextInformation = function(contextInformationList) {
 				if (contextInformationList instanceof ContextInformationList) {
 					for (var index in contextInformationList.getItems()) {
 						var theContextInformation = contextInformationList.getItems()[index];
-						this.addOutContextInformation(theContextInformation);
+						this.addOutputContextInformation(theContextInformation);
 					}
 				}
 			};
@@ -4401,7 +4587,7 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 			 * @returns {ContextInformationList}
 			 */
 			Aggregator.prototype.getCurrentData = function() {
-				return this._outContextInformation;
+				return this._outputData;
 			};
 
 			/**
@@ -4472,7 +4658,7 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 							var typeList = singleCallback.getContextInformation().getItems();
 							for(var y in typeList){
 								var singleType = typeList[y];
-								this.addOutContextInformation(singleType);
+								this.addOutputContextInformation(singleType);
 							}
 						}
 						this.addWidget(widgetIdOrWidget);
@@ -4503,7 +4689,7 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 			 *
 			 * @override
 			 * @public
-			 * @param {(ContextInformationList|Array)} contextInformationListOrArray data that shall be input
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray data that shall be input
 			 */
 			Aggregator.prototype.putData = function(contextInformationListOrArray){
 				this.log("did receive data from a subscribed component.");
@@ -4522,8 +4708,8 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 				// add contextual information to memory and persistent storage
 				for(var i in list){
 					var theContextInformation = list[i];
-					if(theContextInformation instanceof ContextInformation && this._isOutContextInformation(theContextInformation)){
-						this.addOutContextInformation(theContextInformation);
+					if(theContextInformation instanceof ContextInformation && this._isOutputContextInformation(theContextInformation)){
+						this.addOutputContextInformation(theContextInformation);
 						if(this._storage) {
 							this._store(theContextInformation);
 						}
@@ -4547,7 +4733,7 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 
 				// call interpretations
 				for (var index in interpretationsToBeQueried) {
-					this.queryReferencedInterpretation(this._interpretations[index]);
+					this.queryReferencedInterpretation(interpretationsToBeQueried[index]);
 				}
 			};
 
@@ -4594,7 +4780,7 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 
 			/**
 			 * Queries a specific table and only actualizes the storage cache.
-			 * For an alternativ action can be used a callback.
+			 * For an alternative action can be used a callback.
 			 *
 			 * @public
 			 * @returns {RetrievalResult}
@@ -4651,8 +4837,8 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 				var self = this;
 
 				var theInterpreterId = theInterpretation.interpreterId;
-				var interpretationInContextInformation = this.getOutContextInformation(theInterpretation.inContextInformation);
-				var interpretationOutContextInformation = this.getOutContextInformation(theInterpretation.outContextInformation);
+				var interpretationInContextInformation = this.getOutputContextInformation(theInterpretation.inContextInformation);
+				var interpretationOutContextInformation = this.getOutputContextInformation(theInterpretation.outContextInformation);
 
 				this.interpretData(theInterpreterId, interpretationInContextInformation, interpretationOutContextInformation, function(interpretedData) {
 					self.putData(interpretedData);
@@ -4732,12 +4918,12 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 			 * @virtual
 			 */
 			Aggregator.prototype.didFinishSetup = function() {
-				var unsatisfiedContextInformation = this.getOutContextInformation().clone();
+				var unsatisfiedContextInformation = this.getOutputData().clone();
 
 				// get all components that satisfy contextual information
 				this._getComponentsForUnsatisfiedContextInformation(unsatisfiedContextInformation, false, [Widget, Interpreter]);
 				this.log("Unsatisfied contextual information: "+unsatisfiedContextInformation.size());
-				this.log("Satisfied contextual information: "+this.getOutContextInformation().size());
+				this.log("Satisfied contextual information: "+this.getOutputData().size());
 				this.log("Interpretations "+this._interpretations.length);
 			};
 
@@ -4762,14 +4948,14 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._widgets.length) {
 								if (callback && typeof(callback) == 'function') {
-									callback(self.getOutContextInformation());
+									callback(self.getOutputContextInformation());
 								}
 							}
 						});
 					}
 				} else {
 					if (callback && typeof(callback) == 'function') {
-						callback(self.getOutContextInformation());
+						callback(self.getOutputContextInformation());
 					}
 				}
 			};
@@ -4796,14 +4982,14 @@ define('aggregator',['widget', 'contextInformation', 'contextInformationList', '
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._interpretations.length) {
 								if (callback && typeof(callback) == 'function') {
-									callback(self.getOutContextInformation());
+									callback(self.getOutputContextInformation());
 								}
 							}
 						});
 					}
 				} else {
 					if (callback && typeof(callback) == 'function') {
-						callback(self.getOutContextInformation());
+						callback(self.getOutputContextInformation());
 					}
 				}
 			};
@@ -5194,7 +5380,7 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 
 			/**
 			 * Returns all registered components that have the specified contextual information as
-			 * outContextInformation. It can be chosen between the verification of
+			 * outputContextInformation. It can be chosen between the verification of
 			 * all contextual information or at least one information.
 			 *
 			 * @param {ContextInformationList|Array.<ContextInformation>} contextInformationListOrArray A list of searched contextual information.
@@ -5361,13 +5547,13 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its input contextual information can be satisfied, add the interpreter
 							console.log("Discoverer: It's an Interpreter.");
 
-							if (this._checkInterpreterInContextInformation(aggregatorId, theComponent)) {
+							if (this._checkInterpreterInputContextInformation(aggregatorId, theComponent)) {
 								// remove satisfied contextual information
 								this._removeContextInformationSatisfiedByInterpreter(aggregatorId, theComponent, unsatisfiedContextInformation);
 							} else {
 								console.log("Discoverer: I found a registered Interpreter but I couldn't satisfy the required contextual information.");
-								for (var j in theComponent.getInContextInformation().getItems()) {
-									console.log("Discoverer: It is missing " + theComponent.getInContextInformation().getItems()[j] + ".");
+								for (var j in theComponent.getInputContextInformation().getItems()) {
+									console.log("Discoverer: It is missing " + theComponent.getInputContextInformation().getItems()[j] + ".");
 								}
 							}
 						} else {
@@ -5397,7 +5583,7 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 							var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
 							//if a Widget can satisfy the ContextInformation, register it and subscribe the Aggregator
 
-							//create temporary OutContextInformationList
+							//create temporary OutputContextInformationList
 							var tempWidgetOutList = ContextInformationList.fromContextInformationDescriptions(this, theWidget.description.out);
 
 							for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
@@ -5420,17 +5606,17 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 					if (this._checkComponentRequirements(theInterpreter)) {
 						for (var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()) {
 							var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
-							//create temporary outContextInformationList
+							//create temporary outputContextInformationList
 							var tempOutList = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.out);
 							//create temporary inContextInformationList
 							var tempInList = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.in);
 
-							for (var tempOutContextInformationIndex in tempOutList.getItems()) {
-								if (theUnsatisfiedContextInformation.isKindOf(tempOutList.getItems()[tempOutContextInformationIndex])) {
+							for (var tempOutputContextInformationIndex in tempOutList.getItems()) {
+								if (theUnsatisfiedContextInformation.isKindOf(tempOutList.getItems()[tempOutputContextInformationIndex])) {
 									console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested contextual information.");
 
 									//if an interpreter can satisfy the ContextInformation, check if the inContextInformation are satisfied
-									if (this._checkInterpreterInContextInformation(aggregatorId, theInterpreter)) {
+									if (this._checkInterpreterInputContextInformation(aggregatorId, theInterpreter)) {
 										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
 										//theAggregator.addWidgetSubscription(newInterpreter);
 										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
@@ -5453,12 +5639,12 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 			 * @returns {boolean}
 			 * @private
 			 */
-			Discoverer.prototype._checkInterpreterInContextInformation = function(aggregatorId, theInterpreter) {
+			Discoverer.prototype._checkInterpreterInputContextInformation = function(aggregatorId, theInterpreter) {
 				var theAggregator = this.getComponent(aggregatorId);
 				var canSatisfyInContextInformation = true;
 				var contextInformation;
 				if (theInterpreter instanceof Interpreter) {
-					contextInformation = theInterpreter.getInContextInformation().getItems();
+					contextInformation = theInterpreter.getInputContextInformation().getItems();
 				} else {
 					contextInformation = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.in).getItems();
 				}
@@ -5497,11 +5683,11 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 			Discoverer.prototype._removeContextInformationSatisfiedByWidget = function(aggregatorId, theWidget, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 
-				var contextInformation = theWidget.getOutContextInformation().getItems();
+				var contextInformation = theWidget.getOutputContextInformation().getItems();
 				for (var contextInformationIndex in contextInformation) {
 					var theContextInformation = contextInformation[contextInformationIndex];
 					// add the contextual information type to the aggregator's list of handled contextual information
-					if (!theAggregator.getOutContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutContextInformation(theContextInformation);
+					if (!theAggregator.getOutputContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutputContextInformation(theContextInformation);
 					console.log("Discoverer: The Aggregator can now satisfy contextual information "+theContextInformation.toString(true)+" with the help of "+theWidget.getName()+".");
 					unsatisfiedContextInformation.removeContextInformationOfKind(theContextInformation);
 				}
@@ -5517,16 +5703,16 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 			Discoverer.prototype._removeContextInformationSatisfiedByInterpreter = function(aggregatorId, theInterpreter, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 
-				var contextInformation = theInterpreter.getOutContextInformation().getItems();
+				var contextInformation = theInterpreter.getOutputContextInformation().getItems();
 				for (var contextInformationIndex in contextInformation) {
 					var theContextInformation = contextInformation[contextInformationIndex];
 					// add the contextual informationto the aggregator's list of handled contextual information
 					for (var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()) {
 						var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
 						if (theUnsatisfiedContextInformation.isKindOf(theContextInformation)) {
-							if (!theAggregator.getOutContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutContextInformation(theContextInformation);
+							if (!theAggregator.getOutputContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutputContextInformation(theContextInformation);
 							console.log("Discoverer: The Aggregator can now satisfy contextual information "+theContextInformation.toString(true)+" with the help of "+theInterpreter.getName()+".");
-							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInContextInformation(), new ContextInformationList().withItems([theUnsatisfiedContextInformation])));
+							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInputContextInformation(), new ContextInformationList().withItems([theUnsatisfiedContextInformation])));
 						}
 					}
 					unsatisfiedContextInformation.removeContextInformationOfKind(theContextInformation, true);
@@ -5552,8 +5738,8 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 				// iterate over all unregistered interpreters
 				for (var interpreterIndex in this._unregisteredInterpreters) {
 					var theInterpreter = this._unregisteredInterpreters[interpreterIndex];
-					for (var outContextInformationDescriptionIndex in theInterpreter.description.out) {
-						var theContextInformation = ContextInformation.fromContextInformationDescription(this, theInterpreter.description.out[outContextInformationDescriptionIndex]);
+					for (var outputContextInformationDescriptionIndex in theInterpreter.description.out) {
+						var theContextInformation = ContextInformation.fromContextInformationDescription(this, theInterpreter.description.out[outputContextInformationDescriptionIndex]);
 						possibleContextInformation.putIfKindOfNotContained(theContextInformation);
 					}
 				}
@@ -5609,9 +5795,66 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 		})();
 	}
 );
+/**
+ * Created by tobias on 30.09.15.
+ */
+define('callable',['component'],
+    function(Component) {
+        return (function() {
+
+            /**
+             * @type {object}
+             * @public
+             */
+            Callable.description = {
+                in: [
+                    {
+                        'name':'',
+                        'type':''
+                    }
+                ],
+                out: [
+                    {
+                        'name':'',
+                        'type':''
+                    }
+                ],
+                requiredObjects: []
+            };
+
+            /**
+             * Generates the id and initializes the (in and out) types and values.
+             *
+             * @abstract
+             * @classdesc The Widget handles the access to sensors.
+             * @class Callable
+             */
+            function Callable(discoverer) {
+                Component.call(this, discoverer);
+
+                /**
+                 * Name of the callable.
+                 *
+                 * @type {string}
+                 * @private
+                 */
+                this.name = 'Callable';
+
+                return this;
+            }
+
+            Callable.prototype = Object.create(Component.prototype);
+            Callable.prototype.constructor = Callable;
+
+            return Callable;
+        })();
+    }
+);
 	define('contactJS',['retrievalResult',
 			'storage',
 			'aggregator',
+			'data',
+			'dataList',
 		    'contextInformation',
 		    'contextInformationList',
 		    'parameter',
@@ -5623,6 +5866,8 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
             'unequals',
 		    'discoverer',
 		    'translation',
+			'queryable',
+			'callable',
 		    'interpreter',
 		    'interpreterResult',
 		    'callback',   
@@ -5632,37 +5877,42 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 		    'widget',
 		    'abstractList'], 
 		function(RetrievalResult,
-				Storage,
-				Aggregator,
-			    ContextInformation,
-				ContextInformationList,
-			    Parameter,
-			    ParameterList,		
-			    Condition,
-			    ConditionList,
-			    ConditionMethod,
-			    Equals,
-                UnEquals,
-			    Discoverer,
-			    Translation,
-			    Interpreter, 
-			    InterpreterResult,
-			    Callback,   
-			    CallbackList,
-			    Subscriber,
-			    SubscriberList,
-			    Widget,
-			    AbstractList) {
+			Storage,
+			Aggregator,
+			Data,
+			DataList,
+			ContextInformation,
+			ContextInformationList,
+			Parameter,
+			ParameterList,
+			Condition,
+			ConditionList,
+			ConditionMethod,
+			Equals,
+			UnEquals,
+			Discoverer,
+			Translation,
+			Queryable,
+			Callable,
+			Interpreter,
+			InterpreterResult,
+			Callback,
+			CallbackList,
+			Subscriber,
+			SubscriberList,
+			Widget,
+			AbstractList) {
 		
 	// Object Contructor
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '2.0.1';
+	contactJS.VERSION = '3.0.0';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
+	contactJS.Data = Data;
 	contactJS.ContextInformation = ContextInformation;
 	contactJS.ContextInformationList = ContextInformationList;
 	contactJS.Parameter = Parameter;
@@ -5674,6 +5924,8 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
     contactJS.UnEquals = UnEquals;
 	contactJS.Discoverer = Discoverer;
 	contactJS.Translation = Translation;
+	contactJS.Queryable = Queryable;
+	contactJS.Callable = Callable;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;

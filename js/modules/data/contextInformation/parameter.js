@@ -1,8 +1,9 @@
 define(function(){
 	return (function() {
 		/**
-		 * @classdesc Parameter specifies the Attributes to that these are associated.
-		 * @constructs Parameter
+		 * Parameter specifies the Attributes to that these are associated.
+		 *
+		 * @class Parameter
 		 */
 		function Parameter() {
 			/**

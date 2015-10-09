@@ -1,16 +1,16 @@
-define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
- 	function(Widget, ContextInformation, ContextInformationList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
+define(['queryable', 'widget', 'contextInformation', 'contextInformationList', 'subscriber', 'subscriberList', 'callbackList', 'storage', 'interpreter', 'interpretation'],
+ 	function(Queryable, Widget, ContextInformation, ContextInformationList, Subscriber, SubscriberList, CallbackList, Storage, Interpreter, Interpretation){
 		return (function() {
 			/**
 			 * Generates the id and initializes the Aggregator.
 			 *
 			 * @class Aggregator
-			 * @extends Widget
+			 * @extends Queryable
 			 * @param {Discoverer} discoverer
 			 * @param {ContextInformationList} contextInformation
 			 */
 			function Aggregator(discoverer, contextInformation) {
-				Widget.call(this, discoverer);
+				Queryable.call(this, discoverer);
 
 				/**
 				 * Name of the Aggregator.
@@ -42,12 +42,13 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 				 */
 				this._storage = new Storage("DB_Aggregator", 7200000, 5, this);
 
+				this._register();
 				this._aggregatorSetup(contextInformation);
 
 				return this;
 			}
 
-			Aggregator.prototype = Object.create(Widget.prototype);
+			Aggregator.prototype = Object.create(Queryable.prototype);
 			Aggregator.prototype.constructor = Aggregator;
 
 			/**
@@ -104,14 +105,14 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 			 *
 			 * @protected
 			 */
-			Aggregator.prototype._initOutContextInformation = function() {
+			Aggregator.prototype._initOutputContextInformation = function() {
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
 						var theWidget = this._discoverer.getComponent(widgetId);
 						if (theWidget) {
-							this._setOutContextInformation(theWidget.getOutContextInformation());
+							this._setOutputContextInformation(theWidget.getOutputContextInformation());
 						}
 					}
 				}
@@ -123,14 +124,14 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 			 * @protected
 			 * @override
 			 */
-			Aggregator.prototype._initConstantOutContextInformation = function() {
+			Aggregator.prototype._initConstantOutputContextInformation = function() {
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
 						/** @type {Widget} */
 						var theWidget = this._discoverer.getComponent(widgetId);
 						if (theWidget) {
-							this._setConstantOutContextInformation(theWidget.getConstantOutContextInformation());
+							this._setConstantOutputContextInformation(theWidget.getConstantOutputContextInformation());
 						}
 					}
 				}
@@ -143,6 +144,7 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 			 * @override
 			 */
 			Aggregator.prototype._initCallbacks = function() {
+				new Error("Call the aggregator _initCallbacks.");
 				if(typeof this._widgets != "undefined" && this._widgets.length > 0){
 					for(var i in this._widgets){
 						var widgetId = this._widgets[i];
@@ -158,7 +160,7 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 			 * @param {ContextInformationList} contextInformationList
 			 */
 			Aggregator.prototype._aggregatorSetup = function(contextInformationList) {
-				this._setAggregatorOutContextInformation(contextInformationList);
+				this._setAggregatorOutputContextInformation(contextInformationList);
 				this._setAggregatorConstantContextInformation();
 				this._setAggregatorCallbacks();
 
@@ -172,11 +174,11 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 			 * @param {ContextInformationList} contextInformationList
 			 * @protected
 			 */
-			Aggregator.prototype._setAggregatorOutContextInformation = function(contextInformationList) {
+			Aggregator.prototype._setAggregatorOutputContextInformation = function(contextInformationList) {
 				if (contextInformationList instanceof ContextInformationList) {
 					for (var index in contextInformationList.getItems()) {
 						var theContextInformation = contextInformationList.getItems()[index];
-						this.addOutContextInformation(theContextInformation);
+						this.addOutputContextInformation(theContextInformation);
 					}
 				}
 			};
@@ -210,7 +212,7 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 			 * @returns {ContextInformationList}
 			 */
 			Aggregator.prototype.getCurrentData = function() {
-				return this._outContextInformation;
+				return this._outputData;
 			};
 
 			/**
@@ -281,7 +283,7 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 							var typeList = singleCallback.getContextInformation().getItems();
 							for(var y in typeList){
 								var singleType = typeList[y];
-								this.addOutContextInformation(singleType);
+								this.addOutputContextInformation(singleType);
 							}
 						}
 						this.addWidget(widgetIdOrWidget);
@@ -312,7 +314,7 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 			 *
 			 * @override
 			 * @public
-			 * @param {(ContextInformationList|Array)} contextInformationListOrArray data that shall be input
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray data that shall be input
 			 */
 			Aggregator.prototype.putData = function(contextInformationListOrArray){
 				this.log("did receive data from a subscribed component.");
@@ -331,8 +333,8 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 				// add contextual information to memory and persistent storage
 				for(var i in list){
 					var theContextInformation = list[i];
-					if(theContextInformation instanceof ContextInformation && this._isOutContextInformation(theContextInformation)){
-						this.addOutContextInformation(theContextInformation);
+					if(theContextInformation instanceof ContextInformation && this._isOutputContextInformation(theContextInformation)){
+						this.addOutputContextInformation(theContextInformation);
 						if(this._storage) {
 							this._store(theContextInformation);
 						}
@@ -356,7 +358,7 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 
 				// call interpretations
 				for (var index in interpretationsToBeQueried) {
-					this.queryReferencedInterpretation(this._interpretations[index]);
+					this.queryReferencedInterpretation(interpretationsToBeQueried[index]);
 				}
 			};
 
@@ -403,7 +405,7 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 
 			/**
 			 * Queries a specific table and only actualizes the storage cache.
-			 * For an alternativ action can be used a callback.
+			 * For an alternative action can be used a callback.
 			 *
 			 * @public
 			 * @returns {RetrievalResult}
@@ -460,8 +462,8 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 				var self = this;
 
 				var theInterpreterId = theInterpretation.interpreterId;
-				var interpretationInContextInformation = this.getOutContextInformation(theInterpretation.inContextInformation);
-				var interpretationOutContextInformation = this.getOutContextInformation(theInterpretation.outContextInformation);
+				var interpretationInContextInformation = this.getOutputContextInformation(theInterpretation.inContextInformation);
+				var interpretationOutContextInformation = this.getOutputContextInformation(theInterpretation.outContextInformation);
 
 				this.interpretData(theInterpreterId, interpretationInContextInformation, interpretationOutContextInformation, function(interpretedData) {
 					self.putData(interpretedData);
@@ -541,12 +543,12 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 			 * @virtual
 			 */
 			Aggregator.prototype.didFinishSetup = function() {
-				var unsatisfiedContextInformation = this.getOutContextInformation().clone();
+				var unsatisfiedContextInformation = this.getOutputData().clone();
 
 				// get all components that satisfy contextual information
 				this._getComponentsForUnsatisfiedContextInformation(unsatisfiedContextInformation, false, [Widget, Interpreter]);
 				this.log("Unsatisfied contextual information: "+unsatisfiedContextInformation.size());
-				this.log("Satisfied contextual information: "+this.getOutContextInformation().size());
+				this.log("Satisfied contextual information: "+this.getOutputData().size());
 				this.log("Interpretations "+this._interpretations.length);
 			};
 
@@ -571,14 +573,14 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._widgets.length) {
 								if (callback && typeof(callback) == 'function') {
-									callback(self.getOutContextInformation());
+									callback(self.getOutputContextInformation());
 								}
 							}
 						});
 					}
 				} else {
 					if (callback && typeof(callback) == 'function') {
-						callback(self.getOutContextInformation());
+						callback(self.getOutputContextInformation());
 					}
 				}
 			};
@@ -605,14 +607,14 @@ define(['widget', 'contextInformation', 'contextInformationList', 'subscriber', 
 							completedQueriesCounter++;
 							if (completedQueriesCounter == self._interpretations.length) {
 								if (callback && typeof(callback) == 'function') {
-									callback(self.getOutContextInformation());
+									callback(self.getOutputContextInformation());
 								}
 							}
 						});
 					}
 				} else {
 					if (callback && typeof(callback) == 'function') {
-						callback(self.getOutContextInformation());
+						callback(self.getOutputContextInformation());
 					}
 				}
 			};

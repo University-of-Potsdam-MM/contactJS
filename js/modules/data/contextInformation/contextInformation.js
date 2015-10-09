@@ -1,4 +1,4 @@
-define(['parameterList'], function(ParameterList) {
+define(['data', 'parameterList'], function(Data, ParameterList) {
     return (function() {
 
         /**
@@ -21,8 +21,11 @@ define(['parameterList'], function(ParameterList) {
          * ContextInformation defines name, type (string, double,...) an associated parameter of a contextual information.
          *
          * @class ContextInformation
+         * @extends Data
          */
         function ContextInformation(overrideBuilderDependency) {
+            Data.call(this);
+
             // avoid inexpert meddling with contextual information construction
             if (typeof overrideBuilderDependency == 'undefined' || !overrideBuilderDependency)
                 throw new Error("Contextual information must be created by the discoverer's buildContextInformation() method!");
@@ -74,6 +77,9 @@ define(['parameterList'], function(ParameterList) {
 
             return this;
         }
+
+        ContextInformation.prototype = Object.create(Data.prototype);
+        ContextInformation.prototype.constructor = ContextInformation;
 
         ContextInformation.fromContextInformationDescription = function(discoverer, contextInformationDescription) {
             return discoverer.buildContextInformation(

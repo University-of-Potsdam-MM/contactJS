@@ -13,7 +13,7 @@ require(['configTest'], function() {
 				//getInAttributeTypes
 				var latitudeAttribute = discoverer.buildContextInformation('latitude', 'double');
 				var longitudeAttribute = discoverer.buildContextInformation('longitude', 'double');
-				var inTypes = testInterpreter.getInContextInformation();
+				var inTypes = testInterpreter.getInputContextInformation();
 
 				assert.ok( inTypes.size() == 2,"Passed!: 2 defined type in addressInterpreter" );
 				assert.ok( inTypes.getContextInformationOfKind(latitudeAttribute),"Passed!:type latitude exists" );
@@ -23,7 +23,7 @@ require(['configTest'], function() {
 			
 				//getOutAttributeTypes
 				var formattedAddress = discoverer.buildContextInformation('formattedAddress', 'string');
-				var outTypes = testInterpreter.getOutContextInformation();
+				var outTypes = testInterpreter.getOutputContextInformation();
 				assert.ok( outTypes.size() == 1,"Passed!: 1 defined outType in addressInterpreter" );
 				assert.ok( outTypes.getContextInformationOfKind(formattedAddress),"Passed!: formattedAddress exists" );
 				assert.ok( outTypes.getContextInformationOfKind(formattedAddress).isKindOf(formattedAddress),"Passed!: formattedAddress equals expected type" );
@@ -49,8 +49,5 @@ require(['configTest'], function() {
 	    		
 	    		testInterpreter.callInterpreter(attributeList, outTypes, function (result) {assertData2(result); QUnit.start();});
 			});
-			
-
-
 	});
 });

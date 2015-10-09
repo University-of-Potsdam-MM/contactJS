@@ -1,10 +1,10 @@
 define(['abstractList', 'parameter'], function(AbstractList, Parameter) {
 	return (function() {
 		/**
+		 * This class represents a list for Parameter.
 		 *
-		 * @classdesc This class represents a list for Parameter.
 		 * @extends AbstractList
-		 * @constructs ParameterList
+		 * @class ParameterList
 		 */
 		function ParameterList() {
 			AbstractList.call(this);

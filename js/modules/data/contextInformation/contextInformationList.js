@@ -1,18 +1,18 @@
-define(['abstractList', 'contextInformation'], function(AbstractList, ContextInformation) {
+define(['dataList', 'contextInformation'], function(DataList, ContextInformation) {
     return (function() {
         /**
          * This class represents a list for ContextInformation.
          *
-         * @extends AbstractList
+         * @extends DataList
          * @class ContextInformationList
          */
         function ContextInformationList() {
-            AbstractList.call(this);
+            DataList.call(this);
             this._type = ContextInformation;
             return this;
         }
 
-        ContextInformationList.prototype = Object.create(AbstractList.prototype);
+        ContextInformationList.prototype = Object.create(DataList.prototype);
         ContextInformationList.prototype.constructor = ContextInformationList;
 
         /**
@@ -70,8 +70,7 @@ define(['abstractList', 'contextInformation'], function(AbstractList, ContextInf
         };
 
         /**
-         * Adds all items in the specified list to the
-         * itemList.
+         * Adds all items in the specified list to the itemList.
          *
          * @public
          * @param {(ContextInformationList|Array)} contextInformationList ContextInformationList

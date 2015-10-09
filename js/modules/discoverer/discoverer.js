@@ -201,7 +201,7 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 
 			/**
 			 * Returns all registered components that have the specified contextual information as
-			 * outContextInformation. It can be chosen between the verification of
+			 * outputContextInformation. It can be chosen between the verification of
 			 * all contextual information or at least one information.
 			 *
 			 * @param {ContextInformationList|Array.<ContextInformation>} contextInformationListOrArray A list of searched contextual information.
@@ -368,13 +368,13 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 						} else if (theComponent instanceof Interpreter) { // if the component is an interpreter and all its input contextual information can be satisfied, add the interpreter
 							console.log("Discoverer: It's an Interpreter.");
 
-							if (this._checkInterpreterInContextInformation(aggregatorId, theComponent)) {
+							if (this._checkInterpreterInputContextInformation(aggregatorId, theComponent)) {
 								// remove satisfied contextual information
 								this._removeContextInformationSatisfiedByInterpreter(aggregatorId, theComponent, unsatisfiedContextInformation);
 							} else {
 								console.log("Discoverer: I found a registered Interpreter but I couldn't satisfy the required contextual information.");
-								for (var j in theComponent.getInContextInformation().getItems()) {
-									console.log("Discoverer: It is missing " + theComponent.getInContextInformation().getItems()[j] + ".");
+								for (var j in theComponent.getInputContextInformation().getItems()) {
+									console.log("Discoverer: It is missing " + theComponent.getInputContextInformation().getItems()[j] + ".");
 								}
 							}
 						} else {
@@ -404,7 +404,7 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 							var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
 							//if a Widget can satisfy the ContextInformation, register it and subscribe the Aggregator
 
-							//create temporary OutContextInformationList
+							//create temporary OutputContextInformationList
 							var tempWidgetOutList = ContextInformationList.fromContextInformationDescriptions(this, theWidget.description.out);
 
 							for(var tempWidgetOutListIndex in tempWidgetOutList.getItems()) {
@@ -427,17 +427,17 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 					if (this._checkComponentRequirements(theInterpreter)) {
 						for (var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()) {
 							var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
-							//create temporary outContextInformationList
+							//create temporary outputContextInformationList
 							var tempOutList = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.out);
 							//create temporary inContextInformationList
 							var tempInList = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.in);
 
-							for (var tempOutContextInformationIndex in tempOutList.getItems()) {
-								if (theUnsatisfiedContextInformation.isKindOf(tempOutList.getItems()[tempOutContextInformationIndex])) {
+							for (var tempOutputContextInformationIndex in tempOutList.getItems()) {
+								if (theUnsatisfiedContextInformation.isKindOf(tempOutList.getItems()[tempOutputContextInformationIndex])) {
 									console.log("Discoverer: I have found an unregistered "+theInterpreter.name+" that might satisfy the requested contextual information.");
 
 									//if an interpreter can satisfy the ContextInformation, check if the inContextInformation are satisfied
-									if (this._checkInterpreterInContextInformation(aggregatorId, theInterpreter)) {
+									if (this._checkInterpreterInputContextInformation(aggregatorId, theInterpreter)) {
 										var newInterpreter = new theInterpreter(this, tempInList, tempOutList);
 										//theAggregator.addWidgetSubscription(newInterpreter);
 										console.log("Discoverer: I registered the Interpreter \""+theInterpreter.name+"\" .");
@@ -460,12 +460,12 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 			 * @returns {boolean}
 			 * @private
 			 */
-			Discoverer.prototype._checkInterpreterInContextInformation = function(aggregatorId, theInterpreter) {
+			Discoverer.prototype._checkInterpreterInputContextInformation = function(aggregatorId, theInterpreter) {
 				var theAggregator = this.getComponent(aggregatorId);
 				var canSatisfyInContextInformation = true;
 				var contextInformation;
 				if (theInterpreter instanceof Interpreter) {
-					contextInformation = theInterpreter.getInContextInformation().getItems();
+					contextInformation = theInterpreter.getInputContextInformation().getItems();
 				} else {
 					contextInformation = ContextInformationList.fromContextInformationDescriptions(this, theInterpreter.description.in).getItems();
 				}
@@ -504,11 +504,11 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 			Discoverer.prototype._removeContextInformationSatisfiedByWidget = function(aggregatorId, theWidget, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 
-				var contextInformation = theWidget.getOutContextInformation().getItems();
+				var contextInformation = theWidget.getOutputContextInformation().getItems();
 				for (var contextInformationIndex in contextInformation) {
 					var theContextInformation = contextInformation[contextInformationIndex];
 					// add the contextual information type to the aggregator's list of handled contextual information
-					if (!theAggregator.getOutContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutContextInformation(theContextInformation);
+					if (!theAggregator.getOutputContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutputContextInformation(theContextInformation);
 					console.log("Discoverer: The Aggregator can now satisfy contextual information "+theContextInformation.toString(true)+" with the help of "+theWidget.getName()+".");
 					unsatisfiedContextInformation.removeContextInformationOfKind(theContextInformation);
 				}
@@ -524,16 +524,16 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 			Discoverer.prototype._removeContextInformationSatisfiedByInterpreter = function(aggregatorId, theInterpreter, unsatisfiedContextInformation) {
 				var theAggregator = this.getAggregator(aggregatorId);
 
-				var contextInformation = theInterpreter.getOutContextInformation().getItems();
+				var contextInformation = theInterpreter.getOutputContextInformation().getItems();
 				for (var contextInformationIndex in contextInformation) {
 					var theContextInformation = contextInformation[contextInformationIndex];
 					// add the contextual informationto the aggregator's list of handled contextual information
 					for (var unsatisfiedContextInformationIndex in unsatisfiedContextInformation.getItems()) {
 						var theUnsatisfiedContextInformation = unsatisfiedContextInformation.getItems()[unsatisfiedContextInformationIndex];
 						if (theUnsatisfiedContextInformation.isKindOf(theContextInformation)) {
-							if (!theAggregator.getOutContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutContextInformation(theContextInformation);
+							if (!theAggregator.getOutputContextInformation().containsKindOf(theContextInformation)) theAggregator.addOutputContextInformation(theContextInformation);
 							console.log("Discoverer: The Aggregator can now satisfy contextual information "+theContextInformation.toString(true)+" with the help of "+theInterpreter.getName()+".");
-							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInContextInformation(), new ContextInformationList().withItems([theUnsatisfiedContextInformation])));
+							theAggregator._interpretations.push(new Interpretation(theInterpreter.getId(), theInterpreter.getInputContextInformation(), new ContextInformationList().withItems([theUnsatisfiedContextInformation])));
 						}
 					}
 					unsatisfiedContextInformation.removeContextInformationOfKind(theContextInformation, true);
@@ -559,8 +559,8 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 				// iterate over all unregistered interpreters
 				for (var interpreterIndex in this._unregisteredInterpreters) {
 					var theInterpreter = this._unregisteredInterpreters[interpreterIndex];
-					for (var outContextInformationDescriptionIndex in theInterpreter.description.out) {
-						var theContextInformation = ContextInformation.fromContextInformationDescription(this, theInterpreter.description.out[outContextInformationDescriptionIndex]);
+					for (var outputContextInformationDescriptionIndex in theInterpreter.description.out) {
+						var theContextInformation = ContextInformation.fromContextInformationDescription(this, theInterpreter.description.out[outputContextInformationDescriptionIndex]);
 						possibleContextInformation.putIfKindOfNotContained(theContextInformation);
 					}
 				}

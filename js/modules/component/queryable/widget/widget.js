@@ -3,8 +3,8 @@
  * 
  * @module Widget
  */
-define(['component', 'callback', 'callbackList', 'contextInformation', 'contextInformationList', 'conditionList', 'subscriber', 'subscriberList'],
-	function(Component, Callback, CallbackList, ContextInformation, ContextInformationList, ConditionList, Subscriber, SubscriberList) {
+define(['queryable', 'callback', 'callbackList', 'contextInformation', 'contextInformationList', 'conditionList', 'subscriber', 'subscriberList'],
+	function(Queryable, Callback, CallbackList, ContextInformation, ContextInformationList, ConditionList, Subscriber, SubscriberList) {
 		return (function() {
 
 			/**
@@ -36,11 +36,11 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			 *
 			 * @abstract
 			 * @class Widget
-			 * @extends Component
+			 * @extends Queryable
 			 * @param {Discoverer} discoverer
 			 */
 			function Widget(discoverer) {
-				Component.call(this, discoverer);
+				Queryable.call(this, discoverer);
 
 				/**
 				 * Name of the widget.
@@ -50,53 +50,13 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 				 */
 				this._name  = 'Widget';
 
-				/**
-				 * This temporary variable is used for storing the old contextual information values.
-				 * So these can be used to check conditions.
-				 *
-				 * @type {ContextInformationList}
-				 * @protected
-				 */
-				this._oldOutContextInformation = new ContextInformationList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {ContextInformationList}
-				 * @desc All available constant contextual information and their values.
-				 */
-				this._constantOutContextInformation = new ContextInformationList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {CallbackList}
-				 * @desc List of Callbacks.
-				 */
-				this._callbacks = new CallbackList();
-
-				/**
-				 *
-				 * @protected
-				 * @type {SubscriberList}
-				 * @desc List of Subscriber.
-				 */
-				this._subscribers = new SubscriberList();
-
-				/**
-				 *
-				 * @type {null}
-				 * @private
-				 */
-				this._updateInterval = null;
-
 				this._register();
 				this._init();
 
 				return this;
 			}
 
-			Widget.prototype = Object.create(Component.prototype);
+			Widget.prototype = Object.create(Queryable.prototype);
 			Widget.prototype.constructor = Widget;
 
 			/**
@@ -106,18 +66,9 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			 * @protected
 			 */
 			Widget.prototype._init = function() {
-				this._initOutContextInformation();
-				this._initConstantOutContextInformation();
+				this._initOutputContextInformation();
+				this._initConstantOutputContextInformation();
 				this._initCallbacks();
-			};
-
-			/**
-			 * Initializes the provided contextual information.
-			 *
-			 * @private
-			 */
-			Widget.prototype._initOutContextInformation = function() {
-				this._outContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.out);
 			};
 
 			/**
@@ -125,8 +76,8 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			 *
 			 * @private
 			 */
-			Widget.prototype._initConstantOutContextInformation = function() {
-				this._constantOutContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.const);
+			Widget.prototype._initConstantOutputContextInformation = function() {
+				this._constantOutputContextInformation = ContextInformationList.fromContextInformationDescriptions(this._discoverer, this.constructor.description.const);
 			};
 
 			/**
@@ -143,14 +94,14 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			 * Returns the available constant contextual information.
 			 * (contextual information that do not change).
 			 *
-			 * @param {?ContextInformationList} contextInformationList
+			 * @param {?ContextInformationList} [contextInformationList]
 			 * @returns {ContextInformationList}
 			 */
-			Widget.prototype.getConstantOutContextInformation = function(contextInformationList) {
-				if (contextInformationList && contextInformationList instanceof ContextInformationList) {
-					return this._constantOutContextInformation.getSubset(contextInformationList);
+			Widget.prototype.getConstantOutputContextInformation = function(contextInformationList) {
+				if (typeof contextInformationList != "undefined" && contextInformationList instanceof ContextInformationList) {
+					return this._constantOutputContextInformation.getSubset(contextInformationList);
 				} else {
-					return this._constantOutContextInformation;
+					return this._constantOutputContextInformation;
 				}
 			};
 
@@ -162,15 +113,6 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			 */
 			Widget.prototype.getLastValueForContextInformationOfKind = function(contextInformation) {
 				return this.getOutContextInformation().getContextInformationOfKind(contextInformation).getValue();
-			};
-
-			/**
-			 * Returns the old contextual information.
-			 *
-			 * @returns {ContextInformationList}
-			 */
-			Widget.prototype.getOldOutContextInformation = function() {
-				return this._oldOutContextInformation;
 			};
 
 			/**
@@ -207,26 +149,6 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			};
 
 			/**
-			 * Adds a new contextual information value. If the given value is
-			 * not included in the list, the associated type will
-			 * be also added. Otherwise, only the value will be
-			 * updated.
-			 *
-			 * @public
-			 * @param {ContextInformation} contextInformation
-			 * @param {boolean} multipleInstances
-			 */
-			Widget.prototype.addOutContextInformation = function(contextInformation, multipleInstances) {
-				this.log("will add or update contextual information "+contextInformation+".");
-				multipleInstances = typeof multipleInstances == "undefined" ? false : multipleInstances;
-				this._oldOutContextInformation = this._outContextInformation;
-				contextInformation.setTimestamp(this.getCurrentTime());
-				if (contextInformation instanceof ContextInformation) {
-					this._outContextInformation.put(contextInformation, multipleInstances);
-				}
-			};
-
-			/**
 			 * Sets the constant contextual information list.
 			 *
 			 * @protected
@@ -245,11 +167,11 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			 * @protected
 			 * @param {ContextInformation} contextInformation
 			 */
-			Widget.prototype._addConstantOutContextInformation = function(contextInformation) {
+			Widget.prototype._addConstantOutputContextInformation = function(contextInformation) {
 				if (contextInformation instanceof ContextInformation) {
-					if (!this._constantOutContextInformation.containsKindOf(contextInformation)) {
+					if (!this._constantOutputContextInformation.containsKindOf(contextInformation)) {
 						contextInformation.setTimestamp(this.getCurrentTime());
-						this._constantOutContextInformation.put(contextInformation);
+						this._constantOutputContextInformation.put(contextInformation);
 					}
 				}
 			};
@@ -366,7 +288,7 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 								var subscriberInstance = this._discoverer.getComponent(subscriber.getSubscriberId());
 								var callSubset =  callback.getContextInformation();
 								var subscriberSubset = subscriber.getContextInformationSubset();
-								var data = this._outContextInformation.getSubset(callSubset);
+								var data = this.getOutputContextInformation().getSubset(callSubset);
 								if (subscriberSubset && subscriberSubset.size() > 0) {
 									data = data.getSubset(subscriberSubset);
 								}
@@ -417,26 +339,6 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			};
 
 			/**
-			 * Updates the contextual information by external components.
-			 *
-			 * @param {(ContextInformationList|Array)} contextInformationListOrArray Data that should be entered.
-			 */
-			Widget.prototype.putData = function(contextInformationListOrArray) {
-				var list = [];
-				if (contextInformationListOrArray instanceof Array) {
-					list = contextInformationListOrArray;
-				} else if (contextInformationListOrArray instanceof ContextInformationList) {
-					list = contextInformationListOrArray.getItems();
-				}
-				for ( var i in list) {
-					var theContextInformation = list[i];
-					if (theContextInformation instanceof ContextInformation && this._isOutContextInformation(theContextInformation)) {
-						this.addOutContextInformation(theContextInformation);
-					}
-				}
-			};
-
-			/**
 			 * Returns all available contextual information value and constant contextual information.
 			 *
 			 * @public
@@ -444,8 +346,8 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 			 */
 			Widget.prototype.queryWidget = function() {
 				var response = new ContextInformationList();
-				response.putAll(this.getOutContextInformation());
-				response.putAll(this.getConstantOutContextInformation());
+				response.putAll(this.getOutputContextInformation());
+				response.putAll(this.getConstantOutputContextInformation());
 				return response;
 			};
 
@@ -480,8 +382,8 @@ define(['component', 'callback', 'callbackList', 'contextInformation', 'contextI
 						var condition = items[i];
 						var conditionContextInformation = condition.getContextInformation();
 						var conditionContextInformationList = new ContextInformationList().withItems(new Array(conditionContextInformation));
-						var newValue = this.getOutContextInformation().getSubset(conditionContextInformationList);
-						var oldValue = this.getOldOutContextInformation.getSubset(conditionContextInformationList);
+						var newValue = this.getOutputContextInformation().getSubset(conditionContextInformationList);
+						var oldValue = this.getOldOutputContextInformation.getSubset(conditionContextInformationList);
 						return condition.compare(newValue, oldValue);
 					}
 				}

@@ -1,6 +1,8 @@
 	define(['retrievalResult',
 			'storage',
 			'aggregator',
+			'data',
+			'dataList',
 		    'contextInformation',
 		    'contextInformationList',
 		    'parameter',
@@ -12,6 +14,8 @@
             'unequals',
 		    'discoverer',
 		    'translation',
+			'queryable',
+			'callable',
 		    'interpreter',
 		    'interpreterResult',
 		    'callback',   
@@ -21,37 +25,42 @@
 		    'widget',
 		    'abstractList'], 
 		function(RetrievalResult,
-				Storage,
-				Aggregator,
-			    ContextInformation,
-				ContextInformationList,
-			    Parameter,
-			    ParameterList,		
-			    Condition,
-			    ConditionList,
-			    ConditionMethod,
-			    Equals,
-                UnEquals,
-			    Discoverer,
-			    Translation,
-			    Interpreter, 
-			    InterpreterResult,
-			    Callback,   
-			    CallbackList,
-			    Subscriber,
-			    SubscriberList,
-			    Widget,
-			    AbstractList) {
+			Storage,
+			Aggregator,
+			Data,
+			DataList,
+			ContextInformation,
+			ContextInformationList,
+			Parameter,
+			ParameterList,
+			Condition,
+			ConditionList,
+			ConditionMethod,
+			Equals,
+			UnEquals,
+			Discoverer,
+			Translation,
+			Queryable,
+			Callable,
+			Interpreter,
+			InterpreterResult,
+			Callback,
+			CallbackList,
+			Subscriber,
+			SubscriberList,
+			Widget,
+			AbstractList) {
 		
 	// Object Contructor
 	var contactJS = function(obj) {
 		return obj;
 	};
-	contactJS.VERSION = '2.0.1';
+	contactJS.VERSION = '3.0.0';
 	// Methods
 	contactJS.RetrievalResult = RetrievalResult;
 	contactJS.Storage = Storage;
 	contactJS.Aggregator = Aggregator;
+	contactJS.Data = Data;
 	contactJS.ContextInformation = ContextInformation;
 	contactJS.ContextInformationList = ContextInformationList;
 	contactJS.Parameter = Parameter;
@@ -63,6 +72,8 @@
     contactJS.UnEquals = UnEquals;
 	contactJS.Discoverer = Discoverer;
 	contactJS.Translation = Translation;
+	contactJS.Queryable = Queryable;
+	contactJS.Callable = Callable;
 	contactJS.Interpreter = Interpreter;
 	contactJS.InterpreterResult = InterpreterResult;
 	contactJS.Callback = Callback;

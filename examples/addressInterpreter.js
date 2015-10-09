@@ -37,11 +37,11 @@ define(['contactJS'], function(contactJS) {
 		AddressInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
 		AddressInterpreter.prototype.constructor = AddressInterpreter;
 
-		AddressInterpreter.prototype._interpretData = function(inContextInformation, outContextInformation, callback) {
-			var addressValue = outContextInformation.getItems()[0];
+		AddressInterpreter.prototype._interpretData = function(inputContextInformation, outputContextInformation, callback) {
+			var addressValue = outputContextInformation.getItems()[0];
 
-			var latitude = inContextInformation.getValueForContextInformationOfKind(this._inContextInformation.getItems()[0]);
-			var longitude = inContextInformation.getValueForContextInformationOfKind(this._inContextInformation.getItems()[1]);
+			var latitude = inputContextInformation.getValueForContextInformationOfKind(this._inputContextInformation.getItems()[0]);
+			var longitude = inputContextInformation.getValueForContextInformationOfKind(this._inputContextInformation.getItems()[1]);
 
 			if(navigator.onLine){
 				if (latitude && longitude) {

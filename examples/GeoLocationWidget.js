@@ -35,7 +35,7 @@ define(['contactJS'], function (contactJS) {
 		GeoLocationWidget.prototype.constructor = GeoLocationWidget;
 
 		GeoLocationWidget.prototype._initCallbacks = function() {
-			this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutContextInformation()));
+			this._addCallback(new contactJS.Callback().withName('UPDATE').withContextInformation(this.getOutputContextInformation()));
 		};
 
 		GeoLocationWidget.prototype.queryGenerator = function (callback) {
@@ -44,8 +44,8 @@ define(['contactJS'], function (contactJS) {
 
 			if(navigator.geolocation){
 				navigator.geolocation.getCurrentPosition(function(position) {
-					response.put(self.getOutContextInformation().getItems()[0].setValue(position.coords.latitude));
-					response.put(self.getOutContextInformation().getItems()[1].setValue(position.coords.longitude));
+					response.put(self.getOutputContextInformation().getItems()[0].setValue(position.coords.latitude));
+					response.put(self.getOutputContextInformation().getItems()[1].setValue(position.coords.longitude));
 
 					self._sendResponse(response, callback);
 				}, function(error) {
