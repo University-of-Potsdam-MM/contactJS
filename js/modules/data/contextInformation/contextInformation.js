@@ -81,6 +81,13 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
         ContextInformation.prototype = Object.create(Data.prototype);
         ContextInformation.prototype.constructor = ContextInformation;
 
+        /**
+         *
+         * @constructs ContextInformation
+         * @param discoverer
+         * @param contextInformationDescription
+         * @returns {ContextInformation}
+         */
         ContextInformation.fromContextInformationDescription = function(discoverer, contextInformationDescription) {
             return discoverer.buildContextInformation(
                 contextInformationDescription.name,
@@ -475,6 +482,19 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
          */
         ContextInformation.prototype.isKnown = function() {
             return this.getValue() != ContextInformation.VALUE_UNKNOWN && this.getValue() != ContextInformation.VALUE_ERROR;
+        };
+
+        /**
+         * Returns a JSON representation of the contextual information.
+         *
+         * @returns {{id: string, parameters: {}, value: string}}
+         */
+        ContextInformation.prototype.getJSONRepresentation = function() {
+            return {
+                id: this.getName(),
+                parameters: this.getParameters().getItemsAsJson(),
+                value: this.getValue()
+            }
         };
 
         return ContextInformation;

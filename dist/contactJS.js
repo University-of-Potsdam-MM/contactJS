@@ -759,22 +759,19 @@ define('parameterList',['abstractList', 'parameter'], function(AbstractList, Par
 		/**
 		 * Returns the objects of the list as JSON objects.
 		 *
-		 * @public
 		 * @returns {{}}
 		 */
 		ParameterList.prototype.getItemsAsJson = function() {
 			var parameters = {};
-			for (var key in this._items) {
-				var theParameter = this._items[key];
+			this._items.forEach(function(theParameter) {
 				parameters[theParameter.getKey()] = theParameter.getValue();
-			}
+			});
 			return parameters;
 		};
 
 		/**
 		 * Return true if the list contains a parameter that is set at runtime.
 		 *
-		 * @public
 		 * @returns {boolean}
 		 */
 		ParameterList.prototype.hasInputParameter = function() {
@@ -1265,6 +1262,19 @@ define('contextInformation',['data', 'parameterList'], function(Data, ParameterL
          */
         ContextInformation.prototype.isKnown = function() {
             return this.getValue() != ContextInformation.VALUE_UNKNOWN && this.getValue() != ContextInformation.VALUE_ERROR;
+        };
+
+        /**
+         * Returns a JSON representation of the contextual information.
+         *
+         * @returns {{id: string, parameters: {}, value: string}}
+         */
+        ContextInformation.prototype.getJSONRepresentation = function() {
+            return {
+                id: this.getName(),
+                parameters: this.getParameters().getItemsAsJson(),
+                value: this.getValue()
+            }
         };
 
         return ContextInformation;
@@ -4127,7 +4137,7 @@ define('interpreter',['component', 'contextInformation', 'contextInformationList
 			/**
 			 * Convenience accessor for getOutputData.
 			 *
-			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Contextual information that should be entered.
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} [contextInformationListOrArray] Contextual information that should be entered.
 			 * @returns {ContextInformationList}
 			 */
 			Interpreter.prototype.getOutputContextInformation = function(contextInformationListOrArray) {
@@ -5751,10 +5761,10 @@ define('discoverer',['contextInformation', 'contextInformationList', 'translatio
 			 *
 			 *
 			 * @param contextInformationNames
-			 * @returns {*}
+			 * @returns {ContextInformationList}
 			 */
 			Discoverer.prototype.getContextInformationWithNames = function(contextInformationNames) {
-				return ContextInformation.fromContextInformationNames(this, contextInformationNames);
+				return ContextInformationList.fromContextInformationNames(this, contextInformationNames);
 			};
 
 			/**
