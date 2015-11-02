@@ -96,7 +96,7 @@ The type of context information that a widget detects is defined as its **out** 
 
 This information is encapsulated within the widget's **description**.
 The description further includes a list of **const** data and the properties **updateInterval** and **requiredObjects**.
-The **const** information is a legacy from context toolkit and right now there are none, thus none must be defined.
+The **const** information is a mere legacy from context toolkit and at this point not supposed to be defined.
 The **updateInterval**, however, is essential: It determines after how many milliseconds the widget repeats detection.
 External dependencies which the component needs to work are listed in **requiredObjects**, examples include "jQuery" and "cordova". 
 
