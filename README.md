@@ -53,7 +53,7 @@ It registers all available context detection components and handles requests for
 Furthermore, the discoverer 'knows' about all requested/detectable pieces of *context information* and also handles requests for them.
 
 
-### Aggregator <a name"aggregator"/>
+### Aggregator <a name="aggregator"/>
 
 Aggregators aggregate context data delivered by widgets or interpreters.
 There can be one or more instances of an aggregator, as required by the respective application.
