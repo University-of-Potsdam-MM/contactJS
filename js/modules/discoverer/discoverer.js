@@ -572,10 +572,10 @@ define(['contextInformation', 'contextInformationList', 'translation', 'paramete
 			 *
 			 *
 			 * @param contextInformationNames
-			 * @returns {*}
+			 * @returns {ContextInformationList}
 			 */
 			Discoverer.prototype.getContextInformationWithNames = function(contextInformationNames) {
-				return ContextInformation.fromContextInformationNames(this, contextInformationNames);
+				return ContextInformationList.fromContextInformationNames(this, contextInformationNames);
 			};
 
 			/**

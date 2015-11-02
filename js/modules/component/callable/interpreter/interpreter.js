@@ -98,7 +98,7 @@ define(['component', 'contextInformation', 'contextInformationList', 'interprete
 			/**
 			 * Convenience accessor for getOutputData.
 			 *
-			 * @param {(ContextInformationList|Array.<ContextInformation>)} contextInformationListOrArray Contextual information that should be entered.
+			 * @param {(ContextInformationList|Array.<ContextInformation>)} [contextInformationListOrArray] Contextual information that should be entered.
 			 * @returns {ContextInformationList}
 			 */
 			Interpreter.prototype.getOutputContextInformation = function(contextInformationListOrArray) {
