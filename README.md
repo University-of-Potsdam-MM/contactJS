@@ -24,7 +24,7 @@ It is based on a port of the *[Context Toolkit](http://contexttoolkit.sourceforg
         * [Custom Widgets and Interpreters](#custom-widgets-interpreters)
 
 
-## Installation <a name="installation" />
+## Installation <a name="installation"/>
 
 Download the latest release from GitHub. From the *./dist* folder copy the *contact.js* file to your project and add it to the require.js configuration file. For example:
 
@@ -44,7 +44,7 @@ define(['contactJS'], function(contactJS)) {
 ```
 
 
-## Components <a name="components" />
+## Components <a name="components"/>
 
 ### Discoverer <a name="discoverer"/>
 
@@ -169,7 +169,7 @@ MySecondsInterpreter.description = {
 
 ## Usage <a name="usage"/>
 
-### Discoverer <a name"usage-discoverer"/>
+### Discoverer <a name="usage-discoverer"/>
 
 The discoverer is the heart and soul of contactJS:
 It orchestrates the flow of information between the context detecting, interpreting and aggregating components.
@@ -223,7 +223,7 @@ for that matter. It is only interested in an input value it can operate on, whic
 the current timestamp in seconds.
 
 
-### Aggregator <a name"usage-aggregator"/>
+### Aggregator <a name="usage-aggregator"/>
 
 The aggregator (for simplicity's sake, we'll assume a single instance here) serves as the context information gathering component.
 The gathered information can be accessed by calling *getOutputContextInformation()* on an aggregator.
