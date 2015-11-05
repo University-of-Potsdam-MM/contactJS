@@ -59,7 +59,7 @@ Aggregators aggregate context data delivered by widgets or interpreters.
 There can be one or more instances of an aggregator, as required by the respective application.
  
 Aggregators adopt a **publish-subscribe** pattern: 
-An aggregator subscribes to widgets, collects their published data, and publish these in return.
+An aggregator subscribes to widgets, collects their published data, and publishes these in return.
 
 
 
@@ -83,6 +83,8 @@ For example:
     'timestamp':54321
 }
 ```
+
+SynonymList, value and timestamp will automatically be set at runtime whereas name, dataType and parameterList must be defined by the user of contactJS (see [Custom Widgets and Interpreters](#custom-widgets-interpreters)).
 
 
 ### Widgets <a name="widgets"/>
@@ -141,7 +143,7 @@ The respective data are, analogously to widgets, encapsulated within the interpr
 Interpreters have no update interval since their activation depends on the information detected by the widgets:
 Interpreters get called by an aggregator as soon as their **in** data are updated.
 
-Interpreters do, however, have the property **requiredObjects**, just like widgets (see above).
+Interpreters do, however, have the property **requiredObjects**, just like widgets (see above: [Widgets](#widgets)).
 
 **Example of interpreter description:**
 ```JavaScript
