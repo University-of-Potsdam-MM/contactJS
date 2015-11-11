@@ -10,7 +10,7 @@ It is based on a port of the *[Context Toolkit](http://contexttoolkit.sourceforg
 * [Components](#components)
     * [Discoverer](#discoverer)
     * [Aggregator](#aggregator)
-    * [Attributes](#attributes)
+    * [ContextInformation](#context-information)
     * [Widgets](#widgets)
     * [Interpreters](#interpreters)
 * [Usage](#usage)
@@ -24,7 +24,7 @@ It is based on a port of the *[Context Toolkit](http://contexttoolkit.sourceforg
         * [Custom Widgets and Interpreters](#custom-widgets-interpreters)
 
 
-## Installation <a name="installation" />
+## Installation <a name="installation"/>
 
 Download the latest release from GitHub. From the *./dist* folder copy the *contact.js* file to your project and add it to the require.js configuration file. For example:
 
@@ -44,35 +44,35 @@ define(['contactJS'], function(contactJS)) {
 ```
 
 
-## Components <a name="components" />
+## Components <a name="components"/>
 
 ### Discoverer <a name="discoverer"/>
 
-The discoverer is the central registration and lookup component.\
+The discoverer is the central registration and lookup component.
 It registers all available context detection components and handles requests for them.
-Furthermore, the discoverer 'knows' about all requested/detectable *attributes* and also handles requests for them.
+Furthermore, the discoverer 'knows' about all requested/detectable pieces of *context information* and also handles requests for them.
 
 
-### Aggregator <a name"aggregator"/>
+### Aggregator <a name="aggregator"/>
 
-Aggregators aggregate context data delivered by widgets or interpreters.\
+Aggregators aggregate context data delivered by widgets or interpreters.
 There can be one or more instances of an aggregator, as required by the respective application.
+ 
+Aggregators adopt a **publish-subscribe** pattern: 
+An aggregator subscribes to widgets, collects their published data, and publishes these in return.
 
-An aggregator is itself a widget but conceptually different, with added functionality and a slightly different handling.
-A widget's **publish-subscribe** pattern is adopted, though: 
-Aggregators, like widgets, subscribe to other widgets, collects their published data, and publish these in return.
 
 
-### Attributes <a name="attributes"/>
+### Context Information <a name="context-information"/>
 
-Attributes represent distinct pieces of **context information** which can be detected by widgets and interpreted by interpreters.
-Each attribute i.e. context datum has a name, a type, a list of parameters, a list of synonyms, a value and a timestamp.
+A piece of **context information** can be detected by widgets and interpreted by interpreters.
+Each context datum has a name, a dataType, a list of parameters, a list of synonyms, a value and a timestamp.
 For example: 
 
 ```JavaScript
 {
     'name':'CI_CURRENT_UNIX_TIME',
-    'type':'INTEGER',
+    'dataType':'INTEGER',
     'parameterList':[["CP_UNIT", "STRING", "SECONDS"]],
     'synonymList':[
         ['CI_CURRENT_UNIX_TIME', 
@@ -84,20 +84,23 @@ For example:
 }
 ```
 
+SynonymList, value and timestamp will automatically be set at runtime whereas name, dataType and parameterList must be defined by the user of contactJS (see [Custom Widgets and Interpreters](#custom-widgets-interpreters)).
+
 
 ### Widgets <a name="widgets"/>
 
 Widgets detect raw i.e. low-level context information.
 
-The type of information that a widget detects is defined as its **out attributes**, each comprising:
+The type of context information that a widget detects is defined as its **out** information, each comprising:
 * name
 * type
 * parameters (optional)
 
-These attributes are encapsulated within the widget's **description**.
-The description further includes a list of **const** attributes and a property **updateInterval**.
-The **const** attributes are legacy from context toolkit and right now there are none, thus none must be defined.
-The **updateInterval**, however, determines after how many milliseconds the widget repeats its detection.
+This information is encapsulated within the widget's **description**.
+The description further includes a list of **const** data and the properties **updateInterval** and **requiredObjects**.
+The **const** information is a mere legacy from context toolkit and at this point not supposed to be defined.
+The **updateInterval**, however, is essential: It determines after how many milliseconds the widget repeats detection.
+External dependencies which the component needs to work are listed in **requiredObjects**, examples include "jQuery" and "cordova". 
 
 **Example of widget description:**
 ```JavaScript
@@ -115,26 +118,32 @@ MyUnixTimeMillisecondsWidget.description = {
             'type':''
         }
     ],
-    updateInterval: 30000
+    updateInterval: 30000,
+    requiredObjects: []
 };
 ```
 
 
 ### Interpreters <a name="interpreters"/>
 
-Interpreters are responsible for the generation of high(er)-level context:
+Interpreters are responsible for the generation of high(er)-level context information:
 They request low(er)-level context information as input from widgets (or other interpreters) and return an *interpretation* of those data. 
 For example: 
 > The widget 'UnixTimeWidget' outputs a UNIX timestamp. 
 The interpreter 'DateTimeInterpreter' accepts that timestamp as input and processes it in order to return the current date and time.
 
-The type of information that an interpreter requires as input is defined as its **in attributes**.
-The type of information returned by that interpreter is in turn defined as its **out attributes**.
+The type of information that an interpreter requires as input is defined as its **in** information.
+The type of information returned by that interpreter is in turn defined as its **out** information.
 
-The respective attributes are, analogously to widgets, encapsulated within the interpreter's **description** and defined by:
+The respective data are, analogously to widgets, encapsulated within the interpreter's **description** and defined by:
 * name
 * type
 * parameters (optional)
+
+Interpreters have no update interval since their activation depends on the information detected by the widgets:
+Interpreters get called by an aggregator as soon as their **in** data are updated.
+
+Interpreters do, however, have the property **requiredObjects**, just like widgets (see above: [Widgets](#widgets)).
 
 **Example of interpreter description:**
 ```JavaScript
@@ -152,14 +161,15 @@ MySecondsInterpreter.description = {
              'type':'INTEGER',
              'parameterList': [["CP_UNIT", "STRING", "SECONDS"]]
          }
-     ]
+     ],
+     requiredObjects: ["jQuery"]
  };
 ```
 
 
 ## Usage <a name="usage"/>
 
-### Discoverer <a name"usage-discoverer"/>
+### Discoverer <a name="usage-discoverer"/>
 
 The discoverer is the heart and soul of contactJS:
 It orchestrates the flow of information between the context detecting, interpreting and aggregating components.
@@ -192,7 +202,7 @@ The former two lists (widgets, interpreters) are not defined here but inside the
 
 
 #### Translations <a name="translations"/>
-The discoverer can be equipped with a list of *translations* comprising **synonymous attributes**.
+The discoverer can be equipped with a list of *translations* comprising **synonymous** pieces of context information.
 **Example of two translations:**
 
 ```JavaScript
@@ -206,28 +216,25 @@ The discoverer can be equipped with a list of *translations* comprising **synony
 ]
 ```
 
-Treating semantically equivalent attributes interchangeably comes in handy where generic interpreters are intended.
+Treating semantically equivalent context data types interchangeably comes in handy where generic interpreters are intended.
 Considering the above example, an interpreter that requires as input a timestamp in seconds doesn't care if 
 that input is called *'CI_CURRENT_UNIX_TIME'* or *'CI_CURRENT_UNIX_TIME_IN_SECONDS'*, or even *'TIMEYWIMEY'*,
 for that matter. It is only interested in an input value it can operate on, which should be an integer representing 
 the current timestamp in seconds.
 
 
-### Aggregator <a name"usage-aggregator"/>
+### Aggregator <a name="usage-aggregator"/>
 
 The aggregator (for simplicity's sake, we'll assume a single instance here) serves as the context information gathering component.
-This service is employed by calling the function *queryReferencedComponents()*.
+The gathered information can be accessed by calling *getOutputContextInformation()* on an aggregator.
 
 **Example of context acquisition:**
 ```JavaScript
 for (var index in this._aggregators) {
-    var theAggregator = this._aggregators[index];
-    theAggregator.queryReferencedComponents(function(attributes) {
-        var attributeList = attributes.getItems();
-        for (var attributeIndex in attributeList) {
-            // do something with this piece of information
-        }
-    });
+    var theAggregator = this._aggregators[index];    
+    this._callbacks["newContextInformationCallback"](
+        this._contextInformationFromAttributes(theAggregator.getOutputContextInformation())
+    );
 }
 ```
 
@@ -236,14 +243,19 @@ Of course, all aggregators that are supposed to collect context data must be ini
 
 #### Initialization <a name="aggregator-init"/>
 
-Aggregators are initialized by calling their constructor with two parameters: discoverer and requested attributes.
+Aggregators are initialized by calling their constructor with two parameters: discoverer and requested context information.
 
 **Example of aggregator initialization:**
 ```JavaScript
-this._aggregators.push(
-    new contactJS.Aggregator(this._discoverer, 
-                             this._discoverer.getAttributesWithNames(contextIds))
-);
+this._aggregators.push(new contactJS.Aggregator(
+    this._discoverer, 
+    contactJS.ContextInformationList.fromContextInformationDescriptions(this._discoverer, [
+        {
+            'name':'CI_IS_NIGHTTIME',
+            'type':'BOOLEAN'
+        }
+    ])
+));
 ```
 
 
@@ -304,7 +316,7 @@ The main file *interpreters.js* should look very much alike.
 
 **Custom widgets** can be added to contactJS, provided they
 * implement a constructor,
-* define out attributes,
+* define out information and update interval,
 * initialize callbacks,
 * implement the function *queryGenerator()*, and
 * are added to contactJS' configuration, see [Initialization](#config).
@@ -327,7 +339,8 @@ define(['contactJS'], function (contactJS) {
                     'name':'',
                     'type':''
                 }
-            ]
+            ],
+            updateInterval: 5000
         };
 
         function MyUnixTimeWidget(discoverer) {
@@ -342,7 +355,7 @@ define(['contactJS'], function (contactJS) {
         MyUnixTimeWidget.prototype._initCallbacks = function() {
             this._addCallback(new contactJS.Callback()
                 .withName('UPDATE')
-                .withAttributeTypes(this.getOutAttributes()));
+                .withContextInformation(this.getOutputContextInformation()));
         };
 
         MyUnixTimeWidget.prototype.queryGenerator = function(callback) {
@@ -353,7 +366,7 @@ define(['contactJS'], function (contactJS) {
             }
 
             var response = new contactJS.AttributeList();
-            response.put(this.getOutAttributes().getItems()[0].setValue(Date.now()));
+            response.put(this.getOutputContextInformation().getItems()[0].setValue(Date.now()));
             this._sendResponse(response, callback);
         };
 
@@ -364,7 +377,7 @@ define(['contactJS'], function (contactJS) {
 
 **Custom interpreters** can be added to contactJS, provided they
 * implement a constructor,
-* define *in* and *out attributes*,
+* define *in* and *out* information,
 * implement the function *interpretData()*, and
 * are added to contactJS' configuration, see [Initialization](#config).
 
@@ -398,9 +411,11 @@ define(['contactJS'], function(contactJS) {
         MySecondsInterpreter.prototype = Object.create(contactJS.Interpreter.prototype);
         MySecondsInterpreter.prototype.constructor = MySecondsInterpreter;
         
-        MySecondsInterpreter.prototype._interpretData = function(inAttributes, outAttributes, callback) {
-            var unixSecondsValue = outAttributes.getItems()[0];
-            unixSecondsValue.setValue(Math.floor(inAttributes.getValueForAttributeWithTypeOf(this.getInAttributes().getItems()[0]) / 1000));
+        MySecondsInterpreter.prototype._interpretData = function(inContextInformation, outContextInformation, callback) {
+            var unixSecondsValue = outContextInformation.getItems()[0];
+            unixSecondsValue.setValue(Math.floor(
+                inContextInformation.getValueForContextInformationOfKind(this.getInputContextInformation().getItems()[0]) / 1000
+            ));
             callback([
                 unixSecondsValue
             ]);
