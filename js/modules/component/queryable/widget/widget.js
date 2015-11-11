@@ -260,7 +260,6 @@ define(['queryable', 'callback', 'callbackList', 'contextInformation', 'contextI
 			/**
 			 * Notifies other components and sends the contextual information.
 			 *
-			 * @virtual
 			 * @public
 			 */
 			Widget.prototype.notify = function() {

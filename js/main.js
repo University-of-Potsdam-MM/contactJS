@@ -1,5 +1,5 @@
 require(['config'], function() {
-requirejs([], function (){ 
+    requirejs([], function (){
 
     	
     });
