@@ -75,9 +75,7 @@ For example:
     dataType: 'INTEGER',
     parameterList: [["CP_UNIT", "STRING", "SECONDS"]],
     synonymList: [
-        ['CI_CURRENT_UNIX_TIME', 
-        'INTEGER', 
-        [["CP_UNIT","STRING","SECONDS"]]]
+        ['CI_BASE_UNIT_OF_TIME', 'INTEGER', [["CP_UNIT","STRING","SECONDS"]]]
     ],
     value: 12345,
     timestamp: 54321
