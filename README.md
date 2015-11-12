@@ -65,22 +65,22 @@ An aggregator subscribes to widgets, collects their published data, and publishe
 
 ### Context Information <a name="context-information"/>
 
-A piece of **context information** can be detected by widgets and interpreted by interpreters.
+A piece of **context information** can be detected by widgets and may be further processed by interpreters.
 Each context datum has a name, a dataType, a list of parameters, a list of synonyms, a value and a timestamp.
 For example: 
 
 ```JavaScript
 {
-    'name':'CI_CURRENT_UNIX_TIME',
-    'dataType':'INTEGER',
-    'parameterList':[["CP_UNIT", "STRING", "SECONDS"]],
-    'synonymList':[
+    name: 'CI_CURRENT_UNIX_TIME',
+    dataType: 'INTEGER',
+    parameterList: [["CP_UNIT", "STRING", "SECONDS"]],
+    synonymList: [
         ['CI_CURRENT_UNIX_TIME', 
         'INTEGER', 
         [["CP_UNIT","STRING","SECONDS"]]]
     ],
-    'value':12345,
-    'timestamp':54321
+    value: 12345,
+    timestamp: 54321
 }
 ```
 
@@ -107,15 +107,15 @@ External dependencies which the component needs to work are listed in **required
 MyUnixTimeMillisecondsWidget.description = {
     out: [
         {
-            'name':'CI_CURRENT_UNIX_TIME',
-            'type':'INTEGER',
-            'parameterList': [["CP_UNIT", "STRING", "MILLISECONDS"]]
+            name: 'CI_CURRENT_UNIX_TIME',
+            type: 'INTEGER',
+            parameterList: [["CP_UNIT", "STRING", "MILLISECONDS"]]
         }
     ],
     const: [
         {
-            'name':'',
-            'type':''
+            name: '',
+            type: ''
         }
     ],
     updateInterval: 30000,
@@ -150,16 +150,16 @@ Interpreters do, however, have the property **requiredObjects**, just like widge
 MySecondsInterpreter.description = {
      in: [
          {
-             'name':'CI_BASE_UNIT_OF_TIME',
-             'type':'INTEGER',
-             'parameterList': [["CP_UNIT", "STRING", "MILLISECONDS"]]
+             name: 'CI_BASE_UNIT_OF_TIME',
+             type: 'INTEGER',
+             parameterList: [["CP_UNIT", "STRING", "MILLISECONDS"]]
          }
      ],
      out: [
          {
-             'name':'CI_BASE_UNIT_OF_TIME',
-             'type':'INTEGER',
-             'parameterList': [["CP_UNIT", "STRING", "SECONDS"]]
+             name: 'CI_BASE_UNIT_OF_TIME',
+             type: 'INTEGER',
+             parameterList: [["CP_UNIT", "STRING", "SECONDS"]]
          }
      ],
      requiredObjects: ["jQuery"]
@@ -186,13 +186,10 @@ The discoverer is initialized with three parameters:
 
 **Example of discoverer initialization:**
 ```JavaScript
-define("MyContextDetection", ['contactJS', 'widgets', 'interpreters'], 
-    function(contactJS, widgets, interpreters) {    
-        return (function() {
-            ...
-            this._discoverer = new contactJS.Discoverer(widgets, interpreters, [ ... ]);
-            ...
-        })();
+require(['contactJS', 'widgets', 'interpreters'], function(contactJS, widgets, interpreters) {    
+      ...
+      this._discoverer = new contactJS.Discoverer(widgets, interpreters, [ ... ]);
+      ...
     }
 );
 ```
@@ -230,12 +227,11 @@ The gathered information can be accessed by calling *getOutputContextInformation
 
 **Example of context acquisition:**
 ```JavaScript
-for (var index in this._aggregators) {
-    var theAggregator = this._aggregators[index];    
-    this._callbacks["newContextInformationCallback"](
-        this._contextInformationFromAttributes(theAggregator.getOutputContextInformation())
-    );
-}
+var outputContext =  theAggregator.getOutputContextInformation().getItems();
+
+outputContext.forEach(function(theContextInformation) {
+   console.log(theContextInformation.getName()+" "+theContextInformation.getValue());
+});
 ```
 
 Of course, all aggregators that are supposed to collect context data must be initialized first.
@@ -251,8 +247,8 @@ this._aggregators.push(new contactJS.Aggregator(
     this._discoverer, 
     contactJS.ContextInformationList.fromContextInformationDescriptions(this._discoverer, [
         {
-            'name':'CI_IS_NIGHTTIME',
-            'type':'BOOLEAN'
+            name: 'CI_IS_NIGHTTIME',
+            type: 'BOOLEAN'
         }
     ])
 ));
@@ -329,15 +325,15 @@ define(['contactJS'], function (contactJS) {
         MyUnixTimeWidget.description = {
             out: [
                 {
-                    'name':'CI_CURRENT_UNIX_TIME',
-                    'type':'INTEGER',
-                    'parameterList': [["CP_UNIT", "STRING", "MILLISECONDS"]]
+                    name: 'CI_CURRENT_UNIX_TIME',
+                    type: 'INTEGER',
+                    parameterList: [["CP_UNIT", "STRING", "MILLISECONDS"]]
                 }
             ],
             const: [
                 {
-                    'name':'',
-                    'type':''
+                    name: '',
+                    type: ''
                 }
             ],
             updateInterval: 5000
@@ -389,16 +385,16 @@ define(['contactJS'], function(contactJS) {
         MySecondsInterpreter.description = {
             in: [
                 {
-                    'name':'CI_BASE_UNIT_OF_TIME',
-                    'type':'INTEGER',
-                    'parameterList': [["CP_UNIT", "STRING", "MILLISECONDS"]]
+                    name: 'CI_BASE_UNIT_OF_TIME',
+                    type: 'INTEGER',
+                    parameterList: [["CP_UNIT", "STRING", "MILLISECONDS"]]
                 }
             ],
             out: [
                 {
-                    'name':'CI_BASE_UNIT_OF_TIME',
-                    'type':'INTEGER',
-                    'parameterList': [["CP_UNIT", "STRING", "SECONDS"]]
+                    name: 'CI_BASE_UNIT_OF_TIME',
+                    type: 'INTEGER',
+                    parameterList: [["CP_UNIT", "STRING", "SECONDS"]]
                 }
             ]
         };
