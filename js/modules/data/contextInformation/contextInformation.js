@@ -89,7 +89,7 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
          *
          * @constructs ContextInformation
          * @param discoverer
-         * @param contextInformationDescription
+         * @param {{name: string, type: string, parameterList: []}} contextInformationDescription
          * @returns {ContextInformation}
          */
         ContextInformation.fromContextInformationDescription = function(discoverer, contextInformationDescription) {
@@ -347,10 +347,22 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
         /**
          * Returns the value.
          *
-         * @returns {string}
+         * @returns {*}
          */
         ContextInformation.prototype.getValue = function() {
-            return this._value;
+            switch (this.getDataType()) {
+                case "FLOAT":
+                    return parseFloat(this._value);
+                    break;
+                case "INTEGER":
+                    return parseInt(this._value);
+                    break;
+                case "BOOLEAN":
+                    return this._value === "true" || this._value === "TRUE" || this._value == "yes" || this._value == "YES";
+                default:
+                    return this._value;
+                    break;
+            }
         };
 
         /**
