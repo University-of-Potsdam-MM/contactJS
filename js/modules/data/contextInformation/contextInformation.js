@@ -1,6 +1,7 @@
 define(['data', 'parameterList'], function(Data, ParameterList) {
     return (function() {
 
+        ContextInformation.OPERATOR_UNEQUALS = "!=";
         ContextInformation.OPERATOR_EQUALS = "==";
         ContextInformation.OPERATOR_LESS_THAN = "<";
         ContextInformation.OPERATOR_GREATER_THAN = ">";

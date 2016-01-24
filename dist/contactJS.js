@@ -1675,10 +1675,10 @@ define('contextInformationList',['dataList', 'contextInformation'], function(Dat
                     return contextInformation.getValue() == value;
                     break;
                 case ContextInformation.OPERATOR_LESS_THAN:
-                    return contextInformation.getValue() < value;
+                    return contextInformation.getValue() < parseFloat(value);
                     break;
                 case ContextInformation.OPERATOR_GREATER_THAN:
-                    return contextInformation.getValue() > value;
+                    return contextInformation.getValue() > parseFloat(value);
                     break;
                 default:
                     return false;
