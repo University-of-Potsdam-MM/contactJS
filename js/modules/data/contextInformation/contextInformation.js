@@ -102,6 +102,28 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
         };
 
         /**
+         *
+         * @param dataType
+         * @param value
+         * @returns {*}
+         */
+        ContextInformation.restoreDataType = function(dataType, value) {
+            switch (dataType) {
+                case "FLOAT":
+                    return parseFloat(value);
+                    break;
+                case "INTEGER":
+                    return parseInt(value);
+                    break;
+                case "BOOLEAN":
+                    return value === "true" || value === "TRUE" || value == "yes" || value == "YES";
+                default:
+                    return value;
+                    break;
+            }
+        };
+
+        /**
          * Builder for name.
          *
          * @param {String} name The contextual information name to build with.
@@ -351,19 +373,7 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
          * @returns {*}
          */
         ContextInformation.prototype.getValue = function() {
-            switch (this.getDataType()) {
-                case "FLOAT":
-                    return parseFloat(this._value);
-                    break;
-                case "INTEGER":
-                    return parseInt(this._value);
-                    break;
-                case "BOOLEAN":
-                    return this._value === "true" || this._value === "TRUE" || this._value == "yes" || this._value == "YES";
-                default:
-                    return this._value;
-                    break;
-            }
+            return ContextInformation.restoreDataType(this.getDataType(), this._value);
         };
 
         /**

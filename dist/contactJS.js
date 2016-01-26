@@ -788,6 +788,7 @@ define('parameterList',['abstractList', 'parameter'], function(AbstractList, Par
 define('contextInformation',['data', 'parameterList'], function(Data, ParameterList) {
     return (function() {
 
+        ContextInformation.OPERATOR_UNEQUALS = "!=";
         ContextInformation.OPERATOR_EQUALS = "==";
         ContextInformation.OPERATOR_LESS_THAN = "<";
         ContextInformation.OPERATOR_GREATER_THAN = ">";
@@ -885,6 +886,28 @@ define('contextInformation',['data', 'parameterList'], function(Data, ParameterL
                 contextInformationDescription.type,
                 contextInformationDescription.parameterList,
                 true);
+        };
+
+        /**
+         *
+         * @param dataType
+         * @param value
+         * @returns {*}
+         */
+        ContextInformation.restoreDataType = function(dataType, value) {
+            switch (dataType) {
+                case "FLOAT":
+                    return parseFloat(value);
+                    break;
+                case "INTEGER":
+                    return parseInt(value);
+                    break;
+                case "BOOLEAN":
+                    return value === "true" || value === "TRUE" || value == "yes" || value == "YES";
+                default:
+                    return value;
+                    break;
+            }
         };
 
         /**
@@ -1137,19 +1160,7 @@ define('contextInformation',['data', 'parameterList'], function(Data, ParameterL
          * @returns {*}
          */
         ContextInformation.prototype.getValue = function() {
-            switch (this.getDataType()) {
-                case "FLOAT":
-                    return parseFloat(this._value);
-                    break;
-                case "INTEGER":
-                    return parseInt(this._value);
-                    break;
-                case "BOOLEAN":
-                    return this._value === "true" || this._value === "TRUE" || this._value == "yes" || this._value == "YES";
-                default:
-                    return this._value;
-                    break;
-            }
+            return ContextInformation.restoreDataType(this.getDataType(), this._value);
         };
 
         /**
@@ -1656,7 +1667,7 @@ define('contextInformationList',['dataList', 'contextInformation'], function(Dat
         ContextInformationList.prototype.fulfils = function(contextInformation, operator, value) {
             var contextInformationOfKind = this.find(contextInformation);
             for (var index in contextInformationOfKind) {
-                if (contextInformationOfKind.hasOwnProperty(index) && this._fulfils(contextInformationOfKind[index], operator, value)) return true;
+                if (contextInformationOfKind.hasOwnProperty(index) && this._fulfils(contextInformationOfKind[index], operator, ContextInformation.restoreDataType(contextInformation.getDataType(), value))) return true;
             }
             return false;
         };
@@ -1674,11 +1685,14 @@ define('contextInformationList',['dataList', 'contextInformation'], function(Dat
                 case ContextInformation.OPERATOR_EQUALS:
                     return contextInformation.getValue() == value;
                     break;
+                case ContextInformation.UNEQUALS:
+                    return contextInformation.getValue() != value;
+                    break;
                 case ContextInformation.OPERATOR_LESS_THAN:
-                    return contextInformation.getValue() < parseFloat(value);
+                    return contextInformation.getValue() < value;
                     break;
                 case ContextInformation.OPERATOR_GREATER_THAN:
-                    return contextInformation.getValue() > parseFloat(value);
+                    return contextInformation.getValue() > value;
                     break;
                 default:
                     return false;

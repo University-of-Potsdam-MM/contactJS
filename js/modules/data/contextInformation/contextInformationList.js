@@ -351,7 +351,7 @@ define(['dataList', 'contextInformation'], function(DataList, ContextInformation
         ContextInformationList.prototype.fulfils = function(contextInformation, operator, value) {
             var contextInformationOfKind = this.find(contextInformation);
             for (var index in contextInformationOfKind) {
-                if (contextInformationOfKind.hasOwnProperty(index) && this._fulfils(contextInformationOfKind[index], operator, value)) return true;
+                if (contextInformationOfKind.hasOwnProperty(index) && this._fulfils(contextInformationOfKind[index], operator, ContextInformation.restoreDataType(contextInformation.getDataType(), value))) return true;
             }
             return false;
         };
@@ -373,10 +373,10 @@ define(['dataList', 'contextInformation'], function(DataList, ContextInformation
                     return contextInformation.getValue() != value;
                     break;
                 case ContextInformation.OPERATOR_LESS_THAN:
-                    return contextInformation.getValue() < parseFloat(value);
+                    return contextInformation.getValue() < value;
                     break;
                 case ContextInformation.OPERATOR_GREATER_THAN:
-                    return contextInformation.getValue() > parseFloat(value);
+                    return contextInformation.getValue() > value;
                     break;
                 default:
                     return false;
