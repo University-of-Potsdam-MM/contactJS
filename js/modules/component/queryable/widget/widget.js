@@ -403,6 +403,7 @@ define(['queryable', 'callback', 'callbackList', 'contextInformation', 'contextI
 						self.log("Interval Trigger -> queryGenerator");
 						self.queryGenerator();
 					}, this.constructor.description.updateInterval);
+					self.queryGenerator();
 				}
 			};
 

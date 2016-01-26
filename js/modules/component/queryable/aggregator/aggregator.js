@@ -278,7 +278,7 @@ define(['queryable', 'widget', 'contextInformation', 'contextInformationList', '
 						this._subscribeTo(theWidget, callbackList);
 						this._callbacks.putAll(callbackList);
 						var callsList = callbackList.getItems();
-						for(var x in callsList){
+						for(var x in callsList) {
 							var singleCallback = callsList[x];
 							var typeList = singleCallback.getContextInformation().getItems();
 							for(var y in typeList){

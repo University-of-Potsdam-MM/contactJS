@@ -3959,6 +3959,7 @@ define('widget',['queryable', 'callback', 'callbackList', 'contextInformation', 
 						self.log("Interval Trigger -> queryGenerator");
 						self.queryGenerator();
 					}, this.constructor.description.updateInterval);
+					self.queryGenerator();
 				}
 			};
 
@@ -4756,7 +4757,7 @@ define('aggregator',['queryable', 'widget', 'contextInformation', 'contextInform
 						this._subscribeTo(theWidget, callbackList);
 						this._callbacks.putAll(callbackList);
 						var callsList = callbackList.getItems();
-						for(var x in callsList){
+						for(var x in callsList) {
 							var singleCallback = callsList[x];
 							var typeList = singleCallback.getContextInformation().getItems();
 							for(var y in typeList){
