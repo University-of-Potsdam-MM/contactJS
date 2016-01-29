@@ -108,6 +108,7 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
          * @returns {*}
          */
         ContextInformation.restoreDataType = function(dataType, value) {
+            if (value == ContextInformation.VALUE_UNKNOWN) return value;
             switch (dataType) {
                 case "FLOAT":
                     return parseFloat(value);
