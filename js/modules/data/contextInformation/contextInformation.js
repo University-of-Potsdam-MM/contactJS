@@ -526,6 +526,36 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
             }
         };
 
+        /**
+         * Checks if the context information fulfils the given operator and value.
+         *
+         * @param operator
+         * @param {*} value
+         * @returns {boolean}
+         * @private
+         */
+        ContextInformation.prototype.fulfils = function(operator, value) {
+            switch(operator) {
+                case ContextInformation.OPERATOR_EQUALS:
+                    return this.getValue() === value;
+                    break;
+                case ContextInformation.OPERATOR_UNEQUALS:
+                    return this.getValue() !== value;
+                    break;
+                case ContextInformation.OPERATOR_LESS_THAN:
+                    return this.getValue() < value;
+                    break;
+                case ContextInformation.OPERATOR_GREATER_THAN:
+                    return this.getValue() > value;
+                    break;
+                case ContextInformation.OPERATOR_CONTAINS:
+                    return this.getValue().indexOf(value) > -1;
+                    break;
+                default:
+                    return false;
+            }
+        };
+
         return ContextInformation;
     })();
 });
