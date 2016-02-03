@@ -5,6 +5,7 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
         ContextInformation.OPERATOR_EQUALS = "==";
         ContextInformation.OPERATOR_LESS_THAN = "<";
         ContextInformation.OPERATOR_GREATER_THAN = ">";
+        ContextInformation.OPERATOR_CONTAINS = "contains";
 
         /**
          *
@@ -117,7 +118,7 @@ define(['data', 'parameterList'], function(Data, ParameterList) {
                     return parseInt(value);
                     break;
                 case "BOOLEAN":
-                    return value === "true" || value === "TRUE" || value == "yes" || value == "YES";
+                    return value === "true" || value === "TRUE" || value === "yes" || value === "YES";
                 default:
                     return value;
                     break;

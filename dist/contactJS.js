@@ -792,6 +792,7 @@ define('contextInformation',['data', 'parameterList'], function(Data, ParameterL
         ContextInformation.OPERATOR_EQUALS = "==";
         ContextInformation.OPERATOR_LESS_THAN = "<";
         ContextInformation.OPERATOR_GREATER_THAN = ">";
+        ContextInformation.OPERATOR_CONTAINS = "contains";
 
         /**
          *
@@ -904,7 +905,7 @@ define('contextInformation',['data', 'parameterList'], function(Data, ParameterL
                     return parseInt(value);
                     break;
                 case "BOOLEAN":
-                    return value === "true" || value === "TRUE" || value == "yes" || value == "YES";
+                    return value === "true" || value === "TRUE" || value === "yes" || value === "YES";
                 default:
                     return value;
                     break;
@@ -1684,16 +1685,19 @@ define('contextInformationList',['dataList', 'contextInformation'], function(Dat
         ContextInformationList.prototype._fulfils = function(contextInformation, operator, value) {
             switch(operator) {
                 case ContextInformation.OPERATOR_EQUALS:
-                    return contextInformation.getValue() == value;
+                    return contextInformation.getValue() === value;
                     break;
                 case ContextInformation.UNEQUALS:
-                    return contextInformation.getValue() != value;
+                    return contextInformation.getValue() !== value;
                     break;
                 case ContextInformation.OPERATOR_LESS_THAN:
                     return contextInformation.getValue() < value;
                     break;
                 case ContextInformation.OPERATOR_GREATER_THAN:
                     return contextInformation.getValue() > value;
+                    break;
+                case ContextInformation.OPERATOR_CONTAINS:
+                    return contextInformation.getValue().indexOf(value) > -1;
                     break;
                 default:
                     return false;

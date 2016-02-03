@@ -367,16 +367,19 @@ define(['dataList', 'contextInformation'], function(DataList, ContextInformation
         ContextInformationList.prototype._fulfils = function(contextInformation, operator, value) {
             switch(operator) {
                 case ContextInformation.OPERATOR_EQUALS:
-                    return contextInformation.getValue() == value;
+                    return contextInformation.getValue() === value;
                     break;
                 case ContextInformation.UNEQUALS:
-                    return contextInformation.getValue() != value;
+                    return contextInformation.getValue() !== value;
                     break;
                 case ContextInformation.OPERATOR_LESS_THAN:
                     return contextInformation.getValue() < value;
                     break;
                 case ContextInformation.OPERATOR_GREATER_THAN:
                     return contextInformation.getValue() > value;
+                    break;
+                case ContextInformation.OPERATOR_CONTAINS:
+                    return contextInformation.getValue().indexOf(value) > -1;
                     break;
                 default:
                     return false;
